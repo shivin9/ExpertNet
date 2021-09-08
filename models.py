@@ -8,7 +8,6 @@ import torch
 from utils import is_non_zero_file
 
 class AE(nn.Module):
-
     def __init__(self, n_enc_1, n_enc_2, n_enc_3, n_dec_1, n_dec_2, n_dec_3,
                  input_dim, n_z):
         super(AE, self).__init__()
@@ -61,7 +60,6 @@ def pretrain_ae(model, train_loader, args):
     '''
     pretrain autoencoder
     '''
-#     train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
     print(model)
     optimizer = Adam(model.parameters(), lr=args.lr)
     for epoch in range(50):

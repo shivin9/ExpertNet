@@ -13,6 +13,9 @@ from read_patients import get_aki
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
+DATASETS = ['titanic', 'magic', 'creditcard', 'adult', 'diabetes',\
+            'cic', 'sepsis', 'synthetic', 'paper_synthetic', 'kidney', 'infant', 'wid_mortality']
+
 
 def load_mnist(path='./data/mnist.npz'):
     f = np.load(path)
@@ -70,6 +73,41 @@ class MnistDataset(Dataset):
 
 def is_non_zero_file(fpath):
     return os.path.isfile(fpath) and os.path.getsize(fpath) > 0
+
+
+class parameters(object):
+    def __init__(self, parser):
+        self.input_dim = -1
+        self.dataset = parser.dataset
+        
+        # Training parameters
+        self.lr = parser.lr
+        self.alpha = float(parser.alpha)
+        self.wd = parser.wd
+        self.batch_size = parser.batch_size
+        self.n_epochs = parser.n_epochs
+        self.pre_epoch = parser.pre_epoch
+        self.pretrain = parser.pretrain
+        self.load_ae = parser.load_ae
+        self.classifier = parser.classifier
+        self.tol = parser.tol
+
+        # Model parameters
+        self.lamda = parser.lamda
+        self.beta = parser.beta
+        self.gamma = parser.gamma
+        self.delta = parser.delta
+        self.hidden_dims = parser.hidden_dims
+        self.latent_dim = self.n_z = parser.n_z
+        self.n_clusters = parser.n_clusters
+        self.clustering = parser.clustering
+        self.n_classes = parser.n_classes
+
+        # Utility parameters
+        self.device = parser.device
+        self.log_interval = parser.log_interval
+        self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
+
 
 #######################################################
 # Evaluate Critiron
@@ -256,6 +294,71 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
     Y = Y[1:]
     columns = ["feature_"+str(i) for i in range(n_features)]
     return X, np.array(Y).astype('int'), columns
+
+
+def get_train_val_test_loaders(args):
+    if args.dataset in DATASETS:
+        base_dir = "/Users/shivin/Document/NUS/Research/Data"
+        print("Loading Dataset:", args.dataset)
+        if args.dataset != "kidney":
+            if args.dataset == "synthetic":
+                n_feat = 45
+                X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
+                       n_clusters=args.n_clusters, n_features = n_feat,\
+                       inner_class_sep=0.2, outer_class_sep=2, seed=0)
+                args.input_dim = n_feat
+
+            elif args.dataset == "paper_synthetic":
+                n_feat = 100
+                X, y = paper_synthetic(2500, centers=4)
+                args.input_dim = n_feat
+                print(args.input_dim)
+
+            else:
+                X, y, columns = get_dataset(args.dataset, base_dir)
+                print(args.dataset)
+                args.input_dim = X.shape[1]
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+
+            sc = StandardScaler()
+            X_train = sc.fit_transform(X_train)
+            X_val = sc.fit_transform(X_val)
+            X_test = sc.fit_transform(X_test)
+            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
+            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
+            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
+
+        else:
+            print("Loading Kidney Train")
+            X_train, y_train, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/train")
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+
+            args.input_dim = X_train.shape[1]
+            print(args.input_dim)
+
+            print("Loading Kidney Test")
+            X_test, y_test, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/test")
+
+            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
+            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
+            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
+
+            
+        train_loader = torch.utils.data.DataLoader(X_train_data_loader,
+            batch_size=args.batch_size, shuffle=True)
+
+        val_loader = torch.utils.data.DataLoader(X_val_data_loader,
+            batch_size=args.batch_size, shuffle=True)
+
+        test_loader = torch.utils.data.DataLoader(X_test_data_loader, 
+            batch_size=args.batch_size, shuffle=False)
+
+        return (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
+    else:
+        return None
+
 
 def paper_synthetic(n_pts=1000, centers=4):
     X, y = make_blobs(n_pts, centers=centers)

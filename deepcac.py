@@ -23,7 +23,7 @@ from torch.nn.parameter import Parameter
 from torch.optim import Adam
 from torch.utils.data import DataLoader, random_split
 from torch.nn import Linear
-from pytorchtools import EarlyStopping
+from pytorchtools import EarlyStoppingCAC
 
 import numbers
 from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as ari
@@ -106,66 +106,10 @@ args = parameters(parser)
 for key in args.__dict__:
     print(key, args.__dict__[key])
 
-datasets = ['titanic', 'magic', 'creditcard', 'adult', 'diabetes',\
-            'cic', 'sepsis', 'synthetic', 'paper_synthetic', 'kidney', 'infant', 'wid_mortality']
-
-if args.dataset in datasets:
-    base_dir = "/Users/shivin/Document/NUS/Research/Data"
-    print("Loading Dataset:", args.dataset)
-    if args.dataset != "kidney":
-        if args.dataset == "synthetic":
-            n_feat = 45
-            X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
-                   n_clusters=args.n_clusters, n_features = n_feat,\
-                   inner_class_sep=0.2, outer_class_sep=2, seed=0)
-            args.input_dim = n_feat
-
-        elif args.dataset == "paper_synthetic":
-            n_feat = 100
-            X, y = paper_synthetic(2500, centers=4)
-            args.input_dim = n_feat
-            print(args.input_dim)
-
-        else:
-            X, y, columns = get_dataset(args.dataset, base_dir)
-            print(args.dataset)
-            args.input_dim = X.shape[1]
-
-        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
-
-        sc = StandardScaler()
-        X_train = sc.fit_transform(X_train)
-        X_val = sc.fit_transform(X_val)
-        X_test = sc.fit_transform(X_test)
-        X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
-        X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
-        X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
-
-    else:
-        print("Loading Kidney Train")
-        X_train, y_train, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/train")
-        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
-
-        args.input_dim = X_train.shape[1]
-        print(args.input_dim)
-
-        print("Loading Kidney Test")
-        X_test, y_test, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/test")
-
-        X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
-        X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
-        X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
-
-        
-    train_loader = torch.utils.data.DataLoader(X_train_data_loader,
-        batch_size=args.batch_size, shuffle=True)
-
-    val_loader = torch.utils.data.DataLoader(X_val_data_loader,
-        batch_size=args.batch_size, shuffle=True)
-
-    test_loader = torch.utils.data.DataLoader(X_test_data_loader, 
-        batch_size=args.batch_size, shuffle=False)
+train_data, val_data, test_data = get_train_val_test_loaders(args)
+X_train, y_train, train_loader = train_data
+X_val, y_val, val_loader = val_data
+X_test, y_test, test_loader = test_data
 
 ####################################################################################
 ####################################################################################
@@ -246,7 +190,7 @@ avg_train_losses = []
 avg_valid_losses = []
 
 N_EPOCHS = args.n_epochs
-es = EarlyStopping(dataset = args.dataset)
+es = EarlyStoppingCAC(dataset = args.dataset)
 
 for epoch in range(N_EPOCHS):
     if epoch % args.log_interval == 0:
@@ -461,7 +405,7 @@ print("\n#######################################################################
 print("Training Local Networks")
 model = es.load_checkpoint(model)
 
-es = EarlyStopping(dataset = args.dataset)
+es = EarlyStoppingCAC(dataset = args.dataset)
 
 qs, latents_X = model(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
 q_train = qs[0]
