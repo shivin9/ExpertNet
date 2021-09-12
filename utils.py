@@ -303,8 +303,8 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
 
 def get_train_val_test_loaders(args):
     if args.dataset in DATASETS:
-        # base_dir = "/Users/shivin/Document/NUS/Research/Data"
-        base_dir = "/home/shivin/CAC_code/data"
+        base_dir = "/Users/shivin/Document/NUS/Research/Data"
+        # base_dir = "/home/shivin/CAC_code/data"
         print("Loading Dataset:", args.dataset)
         if args.dataset != "kidney":
             if args.dataset == "synthetic":

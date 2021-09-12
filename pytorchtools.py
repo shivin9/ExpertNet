@@ -66,7 +66,7 @@ class EarlyStoppingCAC:
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self, patience=7, verbose=False, delta=0, path='./pretrained_model/checkpoint', dataset="", trace_func=print):
+    def __init__(self, patience=5, verbose=False, delta=0, path='./pretrained_model/checkpoint', dataset="", trace_func=print):
         """
         Args:
             patience (int): How long to wait after last time validation loss improved.
@@ -114,10 +114,10 @@ class EarlyStopping:
         '''Saves model when validation loss decrease.'''
         if self.verbose:
             self.trace_func(f'Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ...')
-        torch.save(model.state_dict(), self.path+".pt")
+        torch.save(model.classifier.state_dict(), self.path+".pt")
         self.val_loss_min = val_loss
 
     def load_checkpoint(self, model):
         print("Loading Best model with score: ", self.best_score)
-        model.load_state_dict(torch.load(self.path+".pt"))
+        model.classifier.load_state_dict(torch.load(self.path+".pt"))
         return model

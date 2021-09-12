@@ -88,6 +88,7 @@ class NNClassifier(nn.Module):
         self.n_classes = args.n_classes
         self.criterion = nn.CrossEntropyLoss(reduction='mean')
         self.ae = ae
+        self.device = args.device
 
         if self.ae == None:
             self.input_dim = args.input_dim
@@ -102,7 +103,8 @@ class NNClassifier(nn.Module):
             nn.Linear(16, 8),
             nn.ReLU(),
             nn.Linear(8, args.n_classes),
-        )
+        ).to(self.device)
+
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
 
     def forward(self, inputs):
@@ -119,7 +121,7 @@ class NNClassifier(nn.Module):
         train_loss = self.criterion(y_pred, y_batch)
         train_loss.backward()
         self.optimizer.step()
-        return y_pred.detach().numpy(), train_loss.item()
+        return y_pred, train_loss.item()
 
 
 class MultiHeadIDEC(nn.Module):
