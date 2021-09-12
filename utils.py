@@ -298,7 +298,8 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
 
 def get_train_val_test_loaders(args):
     if args.dataset in DATASETS:
-        base_dir = "/Users/shivin/Document/NUS/Research/Data"
+        # base_dir = "/Users/shivin/Document/NUS/Research/Data"
+        base_dir = "/home/shivin/CAC_code/data"
         print("Loading Dataset:", args.dataset)
         if args.dataset != "kidney":
             if args.dataset == "synthetic":
@@ -332,14 +333,14 @@ def get_train_val_test_loaders(args):
 
         else:
             print("Loading Kidney Train")
-            X_train, y_train, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/train")
+            X_train, y_train, columns = get_dataset(args.dataset, base_dir + "/aki/train")
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
 
             args.input_dim = X_train.shape[1]
             print(args.input_dim)
 
             print("Loading Kidney Test")
-            X_test, y_test, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/test")
+            X_test, y_test, columns = get_dataset(args.dataset, base_dir + "/aki/test")
 
             X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
@@ -355,7 +356,7 @@ def get_train_val_test_loaders(args):
         test_loader = torch.utils.data.DataLoader(X_test_data_loader, 
             batch_size=args.batch_size, shuffle=False)
 
-        return (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
+        return columns, (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
     else:
         return None
 

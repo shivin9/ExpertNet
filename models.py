@@ -199,18 +199,8 @@ class MultiHeadIDEC(nn.Module):
         q = q.pow((self.alpha + 1.0) / 2.0)
         q = (q.t() / torch.sum(q, 1)).t()
 
-        q_p = 1.0 / (1.0 + torch.sum(
-            torch.pow(z.detach().unsqueeze(1) - self.p_cluster_layer, 2), 2) / self.alpha)
-        q_p = q_p.pow((self.alpha + 1.0) / 2.0)
-        q_p = (q_p.t() / torch.sum(q_p, 1)).t()
-
-        q_n = 1.0 / (1.0 + torch.sum(
-            torch.pow(z.detach().unsqueeze(1) - self.n_cluster_layer, 2), 2) / self.alpha)
-        q_n = q_n.pow((self.alpha + 1.0) / 2.0)
-        q_n = (q_n.t() / torch.sum(q_n, 1)).t()
-
         if output == "latent":
-            return (q, q_p, q_n), z
+            return q, z
 
         elif output == "classifier":
             preds = torch.zeros((len(z), 2))
@@ -219,4 +209,4 @@ class MultiHeadIDEC(nn.Module):
             return preds
         
         else:
-            return z, x_bar, (q, q_p, q_n)
+            return z, x_bar, q

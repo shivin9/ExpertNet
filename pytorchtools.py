@@ -37,7 +37,7 @@ class EarlyStoppingCAC:
             self.best_score[1] = score[1]
             self.save_checkpoint(val_loss, model)
 
-        elif score[0] < self.best_score[0] + self.delta and score[1] < self.best_score[1] + self.delta :
+        if score[0] < self.best_score[0] + self.delta and score[1] < self.best_score[1] + self.delta :
             self.counter += 1
             self.trace_func(f'EarlyStopping counter: {self.counter} out of {self.patience}')
             if self.counter >= self.patience:
@@ -100,7 +100,7 @@ class EarlyStopping:
             self.best_score[1] = score[1]
             self.save_checkpoint(val_loss, model)
 
-        elif score[0] < self.best_score[0] + self.delta and score[1] < self.best_score[1] + self.delta :
+        if score[0] < self.best_score[0] + self.delta and score[1] < self.best_score[1] + self.delta :
             self.counter += 1
             self.trace_func(f'EarlyStopping counter: {self.counter} out of {self.patience}')
             if self.counter >= self.patience:

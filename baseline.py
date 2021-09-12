@@ -90,12 +90,15 @@ device = args.device
 N_EPOCHS = args.n_epochs
 es = EarlyStopping(dataset=args.dataset, path="./pretrained_model/checkpoint_base")
 
+kmeans = KMeans(n_clusters=args.n_classes, n_init=20)
+
 for e in range(1, N_EPOCHS):
     epoch_loss = 0
     epoch_acc = 0
     epoch_f1 = 0
-    acc = 0
     m.train()
+    nmi, acc, ari = 0, 0, 0
+
     for X_batch, y_batch, _ in train_loader:
         X_batch, y_batch = X_batch.to(device), y_batch.to(device)
         y_pred, train_loss = m.fit(X_batch, y_batch)
@@ -105,6 +108,12 @@ for e in range(1, N_EPOCHS):
         acc = roc_auc_score(y_batch, y_pred[:,1])
         epoch_acc += acc.item()
         epoch_f1 += f1.item()
+        y_pred_idx = kmeans.fit_predict(X_latents[cluster_id].data.cpu().numpy())
+        nmi_k = nmi_score(y_pred_idx, y[cluster_id])
+        nmi += nmi_k * len(cluster_id)/len(X_train)
+        acc += cluster_acc(y_pred_idx, y[cluster_id]) * len(cluster_id)/len(X_train)
+        ari += ari_score(y_pred_idx, y[cluster_id]) * len(cluster_id)/len(X_train)
+
 
     m.classifier.eval()
     val_pred = m(torch.FloatTensor(np.array(X_val)).to(args.device))
@@ -115,11 +124,11 @@ for e in range(1, N_EPOCHS):
     es([val_f1, val_auc], m)
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
-    	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Acc: {epoch_acc/len(train_loader):.3f}| ',
-    	f'Val F1: {val_f1:.3f} | Val Acc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
+        f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Acc: {epoch_acc/len(train_loader):.3f}| ',
+        f'Val F1: {val_f1:.3f} | Val Acc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
 
     if es.early_stop == True:
-	    break
+        break
 
 
 ####################################################################################
@@ -143,5 +152,5 @@ test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
 test_auc = roc_auc_score(y_test, test_pred[:,1].detach().numpy())
 
 print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
-	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Acc: {epoch_acc/len(train_loader):.3f}| ',
-	f'Test F1: {test_f1:.3f} | Test Acc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
+    f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Acc: {epoch_acc/len(train_loader):.3f}| ',
+    f'Test F1: {test_f1:.3f} | Test Acc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
