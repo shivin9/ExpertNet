@@ -7,15 +7,13 @@ import umap
 import os
 from torchvision import datasets, transforms
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score,\
-f1_score, roc_auc_score, roc_curve, accuracy_score, matthews_corrcoef as mcc
+accuracy_score, matthews_corrcoef as mcc
 from torch.utils.data import Subset
 import pandas as pd
 
 import argparse
 import numpy as np
 from sklearn.cluster import KMeans
-from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
-from sklearn.metrics import adjusted_rand_score as ari_score
 from sklearn.ensemble import GradientBoostingRegressor
 import torch
 import torch.nn as nn
@@ -65,8 +63,8 @@ parser.add_argument('--n_classes', default= 2, type=int)
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
-# parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
+# parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
 
@@ -136,31 +134,21 @@ optimizer = Adam(model.parameters(), lr=args.lr)
 
 # cluster parameter initiate
 device = args.device
-x_bar, hidden = model.ae(torch.Tensor(X_train).to(args.device))
+x_bar, hidden = model.ae(X_train)
 
 kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
 y_pred = kmeans.fit_predict(hidden.data.cpu().numpy())
-cluster_indices = kmeans.labels_
+cluster_indices = torch.Tensor(kmeans.labels_).to(device)
 original_cluster_centers = kmeans.cluster_centers_
-
-nmi = 0
-for j in range(args.n_clusters):
-    kmeans = KMeans(n_clusters=args.n_classes, n_init=20)
-    cluster_idx = np.where(cluster_indices == j)[0]
-    y_pred_idx = kmeans.fit_predict(hidden.data.cpu().numpy()[cluster_idx])
-    nmi_k = nmi_score(y_pred_idx, y_train[cluster_idx])
-    nmi += len(cluster_idx)*nmi_k
-
-print("NMI score={:.4f}".format(nmi/len(X_train)))
 
 y_pred_last = y_pred
 model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
 
 ## Initialization ##
 for i in range(args.n_clusters):
-    cluster_idx = np.where(cluster_indices == i)[0]
-    cluster_idx_p = np.where(y_train[cluster_idx] == 1)[0]
-    cluster_idx_n = np.where(y_train[cluster_idx] == 0)[0]
+    cluster_idx = torch.where(cluster_indices == i)[0]
+    cluster_idx_p = torch.where(y_train[cluster_idx] == 1)[0]
+    cluster_idx_n = torch.where(y_train[cluster_idx] == 0)[0]
     hidden_p = hidden[cluster_idx][cluster_idx_p]
     hidden_n = hidden[cluster_idx][cluster_idx_n]
     
@@ -193,15 +181,15 @@ avg_valid_losses = []
 N_EPOCHS = args.n_epochs
 es = EarlyStoppingCAC(dataset = args.dataset)
 kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
-val_cluster_labels = kmeans.fit_predict(X_val)
-test_cluster_labels = kmeans.fit_predict(X_test)
+val_cluster_labels = torch.Tensor(kmeans.fit_predict(X_val.data.cpu().numpy())).to(device)
+test_cluster_labels = torch.Tensor(kmeans.fit_predict(X_test.data.cpu().numpy())).to(device)
 
 kmeans = KMeans(n_clusters=args.n_classes, n_init=20)
 
 for epoch in range(N_EPOCHS):
     if epoch % args.log_interval == 0:
         # plot(model, torch.FloatTensor(X_train).to(args.device), y_train)
-        X_latents, _, tmp_q = model(torch.Tensor(X_train).to(args.device), output="decoded")
+        X_latents, _, tmp_q = model(X_train, output="decoded")
         # update target distribution p
         tmp_q = tmp_q.data
 
@@ -212,13 +200,14 @@ for epoch in range(N_EPOCHS):
         delta_label = np.sum(y_pred != y_pred_last).astype(
             np.float32) / y_pred.shape[0]
         y_pred_last = y_pred
+        cluster_indices = torch.argmax(tmp_q, axis=1)
 
         # Calculate Training Metrics
         train_loss = 0
         for j in range(args.n_clusters):
-            cluster_idx = np.where(cluster_indices == j)[0]
+            cluster_idx = torch.where(cluster_indices == j)[0]
             X_cluster = X_latents[cluster_idx]
-            y_cluster = torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor).to(model.device)
+            y_cluster = y_train[cluster_idx]
 
             classifier_k, optimizer_k = model.classifiers[j]
             y_pred_cluster = classifier_k(X_cluster)
@@ -230,10 +219,10 @@ for epoch in range(N_EPOCHS):
             model.classifiers[j][0].eval()
 
         # Evaluate model on Validation dataset
-        qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
+        qs, z_val = model(X_val, output="latent")
         q_val = qs
         cluster_ids = torch.argmax(q_val, axis=1)
-        preds = torch.zeros((len(z_val), 2))
+        preds = torch.zeros((len(z_val), 2)).to(args.device)
 
         # Weighted predictions
         nmi, acc, ari = 0, 0, 0
@@ -244,17 +233,17 @@ for epoch in range(N_EPOCHS):
             preds[:,0] += q_val[:,j]*cluster_preds[:,0]
             preds[:,1] += q_val[:,j]*cluster_preds[:,1]
 
-            y_pred_idx = kmeans.fit_predict(X_cluster[cluster_id].data.cpu().numpy())
-            nmi_k = nmi_score(y_pred_idx, y_val[cluster_id])
+            y_pred_idx = torch.Tensor(kmeans.fit_predict(X_cluster[cluster_id].data.cpu().numpy())).to(args.device)
+            nmi_k = nmi_score_torch(y_pred_idx, y_val[cluster_id])
             nmi += nmi_k * len(cluster_id)/len(X_train)
             acc += cluster_acc(y_pred_idx, y_val[cluster_id]) * len(cluster_id)/len(X_train)
-            ari += ari_score(y_pred_idx, y_val[cluster_id]) * len(cluster_id)/len(X_train)
+            ari += ari_score_torch(y_pred_idx, y_val[cluster_id]) * len(cluster_id)/len(X_train)
 
-        # nmi = nmi_score(val_cluster_labels, kmeans.fit_predict(X_cluster.data.cpu().numpy()))
-        val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
-        val_auc = roc_auc_score(y_val, preds[:,1].detach().numpy())
+        # nmi = nmi_score_torch(val_cluster_labels, kmeans.fit_predict(X_cluster.data.cpu().numpy()))
+        val_f1  = f1_score_torch(y_val, torch.argmax(preds, axis=1))
+        val_auc = roc_auc_score_torch(y_val, preds[:,1])
 
-        loss = criterion(preds, torch.Tensor(y_val).type(torch.LongTensor))
+        loss = criterion(preds, y_val)
         # record validation loss
         valid_losses.append(loss.item())
 
@@ -296,6 +285,7 @@ for epoch in range(N_EPOCHS):
     for batch_idx, (x_batch, y_batch, idx) in enumerate(train_loader):
         # torch.autograd.set_detect_anomaly(True)
         x_batch = x_batch.to(device)
+        y_batch = y_batch.to(device)
         idx = idx.to(device)
 
         X_latents, x_bar, q = model(x_batch)
@@ -306,10 +296,12 @@ for epoch in range(N_EPOCHS):
         for _ in range(train_epochs):
             # Choose classifier for a point probabilistically
             for j in range(len(idx)):
-                classifier_labels[j] = np.random.choice(range(args.n_clusters), p = q[j].detach().numpy())
+                classifier_labels[j] = np.random.choice(range(args.n_clusters), p = q[j].data.cpu().numpy())
+            
+            classifier_labels = torch.Tensor(classifier_labels)
 
             for k in range(args.n_clusters):
-                idx_cluster = np.where(classifier_labels == k)[0]
+                idx_cluster = torch.where(classifier_labels == k)[0].to(args.device)
                 X_cluster = X_latents[idx_cluster]
                 y_cluster = y_batch[idx_cluster]
 
@@ -323,7 +315,7 @@ for epoch in range(N_EPOCHS):
 
         class_loss = torch.tensor(0.).to(args.device)
         for k in range(args.n_clusters):
-            idx_cluster = np.where(classifier_labels == k)[0]
+            idx_cluster = torch.where(classifier_labels == k)[0]
             X_cluster = X_latents[idx_cluster]
             y_cluster = y_batch[idx_cluster]
 
@@ -351,8 +343,8 @@ for epoch in range(N_EPOCHS):
         for j in range(args.n_clusters):
             pts_index = torch.where(cluster_id == j)[0]
             cluster_pts = X_latents[pts_index]
-            n_class_index = np.where(y_batch[pts_index] == 0)[0]
-            p_class_index = np.where(y_batch[pts_index] == 1)[0]
+            n_class_index = torch.where(y_batch[pts_index] == 0)[0]
+            p_class_index = torch.where(y_batch[pts_index] == 1)[0]
 
             n_class = cluster_pts[n_class_index]
             p_class = cluster_pts[p_class_index]
@@ -384,9 +376,9 @@ for epoch in range(N_EPOCHS):
         
         # Update the positive and negative centroids
         for j in range(args.n_clusters):
-            pts_index = np.where(cluster_id == j)[0]
-            n_class_index = np.where(y_batch[pts_index] == 0)[0]
-            p_class_index = np.where(y_batch[pts_index] == 1)[0]
+            pts_index = torch.where(cluster_id == j)[0]
+            n_class_index = torch.where(y_batch[pts_index] == 0)[0]
+            p_class_index = torch.where(y_batch[pts_index] == 1)[0]
 
             N  = len(pts_index)
             Np = len(p_class_index)
@@ -412,7 +404,7 @@ model = es.load_checkpoint(model)
 
 es = EarlyStoppingCAC(dataset = args.dataset, delta=0.001)
 
-qs, latents_X = model(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
+qs, latents_X = model(X_train, output="latent")
 q_train = qs
 cluster_id_train = torch.argmax(q_train, axis=1)
 
@@ -440,10 +432,11 @@ for epoch in range(N_EPOCHS):
         classifier_labels = np.zeros(len(X_latents))
         # Choose classifier for a point probabilistically
         for j in range(len(X_latents)):
-            classifier_labels[j] = np.random.choice(range(args.n_clusters), p = q_batch[j].detach().numpy())
+            classifier_labels[j] = np.random.choice(range(args.n_clusters), p = q_batch[j].data.cpu().numpy())
 
+        classifier_labels = torch.Tensor(classifier_labels).to(args.device)
         for k in range(args.n_clusters):
-            idx_cluster = np.where(classifier_labels == k)[0]
+            idx_cluster = torch.where(classifier_labels == k)[0]
             X_cluster = X_latents[idx_cluster]
             y_cluster = y_batch[idx_cluster]
 
@@ -460,10 +453,10 @@ for epoch in range(N_EPOCHS):
         model.classifiers[j][0].eval()
 
     # Evaluate model on Validation set
-    qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
+    qs, z_val = model(X_val, output="latent")
     q_val = qs
     cluster_ids = torch.argmax(q_val, axis=1)
-    preds = torch.zeros((len(z_val), 2))
+    preds = torch.zeros((len(z_val), 2)).to(args.device)
 
     # Weighted predictions
     for j in range(model.n_clusters):
@@ -474,10 +467,10 @@ for epoch in range(N_EPOCHS):
         preds[:,0] += q_val[:,j]*cluster_preds[:,0]
         preds[:,1] += q_val[:,j]*cluster_preds[:,1]
 
-    val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
-    val_auc = roc_auc_score(y_val, preds[:,1].detach().numpy())
+    val_f1  = f1_score_torch(y_val, torch.argmax(preds, axis=1))
+    val_auc = roc_auc_score_torch(y_val, preds[:,1])
 
-    loss = criterion(preds, torch.Tensor(y_val).type(torch.LongTensor))
+    loss = criterion(preds, y_val)
     # record validation loss
     valid_losses.append(loss.item())
 
@@ -521,10 +514,10 @@ print("Evaluating Test Data")
 model = es.load_checkpoint(model)
 
 # # Evaluate model on Test dataset
-qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
+qs, z_test = model(X_test, output="latent")
 q_test = qs
 cluster_ids = torch.argmax(q_test, axis=1)
-preds_test = torch.zeros((len(z_test), 2))
+preds_test = torch.zeros((len(z_test), 2)).to(args.device)
 
 # Weighted predictions
 nmi, acc, ari = 0, 0, 0
@@ -537,16 +530,16 @@ for j in range(model.n_clusters):
     preds_test[:,1] += q_test[:,j]*cluster_preds_test[:,1]
 
     # Clustering Evaluation Metrics
-    y_pred_idx = kmeans.fit_predict(X_cluster[cluster_id].data.cpu().numpy())
-    nmi_k = nmi_score(y_pred_idx, y_test[cluster_id])
+    y_pred_idx = torch.Tensor(kmeans.fit_predict(X_cluster[cluster_id].data.cpu().numpy())).to(args.device)
+    nmi_k = nmi_score_torch(y_pred_idx, y_test[cluster_id])
     nmi += nmi_k * len(cluster_id)/len(X_train)
     acc += cluster_acc(y_pred_idx, y_test[cluster_id]) * len(cluster_id)/len(X_train)
-    ari += ari_score(y_pred_idx, y_test[cluster_id]) * len(cluster_id)/len(X_train)
+    ari += ari_score_torch(y_pred_idx, y_test[cluster_id]) * len(cluster_id)/len(X_train)
 
-# nmi = nmi_score(test_cluster_labels, kmeans.fit_predict(X_cluster.data.cpu().numpy()))
+# nmi = nmi_score_torch(test_cluster_labels, kmeans.fit_predict(X_cluster.data.cpu().numpy()))
 
-e_test_f1 = f1_score(y_test, np.argmax(preds_test.detach().numpy(), axis=1))
-e_test_auc = roc_auc_score(y_test, preds_test[:,1].detach().numpy())
+e_test_f1 = f1_score_torch(y_test, torch.argmax(preds_test, axis=1))
+e_test_auc = roc_auc_score_torch(y_test, preds_test[:,1])
 
 # Hard local predictions
 for j in range(model.n_clusters):
@@ -555,8 +548,8 @@ for j in range(model.n_clusters):
     cluster_preds_test = model.classifiers[j][0](X_cluster)
     preds_test[cluster_id,:] = cluster_preds_test
 
-test_f1 = f1_score(y_test, np.argmax(preds_test.detach().numpy(), axis=1))
-test_auc = roc_auc_score(y_test, preds_test[:,1].detach().numpy())
+test_f1 = f1_score_torch(y_test, torch.argmax(preds_test, axis=1))
+test_auc = roc_auc_score_torch(y_test, preds_test[:,1])
 
 print('Iter {}'.format(epoch), ': Acc {:.4f}'.format(acc),
       ', nmi {:.4f}'.format(nmi), ', ari {:.4f}'.format(ari))
@@ -579,7 +572,7 @@ regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters
 
 for j in range(model.n_clusters):
     cluster_id = torch.where(cluster_ids == j)[0]
-    X_cluster = z_test[cluster_id].data.cpu().numpy()
+    X_cluster = X_test[cluster_id].data.cpu().numpy()
     y_cluster = preds_test[cluster_id].data.cpu().numpy()[:,1]
     regs[j].fit(X_cluster, y_cluster)
     best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]

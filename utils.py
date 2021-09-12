@@ -10,6 +10,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from read_patients import get_aki
+from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
+from sklearn.metrics import adjusted_rand_score as ari_score, f1_score, roc_auc_score
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
@@ -125,6 +127,9 @@ def cluster_acc(y_true, y_pred):
     # Return
         accuracy, in [0,1]
     """
+    y_true = y_true.data.cpu().numpy()
+    y_pred = y_pred.data.cpu().numpy()
+
     y_true = y_true.astype(np.int64)
     assert y_pred.size == y_true.size
     D = max(y_pred.max(), y_true.max()) + 1
@@ -356,6 +361,10 @@ def get_train_val_test_loaders(args):
         test_loader = torch.utils.data.DataLoader(X_test_data_loader, 
             batch_size=args.batch_size, shuffle=False)
 
+        X_train, y_train = torch.Tensor(X_train).to(args.device), torch.Tensor(y_train).type(torch.LongTensor).to(args.device)
+        X_val, y_val = torch.Tensor(X_val).to(args.device), torch.Tensor(y_val).type(torch.LongTensor).to(args.device)
+        X_test, y_test = torch.Tensor(X_test).to(args.device), torch.Tensor(y_test).type(torch.LongTensor).to(args.device)
+
         return columns, (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
     else:
         return None
@@ -370,3 +379,23 @@ def paper_synthetic(n_pts=1000, centers=4):
     X2 = U.dot(X1)
     X2 = X2*(X2>0)
     return X2.T, y
+
+def nmi_score_torch(y1, y2):
+    y1 = y1.data.cpu().numpy()
+    y2 = y2.data.cpu().numpy()
+    return nmi_score(y1, y2)
+
+def ari_score_torch(y1, y2):
+    y1 = y1.data.cpu().numpy()
+    y2 = y2.data.cpu().numpy()
+    return ari_score(y1, y2)
+
+def f1_score_torch(y1, y2):
+    y1 = y1.data.cpu().numpy()
+    y2 = y2.data.cpu().numpy()
+    return f1_score(y1, y2)
+
+def roc_auc_score_torch(y1, y2):
+    y1 = y1.data.cpu().numpy()
+    y2 = y2.data.cpu().numpy()
+    return roc_auc_score(y1, y2)
