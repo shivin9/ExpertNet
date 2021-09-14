@@ -16,6 +16,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
+from sklearn.ensemble import GradientBoostingRegressor
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -79,7 +80,7 @@ args = parameters(parser)
 ####################################################################################
 
 
-train_data, val_data, test_data = get_train_val_test_loaders(args)
+column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
 X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
@@ -92,9 +93,9 @@ es = EarlyStopping(dataset=args.dataset, path="./pretrained_model/checkpoint_bas
 
 for e in range(1, N_EPOCHS):
     epoch_loss = 0
-    epoch_acc = 0
+    epoch_auc = 0
     epoch_f1 = 0
-    acc = 0
+    auc = 0
     m.train()
     for X_batch, y_batch, _ in train_loader:
         X_batch, y_batch = X_batch.to(device), y_batch.to(device)
@@ -102,8 +103,8 @@ for e in range(1, N_EPOCHS):
         epoch_loss += train_loss
 
         f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy())
-        acc = roc_auc_score(y_batch, y_pred[:,1])
-        epoch_acc += acc.item()
+        auc = roc_auc_score(y_batch, y_pred[:,1])
+        epoch_auc += auc.item()
         epoch_f1 += f1.item()
 
     m.classifier.eval()
@@ -115,8 +116,8 @@ for e in range(1, N_EPOCHS):
     es([val_f1, val_auc], m)
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
-    	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Acc: {epoch_acc/len(train_loader):.3f}| ',
-    	f'Val F1: {val_f1:.3f} | Val Acc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
+    	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
+    	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
 
     if es.early_stop == True:
 	    break
@@ -143,5 +144,13 @@ test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
 test_auc = roc_auc_score(y_test, test_pred[:,1].detach().numpy())
 
 print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
-	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Acc: {epoch_acc/len(train_loader):.3f}| ',
-	f'Test F1: {test_f1:.3f} | Test Acc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
+	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
+	f'Test F1: {test_f1:.3f} | Test Auc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
+
+reg = GradientBoostingRegressor(random_state=0)
+
+reg.fit(X_test, y_test)
+best_features = np.argsort(reg.feature_importances_)[::-1][:10]
+print("Best Features ")
+print(column_names[best_features])
+print("=========================\n")

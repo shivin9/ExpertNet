@@ -355,7 +355,7 @@ def get_train_val_test_loaders(args):
         test_loader = torch.utils.data.DataLoader(X_test_data_loader, 
             batch_size=args.batch_size, shuffle=False)
 
-        return (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
+        return columns, (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
     else:
         return None
 
