@@ -6,6 +6,7 @@ import numpy as np
 from tqdm import tqdm
 
 def clean_data(direc):
+	present_dir = os.getcwd()
 	os.chdir(direc)
 	cnt = 0
 	data = {}
@@ -34,20 +35,22 @@ def clean_data(direc):
 		data[i]['Sofa_Creatinin'] = data[i]['Creatinine'].apply(Sofa_Creatinine)
 		data[i]['Sofa_Platelets'] = data[i]['Platelets'].apply(Sofa_Platelets)
 		# data[cnt] = imputer.fit_transform(data[cnt])
-	os.chdir('../')
+	os.chdir(present_dir)
 	return data
 
 
 def save(data, direc):
+	present_dir = os.getcwd()
 	os.chdir(direc)
 	for i in range(len(data)):
 		data[i].to_csv("patient_"+str(i)+".csv",header=True,index=False)
-	os.chdir("../")
+	os.chdir(present_dir)
 
 
 # Tell directory where records are
 def get_processed_data(direc, hours):
 	cnt = 0
+	present_dir = os.getcwd()
 	os.chdir(direc)
 	data = {}
 	y = []
@@ -75,12 +78,13 @@ def get_processed_data(direc, hours):
 		data[i]['Sofa_Bilirubin'] = data[i]['Bilirubin_total'].apply(Sofa_Bilirubin)
 		data[i]['Sofa_Creatinin'] = data[i]['Creatinine'].apply(Sofa_Creatinine)
 		data[i]['Sofa_Platelets'] = data[i]['Platelets'].apply(Sofa_Platelets)
-	os.chdir('../../')
+	os.chdir(present_dir)
 	return data, y
 
 
 # Tell directory where records are
 def get_aki(direc):
+	present_dir = os.getcwd()
 	os.chdir(direc)
 	cnt = 0
 	data = {}
@@ -93,7 +97,7 @@ def get_aki(direc):
 			data[cnt]['y'] = int(labels[labels.stay == file].y_true)
 			cnt += 1
 
-	os.chdir('../../../')
+	os.chdir(present_dir)
 	return data
 
 

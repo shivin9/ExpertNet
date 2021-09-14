@@ -1,9 +1,10 @@
 import numpy as np
 import torch
+import os
 
 class EarlyStoppingCAC:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self, patience=7, verbose=False, delta=0, path='./pretrained_model/checkpoint', dataset="", trace_func=print):
+    def __init__(self, patience=5, verbose=False, delta=0, path='pretrained_model/checkpoint', dataset="", trace_func=print):
         """
         Args:
             patience (int): How long to wait after last time validation loss improved.
@@ -24,7 +25,7 @@ class EarlyStoppingCAC:
         self.early_stop = False
         self.val_loss_min = np.Inf
         self.delta = delta
-        self.path = path + "_" + dataset
+        self.path = os.getcwd() + "/" + path + "_" + dataset
         self.trace_func = trace_func
 
     def __call__(self, val_loss, model):
@@ -37,7 +38,7 @@ class EarlyStoppingCAC:
             self.best_score[1] = score[1]
             self.save_checkpoint(val_loss, model)
 
-        if score[0] < self.best_score[0] + self.delta and score[1] < self.best_score[1] + self.delta :
+        if score[1] < self.best_score[1] + self.delta :
             self.counter += 1
             self.trace_func(f'EarlyStopping counter: {self.counter} out of {self.patience}')
             if self.counter >= self.patience:
@@ -87,7 +88,7 @@ class EarlyStopping:
         self.early_stop = False
         self.val_loss_min = np.Inf
         self.delta = delta
-        self.path = path + "_" + dataset
+        self.path = os.getcwd() + "/" + path + "_" + dataset
         self.trace_func = trace_func
 
     def __call__(self, val_loss, model):
@@ -100,7 +101,7 @@ class EarlyStopping:
             self.best_score[1] = score[1]
             self.save_checkpoint(val_loss, model)
 
-        if score[0] < self.best_score[0] + self.delta and score[1] < self.best_score[1] + self.delta :
+        if score[1] < self.best_score[1] + self.delta :
             self.counter += 1
             self.trace_func(f'EarlyStopping counter: {self.counter} out of {self.patience}')
             if self.counter >= self.patience:

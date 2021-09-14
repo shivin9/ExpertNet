@@ -11,14 +11,14 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from read_patients import get_aki
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
-from sklearn.metrics import adjusted_rand_score as ari_score, f1_score, roc_auc_score
+from sklearn.metrics import adjusted_rand_score as ari_score, f1_score, roc_auc_score, accuracy_score
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
 DATASETS = ['titanic', 'magic', 'creditcard', 'adult', 'diabetes',\
             'cic', 'sepsis', 'synthetic', 'paper_synthetic', 'kidney', 'infant', 'wid_mortality']
 
-
+BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
 def load_mnist(path='./data/mnist.npz'):
     f = np.load(path)
 
@@ -140,10 +140,13 @@ def cluster_acc(y_true, y_pred):
     return sum([w[i, j] for i, j in zip(row, col)]) * 1.0 / y_pred.size
 
 
-def plot(model, X_train, y_train, X_test=None, y_test=None):
+def plot(model, X_train, y_train, X_test=None, y_test=None, device="cpu"):
     reducer = umap.UMAP(random_state=42)
-    qs, latents_X = model(X_train, output="latent")
-    q_train = qs[0]
+    idx = torch.Tensor(np.random.randint(0,len(X_train),\
+                        int(0.05*len(X_train)))).type(torch.LongTensor).to(device)
+    qs, latents_X = model(X_train[idx], output="latent")
+    y_train = y_train[idx]
+    q_train = qs
     cluster_id_train = torch.argmax(q_train, axis=1)
     X2 = reducer.fit_transform(latents_X.cpu().detach().numpy())
 
@@ -172,6 +175,7 @@ def plot(model, X_train, y_train, X_test=None, y_test=None):
         ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
         plt.show()
 
+        
 def get_dataset(DATASET, base_dir):
     if DATASET == "cic":
         Xa = pd.read_csv(base_dir + "/CIC/cic_set_a.csv")
@@ -272,6 +276,7 @@ def get_dataset(DATASET, base_dir):
         y = np.array(y1)
     return X, y, columns
 
+
 def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=5, n_classes=2,\
                             n_clusters = 2, frac=0.4, outer_class_sep=0.5, inner_class_sep=0.2, clus_per_class=2, seed=0):
     np.random.seed(seed)
@@ -342,7 +347,6 @@ def get_train_val_test_loaders(args):
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
 
             args.input_dim = X_train.shape[1]
-            print(args.input_dim)
 
             print("Loading Kidney Test")
             X_test, y_test, columns = get_dataset(args.dataset, base_dir + "/aki/test")
@@ -380,22 +384,32 @@ def paper_synthetic(n_pts=1000, centers=4):
     X2 = X2*(X2>0)
     return X2.T, y
 
+
 def nmi_score_torch(y1, y2):
     y1 = y1.data.cpu().numpy()
     y2 = y2.data.cpu().numpy()
     return nmi_score(y1, y2)
+
 
 def ari_score_torch(y1, y2):
     y1 = y1.data.cpu().numpy()
     y2 = y2.data.cpu().numpy()
     return ari_score(y1, y2)
 
+
 def f1_score_torch(y1, y2):
     y1 = y1.data.cpu().numpy()
     y2 = y2.data.cpu().numpy()
     return f1_score(y1, y2)
 
+
 def roc_auc_score_torch(y1, y2):
     y1 = y1.data.cpu().numpy()
     y2 = y2.data.cpu().numpy()
     return roc_auc_score(y1, y2)
+
+
+def accuracy_score_torch(y1, y2):
+    y1 = y1.data.cpu().numpy()
+    y2 = y2.data.cpu().numpy()
+    return accuracy_score(y1, y2)
