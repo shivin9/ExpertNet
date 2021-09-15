@@ -1,2 +1,2 @@
-pretrained_model/*
-./pretrained_model/
+pretrained_model/*.pt
+./pretrained_model/*.pt
