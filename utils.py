@@ -139,8 +139,12 @@ def cluster_acc(y_true, y_pred):
 
 def plot(model, X_train, y_train, X_test=None, y_test=None):
     reducer = umap.UMAP(random_state=42)
-    qs, latents_X = model(X_train, output="latent")
+    idx = torch.Tensor(np.random.randint(0,len(X_train),\
+                        int(0.05*len(X_train)))).type(torch.LongTensor).to(device)
+    qs, latents_X = model(X_train[idx], output="latent")
     q_train = qs[0]
+    y_train = y_train[idx]
+
     cluster_id_train = torch.argmax(q_train, axis=1)
     X2 = reducer.fit_transform(latents_X.cpu().detach().numpy())
 
@@ -187,8 +191,8 @@ def get_dataset(DATASET, DATA_DIR):
 
         scale = StandardScaler()
         Xa = scale.fit_transform(Xa)
-        Xb = scale.fit_transform(Xb)
-        Xc = scale.fit_transform(Xc)
+        Xb = scale.transform(Xb)
+        Xc = scale.transform(Xc)
 
         Xa = pd.DataFrame(Xa, columns=cols)
         Xb = pd.DataFrame(Xb, columns=cols)

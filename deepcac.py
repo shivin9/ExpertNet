@@ -32,7 +32,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import MultiHeadIDEC,  target_distribution
+from models import MultiHeadIDEC,  target_distribution, source_distribution
 from utils import *
 
 parser = argparse.ArgumentParser()
@@ -147,26 +147,20 @@ for r in range(5):
     # cluster parameter initiate
     device = args.device
     y = y_train
-    _, ori_hidden = model.ae(torch.Tensor(X_train).to(args.device))
-    _, ori_hidden_val = model.ae(torch.Tensor(X_val).to(args.device))
+    x_bar, hidden = model.ae(torch.Tensor(X_train).to(args.device))
 
     kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
-    _ = kmeans.fit_predict(ori_hidden.data.cpu().numpy())
-
-    ori_cluster_indices = kmeans.labels_
+    cluster_indices = kmeans.fit_predict(hidden.data.cpu().numpy())
     original_cluster_centers = kmeans.cluster_centers_
-    
-    ori_val_cluster_indices = kmeans.fit_predict(ori_hidden_val.data.cpu().numpy())
-
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
 
     ## Initialization ##
     for i in range(args.n_clusters):
-        cluster_idx = np.where(ori_cluster_indices == i)[0]
+        cluster_idx = np.where(cluster_indices == i)[0]
         cluster_idx_p = np.where(y[cluster_idx] == 1)[0]
         cluster_idx_n = np.where(y[cluster_idx] == 0)[0]
-        hidden_p = ori_hidden[cluster_idx][cluster_idx_p]
-        hidden_n = ori_hidden[cluster_idx][cluster_idx_n]
+        hidden_p = hidden[cluster_idx][cluster_idx_p]
+        hidden_n = hidden[cluster_idx][cluster_idx_n]
         
         model.p_cluster_layer.data[i,:] = torch.mean(hidden_p, axis=0)
         model.n_cluster_layer.data[i,:] = torch.mean(hidden_n, axis=0)
@@ -199,7 +193,7 @@ for r in range(5):
 
     for epoch in range(N_EPOCHS):
         if epoch % args.log_interval == 0:
-            # plot(model, torch.FloatTensor(X_val).to(args.device), y_val)
+
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
@@ -215,7 +209,6 @@ for r in range(5):
             # Calculate Training Metrics
             nmi, acc, ari = 0, 0, 0
             train_loss = 0
-
             for j in range(args.n_clusters):
                 # kmeans = KMeans(n_clusters=args.n_classes, n_init=20)
                 cluster_idx = np.where(cluster_indices == j)[0]
@@ -236,21 +229,20 @@ for r in range(5):
             # Evaluate model on Test dataset
             qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
             q_val = qs[0]
-            val_cluster_ids = torch.argmax(q_val, axis=1)
-            val_cluster_ids = torch.Tensor(kmeans.fit_predict(z_val.data.cpu().numpy()))
+            cluster_ids = torch.argmax(q_val, axis=1)
             preds = torch.zeros((len(z_val), 2))
 
             # Weighted predictions
             if args.attention == False:
                 for j in range(model.n_clusters):
-                    cluster_id = np.where(val_cluster_ids == j)[0]
+                    cluster_id = np.where(cluster_ids == j)[0]
                     X_cluster = z_val[cluster_id]
                     cluster_preds_val = model.classifiers[j][0](X_cluster)
                     preds[cluster_id,:] = cluster_preds_val
 
             else:
                 for j in range(model.n_clusters):
-                    cluster_id = np.where(val_cluster_ids == j)[0]
+                    cluster_id = np.where(cluster_ids == j)[0]
                     X_cluster = z_val
                     cluster_preds = model.classifiers[j][0](X_cluster)
                     preds[:,0] += q_val[:,j]*cluster_preds[:,0]
@@ -261,16 +253,16 @@ for r in range(5):
             for i in range(args.n_clusters):
                 for j in range(args.n_clusters):
                     if i > j:
-                        ci = torch.where(val_cluster_ids == i)[0]
-                        cj = torch.where(val_cluster_ids == j)[0]
+                        ci = torch.where(cluster_ids == i)[0]
+                        cj = torch.where(cluster_ids == j)[0]
                         Xi = X_val[ci]
                         Xj = X_val[cj]
                         feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/args.input_dim
                         # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
                         cntr += 1
             
-            val_sil = silhouette_score(z_val.data.cpu().numpy(), val_cluster_ids.data.cpu().numpy(), metric='euclidean')
-            # val_sil = 0
+            # val_sil = silhouette_score(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
+            val_sil = 0
             val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
             val_auc = roc_auc_score(y_val, preds[:,1].detach().numpy())
             val_feature_diff = feature_diff/cntr
@@ -282,7 +274,6 @@ for r in range(5):
             # calculate average loss over an epoch
             valid_loss = np.average(valid_losses)
             avg_valid_losses.append(valid_loss)
-            val_ori_nmi = nmi_score(ori_val_cluster_indices, val_cluster_ids.data.cpu().numpy())
             
             epoch_len = len(str(N_EPOCHS))
             
@@ -292,8 +283,7 @@ for r in range(5):
                          f'valid_F1: {val_f1:.3f} '  +
                          f'valid_AUC: {val_auc:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
-                         f'valid_Silhouette: {val_sil:.3f} ' +
-                         f'val_ori_NMI: {val_ori_nmi:.3f}')
+                         f'valid_Silhouette: {val_sil:.3f}')
             
             print(print_msg)
             
@@ -303,7 +293,7 @@ for r in range(5):
             
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
-            es([val_f1, valid_loss], model)
+            es([val_f1, val_auc], model)
             if es.early_stop == True:
                 break
 
@@ -388,8 +378,9 @@ for r in range(5):
 
                 class_sep_loss += (s1+s2)/m12
                 km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
-            
-            km_loss -= torch.sum(torch.kl_div(torch.sum(q, axis=0), torch.ones(args.n_clusters)/args.n_clusters))
+
+            q_tmp = source_distribution(X_latents, model.cluster_layer)
+            km_loss -= torch.sum(torch.kl_div(torch.sum(q_tmp, axis=0), torch.ones(args.n_clusters)/args.n_clusters))
             loss = reconstr_loss
             if args.beta != 0:
                 loss += args.beta*km_loss
@@ -527,7 +518,7 @@ for r in range(5):
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, valid_loss], model)
+        es([val_f1, val_auc], model)
         if es.early_stop == True:
             break
 
@@ -624,13 +615,13 @@ for r in range(5):
             y_cluster = preds_e[cluster_id][:,1]
         else:
             y_cluster = preds[cluster_id][:,1]
-        print(X_cluster.shape)
-        regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
-        best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-        feature_importances[j,:] = regs[j].feature_importances_
-        print("Cluster # ", j)
-        print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-        print("=========================\n")
+        if len(cluster_id) > 0:
+            regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
+            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
+            feature_importances[j,:] = regs[j].feature_importances_
+            print("Cluster # ", j)
+            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+            print("=========================\n")
 
     feature_diff = 0
     cntr = 0

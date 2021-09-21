@@ -55,7 +55,7 @@ X_test = X_test.fillna(0)
 X_test = X_test[data_columns]
 
 scaler = MinMaxScaler()
-X_test[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X_test[non_binary_columns]))
+X_test[non_binary_columns] = scaler.transform(np.nan_to_num(X_test[non_binary_columns]))
 
 train_case_1(X, X_test)
 train_case_2(X, X_test, ENSEMBLE=True)
@@ -99,7 +99,7 @@ y_test = X_test['y']
 X_test = X_test.drop(columns=['y'])
 
 scaler = MinMaxScaler()
-X_test[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X_test[non_binary_columns]))
+X_test[non_binary_columns] = scaler.transform(np.nan_to_num(X_test[non_binary_columns]))
 
 train_case_1(X, X_test)
 train_case_2(X, X_test, ENSEMBLE=True)
