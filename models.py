@@ -161,7 +161,13 @@ class MultiHeadIDEC(nn.Module):
         self.classifiers = []
         for _ in range(self.n_clusters):
             classifier = nn.Sequential(
-                nn.Linear(self.n_z, 16),
+                nn.Linear(self.n_z, 128),
+                nn.ReLU(),
+                nn.Linear(128, 64),
+                nn.ReLU(),
+                nn.Linear(64, 32),
+                nn.ReLU(),
+                nn.Linear(32, 16),
                 nn.ReLU(),
                 nn.Linear(16, 8),
                 nn.ReLU(),

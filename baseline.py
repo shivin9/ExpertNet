@@ -85,72 +85,80 @@ X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
 
-m = NNClassifier(args, input_dim=args.input_dim)
-device = args.device
+f1_scores, auc_scores = [], []
 
-N_EPOCHS = args.n_epochs
-es = EarlyStopping(dataset=args.dataset, path="./pretrained_model/checkpoint_base")
+for r in range(5):
+    m = NNClassifier(args, input_dim=args.input_dim)
+    device = args.device
 
-for e in range(1, N_EPOCHS):
-    epoch_loss = 0
-    epoch_auc = 0
-    epoch_f1 = 0
-    auc = 0
-    m.train()
-    for X_batch, y_batch, _ in train_loader:
-        X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-        y_pred, train_loss = m.fit(X_batch, y_batch)
-        epoch_loss += train_loss
+    N_EPOCHS = args.n_epochs
+    es = EarlyStopping(dataset=args.dataset, path="./pretrained_model/checkpoint_base")
 
-        f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy())
-        auc = roc_auc_score(y_batch, y_pred[:,1])
-        epoch_auc += auc.item()
-        epoch_f1 += f1.item()
+    for e in range(1, N_EPOCHS):
+        epoch_loss = 0
+        epoch_auc = 0
+        epoch_f1 = 0
+        auc = 0
+        m.train()
+        for X_batch, y_batch, _ in train_loader:
+            X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+            y_pred, train_loss = m.fit(X_batch, y_batch)
+            epoch_loss += train_loss
 
+            f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy())
+            auc = roc_auc_score(y_batch, y_pred[:,1])
+            epoch_auc += auc.item()
+            epoch_f1 += f1.item()
+
+        m.classifier.eval()
+        val_pred = m(torch.FloatTensor(np.array(X_val)).to(args.device))
+        val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
+
+        val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val)
+        val_auc = roc_auc_score(y_val, val_pred[:,1].detach().numpy())
+        es([val_f1, val_auc], m)
+
+        print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
+        	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
+        	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
+
+        if es.early_stop == True:
+    	    break
+
+
+    ####################################################################################
+    ####################################################################################
+    ####################################################################################
+    ###################################### Testing #####################################
+    ####################################################################################
+    ####################################################################################
+    ####################################################################################
+
+    print("\n####################################################################################\n")
+    print("Evaluating Test Data")
+
+    # Load best model trained from local training phase
+    m = es.load_checkpoint(m)
     m.classifier.eval()
-    val_pred = m(torch.FloatTensor(np.array(X_val)).to(args.device))
-    val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
+    test_pred = m(torch.FloatTensor(np.array(X_test)).to(args.device))
+    test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
 
-    val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val)
-    val_auc = roc_auc_score(y_val, val_pred[:,1].detach().numpy())
-    es([val_f1, val_auc], m)
+    test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
+    test_auc = roc_auc_score(y_test, test_pred[:,1].detach().numpy())
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
-    	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
+    	f'Test F1: {test_f1:.3f} | Test Auc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
 
-    if es.early_stop == True:
-	    break
+    f1_scores.append(test_f1)
+    auc_scores.append(test_auc)
 
+    # reg = GradientBoostingRegressor(random_state=0)
 
-####################################################################################
-####################################################################################
-####################################################################################
-###################################### Testing #####################################
-####################################################################################
-####################################################################################
-####################################################################################
+    # reg.fit(X_test, y_test)
+    # best_features = np.argsort(reg.feature_importances_)[::-1][:10]
+    # print("Best Features ")
+    # print(column_names[best_features])
+    # print("=========================\n")
 
-print("\n####################################################################################\n")
-print("Evaluating Test Data")
-
-# Load best model trained from local training phase
-m = es.load_checkpoint(m)
-m.classifier.eval()
-test_pred = m(torch.FloatTensor(np.array(X_test)).to(args.device))
-test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
-
-test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
-test_auc = roc_auc_score(y_test, test_pred[:,1].detach().numpy())
-
-print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
-	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
-	f'Test F1: {test_f1:.3f} | Test Auc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
-
-reg = GradientBoostingRegressor(random_state=0)
-
-reg.fit(X_test, y_test)
-best_features = np.argsort(reg.feature_importances_)[::-1][:10]
-print("Best Features ")
-print(column_names[best_features])
-print("=========================\n")
+print("Avg. Test F1 = {:.3f}, AUC = {:.3f}".format(np.average(f1_scores), np.average(auc_scores)))

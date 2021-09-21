@@ -1,0 +1,2 @@
+Dataset,Classifier,alpha,k,Base_F1_mean,Base_AUC_mean,Base_F1_std,Base_AUC_std,KM_F1_mean,KM_AUC_mean,KM_F1_std,KM_AUC_std,CAC_F1_mean,CAC_AUC_mean,CAC_F1_std,CAC_AUC_std
+wid_mortality,DMNN,0.1,2,0.0,0.0,0.0,0.0,0.31410886000418625,0.8111086687037364,0.13498581130312146,0.11393393756897452,0.0,0.0,0.0,0.0

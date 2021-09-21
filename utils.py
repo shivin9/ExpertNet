@@ -13,9 +13,11 @@ from read_patients import get_aki
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-DATASETS = ['titanic', 'magic', 'creditcard', 'adult', 'diabetes',\
+DATASETS = ['titanic', 'magic', 'creditcard', 'adult', 'diabetes', 'respiratory',\
             'cic', 'sepsis', 'synthetic', 'paper_synthetic', 'kidney', 'infant', 'wid_mortality']
 
+DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
+BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
 
 def load_mnist(path='./data/mnist.npz'):
     f = np.load(path)
@@ -167,11 +169,11 @@ def plot(model, X_train, y_train, X_test=None, y_test=None):
         ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
         plt.show()
 
-def get_dataset(DATASET, base_dir):
+def get_dataset(DATASET, DATA_DIR):
     if DATASET == "cic":
-        Xa = pd.read_csv(base_dir + "/CIC/cic_set_a.csv")
-        Xb = pd.read_csv(base_dir + "/CIC/cic_set_b.csv")
-        Xc = pd.read_csv(base_dir + "/CIC/cic_set_c.csv")
+        Xa = pd.read_csv(DATA_DIR + "/CIC/cic_set_a.csv")
+        Xb = pd.read_csv(DATA_DIR + "/CIC/cic_set_b.csv")
+        Xc = pd.read_csv(DATA_DIR + "/CIC/cic_set_c.csv")
 
         ya = Xa['In-hospital_death']
         yb = Xb['In-hospital_death']
@@ -207,12 +209,12 @@ def get_dataset(DATASET, base_dir):
         columns = cols
 
     elif DATASET == "titanic":
-        X_train = pd.read_csv(base_dir + "/" + DATASET + "/" + "X_train.csv")
+        X_train = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X_train.csv")
         columns = X_train.columns
         X_train = X_train.to_numpy()
-        X_test = pd.read_csv(base_dir + "/" + DATASET + "/" + "X_test.csv").to_numpy()
-        y_train = pd.read_csv(base_dir + "/" + DATASET + "/" + "y_train.csv").to_numpy()
-        y_test = pd.read_csv(base_dir + "/" + DATASET + "/" + "y_test.csv").to_numpy()
+        X_test = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X_test.csv").to_numpy()
+        y_train = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y_train.csv").to_numpy()
+        y_test = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y_test.csv").to_numpy()
 
         X = np.vstack([X_train, X_test])
         y = np.vstack([y_train, y_test])
@@ -224,10 +226,10 @@ def get_dataset(DATASET, base_dir):
         # y = pd.concat([y_train, y_test]).to_numpy()
     
     elif DATASET == "infant":
-        X = pd.read_csv(base_dir + "/" + DATASET + "/" + "X.csv")
+        X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
         X = X.to_numpy()
-        y = pd.read_csv(base_dir + "/" + DATASET + "/" + "y.csv").to_numpy()
+        y = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y.csv").to_numpy()
         y1 = []
         
         for i in range(len(y)):
@@ -239,7 +241,7 @@ def get_dataset(DATASET, base_dir):
     
     elif DATASET == "kidney":
         print("Fetching Kidney Dataset")
-        data = get_aki(base_dir)
+        data = get_aki(DATA_DIR)
         X = pd.concat(data,axis=1).T
         columns = X.columns
 
@@ -255,17 +257,39 @@ def get_dataset(DATASET, base_dir):
         scaler = MinMaxScaler()
         X[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X[non_binary_columns]))
         X = X.to_numpy()
+        os.chdir(BASE_DIR)
+
+    elif DATASET == "respiratory":
+        print("Fetching Respiratory Dataset")
+        data = get_aki(DATA_DIR)
+        X = pd.concat(data,axis=1).T
+        columns = X.columns
+
+        data_columns = list(columns[1:90]) + ['y'] # get the columns which have data, not mask
+        non_binary_columns = data_columns[:81] # only these columns have non-binary data fit for scaling
+
+        X = X.fillna(0)
+        X = X[data_columns]
+
+        y = X['y'].to_numpy().astype(int)
+        X = X.drop(columns=['y'])
+
+        scaler = MinMaxScaler()
+        X[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X[non_binary_columns]))
+        X = X.to_numpy()
+        os.chdir(BASE_DIR)
 
     else:
-        X = pd.read_csv(base_dir + "/" + DATASET + "/" + "X.csv")
+        X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
         X = X.to_numpy()
-        y = pd.read_csv(base_dir + "/" + DATASET + "/" + "y.csv").to_numpy()
+        y = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y.csv").to_numpy()
         y1 = []
         for i in range(len(y)):
             y1.append(y[i][0])
         y = np.array(y1)
     return X, y, columns
+
 
 def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=5, n_classes=2,\
                             n_clusters = 2, frac=0.4, outer_class_sep=0.5, inner_class_sep=0.2, clus_per_class=2, seed=0):
@@ -298,9 +322,8 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
 
 def get_train_val_test_loaders(args):
     if args.dataset in DATASETS:
-        base_dir = "/Users/shivin/Document/NUS/Research/Data"
-        print("Loading Dataset:", args.dataset)
-        if args.dataset != "kidney":
+        if args.dataset != "kidney" and args.dataset != "respiratory":
+            print("Loading Dataset ", args.dataset)
             if args.dataset == "synthetic":
                 n_feat = 45
                 X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
@@ -315,7 +338,7 @@ def get_train_val_test_loaders(args):
                 print(args.input_dim)
 
             else:
-                X, y, columns = get_dataset(args.dataset, base_dir)
+                X, y, columns = get_dataset(args.dataset, DATA_DIR)
                 print(args.dataset)
                 args.input_dim = X.shape[1]
 
@@ -330,7 +353,7 @@ def get_train_val_test_loaders(args):
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
-        else:
+        elif args.dataset == "kidney":
             print("Loading Kidney Train")
             X_train, y_train, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/train")
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
@@ -345,6 +368,20 @@ def get_train_val_test_loaders(args):
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
+        else:
+            print("Loading Repiratory Train")
+            X_train, y_train, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/ards/train")
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+
+            args.input_dim = X_train.shape[1]
+            print(args.input_dim)
+
+            print("Loading Respiratory Test")
+            X_test, y_test, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/ards/test")
+
+            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
+            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
+            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
             
         train_loader = torch.utils.data.DataLoader(X_train_data_loader,
             batch_size=args.batch_size, shuffle=True)
