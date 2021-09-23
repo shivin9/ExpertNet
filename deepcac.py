@@ -11,6 +11,7 @@ f1_score, roc_auc_score, roc_curve, accuracy_score, matthews_corrcoef as mcc
 from torch.utils.data import Subset
 import pandas as pd
 from scipy.stats import ttest_ind
+from scipy.spatial import distance_matrix
 
 import argparse
 import numpy as np
@@ -66,6 +67,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
+parser.add_argument('--ablation', default='None')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 
@@ -102,18 +104,19 @@ class parameters(object):
 
         # Utility parameters
         self.device = parser.device
+        self.ablation = parser.ablation
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
 
 args = parameters(parser)
-suffix = ""
+base_suffix = ""
 
 for key in args.__dict__:
     print(key, args.__dict__[key])
 
-suffix += args.dataset + "_"
-suffix += str(args.n_clusters) + "_"
-suffix += str(args.attention)
+base_suffix += args.dataset + "_"
+base_suffix += str(args.n_clusters) + "_"
+base_suffix += str(args.attention)
 
 column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
 X_train, y_train, train_loader = train_data
@@ -130,7 +133,36 @@ X_test, y_test, test_loader = test_data
 
 f1_scores, auc_scores = [], []
 
-for r in range(5):
+iter_array = range(5)
+iteration_name = "Run"
+
+if args.ablation == "beta":
+    iter_array = betas
+    iteration_name = "Beta"
+
+elif args.ablation == "gamma":
+    iter_array = gammas
+    iteration_name = "Gamma"
+
+elif args.ablation == "delta":
+    iter_array = deltas
+    iteration_name = "Delta"
+
+
+for r in range(len(iter_array)):
+    print(iteration_name, ":", iter_array[r])
+    # blockPrint()
+
+    if args.ablation == "beta":
+        args.beta = iter_array[r]
+
+    elif args.ablation == "gamma":
+        args.gamma = iter_array[r]
+
+    elif args.ablation == "delta":
+        args.delta = iter_array[r]
+
+    suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     model = MultiHeadIDEC(
             n_enc_1=128,
             n_enc_2=64,
@@ -257,7 +289,7 @@ for r in range(5):
                         cj = torch.where(cluster_ids == j)[0]
                         Xi = X_val[ci]
                         Xj = X_val[cj]
-                        feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/args.input_dim
+                        # feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/args.input_dim
                         # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
                         cntr += 1
             
@@ -357,7 +389,7 @@ for r in range(5):
             positive_class_dist = 0
             negative_class_dist = 0
             km_loss             = 0
-            class_sep_loss = 0
+            cluster_balance_loss = 0
 
             for j in range(args.n_clusters):
                 pts_index = np.where(cluster_id == j)[0]
@@ -372,25 +404,24 @@ for r in range(5):
                 delta_mu_n[j,:] = n_class.sum(axis=0)/(1+len(n_class))
                 delta_mu[j,:]   = cluster_pts.sum(axis=0)/(1+len(cluster_pts))
 
-                s1 = torch.linalg.vector_norm(X_latents[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
-                s2 = torch.linalg.vector_norm(X_latents[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
-                m12 = torch.linalg.vector_norm(model.p_cluster_layer[j] - model.n_cluster_layer[j])
+                # s1 = torch.linalg.vector_norm(X_latents[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
+                # s2 = torch.linalg.vector_norm(X_latents[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
+                # m12 = torch.linalg.vector_norm(model.p_cluster_layer[j] - model.n_cluster_layer[j])
 
-                class_sep_loss += (s1+s2)/m12
+                # cluster_balance_loss += (s1+s2)/m12
                 km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
 
             q_tmp = source_distribution(X_latents, model.cluster_layer)
-            km_loss -= torch.sum(torch.kl_div(torch.sum(q_tmp, axis=0), torch.ones(args.n_clusters)/args.n_clusters))
+            cluster_balance_loss = -torch.sum(torch.kl_div(torch.sum(q_tmp, axis=0), torch.ones(args.n_clusters)/args.n_clusters))
             loss = reconstr_loss
             if args.beta != 0:
                 loss += args.beta*km_loss
             if args.gamma != 0:
                 loss += args.gamma*class_loss
             if args.delta != 0:
-                loss += args.delta*class_sep_loss
+                loss += args.delta*cluster_balance_loss
 
             epoch_loss += loss
-            epoch_sep_loss += class_sep_loss.item()
             optimizer.zero_grad()
             loss.backward(retain_graph=True)
             optimizer.step()
@@ -408,8 +439,8 @@ for r in range(5):
                 model.n_cluster_layer.data[j:] -= (1/(100+Nn))*delta_mu_n[j:]
                 model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
 
-        print('Epoch: {:02d} | Loss: {:.3f} | Classification Loss: {:.3f} | Class Sep Loss: {:.3f}'.format(
-                    epoch, epoch_loss, class_loss/train_epochs, class_sep_loss))
+        print('Epoch: {:02d} | Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
+                    epoch, epoch_loss, class_loss/train_epochs, cluster_balance_loss))
 
     ####################################################################################
     ####################################################################################
@@ -473,7 +504,7 @@ for r in range(5):
                 cluster_loss.backward(retain_graph=True)
                 optimizer_k.step()
         
-        model.ae.eval() # prep model for evaluation
+        # model.ae.eval() # prep model for evaluation
         for j in range(model.n_clusters):
             model.classifiers[j][0].eval()
 
@@ -540,7 +571,8 @@ for r in range(5):
     # # Evaluate model on Test dataset
     qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
     q_test = qs[0]
-    cluster_ids = torch.argmax(q_test, axis=1)
+    # cluster_ids = torch.argmax(q_test, axis=1)
+    cluster_ids = np.argmax(distance_matrix(z_test.data.cpu().numpy(), model.cluster_layer.data.cpu().numpy()), axis=1)
     preds_e = torch.zeros((len(z_test), 2))
 
     # Weighted predictions
@@ -576,6 +608,7 @@ for r in range(5):
           ', nmi {:.4f}'.format(nmi), ', ari {:.4f}'.format(ari),\
           ', Test Loss {:.3f}, E-Test Loss {:.3f}'.format(test_loss, e_test_loss))
 
+    enablePrint()
     print('Run #{}, Test F1 {:.3f}, Test AUC {:.3f}, Test ACC {:.3f}'.format(r, test_f1, test_auc, test_acc),\
         ', E-Test F1 {:.3f}, E-Test AUC {:.3f}, E-Test ACC {:.3f}'.format(e_test_f1, e_test_auc, e_test_acc))
 
@@ -591,51 +624,51 @@ for r in range(5):
     ####################################################################################
 
 
-    regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
-    qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
-    q_train = qs[0]
-    cluster_ids = torch.argmax(q_train, axis=1)
-    preds_e = torch.zeros((len(z_train), 2))
-    feature_importances = np.zeros((args.n_clusters, args.input_dim))
+    # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
+    # qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
+    # q_train = qs[0]
+    # cluster_ids = torch.argmax(q_train, axis=1)
+    # preds_e = torch.zeros((len(z_train), 2))
+    # feature_importances = np.zeros((args.n_clusters, args.input_dim))
 
-    # Weighted predictions
-    for j in range(model.n_clusters):
-        cluster_id = np.where(cluster_ids == j)[0]
-        # X_cluster = z_test[cluster_id]
-        X_cluster = z_train
-        cluster_preds = model.classifiers[j][0](X_cluster)
-        # print(q_test, cluster_preds[:,0])
-        preds_e[:,0] += q_train[:,j]*cluster_preds[:,0]
-        preds_e[:,1] += q_train[:,j]*cluster_preds[:,1]
+    # # Weighted predictions
+    # for j in range(model.n_clusters):
+    #     X_cluster = z_train
+    #     cluster_preds = model.classifiers[j][0](X_cluster)
+    #     # print(q_test, cluster_preds[:,0])
+    #     preds_e[:,0] += q_train[:,j]*cluster_preds[:,0]
+    #     preds_e[:,1] += q_train[:,j]*cluster_preds[:,1]
 
-    for j in range(model.n_clusters):
-        cluster_id = torch.where(cluster_ids == j)[0]
-        X_cluster = X_train[cluster_id]
-        if args.attention == True:
-            y_cluster = preds_e[cluster_id][:,1]
-        else:
-            y_cluster = preds[cluster_id][:,1]
-        if len(cluster_id) > 0:
-            regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
-            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-            feature_importances[j,:] = regs[j].feature_importances_
-            print("Cluster # ", j)
-            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-            print("=========================\n")
+    # for j in range(model.n_clusters):
+    #     cluster_id = torch.where(cluster_ids == j)[0]
+    #     X_cluster = X_train[cluster_id]
+    #     if args.attention == True:
+    #         y_cluster = preds_e[cluster_id][:,1]
+    #     else:
+    #         y_cluster = preds[cluster_id][:,1]
 
-    feature_diff = 0
-    cntr = 0
-    for i in range(args.n_clusters):
-        for j in range(args.n_clusters):
-            if i > j:
-                ci = torch.where(cluster_ids == i)[0]
-                cj = torch.where(cluster_ids == j)[0]
-                Xi = X_train[ci]
-                Xj = X_train[cj]
-                feature_diff += sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
-                print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
-                cntr += 1
+    #     # Some test data might not belong to any cluster
+    #     if len(cluster_id) > 0:
+    #         regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
+    #         best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
+    #         feature_importances[j,:] = regs[j].feature_importances_
+    #         print("Cluster # ", j, "sized: ", len(cluster_id))
+    #         print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+    #         print("=========================\n")
 
-    print("Average Feature Difference: ", feature_diff/cntr)
+    # feature_diff = 0
+    # cntr = 0
+    # for i in range(args.n_clusters):
+    #     for j in range(args.n_clusters):
+    #         if i > j:
+    #             ci = torch.where(cluster_ids == i)[0]
+    #             cj = torch.where(cluster_ids == j)[0]
+    #             Xi = X_train[ci]
+    #             Xj = X_train[cj]
+    #             feature_diff += sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
+    #             print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
+    #             cntr += 1
+
+    # print("Average Feature Difference: ", feature_diff/cntr)
 
 print("Avg. Test F1 = {:.3f}, AUC = {:.3f}".format(np.average(f1_scores), np.average(auc_scores)))

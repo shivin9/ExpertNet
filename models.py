@@ -97,11 +97,12 @@ class NNClassifier(nn.Module):
             self.input_dim = input_dim
 
         self.classifier = nn.Sequential(
-            nn.Linear(self.input_dim, 16),
+            nn.Linear(self.input_dim,100),
             nn.ReLU(),
-            nn.Linear(16, 8),
+            nn.Linear(100, 100),
             nn.ReLU(),
-            nn.Linear(8, args.n_classes),
+            nn.Linear(100, 50),
+            nn.Linear(50, args.n_classes),
         )
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
 
@@ -160,19 +161,29 @@ class MultiHeadIDEC(nn.Module):
         
         self.classifiers = []
         for _ in range(self.n_clusters):
+            # classifier = nn.Sequential(
+            #     nn.Linear(self.n_z, 128),
+            #     nn.ReLU(),
+            #     nn.Linear(128, 64),
+            #     nn.ReLU(),
+            #     nn.Linear(64, 32),
+            #     nn.ReLU(),
+            #     nn.Linear(32, 16),
+            #     nn.ReLU(),
+            #     nn.Linear(16, 8),
+            #     nn.ReLU(),
+            #     nn.Linear(8, args.n_classes),
+            # ).to(self.device)
+
             classifier = nn.Sequential(
-                nn.Linear(self.n_z, 128),
+                nn.Linear(self.n_z, 100),
                 nn.ReLU(),
-                nn.Linear(128, 64),
+                nn.Linear(100, 100),
                 nn.ReLU(),
-                nn.Linear(64, 32),
+                nn.Linear(100, 50),
                 nn.ReLU(),
-                nn.Linear(32, 16),
-                nn.ReLU(),
-                nn.Linear(16, 8),
-                nn.ReLU(),
-                nn.Linear(8, args.n_classes),
-            ).to(self.device)
+                nn.Linear(50, args.n_classes),
+            )
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             

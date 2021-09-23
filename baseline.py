@@ -150,6 +150,7 @@ for r in range(5):
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
     	f'Test F1: {test_f1:.3f} | Test Auc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
 
+    print("\n####################################################################################\n")
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
 

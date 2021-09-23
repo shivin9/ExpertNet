@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from read_patients import get_aki
+import sys
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
@@ -18,6 +19,16 @@ DATASETS = ['titanic', 'magic', 'creditcard', 'adult', 'diabetes', 'respiratory'
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
+
+# Disable Print
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+
+
+# Restore Print
+def enablePrint():
+    sys.stdout = sys.__stdout__
+
 
 def load_mnist(path='./data/mnist.npz'):
     f = np.load(path)
@@ -410,3 +421,8 @@ def paper_synthetic(n_pts=1000, centers=4):
     X2 = U.dot(X1)
     X2 = X2*(X2>0)
     return X2.T, y
+
+## Ablation Parameter Ranges ##
+betas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+gammas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+deltas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
