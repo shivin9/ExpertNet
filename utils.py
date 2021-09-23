@@ -148,15 +148,20 @@ def cluster_acc(y_true, y_pred):
     return sum([w[i, j] for i, j in zip(row, col)]) * 1.0 / y_pred.size
 
 
-def plot(model, X_train, y_train, X_test=None, y_test=None):
+def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
     reducer = umap.UMAP(random_state=42)
-    idx = torch.Tensor(np.random.randint(0,len(X_train),\
-                        int(0.05*len(X_train)))).type(torch.LongTensor).to(device)
+#     idx = torch.Tensor(np.random.randint(0,len(X_train),\
+#                         int(0.1*len(X_train)))).type(torch.LongTensor).to(device)
+    idx = range(int(0.2*len(X_train)))
     qs, latents_X = model(X_train[idx], output="latent")
     q_train = qs[0]
     y_train = y_train[idx]
 
-    cluster_id_train = torch.argmax(q_train, axis=1)
+    if labels is not None:
+        cluster_id_train = labels[idx]
+    else:
+        cluster_id_train = torch.argmax(q_train, axis=1)
+
     X2 = reducer.fit_transform(latents_X.cpu().detach().numpy())
 
     print("Training data")
@@ -183,6 +188,7 @@ def plot(model, X_train, y_train, X_test=None, y_test=None):
         ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
         ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
         plt.show()
+
 
 def get_dataset(DATASET, DATA_DIR):
     if DATASET == "cic":

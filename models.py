@@ -45,9 +45,11 @@ class AE(nn.Module):
 
         return x_bar, z
 
+
 def target_distribution(q):
     weight = q**2 / q.sum(0)
     return (weight.t() / weight.sum(1)).t()
+
 
 def source_distribution(z, cluster_layer, alpha=1):
     q = 1.0 / (1.0 + torch.sum(
@@ -55,6 +57,7 @@ def source_distribution(z, cluster_layer, alpha=1):
     q = q.pow((alpha + 1.0) / 2.0)
     q = (q.t() / torch.sum(q, 1)).t()
     return q
+
 
 def pretrain_ae(model, train_loader, args):
     '''
@@ -152,38 +155,38 @@ class MultiHeadIDEC(nn.Module):
             n_z=self.n_z)
 
         # cluster layer
-        self.cluster_layer = Parameter(torch.Tensor(self.n_clusters, self.n_z))
-        self.p_cluster_layer = Parameter(torch.Tensor(self.n_clusters, self.n_z))
-        self.n_cluster_layer = Parameter(torch.Tensor(self.n_clusters, self.n_z))
+        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        self.p_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        self.n_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
         torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
         torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
         
         self.classifiers = []
         for _ in range(self.n_clusters):
-            # classifier = nn.Sequential(
-            #     nn.Linear(self.n_z, 128),
-            #     nn.ReLU(),
-            #     nn.Linear(128, 64),
-            #     nn.ReLU(),
-            #     nn.Linear(64, 32),
-            #     nn.ReLU(),
-            #     nn.Linear(32, 16),
-            #     nn.ReLU(),
-            #     nn.Linear(16, 8),
-            #     nn.ReLU(),
-            #     nn.Linear(8, args.n_classes),
-            # ).to(self.device)
-
             classifier = nn.Sequential(
-                nn.Linear(self.n_z, 100),
+                nn.Linear(self.n_z, 64),
                 nn.ReLU(),
-                nn.Linear(100, 100),
+                # nn.Linear(128, 64),
+                # nn.ReLU(),
+                nn.Linear(64, 32),
                 nn.ReLU(),
-                nn.Linear(100, 50),
+                nn.Linear(32, 16),
                 nn.ReLU(),
-                nn.Linear(50, args.n_classes),
-            )
+                nn.Linear(16, 8),
+                nn.ReLU(),
+                nn.Linear(8, args.n_classes),
+            ).to(self.device)
+
+            # classifier = nn.Sequential(
+            #     nn.Linear(self.n_z, 100),
+            #     nn.ReLU(),
+            #     nn.Linear(100, 100),
+            #     nn.ReLU(),
+            #     nn.Linear(100, 50),
+            #     nn.ReLU(),
+            #     nn.Linear(50, args.n_classes),
+            # )
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             
@@ -199,6 +202,7 @@ class MultiHeadIDEC(nn.Module):
             self.ae.load_state_dict(torch.load(self.pretrain_path))
             print('load pretrained ae from', path)
 
+
     def predict(self, X_test):
         qs, z_test = self.forward(X_test)
         q_test = qs[0]
@@ -207,24 +211,14 @@ class MultiHeadIDEC(nn.Module):
         for j in range(self.n_clusters):
             preds[j,:] = self.classifiers[cluster_ids[j]]
         return preds
-        
+
+
     def forward(self, x, output="default"):
         x_bar, z = self.ae(x)
         # Cluster
-        q = 1.0 / (1.0 + torch.sum(
-            torch.pow(z.unsqueeze(1) - self.cluster_layer, 2), 2) / self.alpha)
-        q = q.pow((self.alpha + 1.0) / 2.0)
-        q = (q.t() / torch.sum(q, 1)).t()
-
-        q_p = 1.0 / (1.0 + torch.sum(
-            torch.pow(z.detach().unsqueeze(1) - self.p_cluster_layer, 2), 2) / self.alpha)
-        q_p = q_p.pow((self.alpha + 1.0) / 2.0)
-        q_p = (q_p.t() / torch.sum(q_p, 1)).t()
-
-        q_n = 1.0 / (1.0 + torch.sum(
-            torch.pow(z.detach().unsqueeze(1) - self.n_cluster_layer, 2), 2) / self.alpha)
-        q_n = q_n.pow((self.alpha + 1.0) / 2.0)
-        q_n = (q_n.t() / torch.sum(q_n, 1)).t()
+        q   = source_distribution(z, self.cluster_layer, alpha=self.alpha)
+        q_p = source_distribution(z, self.p_cluster_layer, alpha=self.alpha)
+        q_n = source_distribution(z, self.n_cluster_layer, alpha=self.alpha)
 
         if output == "latent":
             return (q, q_p, q_n), z

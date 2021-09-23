@@ -133,8 +133,6 @@ X_test, y_test, test_loader = test_data
 
 f1_scores, auc_scores = [], []
 
-iter_array = range(5)
-iteration_name = "Run"
 
 if args.ablation == "beta":
     iter_array = betas
@@ -148,6 +146,9 @@ elif args.ablation == "delta":
     iter_array = deltas
     iteration_name = "Delta"
 
+else:
+    iter_array = range(5)
+    iteration_name = "Run"
 
 for r in range(len(iter_array)):
     print(iteration_name, ":", iter_array[r])
@@ -331,7 +332,8 @@ for r in range(len(iter_array)):
 
         # Normal Training
         epoch_loss = 0
-        epoch_sep_loss = 0
+        epoch_balance_loss = 0
+        epoch_class_loss = 0
 
         model.ae.train() # prep model for evaluation
         for j in range(model.n_clusters):
@@ -347,11 +349,12 @@ for r in range(len(iter_array)):
             reconstr_loss = F.mse_loss(x_bar, x_batch)
 
             classifier_labels = np.zeros(len(idx))
-            train_epochs = min(10, 1 + int(epoch/5))
+            sub_epochs = min(1, 10 - int(epoch/5))
+            # sub_epochs = 10
             if args.attention == False:
                 classifier_labels = np.argmax(q.detach().cpu().numpy(), axis=1)
 
-            for _ in range(train_epochs):
+            for _ in range(sub_epochs):
                 # Choose classifier for a point probabilistically
                 if args.attention == True:
                     for j in range(len(idx)):
@@ -411,8 +414,9 @@ for r in range(len(iter_array)):
                 # cluster_balance_loss += (s1+s2)/m12
                 km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
 
-            q_tmp = source_distribution(X_latents, model.cluster_layer)
-            cluster_balance_loss = -torch.sum(torch.kl_div(torch.sum(q_tmp, axis=0), torch.ones(args.n_clusters)/args.n_clusters))
+            q_tmp = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
+            cluster_balance_loss = torch.sum(torch.kl_div(torch.sum(q_tmp.log(), axis=0),\
+                                    torch.ones(args.n_clusters)/args.n_clusters))/args.n_clusters
             loss = reconstr_loss
             if args.beta != 0:
                 loss += args.beta*km_loss
@@ -422,6 +426,8 @@ for r in range(len(iter_array)):
                 loss += args.delta*cluster_balance_loss
 
             epoch_loss += loss
+            epoch_balance_loss += cluster_balance_loss
+            epoch_class_loss += class_loss
             optimizer.zero_grad()
             loss.backward(retain_graph=True)
             optimizer.step()
@@ -440,7 +446,7 @@ for r in range(len(iter_array)):
                 model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
 
         print('Epoch: {:02d} | Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
-                    epoch, epoch_loss, class_loss/train_epochs, cluster_balance_loss))
+                    epoch, epoch_loss, epoch_class_loss, epoch_balance_loss))
 
     ####################################################################################
     ####################################################################################
@@ -476,7 +482,7 @@ for r in range(len(iter_array)):
         epoch_f1 = 0
         acc = 0
 
-        model.ae.train() # prep model for evaluation
+        # model.ae.train() # prep model for evaluation
         for j in range(model.n_clusters):
             model.classifiers[j][0].train()
 
