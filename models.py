@@ -51,6 +51,14 @@ def target_distribution(q):
     return (weight.t() / weight.sum(1)).t()
 
 
+# def source_distribution(z, cluster_layer, alpha=1):
+#     q = 1.0 / (1.0 + torch.sum(
+#         torch.pow(z.unsqueeze(1) - cluster_layer, 2), 2) / alpha)
+#     q = q.pow((alpha + 1.0) / 2.0)
+#     q = (q.t() / torch.sum(q, 1)).t()
+#     return q
+
+
 def source_distribution(z, cluster_layer, alpha=1):
     q = 1.0 / (torch.sum(
         torch.pow(z.unsqueeze(1) - cluster_layer, 2), 2))

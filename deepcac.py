@@ -229,19 +229,15 @@ for r in range(len(iter_array)):
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
-
+            
+            # plot(model, torch.FloatTensor(X_val).to(args.device), y_val)
             z_train, _, q_train = model(torch.Tensor(X_train).to(args.device), output="decoded")
             q_train, q_train_p, q_train_n = q_train
             # update target distribution p
             q_train = q_train.data
 
             # evaluate clustering performance
-            cluster_indices = q_train.cpu().numpy().argmax(1)
-
-            qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
-            q_test = qs[0]
-            # cluster_ids = torch.argmax(q_test, axis=1)
-            cluster_ids = np.argmax(distance_matrix(z_test.data.cpu().numpy(), model.cluster_layer.data.cpu().numpy()), axis=1)
+            # cluster_indices = q_train.cpu().numpy().argmax(1)
             preds_e = torch.zeros((len(z_train), 2))
 
             # Calculate Training Metrics
@@ -262,6 +258,11 @@ for r in range(len(iter_array)):
             qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
             q_val = qs[0]
             cluster_ids = torch.argmax(q_val, axis=1)
+            # cluster_ids = np.zeros(len(q_val))
+            # for j in range(args.n_clusters):
+            #     cluster_ids[j] = np.random.choice(range(args.n_clusters), p = q_val[j].detach().numpy())
+            # cluster_ids = torch.Tensor(cluster_ids)
+
             preds = torch.zeros((len(z_val), 2))
 
             # Weighted predictions
@@ -289,12 +290,15 @@ for r in range(len(iter_array)):
                         cj = torch.where(cluster_ids == j)[0]
                         Xi = X_val[ci]
                         Xj = X_val[cj]
-                        # feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/args.input_dim
-                        # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
+                        feature_diff += sum((ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
                         cntr += 1
-            
-            # val_sil = silhouette_score(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
-            val_sil = 0
+
+            print("qval", torch.sum(q_val, axis=0))
+            print("qval max", np.bincount(cluster_ids))
+            # print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
+            #                         torch.ones(args.n_clusters)/args.n_clusters))
+            val_sil = silhouette_score(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
+            # val_sil = 0
             val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
             val_auc = roc_auc_score(y_val, preds[:,1].detach().numpy())
             val_feature_diff = feature_diff/cntr
@@ -307,8 +311,7 @@ for r in range(len(iter_array)):
             valid_loss = np.average(valid_losses)
             avg_valid_losses.append(valid_loss)
             
-            epoch_len = len(str(N_EPOCHS))
-            
+            epoch_len = len(str(N_EPOCHS))            
             print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
                          f'train_loss: {train_loss:.3f} ' +
                          f'valid_loss: {valid_loss:.3f} '  +
@@ -391,15 +394,17 @@ for r in range(len(iter_array)):
 
             q_train = source_distribution(z_train, model.cluster_layer, alpha=model.alpha)
             dists = torch.pow(torch.cdist(z_train, model.cluster_layer), 2)
-            km_loss = torch.sqrt(torch.norm(q_train*dists)) # Frobenius norm
+            km_loss = torch.sqrt(torch.norm(torch.pow(q_train, model.alpha)*dists)) # Frobenius norm
 
             for j in range(args.n_clusters):
                 q_j = torch.pow(q_train[:,j], model.alpha)
                 delta_mu[j,:] = (q_j.unsqueeze(1)*z_train).sum(axis=0)/torch.sum(q_j)
+            
+            # print(torch.sum(q_train, axis=0))
 
-            cluster_balance_loss = torch.sum(torch.kl_div(torch.sum(q_train.log(), axis=0),\
-                                    torch.ones(args.n_clusters)/args.n_clusters))/args.n_clusters
-
+            P = torch.sum(q_train, axis=0)
+            Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
+            cluster_balance_loss = F.kl_div(P.log(),Q, reduction='batchmean')
             loss = reconstr_loss
             if args.beta != 0:
                 loss += args.beta*km_loss
@@ -561,7 +566,6 @@ for r in range(len(iter_array)):
     # Weighted predictions
     for j in range(model.n_clusters):
         cluster_id = np.where(cluster_ids == j)[0]
-        # X_cluster = z_test[cluster_id]
         X_cluster = z_test
         cluster_preds = model.classifiers[j][0](X_cluster)
         # print(q_test, cluster_preds[:,0])
