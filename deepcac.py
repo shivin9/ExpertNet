@@ -226,7 +226,7 @@ for r in range(len(iter_array)):
 
     for epoch in range(N_EPOCHS):
         if epoch % args.log_interval == 0:
-
+            blockPrint()
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
@@ -401,10 +401,11 @@ for r in range(len(iter_array)):
                 km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
 
             q_train = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
-            P = torch.sum(q_train, axis=0)
+            P = torch.sum(torch.nn.Softmax(dim=1)(10*q_train), axis=0)
             Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
 
-            cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
+            # cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
+            cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P/sum(P)) - torch.sqrt(Q))
 
             loss = reconstr_loss
             if args.beta != 0:
