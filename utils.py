@@ -30,6 +30,17 @@ def enablePrint():
     sys.stdout = sys.__stdout__
 
 
+def calculate_bound(model, B, m):
+    sum1 = 0
+    for j in range(model.n_clusters):
+        prod = 1.0
+        for param in model.classifiers[j][0].parameters():
+            prod *= torch.norm(param.view(-1))
+        sum1 += B[j]*prod
+    x = sum1/np.sqrt(model.n_clusters*m)
+    return x
+
+
 def load_mnist(path='./data/mnist.npz'):
     f = np.load(path)
 

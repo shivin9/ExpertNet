@@ -147,7 +147,7 @@ elif args.ablation == "delta":
     iteration_name = "Delta"
 
 else:
-    iter_array = range(5)
+    iter_array = range(2)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -198,7 +198,7 @@ for r in range(len(iter_array)):
         model.p_cluster_layer.data[i,:] = torch.mean(hidden_p, axis=0)
         model.n_cluster_layer.data[i,:] = torch.mean(hidden_n, axis=0)
 
-    criterion = nn.CrossEntropyLoss(reduction='mean')
+    criterion = nn.CrossEntropyLoss(reduction='none')
 
 
     ####################################################################################
@@ -226,23 +226,26 @@ for r in range(len(iter_array)):
 
     for epoch in range(N_EPOCHS):
         if epoch % args.log_interval == 0:
-            blockPrint()
+            # blockPrint()
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
 
             z_train, _, q_train = model(torch.Tensor(X_train).to(args.device), output="decoded")
             q_train, q_train_p, q_train_n = q_train
+
             # update target distribution p
             q_train = q_train.data
 
             # evaluate clustering performance
             cluster_indices = q_train.cpu().numpy().argmax(1)
+            preds = torch.zeros((len(z_train), 2))
 
             # Calculate Training Metrics
             nmi, acc, ari = 0, 0, 0
             train_loss = 0
-            for j in range(args.n_clusters):
+            B = []
+            for j in range(model.n_clusters):
                 # kmeans = KMeans(n_clusters=args.n_classes, n_init=20)
                 cluster_idx = np.where(cluster_indices == j)[0]
                 # y_pred_idx = kmeans.fit_predict(z_train.data.cpu().numpy()[cluster_idx])
@@ -251,14 +254,20 @@ for r in range(len(iter_array)):
                 # acc += cluster_acc(y_pred_idx, y[cluster_idx]) * len(cluster_idx)/len(X_train)
                 # ari += ari_score(y_pred_idx, y[cluster_idx]) * len(cluster_idx)/len(X_train)
 
-                X_cluster = z_train[cluster_idx]
-                y_cluster = torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor).to(model.device)
+                # X_cluster = z_train[cluster_idx]
+                # y_cluster = torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor).to(model.device)
 
-                classifier_k, optimizer_k = model.classifiers[j]
-                y_pred_cluster = classifier_k(X_cluster)
-                cluster_los = criterion(y_pred_cluster, y_cluster)
-                train_loss += cluster_los
-            
+                # classifier_k, optimizer_k = model.classifiers[j]
+                # y_pred_cluster = classifier_k(X_cluster)
+                # cluster_los = criterion(y_pred_cluster, y_cluster)
+                # train_loss += cluster_los
+
+                X_cluster = z_train[cluster_idx]
+                B.append(torch.max(torch.norm(X_cluster)))
+                cluster_preds = model.classifiers[j][0](X_cluster)
+                train_loss += torch.mean(q_train[cluster_idx,j]*criterion(cluster_preds,\
+                                        torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor)))
+
             # Evaluate model on Test dataset
             qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
             q_val = qs[0]
@@ -275,7 +284,6 @@ for r in range(len(iter_array)):
 
             else:
                 for j in range(model.n_clusters):
-                    cluster_id = np.where(cluster_ids == j)[0]
                     X_cluster = z_val
                     cluster_preds = model.classifiers[j][0](X_cluster)
                     preds[:,0] += q_val[:,j]*cluster_preds[:,0]
@@ -303,8 +311,9 @@ for r in range(len(iter_array)):
             val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
             val_auc = roc_auc_score(y_val, preds[:,1].detach().numpy())
             val_feature_diff = feature_diff/cntr
+            complexity_term = calculate_bound(model, B, len(z_train))
 
-            loss = criterion(preds, torch.Tensor(y_val).type(torch.LongTensor))
+            loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
             # record validation loss
             valid_losses.append(loss.item())
 
@@ -320,7 +329,8 @@ for r in range(len(iter_array)):
                          f'valid_F1: {val_f1:.3f} '  +
                          f'valid_AUC: {val_auc:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
-                         f'valid_Silhouette: {val_sil:.3f}')
+                         f'valid_Silhouette: {val_sil:.3f} ' + 
+                         f'Complexity Term: {complexity_term:.3f}')
             
             print(print_msg)
             
@@ -353,7 +363,7 @@ for r in range(len(iter_array)):
             reconstr_loss = F.mse_loss(x_bar, x_batch)
 
             classifier_labels = np.zeros(len(idx))
-            sub_epochs = min(1, 10 - int(epoch/5))
+            sub_epochs = min(10, 1 + int(epoch/5))
             # sub_epochs = 10
             if args.attention == False:
                 classifier_labels = np.argmax(q_train.detach().cpu().numpy(), axis=1)
@@ -372,7 +382,7 @@ for r in range(len(iter_array)):
                     classifier_k, optimizer_k = model.classifiers[k]
                     # Do not backprop the error to encoder
                     y_pred_cluster = classifier_k(X_cluster.detach())
-                    cluster_loss = criterion(y_pred_cluster, y_cluster)
+                    cluster_loss = torch.mean(criterion(y_pred_cluster, y_cluster))
                     optimizer_k.zero_grad()
                     cluster_loss.backward(retain_graph=True)
                     optimizer_k.step()
@@ -385,13 +395,13 @@ for r in range(len(iter_array)):
 
                 classifier_k, optimizer_k = model.classifiers[k]
                 y_pred_cluster = classifier_k(X_cluster)
-                cluster_los = criterion(y_pred_cluster, y_cluster)
-                class_loss += cluster_los
+                cluster_los = torch.mean(criterion(y_pred_cluster, y_cluster))
+                class_loss += torch.mean(q_train[idx_cluster,k]*criterion(y_pred_cluster, y_cluster))
 
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
             cluster_id = torch.argmax(q_train, 1)
             
-            km_loss             = 0
+            km_loss = 0
             cluster_balance_loss = 0
 
             for j in range(args.n_clusters):
@@ -402,10 +412,11 @@ for r in range(len(iter_array)):
 
             q_train = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_train), axis=0)
+            P = P/P.sum()
             Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
 
             # cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
-            cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P/sum(P)) - torch.sqrt(Q))
+            cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P) - torch.sqrt(Q))
 
             loss = reconstr_loss
             if args.beta != 0:
@@ -455,6 +466,8 @@ for r in range(len(iter_array)):
     train_loader_latents = torch.utils.data.DataLoader(X_latents_data_loader,
         batch_size=1024, shuffle=False)
 
+    B = []
+
     # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train,\
     #      torch.FloatTensor(np.array(X_test)).to(args.device), y_test)
 
@@ -483,12 +496,13 @@ for r in range(len(iter_array)):
             for k in range(args.n_clusters):
                 idx_cluster = np.where(classifier_labels == k)[0]
                 X_cluster = X_latents[idx_cluster]
+                B.append(torch.linalg.norm(X_cluster, axis=1))
                 y_cluster = y_batch[idx_cluster]
 
                 classifier_k, optimizer_k = model.classifiers[k]
                 # Do not backprop the error to encoder
                 y_pred_cluster = classifier_k(X_cluster.detach())
-                cluster_loss = criterion(y_pred_cluster, y_cluster)
+                cluster_loss = torch.mean(criterion(y_pred_cluster, y_cluster))
                 optimizer_k.zero_grad()
                 cluster_loss.backward(retain_graph=True)
                 optimizer_k.step()
@@ -496,6 +510,20 @@ for r in range(len(iter_array)):
         # model.ae.eval() # prep model for evaluation
         for j in range(model.n_clusters):
             model.classifiers[j][0].eval()
+
+        preds = torch.zeros((len(z_train), 2))
+        train_loss = 0
+
+        # Weighted predictions
+        for j in range(model.n_clusters):
+            cluster_id = np.where(classifier_labels == j)[0]
+            X_cluster = z_train[cluster_id]
+            y_cluster = torch.Tensor(y_train[cluster_id]).type(torch.LongTensor)
+            cluster_preds = model.classifiers[j][0](X_cluster)
+            # preds[:,0] += q_train[:,j]*cluster_preds[:,0]
+            # preds[:,1] += q_train[:,j]*cluster_preds[:,1]
+            # train_loss = criterion(preds, torch.Tensor(y_train).type(torch.LongTensor))
+            train_loss += torch.mean(q_train[cluster_id,j]*criterion(cluster_preds, y_cluster))
 
         # Evaluate model on Validation set
         qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
@@ -514,7 +542,7 @@ for r in range(len(iter_array)):
         val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
         val_auc = roc_auc_score(y_val, preds[:,1].detach().numpy())
 
-        loss = criterion(preds, torch.Tensor(y_val).type(torch.LongTensor))
+        loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
         # record validation loss
         valid_losses.append(loss.item())
 
@@ -532,13 +560,9 @@ for r in range(len(iter_array)):
         
         print(print_msg)
         
-        # clear lists to track next epoch
-        train_losses = []
-        valid_losses = []
-        
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_auc], model)
+        es([train_loss.data, val_auc], model)
         if es.early_stop == True:
             break
 
@@ -577,7 +601,7 @@ for r in range(len(iter_array)):
     e_test_f1 = f1_score(y_test, np.argmax(preds_e.detach().numpy(), axis=1))
     e_test_auc = roc_auc_score(y_test, preds_e[:,1].detach().numpy())
     e_test_acc = accuracy_score(y_test, np.argmax(preds_e.detach().numpy(), axis=1))
-    e_test_loss = criterion(preds_e, torch.Tensor(y_test).type(torch.LongTensor))
+    e_test_loss = torch.mean(criterion(preds_e, torch.Tensor(y_test).type(torch.LongTensor)))
 
     preds = torch.zeros((len(z_test), 2))
 
@@ -591,7 +615,7 @@ for r in range(len(iter_array)):
     test_f1 = f1_score(y_test, np.argmax(preds.detach().numpy(), axis=1))
     test_auc = roc_auc_score(y_test, preds[:,1].detach().numpy())
     test_acc = accuracy_score(y_test, np.argmax(preds.detach().numpy(), axis=1))
-    test_loss = criterion(preds, torch.Tensor(y_test).type(torch.LongTensor))
+    test_loss = torch.mean(criterion(preds, torch.Tensor(y_test).type(torch.LongTensor)))
 
     print('Run #{}, Acc {:.4f}'.format(r, acc),
           ', nmi {:.4f}'.format(nmi), ', ari {:.4f}'.format(ari),\
