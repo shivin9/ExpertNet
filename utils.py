@@ -6,9 +6,11 @@ import os
 import torch
 from torch.utils.data import Dataset
 from sklearn.datasets import make_classification, make_blobs
+from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from scipy.optimize import linear_sum_assignment as linear_assignment
+from scipy.stats import ttest_ind
 from read_patients import get_aki
 import sys
 
@@ -38,7 +40,32 @@ def calculate_bound(model, B, m):
             prod *= torch.norm(param.view(-1))
         sum1 += B[j]*prod
     x = sum1/np.sqrt(model.n_clusters*m)
-    return x
+    return x.item()
+
+
+def silhouette_new(X, labels, metric="euclidean"):
+    if len(np.unique(labels)) == 1:
+        return 0
+    else:
+        return silhouette_score(X, labels, metric=metric)
+
+def calculate_nhfd(X, cluster_ids):
+    feature_diff = 0
+    cntr = 0
+    n_clusters = len(torch.unique(cluster_ids))
+    input_dim = X.shape[1]
+    for i in range(n_clusters):
+        for j in range(n_clusters):
+            if i > j:
+                ci = torch.where(cluster_ids == i)[0]
+                cj = torch.where(cluster_ids == j)[0]
+                Xi = X[ci]
+                Xj = X[cj]
+                feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/input_dim
+                cntr += 1
+    if cntr == 0:
+        return 0
+    return feature_diff/cntr
 
 
 def load_mnist(path='./data/mnist.npz'):
@@ -443,3 +470,4 @@ def paper_synthetic(n_pts=1000, centers=4):
 betas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
 gammas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
 deltas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+ks = [1, 2, 3, 4, 5]
