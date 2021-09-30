@@ -100,12 +100,15 @@ class NNClassifier(nn.Module):
             self.input_dim = input_dim
 
         self.classifier = nn.Sequential(
-            nn.Linear(self.input_dim,100),
+            nn.Linear(self.input_dim,64),
             nn.ReLU(),
-            nn.Linear(100, 100),
+            nn.Linear(64, 32),
             nn.ReLU(),
-            nn.Linear(100, 50),
-            nn.Linear(50, args.n_classes),
+            nn.Linear(32, 16),
+            nn.ReLU(),
+            nn.Linear(16, 8),
+            nn.ReLU(),
+            nn.Linear(8, args.n_classes),
         )
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
 

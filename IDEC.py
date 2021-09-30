@@ -162,6 +162,10 @@ for r in range(len(iter_array)):
     original_cluster_centers = kmeans.cluster_centers_
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
 
+    ## Initialization ##
+    for i in range(args.n_clusters):
+        cluster_idx = np.where(cluster_indices == i)[0]
+
     criterion = nn.CrossEntropyLoss(reduction='none')
 
 
@@ -189,8 +193,11 @@ for r in range(len(iter_array)):
             z_train, _, q_train = model(torch.Tensor(X_train).to(args.device), output="decoded")
             q_train, q_train_p, q_train_n = q_train
 
+            # update target distribution p
+            q_train = q_train.data
+
             # evaluate clustering performance
-            cluster_indices = q_train.detach().cpu().numpy().argmax(1)
+            cluster_indices = q_train.cpu().numpy().argmax(1)
             preds = torch.zeros((len(z_train), 2))
 
             # Calculate Training Metrics
@@ -199,9 +206,21 @@ for r in range(len(iter_array)):
             B = []
 
             for j in range(model.n_clusters):
+                # kmeans = KMeans(n_clusters=args.n_classes, n_init=20)
                 cluster_idx = np.where(cluster_indices == j)[0]
+                # y_pred_idx = kmeans.fit_predict(z_train.data.cpu().numpy()[cluster_idx])
+                # nmi_k = nmi_score(y_pred_idx, y[cluster_idx])
+                # nmi += nmi_k * len(cluster_idx)/len(X_train)
+                # acc += cluster_acc(y_pred_idx, y[cluster_idx]) * len(cluster_idx)/len(X_train)
+                # ari += ari_score(y_pred_idx, y[cluster_idx]) * len(cluster_idx)/len(X_train)
+
                 X_cluster = z_train[cluster_idx]
                 y_cluster = torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor).to(model.device)
+
+                # classifier_k, optimizer_k = model.classifiers[j]
+                # y_pred_cluster = classifier_k(X_cluster)
+                # cluster_los = criterion(y_pred_cluster, y_cluster)
+                # train_loss += cluster_los
 
                 B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
                 cluster_preds = model.classifiers[j][0](X_cluster)
@@ -661,5 +680,5 @@ print("Local Test Loss: ", local_sum_test_losses)
 
 print("Model Complexity: ", model_complexity)
 
-print("k\t{}\tF1\t{:.3f}\tAUC\t{:.3f}\tSIL\t{:.3f}\tNHFD\t{:.3f}".format\
-    (args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(sil_scores), np.average(nhfd_scores)))
+print("Avg. Test F1\t{:.3f}\tAUC\t{:.3f}\tSIL\t{:.3f}\tNHFD\t{:.3f}".format\
+    (np.average(f1_scores), np.average(auc_scores), np.average(sil_scores), np.average(nhfd_scores)))

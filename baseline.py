@@ -51,6 +51,9 @@ parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
+parser.add_argument("--attention", default="True")
+parser.add_argument('--ablation', default='None')
+parser.add_argument('--cluster_balance', default='hellinger')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -67,6 +70,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+
 
 parser = parser.parse_args()
 args = parameters(parser)
@@ -119,7 +123,7 @@ for r in range(5):
         es([val_f1, val_auc], m)
 
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
-        	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
+        	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f} | ',
         	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
 
         if es.early_stop == True:
