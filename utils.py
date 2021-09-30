@@ -49,6 +49,7 @@ def silhouette_new(X, labels, metric="euclidean"):
     else:
         return silhouette_score(X, labels, metric=metric)
 
+
 def calculate_nhfd(X, cluster_ids):
     feature_diff = 0
     cntr = 0
@@ -126,6 +127,7 @@ def is_non_zero_file(fpath):
     return os.path.isfile(fpath) and os.path.getsize(fpath) > 0
 
 
+
 class parameters(object):
     def __init__(self, parser):
         self.input_dim = -1
@@ -142,6 +144,9 @@ class parameters(object):
         self.load_ae = parser.load_ae
         self.classifier = parser.classifier
         self.tol = parser.tol
+        self.attention = parser.attention == "True"
+        self.ablation = parser.ablation
+        self.cluster_balance = parser.cluster_balance
 
         # Model parameters
         self.lamda = parser.lamda

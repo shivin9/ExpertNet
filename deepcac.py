@@ -71,42 +71,6 @@ parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 
-class parameters(object):
-    def __init__(self, parser):
-        self.input_dim = -1
-        self.dataset = parser.dataset
-        
-        # Training parameters
-        self.lr = parser.lr
-        self.alpha = float(parser.alpha)
-        self.wd = parser.wd
-        self.batch_size = parser.batch_size
-        self.n_epochs = parser.n_epochs
-        self.pre_epoch = parser.pre_epoch
-        self.pretrain = parser.pretrain
-        self.load_ae = parser.load_ae
-        self.classifier = parser.classifier
-        self.tol = parser.tol
-        self.attention = parser.attention == "True"
-        self.ablation = parser.ablation
-        self.cluster_balance = parser.cluster_balance
-
-        # Model parameters
-        self.lamda = parser.lamda
-        self.beta = parser.beta
-        self.gamma = parser.gamma
-        self.delta = parser.delta
-        self.hidden_dims = parser.hidden_dims
-        self.latent_dim = self.n_z = parser.n_z
-        self.n_clusters = parser.n_clusters
-        self.clustering = parser.clustering
-        self.n_classes = parser.n_classes
-
-        # Utility parameters
-        self.device = parser.device
-        self.log_interval = parser.log_interval
-        self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
-
 parser = parser.parse_args()  
 args = parameters(parser)
 base_suffix = ""
@@ -259,7 +223,7 @@ for r in range(len(iter_array)):
                 # train_loss += cluster_los
 
                 X_cluster = z_train[cluster_idx]
-                B.append(torch.max(torch.linalg.norm(X_cluster, axis=1)))
+                B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
                 cluster_preds = model.classifiers[j][0](X_cluster)
                 train_loss += torch.sum(q_train[cluster_idx,j]*criterion(cluster_preds,\
                                         torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor)))
@@ -380,9 +344,9 @@ for r in range(len(iter_array)):
                 y_pred_cluster = classifier_k(X_cluster)
                 class_loss += torch.sum(q_batch[idx_cluster,k]*criterion(y_pred_cluster, y_cluster))
 
+            class_loss /= len(X_latents)
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
             cluster_id = torch.argmax(q_batch, 1)
-            class_loss /= len(X_latents)
             
             km_loss = 0
             cluster_balance_loss = 0
@@ -517,7 +481,7 @@ for r in range(len(iter_array)):
             X_cluster = z_train[cluster_id]
             cluster_preds = model.classifiers[j][0](X_cluster)
             train_loss += torch.sum(q_train[cluster_id,j]*criterion(cluster_preds, y_cluster))
-            B.append(torch.max(torch.linalg.norm(X_cluster, axis=1)))
+            B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
 
 
         train_loss /= len(z_train)
@@ -570,7 +534,6 @@ for r in range(len(iter_array)):
             nhfd_scores.append(calculate_nhfd(X_train,  cluster_ids_train))
             model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
-
 
 
     ####################################################################################
@@ -636,7 +599,7 @@ for r in range(len(iter_array)):
     enablePrint()
     print("Run #{}".format(r))
 
-    print('Test Loss - {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
+    print('Loss Metrics - Test Loss {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
 
     print('Clustering Metrics     - Acc {:.4f}'.format(acc), ', nmi {:.4f}'.format(nmi),\
           ', ari {:.4f}, NHFD {:.3f}'.format(ari, e_test_nhfd))
