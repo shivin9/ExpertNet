@@ -70,12 +70,13 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+# parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
 args = parameters(parser)
 base_suffix = ""
 
-for key in args.__dict__:
+for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta']:
     print(key, args.__dict__[key])
 
 base_suffix += args.dataset + "_"
@@ -124,7 +125,7 @@ else:
 
 for r in range(len(iter_array)):
     print(iteration_name, ":", iter_array[r])
-    # blockPrint()
+    blockPrint()
 
     if args.ablation == "beta":
         args.beta = iter_array[r]
@@ -161,8 +162,6 @@ for r in range(len(iter_array)):
     cluster_indices = kmeans.fit_predict(hidden.data.cpu().numpy())
     original_cluster_centers = kmeans.cluster_centers_
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
-
-    ## Initialization ##
     for i in range(args.n_clusters):
         cluster_idx = np.where(cluster_indices == i)[0]
 
@@ -184,20 +183,23 @@ for r in range(len(iter_array)):
     es = EarlyStoppingCAC(dataset=suffix)
 
     for epoch in range(N_EPOCHS):
+        # beta = args.beta*(epoch*0.1)/(1+epoch*0.1)
+        beta = args.beta
+        # gamma = args.gamma - args.gamma*(epoch*0.1)/(1+epoch*0.1)
+        gamma = args.gamma
+        delta = args.delta
         if epoch % args.log_interval == 0:
-            blockPrint()
+            # plot(model, torch.FloatTensor(X_val).to(args.device), y_val, labels=None)
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
 
             z_train, _, q_train = model(torch.Tensor(X_train).to(args.device), output="decoded")
             q_train, q_train_p, q_train_n = q_train
-
-            # update target distribution p
-            q_train = q_train.data
+            p = target_distribution(q_train.detach())
 
             # evaluate clustering performance
-            cluster_indices = q_train.cpu().numpy().argmax(1)
+            cluster_indices = q_train.detach().cpu().numpy().argmax(1)
             preds = torch.zeros((len(z_train), 2))
 
             # Calculate Training Metrics
@@ -206,23 +208,11 @@ for r in range(len(iter_array)):
             B = []
 
             for j in range(model.n_clusters):
-                # kmeans = KMeans(n_clusters=args.n_classes, n_init=20)
                 cluster_idx = np.where(cluster_indices == j)[0]
-                # y_pred_idx = kmeans.fit_predict(z_train.data.cpu().numpy()[cluster_idx])
-                # nmi_k = nmi_score(y_pred_idx, y[cluster_idx])
-                # nmi += nmi_k * len(cluster_idx)/len(X_train)
-                # acc += cluster_acc(y_pred_idx, y[cluster_idx]) * len(cluster_idx)/len(X_train)
-                # ari += ari_score(y_pred_idx, y[cluster_idx]) * len(cluster_idx)/len(X_train)
-
                 X_cluster = z_train[cluster_idx]
                 y_cluster = torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor).to(model.device)
 
-                # classifier_k, optimizer_k = model.classifiers[j]
-                # y_pred_cluster = classifier_k(X_cluster)
-                # cluster_los = criterion(y_pred_cluster, y_cluster)
-                # train_loss += cluster_los
-
-                B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
+                # B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
                 cluster_preds = model.classifiers[j][0](X_cluster)
                 train_loss += torch.sum(criterion(cluster_preds, y_cluster))
 
@@ -249,7 +239,7 @@ for r in range(len(iter_array)):
                     preds[:,1] += q_val[:,j]*cluster_preds[:,1]
 
             # print("qval", torch.sum(q_val, axis=0))
-            # print("qval max", np.bincount(cluster_ids))
+            # print("Cluster Counts", np.bincount(cluster_ids))
             # print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
             #                         torch.ones(args.n_clusters)/args.n_clusters))
 
@@ -260,7 +250,8 @@ for r in range(len(iter_array)):
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
             val_feature_diff = calculate_nhfd(X_val, cluster_ids)
-            complexity_term  = calculate_bound(model, B, len(z_train))
+            complexity_term = 0
+            # complexity_term  = calculate_bound(model, B, len(z_train))
 
             val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
 
@@ -270,9 +261,9 @@ for r in range(len(iter_array)):
             # # calculate average loss over an epoch
             # valid_loss = np.average(valid_losses)
             # avg_valid_losses.append(valid_loss)
-            
+
             epoch_len = len(str(N_EPOCHS))
-            
+
             print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
                          f'train_loss: {train_loss:.3f} ' +
                          f'valid_loss: {val_loss:.3f} '  +
@@ -281,9 +272,9 @@ for r in range(len(iter_array)):
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
                          f'valid_Silhouette: {val_sil:.3f} ' + 
                          f'Complexity Term: {complexity_term:.3f}')
-            
+
             print(print_msg)
-            
+
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
             es([val_f1, val_auc], model)
@@ -294,7 +285,8 @@ for r in range(len(iter_array)):
         epoch_loss = 0
         epoch_balance_loss = 0
         epoch_class_loss = 0
-
+        epoch_km_loss = 0
+        
         model.ae.train() # prep model for evaluation
         for j in range(model.n_clusters):
             model.classifiers[j][0].train()
@@ -313,82 +305,26 @@ for r in range(len(iter_array)):
             if args.attention == False:
                 classifier_labels = np.argmax(q_batch.detach().cpu().numpy(), axis=1)
 
-            for _ in range(sub_epochs):
-                # Choose classifier for a point probabilistically
-                if args.attention == True:
-                    for j in range(len(idx)):
-                        classifier_labels[j] = np.random.choice(range(args.n_clusters), p = q_batch[j].detach().numpy())
-
-                for k in range(args.n_clusters):
-                    idx_cluster = np.where(classifier_labels == k)[0]
-                    X_cluster = X_latents[idx_cluster]
-                    y_cluster = y_batch[idx_cluster]
-
-                    classifier_k, optimizer_k = model.classifiers[k]
-                    # Do not backprop the error to encoder
-                    y_pred_cluster = classifier_k(X_cluster.detach())
-                    cluster_loss = torch.mean(criterion(y_pred_cluster, y_cluster))
-                    optimizer_k.zero_grad()
-                    cluster_loss.backward(retain_graph=True)
-                    optimizer_k.step()
-
-            # Back propagate the error corresponding to last clustering
-            class_loss = torch.tensor(0.).to(args.device)
-            for k in range(args.n_clusters):
-                idx_cluster = np.where(classifier_labels == k)[0]
-                X_cluster = X_latents[idx_cluster]
-                y_cluster = y_batch[idx_cluster]
-
-                classifier_k, optimizer_k = model.classifiers[k]
-                y_pred_cluster = classifier_k(X_cluster)
-                class_loss += torch.sum(q_batch[idx_cluster,k]*criterion(y_pred_cluster, y_cluster))
-
-            class_loss /= len(X_latents)
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
             cluster_id = torch.argmax(q_batch, 1)
-            
-            km_loss = 0
+
+            kl_loss = 0
             cluster_balance_loss = 0
 
-            for j in range(args.n_clusters):
-                pts_index = np.where(cluster_id == j)[0]
-                cluster_pts = X_latents[pts_index]
-                delta_mu[j,:]   = cluster_pts.sum(axis=0)/(1+len(cluster_pts))
-                km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
-
-            q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
-            P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
-            P = P/P.sum()
-            Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
-
-            if args.cluster_balance == "kl":
-                cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
-            else:
-                cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P) - torch.sqrt(Q))
+            kl_loss = F.kl_div(q_batch.log(), p[idx], reduction='batchmean')
 
             loss = reconstr_loss
             if args.beta != 0:
-                loss += args.beta*km_loss
-            if args.gamma != 0:
-                loss += args.gamma*class_loss
-            if args.delta != 0:
-                loss += args.delta*cluster_balance_loss
+                loss += beta*kl_loss
 
             epoch_loss += loss
-            epoch_class_loss += class_loss
-            epoch_balance_loss += cluster_balance_loss
+            epoch_km_loss += kl_loss
             optimizer.zero_grad()
             loss.backward(retain_graph=True)
             optimizer.step()
-            
-            # Update the positive and negative centroids
-            for j in range(args.n_clusters):
-                pts_index = np.where(cluster_id == j)[0]
-                N  = len(pts_index)
-                model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
 
-        print('Epoch: {:02d} | Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
-                    epoch, epoch_loss, epoch_class_loss, epoch_balance_loss))
+        print('Epoch: {:02d} | Loss: {:.3f} | KM Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
+                    epoch, epoch_km_loss, epoch_loss, epoch_class_loss, epoch_balance_loss))
 
     ####################################################################################
     ####################################################################################
@@ -679,6 +615,7 @@ print("E-Test Loss: ", e_test_losses)
 print("Local Test Loss: ", local_sum_test_losses)
 
 print("Model Complexity: ", model_complexity)
+print("Dataset\tk\tF1\tAUC\tSIL\tNHFD")
 
-print("Avg. Test F1\t{:.3f}\tAUC\t{:.3f}\tSIL\t{:.3f}\tNHFD\t{:.3f}".format\
-    (np.average(f1_scores), np.average(auc_scores), np.average(sil_scores), np.average(nhfd_scores)))
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(sil_scores), np.average(nhfd_scores)))

@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 from sklearn.datasets import make_classification, make_blobs
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from scipy.stats import ttest_ind
 from read_patients import get_aki
@@ -16,11 +16,10 @@ import sys
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-DATASETS = ['titanic', 'magic', 'creditcard', 'adult', 'diabetes', 'respiratory',\
-            'cic', 'sepsis', 'synthetic', 'paper_synthetic', 'kidney', 'infant', 'wid_mortality']
+DATASETS = ['diabetes', 'respiratory', 'cic', 'sepsis', 'kidney', 'infant', 'wid_mortality']
 
-DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
-BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
+DATA_DIR = "/Users/shivin/Document/NUS/Research/Data/"
+BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC/"
 
 # Disable Print
 def blockPrint():
@@ -419,14 +418,14 @@ def get_train_val_test_loaders(args):
 
         elif args.dataset == "kidney":
             print("Loading Kidney Train")
-            X_train, y_train, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/train")
+            X_train, y_train, columns = get_dataset(args.dataset, DATA_DIR + "/aki/train")
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
 
             args.input_dim = X_train.shape[1]
             print(args.input_dim)
 
             print("Loading Kidney Test")
-            X_test, y_test, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/aki/test")
+            X_test, y_test, columns = get_dataset(args.dataset, DATA_DIR + "/aki/test")
 
             X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
@@ -434,14 +433,14 @@ def get_train_val_test_loaders(args):
 
         else:
             print("Loading Repiratory Train")
-            X_train, y_train, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/ards/train")
+            X_train, y_train, columns = get_dataset(args.dataset, DATA_DIR + "/ards/train")
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
 
             args.input_dim = X_train.shape[1]
             print(args.input_dim)
 
             print("Loading Respiratory Test")
-            X_test, y_test, columns = get_dataset(args.dataset, "/Users/shivin/Document/NUS/Research/Data/ards/test")
+            X_test, y_test, columns = get_dataset(args.dataset, DATA_DIR + "/ards/test")
 
             X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
