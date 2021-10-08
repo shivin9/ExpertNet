@@ -60,6 +60,7 @@ parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
 parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
 parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -90,6 +91,7 @@ X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
 
 f1_scores, auc_scores = [], []
+blockPrint()
 
 for r in range(5):
     m = NNClassifier(args, input_dim=args.input_dim)
@@ -166,4 +168,5 @@ for r in range(5):
     # print(column_names[best_features])
     # print("=========================\n")
 
+enablePrint()
 print("Avg. Test F1 = {:.3f}, AUC = {:.3f}".format(np.average(f1_scores), np.average(auc_scores)))

@@ -265,8 +265,8 @@ for r in range(len(iter_array)):
 
             print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
                          f'train_loss: {train_loss:.3f} ' +
-                         f'valid_loss: {val_loss:.3f} '  +
-                         f'valid_F1: {val_f1:.3f} '  +
+                         f'valid_loss: {val_loss:.3f} ' +
+                         f'valid_F1: {val_f1:.3f} ' +
                          f'valid_AUC: {val_auc:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
                          f'valid_Silhouette: {val_sil:.3f} ' + 

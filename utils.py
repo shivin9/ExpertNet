@@ -152,6 +152,7 @@ class parameters(object):
         self.beta = parser.beta
         self.gamma = parser.gamma
         self.delta = parser.delta
+        self.eta = parser.eta
         self.hidden_dims = parser.hidden_dims
         self.latent_dim = self.n_z = parser.n_z
         self.n_clusters = parser.n_clusters
