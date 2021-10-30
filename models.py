@@ -100,7 +100,7 @@ class NNClassifier(nn.Module):
             self.input_dim = input_dim
 
         self.classifier = nn.Sequential(
-            nn.Linear(self.input_dim,64),
+            nn.Linear(self.input_dim, 64),
             nn.ReLU(),
             nn.Linear(64, 32),
             nn.ReLU(),

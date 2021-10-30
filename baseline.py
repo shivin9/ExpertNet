@@ -169,4 +169,6 @@ for r in range(5):
     # print("=========================\n")
 
 enablePrint()
-print("Avg. Test F1 = {:.3f}, AUC = {:.3f}".format(np.average(f1_scores), np.average(auc_scores)))
+print("Dataset\tk\tF1\tAUC")
+
+print("{}\t{}\t{:.3f}\t{:.3f}".format(args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores)))

@@ -15,11 +15,10 @@ from read_patients import get_aki
 import sys
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
+DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic']
 
-DATASETS = ['diabetes', 'respiratory', 'cic', 'sepsis', 'kidney', 'infant', 'wid_mortality']
-
-DATA_DIR = "/Users/shivin/Document/NUS/Research/Data/"
-BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC/"
+DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
+BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
 
 # Disable Print
 def blockPrint():
@@ -126,7 +125,6 @@ def is_non_zero_file(fpath):
     return os.path.isfile(fpath) and os.path.getsize(fpath) > 0
 
 
-
 class parameters(object):
     def __init__(self, parser):
         self.input_dim = -1
@@ -193,8 +191,7 @@ def cluster_acc(y_true, y_pred):
 
 def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
     reducer = umap.UMAP(random_state=42)
-#     idx = torch.Tensor(np.random.randint(0,len(X_train),\
-#                         int(0.1*len(X_train)))).type(torch.LongTensor).to(device)
+    # idx = torch.Tensor(np.random.randint(0,len(X_train), int(0.1*len(X_train)))).type(torch.LongTensor).to(device)
     idx = range(int(0.2*len(X_train)))
     qs, latents_X = model(X_train[idx], output="latent")
     q_train = qs[0]
@@ -302,46 +299,6 @@ def get_dataset(DATASET, DATA_DIR):
         y = y.astype(int)
         enc = OneHotEncoder(handle_unknown='ignore')
         X = enc.fit_transform(X).toarray()
-    
-    elif DATASET == "kidney":
-        print("Fetching Kidney Dataset")
-        data = get_aki(DATA_DIR)
-        X = pd.concat(data,axis=1).T
-        columns = X.columns
-
-        data_columns = list(columns[1:90]) + ['y'] # get the columns which have data, not mask
-        non_binary_columns = data_columns[:81] # only these columns have non-binary data fit for scaling
-
-        X = X.fillna(0)
-        X = X[data_columns]
-
-        y = X['y'].to_numpy().astype(int)
-        X = X.drop(columns=['y'])
-
-        scaler = MinMaxScaler()
-        X[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X[non_binary_columns]))
-        X = X.to_numpy()
-        os.chdir(BASE_DIR)
-
-    elif DATASET == "respiratory":
-        print("Fetching Respiratory Dataset")
-        data = get_aki(DATA_DIR)
-        X = pd.concat(data,axis=1).T
-        columns = X.columns
-
-        data_columns = list(columns[1:90]) + ['y'] # get the columns which have data, not mask
-        non_binary_columns = data_columns[:81] # only these columns have non-binary data fit for scaling
-
-        X = X.fillna(0)
-        X = X[data_columns]
-
-        y = X['y'].to_numpy().astype(int)
-        X = X.drop(columns=['y'])
-
-        scaler = MinMaxScaler()
-        X[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X[non_binary_columns]))
-        X = X.to_numpy()
-        os.chdir(BASE_DIR)
 
     else:
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
@@ -386,7 +343,7 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
 
 def get_train_val_test_loaders(args):
     if args.dataset in DATASETS:
-        if args.dataset != "kidney" and args.dataset != "respiratory":
+        if args.dataset != "aki" and args.dataset != "ards":
             print("Loading Dataset ", args.dataset)
             if args.dataset == "synthetic":
                 n_feat = 45
@@ -417,35 +374,32 @@ def get_train_val_test_loaders(args):
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
-        elif args.dataset == "kidney":
-            print("Loading Kidney Train")
-            X_train, y_train, columns = get_dataset(args.dataset, DATA_DIR + "/aki/train")
+        elif args.dataset == "aki":
+            print("Loading aki Train")
+            X, y, columns = get_dataset(args.dataset, DATA_DIR)
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
 
             args.input_dim = X_train.shape[1]
-            print(args.input_dim)
-
-            print("Loading Kidney Test")
-            X_test, y_test, columns = get_dataset(args.dataset, DATA_DIR + "/aki/test")
 
             X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
         else:
-            print("Loading Repiratory Train")
-            X_train, y_train, columns = get_dataset(args.dataset, DATA_DIR + "/ards/train")
+            print("Loading ards Train")
+            X, y, columns = get_dataset(args.dataset, DATA_DIR)
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
 
             args.input_dim = X_train.shape[1]
-            print(args.input_dim)
-
-            print("Loading Respiratory Test")
-            X_test, y_test, columns = get_dataset(args.dataset, DATA_DIR + "/ards/test")
 
             X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
+
             
         train_loader = torch.utils.data.DataLoader(X_train_data_loader,
             batch_size=args.batch_size, shuffle=True)

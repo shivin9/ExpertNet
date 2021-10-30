@@ -3,7 +3,6 @@ import copy
 import torch
 import argparse
 import numpy as np
-import umap
 import os
 from torchvision import datasets, transforms
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score,\
@@ -58,8 +57,9 @@ parser.add_argument('--cluster_balance', default='hellinger')
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.0, type=float) # Class seploss wt
+parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -114,6 +114,10 @@ elif args.ablation == "gamma":
 elif args.ablation == "delta":
     iter_array = deltas
     iteration_name = "Delta"
+
+elif args.ablation == "eta":
+    iter_array = [0, 0.1]
+    iteration_name = "Eta"
 
 elif args.ablation == "k":
     iter_array = ks
@@ -307,7 +311,7 @@ for r in range(len(iter_array)):
                 pts_index = np.where(cluster_id == j)[0]
                 cluster_pts = X_latents[pts_index]
                 delta_mu[j,:]   = cluster_pts.sum(axis=0)/(1+len(cluster_pts))
-                km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
+                km_loss += torch.pow(torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j]),2)/(1+len(cluster_pts))
 
             loss = reconstr_loss
             if args.beta != 0:
@@ -323,7 +327,7 @@ for r in range(len(iter_array)):
             for j in range(args.n_clusters):
                 pts_index = np.where(cluster_id == j)[0]
                 N  = len(pts_index)
-                model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
+                model.cluster_layer.data[j:] -= (1/(100+N))*delta_mu[j:]
 
         print('Epoch: {:02d} | Loss: {:.3f} | KM Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
                     epoch, epoch_km_loss, epoch_loss, epoch_class_loss, epoch_balance_loss))
@@ -533,7 +537,7 @@ for r in range(len(iter_array)):
     e_test_losses.append(e_test_loss.item())
     local_sum_test_losses.append(local_sum_loss.item())
 
-    enablePrint()
+    # enablePrint()
     print("Run #{}".format(r))
 
     print('Loss Metrics - Test Loss {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
@@ -617,6 +621,8 @@ print("E-Test Loss: ", e_test_losses)
 print("Local Test Loss: ", local_sum_test_losses)
 
 print("Model Complexity: ", model_complexity)
+
+enablePrint()
 print("Dataset\tk\tF1\tAUC\tSIL\tNHFD")
 
 print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\

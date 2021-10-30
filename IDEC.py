@@ -58,8 +58,9 @@ parser.add_argument('--cluster_balance', default='hellinger')
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.0, type=float) # Class seploss wt
+parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -76,7 +77,7 @@ parser = parser.parse_args()
 args = parameters(parser)
 base_suffix = ""
 
-for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta']:
+for key in ['n_clusters', 'alpha', 'beta']:
     print(key, args.__dict__[key])
 
 base_suffix += args.dataset + "_"
@@ -531,7 +532,6 @@ for r in range(len(iter_array)):
     e_test_losses.append(e_test_loss.item())
     local_sum_test_losses.append(local_sum_loss.item())
 
-    enablePrint()
     print("Run #{}".format(r))
 
     print('Loss Metrics - Test Loss {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
@@ -613,8 +613,10 @@ print("E-Train Loss: ", e_train_losses)
 print("Test Loss: ", test_losses)
 print("E-Test Loss: ", e_test_losses)
 print("Local Test Loss: ", local_sum_test_losses)
-
 print("Model Complexity: ", model_complexity)
+
+enablePrint()
+
 print("Dataset\tk\tF1\tAUC\tSIL\tNHFD")
 
 print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\

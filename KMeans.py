@@ -58,8 +58,9 @@ parser.add_argument('--cluster_balance', default='hellinger')
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.0, type=float) # Class seploss wt
+parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -375,7 +376,6 @@ for r in range(len(iter_array)):
 
     # print("Average Feature Difference: ", feature_diff/cntr)
 
-enablePrint()
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
 
@@ -389,5 +389,6 @@ print("Local Test Loss: ", local_sum_test_losses)
 
 print("Model Complexity: ", model_complexity)
 
+enablePrint()
 print("Dataset\t{}\tk\t{}\tF1\t{:.3f}\tAUC\t{:.3f}\tSIL\t{:.3f}\tNHFD\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(sil_scores), np.average(nhfd_scores)))
