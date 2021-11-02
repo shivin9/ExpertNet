@@ -68,6 +68,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
+parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 # parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
@@ -96,7 +97,7 @@ X_test, y_test, test_loader = test_data
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores , sil_scores, nhfd_scores, w_nhfd_scores = [], [], [], [], [], []
+f1_scores, auc_scores, acc_scores , sil_scores, mifd_scores, nhfd_scores, w_nhfd_scores = [], [], [], [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -124,7 +125,8 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
-    blockPrint()
+    if args.verbose == False:
+        blockPrint()
     print(iteration_name, ":", iter_array[r])
 
     if args.ablation == "beta":
@@ -258,6 +260,7 @@ for r in range(len(iter_array)):
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
             val_feature_diff = calculate_nhfd(X_val, cluster_ids)
+            val_MIFD = calculate_MIFD(X_val, cluster_ids)
             complexity_term = 0
             # complexity_term  = calculate_bound(model, B, len(z_train))
 
@@ -278,6 +281,7 @@ for r in range(len(iter_array)):
                          f'valid_F1: {val_f1:.3f} '  +
                          f'valid_AUC: {val_auc:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
+                         f'valid_MIFD: {val_MIFD:.3f} ' + 
                          f'valid_Silhouette: {val_sil:.3f} ' + 
                          f'Complexity Term: {complexity_term:.3f}')
 
@@ -560,6 +564,7 @@ for r in range(len(iter_array)):
             e_train_losses.append(e_train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             nhfd_scores.append(calculate_nhfd(X_train,  cluster_ids_train))
+            mifd_scores.append(calculate_MIFD(X_train,  cluster_ids_train))
             # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
 
@@ -706,6 +711,7 @@ print("Test AUC: ", auc_scores)
 
 print("Sil scores: ", sil_scores)
 print("NHFD: ", nhfd_scores)
+print("MIFD: ", mifd_scores)
 
 print("Train Loss: ", train_losses)
 print("E-Train Loss: ", e_train_losses)
@@ -717,10 +723,11 @@ print("Local Test Loss: ", local_sum_test_losses)
 print("Model Complexity: ", model_complexity)
 
 enablePrint()
-print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tW-NHFD")
+print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tMIFD\tW-NHFD")
 
 print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores), np.average(w_nhfd_scores)))
+    np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores),\
+    np.average(mifd_scores), np.average(w_nhfd_scores)))
 
 print("\n")

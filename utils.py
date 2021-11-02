@@ -6,6 +6,7 @@ import os
 import torch
 from torch.utils.data import Dataset
 from sklearn.datasets import make_classification, make_blobs
+from sklearn.metrics import mutual_info_score
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
@@ -61,10 +62,49 @@ def calculate_nhfd(X, cluster_ids):
                 Xi = X[ci]
                 Xj = X[cj]
                 feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/input_dim
+                # feature_diff += torch.nn.functional.kl_div(Xi.log(), Xj, reduction='batchmean')
                 cntr += 1
     if cntr == 0:
         return 0
     return feature_diff/cntr
+
+
+def calc_MI(x, y, bins=10):
+    minn = min(np.min(x), np.min(y))
+    maxx = max(np.max(x), np.max(y))
+    h1 = np.histogram(x, np.arange(minn, maxx, 0.1))[0]
+    h2 = np.histogram(y, np.arange(minn, maxx, 0.1))[0]
+    c_xy = np.histogram2d(h1, h2, bins)[0]
+    if np.sum(c_xy) == 0:
+        return 0
+    # print(minn, maxx)
+    # print(h1, h2, x, y)
+    # print(c_xy)
+    mi = mutual_info_score(None, None, contingency=c_xy)
+    return mi
+
+
+def calculate_MIFD(X, cluster_ids):
+    cluster_entrpy = 0
+    cntr = 0
+    n_columns = X.shape[1]
+    n_clusters = len(torch.unique(cluster_ids))
+    input_dim = X.shape[1]
+    for i in range(n_clusters):
+        for j in range(n_clusters):
+            if i > j:
+                ci = torch.where(cluster_ids == i)[0]
+                cj = torch.where(cluster_ids == j)[0]
+                Xi = X[ci]
+                Xj = X[cj]
+                col_entrpy = 0
+                for c in range(n_columns):
+                    col_entrpy += calc_MI(Xi[:,c], Xj[:,c])
+                cluster_entrpy += col_entrpy/n_columns
+                cntr += 1
+    if cntr == 0:
+        return 0
+    return cluster_entrpy/cntr
 
 
 def load_mnist(path='./data/mnist.npz'):
@@ -159,6 +199,7 @@ class parameters(object):
 
         # Utility parameters
         self.device = parser.device
+        self.verbose = parser.verbose
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
 
