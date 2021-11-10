@@ -61,7 +61,10 @@ def calculate_nhfd(X, cluster_ids):
                 cj = torch.where(cluster_ids == j)[0]
                 Xi = X[ci]
                 Xj = X[cj]
-                feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/input_dim
+                # feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/input_dim
+                # Take the max element and take negative exp weighted by 0.05
+                max_p_val = np.max(np.nan_to_num(ttest_ind(Xi, Xj, axis=0)[1]))
+                feature_diff += np.exp(-max_p_val/0.05)
                 # feature_diff += torch.nn.functional.kl_div(Xi.log(), Xj, reduction='batchmean')
                 cntr += 1
     if cntr == 0:
@@ -89,7 +92,6 @@ def calculate_MIFD(X, cluster_ids):
     cntr = 0
     n_columns = X.shape[1]
     n_clusters = len(torch.unique(cluster_ids))
-    input_dim = X.shape[1]
     for i in range(n_clusters):
         for j in range(n_clusters):
             if i > j:
@@ -105,60 +107,6 @@ def calculate_MIFD(X, cluster_ids):
     if cntr == 0:
         return 0
     return cluster_entrpy/cntr
-
-
-def load_mnist(path='./data/mnist.npz'):
-    f = np.load(path)
-
-    x_train, y_train, x_test, y_test = f['x_train'], f['y_train'], f[
-        'x_test'], f['y_test']
-    f.close()
-    x = np.concatenate((x_train, x_test))
-    y = np.concatenate((y_train, y_test)).astype(np.int32)
-    x = x.reshape((x.shape[0], -1)).astype(np.float32)
-    x = np.divide(x, 255.)
-    print('MNIST samples', x.shape)
-    return x, y
-
-
-class MnistDataset(Dataset):
-
-    def __init__(self):
-        self.x, self.y = load_mnist()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-
-
-def load_mnist(path='./data/mnist.npz'):
-    f = np.load(path)
-
-    x_train, y_train, x_test, y_test = f['x_train'], f['y_train'], f[
-        'x_test'], f['y_test']
-    f.close()
-    x = np.concatenate((x_train, x_test))
-    y = np.concatenate((y_train, y_test)).astype(np.int32)
-    x = x.reshape((x.shape[0], -1)).astype(np.float32)
-    x = np.divide(x, 255.)
-    print('MNIST samples', x.shape)
-    return x, y
-
-
-class MnistDataset(Dataset):
-
-    def __init__(self):
-        self.x, self.y = load_mnist()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
 
 
 def is_non_zero_file(fpath):

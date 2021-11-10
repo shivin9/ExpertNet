@@ -121,7 +121,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(5)
+    iter_array = range(1)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -248,10 +248,10 @@ for r in range(len(iter_array)):
                     preds[:,0] += q_val[:,j]*cluster_preds[:,0]
                     preds[:,1] += q_val[:,j]*cluster_preds[:,1]
 
-            # print("qval", torch.sum(q_val, axis=0))
-            # print("Cluster Counts", np.bincount(cluster_ids))
-            # print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
-            #                         torch.ones(args.n_clusters)/args.n_clusters))
+            print("qval", torch.sum(q_val, axis=0))
+            print("Cluster Counts", np.bincount(cluster_ids))
+            print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
+                                    torch.ones(args.n_clusters)/args.n_clusters))
 
             # Classification Matrics
             val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
@@ -313,7 +313,7 @@ for r in range(len(iter_array)):
 
             classifier_labels = np.zeros(len(idx))
             sub_epochs = min(10, 1 + int(epoch/5))
-            # sub_epochs = 10
+
             if args.attention == False:
                 classifier_labels = np.argmax(q_batch.detach().cpu().numpy(), axis=1)
 
@@ -353,6 +353,7 @@ for r in range(len(iter_array)):
             delta_mu_n = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
 
             cluster_id = torch.argmax(q_batch, 1)
+            # print(np.bincount(cluster_id.cpu().numpy()))
 
             positive_class_dist = 0
             negative_class_dist = 0
