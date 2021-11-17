@@ -1,0 +1,1301 @@
+cic	1	0.278	0.785	0.000	0.000
+cic	2	0.331	0.826	0.393	0.893
+cic	3	0.261	0.813	0.315	0.707
+cic	4	0.165	0.807	0.092	0.785
+
+sepsis	1	0.440	0.824	0.000	0.000
+sepsis	2	0.492	0.840	nan	nan
+sepsis	3	0.361	0.825	0.268	0.850
+sepsis	4	0.382	0.828	nan	nan
+
+aki	1	0.568	0.594	0.000	0.000
+aki	2	0.542	0.617	0.629	0.742
+aki	3	0.488	0.567	0.617	0.782
+aki	4	0.575	0.592	0.852	0.732
+
+ards	1	0.053	0.678	0.000	0.000
+ards	2	0.030	0.651	0.636	0.806
+ards	3	0.000	0.599	0.575	0.723
+ards	4	0.019	0.648	nan	nan
+
+wid_mortality	1	0.331	0.853	0.000	0.000
+wid_mortality	2	0.282	0.849	0.398	0.946
+wid_mortality	3	0.280	0.850	0.438	0.920
+wid_mortality	4	0.217	0.798	0.421	0.910
+
+diabetes	1	0.238	0.581	0.000	0.000
+diabetes	2	0.154	0.557	0.495	0.972
+diabetes	3	0.119	0.569	0.351	0.938
+diabetes	4	0.092	0.575	nan	nan
+
+
+Loading Dataset  cic
+cic
+Run : 0
+DCN
+CIC
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  cic
+cic
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+cic	1	0.211	0.714	0.858	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  cic
+cic
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+cic	2	0.204	0.734	0.862	0.467	0.455	0.736
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  cic
+cic
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+cic	3	0.209	0.768	0.717	0.252	0.255	0.693
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  cic
+cic
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+cic	4	0.143	0.736	0.857	nan	nan	nan
+
+
+DCN
+Sepsis
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  sepsis
+sepsis
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+sepsis	1	0.229	0.678	0.759	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  sepsis
+sepsis
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+sepsis	2	0.239	0.792	0.933	0.454	0.694	0.490
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  sepsis
+sepsis
+Run : 0
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  sepsis
+sepsis
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+sepsis	4	0.430	0.827	0.943	0.133	0.638	0.500
+
+
+DCN
+Kidney
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading aki Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+aki	1	0.613	0.596	0.534	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading aki Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+aki	2	0.516	0.602	0.575	0.589	0.254	3.035
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading aki Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+aki	3	0.540	0.584	0.544	0.768	0.241	2.469
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading aki Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+aki	4	0.540	0.594	0.571	0.503	0.159	1.934
+
+
+DCN
+Respiratory
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading ards Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+ards	1	0.110	0.716	0.926	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading ards Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+ards	2	0.024	0.620	0.863	0.919	0.445	5.681
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading ards Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+ards	3	0.027	0.595	0.849	0.650	0.060	3.963
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading ards Train
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+ards	4	0.001	0.662	0.928	0.418	0.149	3.199
+
+
+DCN
+Wid_Mortality
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+wid_mortality
+Run : 0
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+wid_mortality	1	0.124	0.772	0.916	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+wid_mortality
+Run : 0
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+Starting Training
+
+[ 0/50] train_loss: 0.554 valid_loss: 0.557 valid_F1: 0.000 valid_AUC: 0.588 valid_Feature_p: 0.557 valid_Silhouette: 0.228 Complexity Term: 0.000
+Epoch: 00 | Loss: 5817.900 | KM Loss: 2981.325 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 01 | Loss: 412.222 | KM Loss: 290.183 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 2/50] train_loss: 0.566 valid_loss: 0.566 valid_F1: 0.000 valid_AUC: 0.656 valid_Feature_p: 0.472 valid_Silhouette: 0.839 Complexity Term: 0.000
+Epoch: 02 | Loss: 167.396 | KM Loss: 166.103 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 03 | Loss: 96.150 | KM Loss: 124.760 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 4/50] train_loss: 0.571 valid_loss: 0.571 valid_F1: 0.000 valid_AUC: 0.658 valid_Feature_p: 0.471 valid_Silhouette: 0.859 Complexity Term: 0.000
+Epoch: 04 | Loss: 64.100 | KM Loss: 104.021 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 05 | Loss: 46.643 | KM Loss: 92.056 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 6/50] train_loss: 0.573 valid_loss: 0.573 valid_F1: 0.000 valid_AUC: 0.655 valid_Feature_p: 0.470 valid_Silhouette: 0.830 Complexity Term: 0.000
+EarlyStopping counter: 1 out of 7
+Epoch: 06 | Loss: 35.998 | KM Loss: 83.621 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 07 | Loss: 30.624 | KM Loss: 78.477 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 8/50] train_loss: 0.574 valid_loss: 0.576 valid_F1: 0.000 valid_AUC: 0.640 valid_Feature_p: 0.470 valid_Silhouette: 0.758 Complexity Term: 0.000
+EarlyStopping counter: 2 out of 7
+Epoch: 08 | Loss: 26.962 | KM Loss: 74.351 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 09 | Loss: 23.828 | KM Loss: 70.720 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[10/50] train_loss: 0.575 valid_loss: 0.579 valid_F1: 0.000 valid_AUC: 0.639 valid_Feature_p: 0.474 valid_Silhouette: 0.629 Complexity Term: 0.000
+EarlyStopping counter: 3 out of 7
+Epoch: 10 | Loss: 21.504 | KM Loss: 67.028 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 11 | Loss: 20.188 | KM Loss: 65.078 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[12/50] train_loss: 0.575 valid_loss: 0.581 valid_F1: 0.000 valid_AUC: 0.642 valid_Feature_p: 0.476 valid_Silhouette: 0.443 Complexity Term: 0.000
+EarlyStopping counter: 4 out of 7
+Epoch: 12 | Loss: 19.173 | KM Loss: 63.304 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 13 | Loss: 18.327 | KM Loss: 61.796 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[14/50] train_loss: 0.576 valid_loss: 0.581 valid_F1: 0.000 valid_AUC: 0.634 valid_Feature_p: 0.478 valid_Silhouette: 0.267 Complexity Term: 0.000
+EarlyStopping counter: 5 out of 7
+Epoch: 14 | Loss: 17.668 | KM Loss: 60.067 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 15 | Loss: 15.230 | KM Loss: 56.246 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[16/50] train_loss: 0.577 valid_loss: 0.581 valid_F1: 0.000 valid_AUC: 0.635 valid_Feature_p: 0.439 valid_Silhouette: 0.141 Complexity Term: 0.000
+EarlyStopping counter: 6 out of 7
+Epoch: 16 | Loss: 14.753 | KM Loss: 55.188 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 17 | Loss: 16.102 | KM Loss: 57.813 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[18/50] train_loss: 0.590 valid_loss: 0.581 valid_F1: 0.000 valid_AUC: 0.590 valid_Feature_p: 0.295 valid_Silhouette: 0.022 Complexity Term: 0.000
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.0, 0.6582503441921269]
+
+[18/50] train_loss: 0.268 valid_loss: 0.279 valid_F1: 0.000 valid_AUC: 0.627 valid_Sil: 0.859
+
+[18/50] train_loss: 0.268 valid_loss: 0.278 valid_F1: 0.000 valid_AUC: 0.664 valid_Sil: 0.859
+
+[18/50] train_loss: 0.265 valid_loss: 0.274 valid_F1: 0.000 valid_AUC: 0.686 valid_Sil: 0.859
+
+[18/50] train_loss: 0.262 valid_loss: 0.271 valid_F1: 0.000 valid_AUC: 0.696 valid_Sil: 0.859
+
+[18/50] train_loss: 0.261 valid_loss: 0.270 valid_F1: 0.000 valid_AUC: 0.703 valid_Sil: 0.859
+
+[18/50] train_loss: 0.262 valid_loss: 0.271 valid_F1: 0.000 valid_AUC: 0.708 valid_Sil: 0.859
+
+[18/50] train_loss: 0.259 valid_loss: 0.268 valid_F1: 0.000 valid_AUC: 0.713 valid_Sil: 0.859
+
+[18/50] train_loss: 0.258 valid_loss: 0.267 valid_F1: 0.000 valid_AUC: 0.716 valid_Sil: 0.859
+
+[18/50] train_loss: 0.257 valid_loss: 0.266 valid_F1: 0.000 valid_AUC: 0.719 valid_Sil: 0.859
+
+[18/50] train_loss: 0.255 valid_loss: 0.265 valid_F1: 0.000 valid_AUC: 0.721 valid_Sil: 0.859
+
+[18/50] train_loss: 0.255 valid_loss: 0.265 valid_F1: 0.000 valid_AUC: 0.724 valid_Sil: 0.859
+
+[18/50] train_loss: 0.253 valid_loss: 0.263 valid_F1: 0.000 valid_AUC: 0.726 valid_Sil: 0.859
+
+[18/50] train_loss: 0.253 valid_loss: 0.263 valid_F1: 0.000 valid_AUC: 0.728 valid_Sil: 0.859
+
+[18/50] train_loss: 0.254 valid_loss: 0.264 valid_F1: 0.000 valid_AUC: 0.731 valid_Sil: 0.859
+
+[18/50] train_loss: 0.251 valid_loss: 0.262 valid_F1: 0.001 valid_AUC: 0.732 valid_Sil: 0.859
+
+[18/50] train_loss: 0.252 valid_loss: 0.262 valid_F1: 0.003 valid_AUC: 0.734 valid_Sil: 0.859
+
+[18/50] train_loss: 0.250 valid_loss: 0.261 valid_F1: 0.007 valid_AUC: 0.735 valid_Sil: 0.859
+
+[18/50] train_loss: 0.252 valid_loss: 0.262 valid_F1: 0.003 valid_AUC: 0.738 valid_Sil: 0.859
+
+[18/50] train_loss: 0.250 valid_loss: 0.260 valid_F1: 0.015 valid_AUC: 0.737 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+[18/50] train_loss: 0.249 valid_loss: 0.260 valid_F1: 0.026 valid_AUC: 0.737 valid_Sil: 0.859
+EarlyStopping counter: 2 out of 7
+
+[18/50] train_loss: 0.249 valid_loss: 0.260 valid_F1: 0.024 valid_AUC: 0.739 valid_Sil: 0.859
+
+[18/50] train_loss: 0.248 valid_loss: 0.260 valid_F1: 0.026 valid_AUC: 0.738 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+[18/50] train_loss: 0.250 valid_loss: 0.261 valid_F1: 0.008 valid_AUC: 0.739 valid_Sil: 0.859
+
+[18/50] train_loss: 0.248 valid_loss: 0.260 valid_F1: 0.022 valid_AUC: 0.740 valid_Sil: 0.859
+
+[18/50] train_loss: 0.249 valid_loss: 0.261 valid_F1: 0.014 valid_AUC: 0.740 valid_Sil: 0.859
+
+[18/50] train_loss: 0.248 valid_loss: 0.261 valid_F1: 0.014 valid_AUC: 0.740 valid_Sil: 0.859
+
+[18/50] train_loss: 0.247 valid_loss: 0.260 valid_F1: 0.015 valid_AUC: 0.741 valid_Sil: 0.859
+
+[18/50] train_loss: 0.246 valid_loss: 0.260 valid_F1: 0.032 valid_AUC: 0.739 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+[18/50] train_loss: 0.247 valid_loss: 0.260 valid_F1: 0.018 valid_AUC: 0.743 valid_Sil: 0.859
+
+[18/50] train_loss: 0.248 valid_loss: 0.262 valid_F1: 0.010 valid_AUC: 0.743 valid_Sil: 0.859
+
+[18/50] train_loss: 0.248 valid_loss: 0.261 valid_F1: 0.004 valid_AUC: 0.739 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+[18/50] train_loss: 0.248 valid_loss: 0.262 valid_F1: 0.004 valid_AUC: 0.742 valid_Sil: 0.859
+EarlyStopping counter: 2 out of 7
+
+[18/50] train_loss: 0.247 valid_loss: 0.261 valid_F1: 0.020 valid_AUC: 0.744 valid_Sil: 0.859
+
+[18/50] train_loss: 0.246 valid_loss: 0.261 valid_F1: 0.016 valid_AUC: 0.742 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+[18/50] train_loss: 0.245 valid_loss: 0.260 valid_F1: 0.024 valid_AUC: 0.741 valid_Sil: 0.859
+EarlyStopping counter: 2 out of 7
+
+[18/50] train_loss: 0.246 valid_loss: 0.261 valid_F1: 0.014 valid_AUC: 0.742 valid_Sil: 0.859
+EarlyStopping counter: 3 out of 7
+
+[18/50] train_loss: 0.245 valid_loss: 0.261 valid_F1: 0.014 valid_AUC: 0.741 valid_Sil: 0.859
+EarlyStopping counter: 4 out of 7
+
+[18/50] train_loss: 0.245 valid_loss: 0.261 valid_F1: 0.022 valid_AUC: 0.743 valid_Sil: 0.859
+EarlyStopping counter: 5 out of 7
+
+[18/50] train_loss: 0.247 valid_loss: 0.262 valid_F1: 0.012 valid_AUC: 0.745 valid_Sil: 0.859
+
+[18/50] train_loss: 0.246 valid_loss: 0.261 valid_F1: 0.012 valid_AUC: 0.746 valid_Sil: 0.859
+
+[18/50] train_loss: 0.244 valid_loss: 0.260 valid_F1: 0.015 valid_AUC: 0.745 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+[18/50] train_loss: 0.244 valid_loss: 0.260 valid_F1: 0.023 valid_AUC: 0.745 valid_Sil: 0.859
+EarlyStopping counter: 2 out of 7
+
+[18/50] train_loss: 0.243 valid_loss: 0.260 valid_F1: 0.020 valid_AUC: 0.744 valid_Sil: 0.859
+EarlyStopping counter: 3 out of 7
+
+[18/50] train_loss: 0.243 valid_loss: 0.260 valid_F1: 0.024 valid_AUC: 0.745 valid_Sil: 0.859
+EarlyStopping counter: 4 out of 7
+
+[18/50] train_loss: 0.243 valid_loss: 0.260 valid_F1: 0.019 valid_AUC: 0.745 valid_Sil: 0.859
+EarlyStopping counter: 5 out of 7
+
+[18/50] train_loss: 0.245 valid_loss: 0.261 valid_F1: 0.010 valid_AUC: 0.746 valid_Sil: 0.859
+
+[18/50] train_loss: 0.242 valid_loss: 0.260 valid_F1: 0.020 valid_AUC: 0.745 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+[18/50] train_loss: 0.242 valid_loss: 0.261 valid_F1: 0.028 valid_AUC: 0.745 valid_Sil: 0.859
+EarlyStopping counter: 2 out of 7
+
+[18/50] train_loss: 0.243 valid_loss: 0.261 valid_F1: 0.035 valid_AUC: 0.748 valid_Sil: 0.859
+
+[18/50] train_loss: 0.243 valid_loss: 0.261 valid_F1: 0.019 valid_AUC: 0.748 valid_Sil: 0.859
+EarlyStopping counter: 1 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  True
+Loading Best model with score:  [0.034666666666666665, 0.7480485651779646]
+Run #0
+Loss Metrics - Test Loss 0.271, E-Test Loss 0.269, Local Sum Test Loss 0.257
+Clustering Metrics     - Acc 0.0000 , nmi 0.0000 , ari 0.0000, NHFD 0.563
+Classification Metrics - Test F1 0.045, Test AUC 0.745, Test ACC 0.914 , E-Test F1 0.044, E-Test AUC 0.745, E-Test ACC 0.914
+Run : 1
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+Starting Training
+
+[ 0/50] train_loss: 0.742 valid_loss: 0.753 valid_F1: 0.156 valid_AUC: 0.665 valid_Feature_p: 0.559 valid_Silhouette: 0.227 Complexity Term: 0.000
+Epoch: 00 | Loss: 6331.809 | KM Loss: 3236.549 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 01 | Loss: 434.454 | KM Loss: 299.994 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 2/50] train_loss: 0.756 valid_loss: 0.757 valid_F1: 0.156 valid_AUC: 0.648 valid_Feature_p: 0.447 valid_Silhouette: 0.834 Complexity Term: 0.000
+EarlyStopping counter: 1 out of 7
+Epoch: 02 | Loss: 175.486 | KM Loss: 168.694 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 03 | Loss: 99.830 | KM Loss: 125.558 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 4/50] train_loss: 0.754 valid_loss: 0.755 valid_F1: 0.156 valid_AUC: 0.643 valid_Feature_p: 0.447 valid_Silhouette: 0.855 Complexity Term: 0.000
+EarlyStopping counter: 2 out of 7
+Epoch: 04 | Loss: 65.735 | KM Loss: 103.613 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 05 | Loss: 47.450 | KM Loss: 91.133 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 6/50] train_loss: 0.754 valid_loss: 0.756 valid_F1: 0.156 valid_AUC: 0.642 valid_Feature_p: 0.442 valid_Silhouette: 0.826 Complexity Term: 0.000
+EarlyStopping counter: 3 out of 7
+Epoch: 06 | Loss: 36.891 | KM Loss: 82.866 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 07 | Loss: 30.896 | KM Loss: 77.388 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 8/50] train_loss: 0.755 valid_loss: 0.758 valid_F1: 0.156 valid_AUC: 0.638 valid_Feature_p: 0.445 valid_Silhouette: 0.755 Complexity Term: 0.000
+EarlyStopping counter: 4 out of 7
+Epoch: 08 | Loss: 26.965 | KM Loss: 73.298 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 09 | Loss: 23.663 | KM Loss: 68.798 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[10/50] train_loss: 0.755 valid_loss: 0.760 valid_F1: 0.156 valid_AUC: 0.634 valid_Feature_p: 0.448 valid_Silhouette: 0.631 Complexity Term: 0.000
+EarlyStopping counter: 5 out of 7
+Epoch: 10 | Loss: 21.191 | KM Loss: 65.832 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 11 | Loss: 19.868 | KM Loss: 63.686 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[12/50] train_loss: 0.755 valid_loss: 0.761 valid_F1: 0.156 valid_AUC: 0.629 valid_Feature_p: 0.456 valid_Silhouette: 0.454 Complexity Term: 0.000
+EarlyStopping counter: 6 out of 7
+Epoch: 12 | Loss: 18.675 | KM Loss: 62.078 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 13 | Loss: 17.576 | KM Loss: 59.259 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[14/50] train_loss: 0.755 valid_loss: 0.762 valid_F1: 0.156 valid_AUC: 0.610 valid_Feature_p: 0.455 valid_Silhouette: 0.282 Complexity Term: 0.000
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.15596822670674107, 0.6649656808984331]
+
+[14/50] train_loss: 0.170 valid_loss: 0.272 valid_F1: 0.000 valid_AUC: 0.631 valid_Sil: 0.227
+
+[14/50] train_loss: 0.148 valid_loss: 0.234 valid_F1: 0.090 valid_AUC: 0.786 valid_Sil: 0.227
+
+[14/50] train_loss: 0.139 valid_loss: 0.222 valid_F1: 0.289 valid_AUC: 0.817 valid_Sil: 0.227
+
+[14/50] train_loss: 0.138 valid_loss: 0.220 valid_F1: 0.255 valid_AUC: 0.822 valid_Sil: 0.227
+
+[14/50] train_loss: 0.136 valid_loss: 0.218 valid_F1: 0.275 valid_AUC: 0.828 valid_Sil: 0.227
+
+[14/50] train_loss: 0.135 valid_loss: 0.217 valid_F1: 0.306 valid_AUC: 0.829 valid_Sil: 0.227
+
+[14/50] train_loss: 0.134 valid_loss: 0.215 valid_F1: 0.305 valid_AUC: 0.838 valid_Sil: 0.227
+
+[14/50] train_loss: 0.133 valid_loss: 0.216 valid_F1: 0.316 valid_AUC: 0.835 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.133 valid_loss: 0.214 valid_F1: 0.316 valid_AUC: 0.838 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.133 valid_loss: 0.215 valid_F1: 0.321 valid_AUC: 0.841 valid_Sil: 0.227
+
+[14/50] train_loss: 0.132 valid_loss: 0.213 valid_F1: 0.337 valid_AUC: 0.846 valid_Sil: 0.227
+
+[14/50] train_loss: 0.131 valid_loss: 0.213 valid_F1: 0.340 valid_AUC: 0.844 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.130 valid_loss: 0.212 valid_F1: 0.329 valid_AUC: 0.842 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.129 valid_loss: 0.211 valid_F1: 0.342 valid_AUC: 0.846 valid_Sil: 0.227
+
+[14/50] train_loss: 0.129 valid_loss: 0.212 valid_F1: 0.334 valid_AUC: 0.843 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.129 valid_loss: 0.211 valid_F1: 0.325 valid_AUC: 0.844 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.128 valid_loss: 0.211 valid_F1: 0.341 valid_AUC: 0.847 valid_Sil: 0.227
+
+[14/50] train_loss: 0.128 valid_loss: 0.210 valid_F1: 0.354 valid_AUC: 0.849 valid_Sil: 0.227
+
+[14/50] train_loss: 0.127 valid_loss: 0.211 valid_F1: 0.342 valid_AUC: 0.848 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.342 valid_AUC: 0.849 valid_Sil: 0.227
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.335 valid_AUC: 0.848 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.329 valid_AUC: 0.850 valid_Sil: 0.227
+
+[14/50] train_loss: 0.126 valid_loss: 0.210 valid_F1: 0.357 valid_AUC: 0.852 valid_Sil: 0.227
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.349 valid_AUC: 0.850 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.340 valid_AUC: 0.852 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.331 valid_AUC: 0.852 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.209 valid_F1: 0.336 valid_AUC: 0.853 valid_Sil: 0.227
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.330 valid_AUC: 0.850 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.348 valid_AUC: 0.852 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.125 valid_loss: 0.210 valid_F1: 0.338 valid_AUC: 0.855 valid_Sil: 0.227
+
+[14/50] train_loss: 0.124 valid_loss: 0.210 valid_F1: 0.363 valid_AUC: 0.854 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.210 valid_F1: 0.346 valid_AUC: 0.852 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.349 valid_AUC: 0.855 valid_Sil: 0.227
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.330 valid_AUC: 0.853 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.122 valid_loss: 0.210 valid_F1: 0.365 valid_AUC: 0.854 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.122 valid_loss: 0.210 valid_F1: 0.351 valid_AUC: 0.855 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.363 valid_AUC: 0.855 valid_Sil: 0.227
+
+[14/50] train_loss: 0.124 valid_loss: 0.210 valid_F1: 0.349 valid_AUC: 0.857 valid_Sil: 0.227
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.345 valid_AUC: 0.855 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.209 valid_F1: 0.351 valid_AUC: 0.852 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.209 valid_F1: 0.367 valid_AUC: 0.854 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.209 valid_F1: 0.358 valid_AUC: 0.855 valid_Sil: 0.227
+EarlyStopping counter: 4 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.209 valid_F1: 0.374 valid_AUC: 0.855 valid_Sil: 0.227
+EarlyStopping counter: 5 out of 7
+
+[14/50] train_loss: 0.120 valid_loss: 0.211 valid_F1: 0.364 valid_AUC: 0.855 valid_Sil: 0.227
+EarlyStopping counter: 6 out of 7
+
+[14/50] train_loss: 0.120 valid_loss: 0.211 valid_F1: 0.383 valid_AUC: 0.855 valid_Sil: 0.227
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  True
+Loading Best model with score:  [0.3492537313432836, 0.8565448570660033]
+Run #1
+Loss Metrics - Test Loss 0.223, E-Test Loss 0.217, Local Sum Test Loss 0.141
+Clustering Metrics     - Acc 0.0000 , nmi 0.0000 , ari 0.0000, NHFD 0.603
+Classification Metrics - Test F1 0.348, Test AUC 0.845, Test ACC 0.921 , E-Test F1 0.338, E-Test AUC 0.856, E-Test ACC 0.922
+Run : 2
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+Starting Training
+
+[ 0/50] train_loss: 0.853 valid_loss: 0.821 valid_F1: 0.156 valid_AUC: 0.671 valid_Feature_p: 0.559 valid_Silhouette: 0.228 Complexity Term: 0.000
+Epoch: 00 | Loss: 5503.648 | KM Loss: 2823.295 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 01 | Loss: 373.638 | KM Loss: 269.402 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 2/50] train_loss: 0.824 valid_loss: 0.823 valid_F1: 0.123 valid_AUC: 0.642 valid_Feature_p: 0.425 valid_Silhouette: 0.843 Complexity Term: 0.000
+EarlyStopping counter: 1 out of 7
+Epoch: 02 | Loss: 155.883 | KM Loss: 158.046 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 03 | Loss: 90.577 | KM Loss: 119.304 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 4/50] train_loss: 0.827 valid_loss: 0.824 valid_F1: 0.156 valid_AUC: 0.632 valid_Feature_p: 0.437 valid_Silhouette: 0.861 Complexity Term: 0.000
+EarlyStopping counter: 2 out of 7
+Epoch: 04 | Loss: 60.084 | KM Loss: 99.525 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 05 | Loss: 43.639 | KM Loss: 88.095 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 6/50] train_loss: 0.828 valid_loss: 0.821 valid_F1: 0.156 valid_AUC: 0.644 valid_Feature_p: 0.420 valid_Silhouette: 0.831 Complexity Term: 0.000
+EarlyStopping counter: 3 out of 7
+Epoch: 06 | Loss: 34.415 | KM Loss: 80.492 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 07 | Loss: 28.513 | KM Loss: 75.006 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 8/50] train_loss: 0.828 valid_loss: 0.814 valid_F1: 0.156 valid_AUC: 0.649 valid_Feature_p: 0.442 valid_Silhouette: 0.756 Complexity Term: 0.000
+EarlyStopping counter: 4 out of 7
+Epoch: 08 | Loss: 25.218 | KM Loss: 71.188 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 09 | Loss: 22.545 | KM Loss: 67.712 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[10/50] train_loss: 0.829 valid_loss: 0.805 valid_F1: 0.156 valid_AUC: 0.627 valid_Feature_p: 0.461 valid_Silhouette: 0.633 Complexity Term: 0.000
+EarlyStopping counter: 5 out of 7
+Epoch: 10 | Loss: 20.184 | KM Loss: 64.145 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 11 | Loss: 21.130 | KM Loss: 65.364 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[12/50] train_loss: 0.829 valid_loss: 0.800 valid_F1: 0.156 valid_AUC: 0.615 valid_Feature_p: 0.464 valid_Silhouette: 0.452 Complexity Term: 0.000
+EarlyStopping counter: 6 out of 7
+Epoch: 12 | Loss: 18.319 | KM Loss: 60.910 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 13 | Loss: 16.500 | KM Loss: 57.456 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[14/50] train_loss: 0.829 valid_loss: 0.797 valid_F1: 0.156 valid_AUC: 0.604 valid_Feature_p: 0.404 valid_Silhouette: 0.289 Complexity Term: 0.000
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.15584415584415584, 0.6710275410970405]
+
+[14/50] train_loss: 0.170 valid_loss: 0.268 valid_F1: 0.000 valid_AUC: 0.730 valid_Sil: 0.228
+
+[14/50] train_loss: 0.151 valid_loss: 0.235 valid_F1: 0.075 valid_AUC: 0.801 valid_Sil: 0.228
+
+[14/50] train_loss: 0.143 valid_loss: 0.226 valid_F1: 0.212 valid_AUC: 0.824 valid_Sil: 0.228
+
+[14/50] train_loss: 0.139 valid_loss: 0.222 valid_F1: 0.272 valid_AUC: 0.835 valid_Sil: 0.228
+
+[14/50] train_loss: 0.138 valid_loss: 0.220 valid_F1: 0.286 valid_AUC: 0.839 valid_Sil: 0.228
+
+[14/50] train_loss: 0.138 valid_loss: 0.219 valid_F1: 0.298 valid_AUC: 0.842 valid_Sil: 0.228
+
+[14/50] train_loss: 0.136 valid_loss: 0.217 valid_F1: 0.281 valid_AUC: 0.844 valid_Sil: 0.228
+
+[14/50] train_loss: 0.135 valid_loss: 0.216 valid_F1: 0.300 valid_AUC: 0.844 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.135 valid_loss: 0.216 valid_F1: 0.298 valid_AUC: 0.845 valid_Sil: 0.228
+
+[14/50] train_loss: 0.134 valid_loss: 0.215 valid_F1: 0.303 valid_AUC: 0.845 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.134 valid_loss: 0.214 valid_F1: 0.299 valid_AUC: 0.848 valid_Sil: 0.228
+
+[14/50] train_loss: 0.133 valid_loss: 0.214 valid_F1: 0.297 valid_AUC: 0.848 valid_Sil: 0.228
+
+[14/50] train_loss: 0.133 valid_loss: 0.213 valid_F1: 0.299 valid_AUC: 0.848 valid_Sil: 0.228
+
+[14/50] train_loss: 0.133 valid_loss: 0.213 valid_F1: 0.307 valid_AUC: 0.850 valid_Sil: 0.228
+
+[14/50] train_loss: 0.132 valid_loss: 0.213 valid_F1: 0.321 valid_AUC: 0.852 valid_Sil: 0.228
+
+[14/50] train_loss: 0.132 valid_loss: 0.213 valid_F1: 0.322 valid_AUC: 0.850 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.131 valid_loss: 0.212 valid_F1: 0.316 valid_AUC: 0.850 valid_Sil: 0.228
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.130 valid_loss: 0.212 valid_F1: 0.327 valid_AUC: 0.853 valid_Sil: 0.228
+
+[14/50] train_loss: 0.130 valid_loss: 0.211 valid_F1: 0.333 valid_AUC: 0.854 valid_Sil: 0.228
+
+[14/50] train_loss: 0.131 valid_loss: 0.212 valid_F1: 0.325 valid_AUC: 0.855 valid_Sil: 0.228
+
+[14/50] train_loss: 0.129 valid_loss: 0.211 valid_F1: 0.339 valid_AUC: 0.854 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.129 valid_loss: 0.211 valid_F1: 0.317 valid_AUC: 0.854 valid_Sil: 0.228
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.129 valid_loss: 0.210 valid_F1: 0.363 valid_AUC: 0.855 valid_Sil: 0.228
+
+[14/50] train_loss: 0.128 valid_loss: 0.211 valid_F1: 0.346 valid_AUC: 0.855 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.128 valid_loss: 0.210 valid_F1: 0.354 valid_AUC: 0.855 valid_Sil: 0.228
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.333 valid_AUC: 0.856 valid_Sil: 0.228
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.325 valid_AUC: 0.856 valid_Sil: 0.228
+
+[14/50] train_loss: 0.126 valid_loss: 0.210 valid_F1: 0.367 valid_AUC: 0.857 valid_Sil: 0.228
+
+[14/50] train_loss: 0.126 valid_loss: 0.210 valid_F1: 0.358 valid_AUC: 0.857 valid_Sil: 0.228
+
+[14/50] train_loss: 0.125 valid_loss: 0.210 valid_F1: 0.368 valid_AUC: 0.858 valid_Sil: 0.228
+
+[14/50] train_loss: 0.126 valid_loss: 0.210 valid_F1: 0.358 valid_AUC: 0.858 valid_Sil: 0.228
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.340 valid_AUC: 0.858 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.346 valid_AUC: 0.859 valid_Sil: 0.228
+
+[14/50] train_loss: 0.124 valid_loss: 0.209 valid_F1: 0.374 valid_AUC: 0.858 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.209 valid_F1: 0.362 valid_AUC: 0.858 valid_Sil: 0.228
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.209 valid_F1: 0.359 valid_AUC: 0.860 valid_Sil: 0.228
+
+[14/50] train_loss: 0.124 valid_loss: 0.210 valid_F1: 0.372 valid_AUC: 0.858 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.375 valid_AUC: 0.859 valid_Sil: 0.228
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.392 valid_AUC: 0.859 valid_Sil: 0.228
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.208 valid_F1: 0.342 valid_AUC: 0.860 valid_Sil: 0.228
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.379 valid_AUC: 0.860 valid_Sil: 0.228
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.384 valid_AUC: 0.862 valid_Sil: 0.228
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.368 valid_AUC: 0.861 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.208 valid_F1: 0.398 valid_AUC: 0.860 valid_Sil: 0.228
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.208 valid_F1: 0.367 valid_AUC: 0.861 valid_Sil: 0.228
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.384 valid_AUC: 0.860 valid_Sil: 0.228
+EarlyStopping counter: 4 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.210 valid_F1: 0.403 valid_AUC: 0.861 valid_Sil: 0.228
+EarlyStopping counter: 5 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.208 valid_F1: 0.384 valid_AUC: 0.862 valid_Sil: 0.228
+
+[14/50] train_loss: 0.121 valid_loss: 0.209 valid_F1: 0.377 valid_AUC: 0.861 valid_Sil: 0.228
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.210 valid_F1: 0.401 valid_AUC: 0.861 valid_Sil: 0.228
+EarlyStopping counter: 2 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  True
+Loading Best model with score:  [0.3839157491622786, 0.8623235645123786]
+Run #2
+Loss Metrics - Test Loss 0.219, E-Test Loss 0.216, Local Sum Test Loss 0.138
+Clustering Metrics     - Acc 0.0000 , nmi 0.0000 , ari 0.0000, NHFD 0.600
+Classification Metrics - Test F1 0.359, Test AUC 0.837, Test ACC 0.920 , E-Test F1 0.347, E-Test AUC 0.856, E-Test ACC 0.921
+Run : 3
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+Starting Training
+
+[ 0/50] train_loss: 0.612 valid_loss: 0.604 valid_F1: 0.000 valid_AUC: 0.572 valid_Feature_p: 0.556 valid_Silhouette: 0.228 Complexity Term: 0.000
+Epoch: 00 | Loss: 5605.545 | KM Loss: 2874.214 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 01 | Loss: 343.542 | KM Loss: 254.611 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 2/50] train_loss: 0.609 valid_loss: 0.607 valid_F1: 0.000 valid_AUC: 0.622 valid_Feature_p: 0.420 valid_Silhouette: 0.784 Complexity Term: 0.000
+Epoch: 02 | Loss: 142.110 | KM Loss: 152.184 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 03 | Loss: 88.079 | KM Loss: 119.525 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 4/50] train_loss: 0.609 valid_loss: 0.608 valid_F1: 0.000 valid_AUC: 0.639 valid_Feature_p: 0.423 valid_Silhouette: 0.843 Complexity Term: 0.000
+Epoch: 04 | Loss: 62.650 | KM Loss: 102.117 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 05 | Loss: 47.293 | KM Loss: 91.450 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 6/50] train_loss: 0.608 valid_loss: 0.607 valid_F1: 0.000 valid_AUC: 0.644 valid_Feature_p: 0.421 valid_Silhouette: 0.836 Complexity Term: 0.000
+Epoch: 06 | Loss: 37.593 | KM Loss: 84.527 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 07 | Loss: 30.339 | KM Loss: 77.440 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 8/50] train_loss: 0.607 valid_loss: 0.605 valid_F1: 0.000 valid_AUC: 0.630 valid_Feature_p: 0.416 valid_Silhouette: 0.793 Complexity Term: 0.000
+EarlyStopping counter: 1 out of 7
+Epoch: 08 | Loss: 26.545 | KM Loss: 73.804 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 09 | Loss: 23.874 | KM Loss: 70.811 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[10/50] train_loss: 0.607 valid_loss: 0.604 valid_F1: 0.000 valid_AUC: 0.627 valid_Feature_p: 0.422 valid_Silhouette: 0.709 Complexity Term: 0.000
+EarlyStopping counter: 2 out of 7
+Epoch: 10 | Loss: 21.120 | KM Loss: 66.900 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 11 | Loss: 24.445 | KM Loss: 70.876 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[12/50] train_loss: 0.607 valid_loss: 0.603 valid_F1: 0.000 valid_AUC: 0.630 valid_Feature_p: 0.417 valid_Silhouette: 0.591 Complexity Term: 0.000
+EarlyStopping counter: 3 out of 7
+Epoch: 12 | Loss: 17.882 | KM Loss: 62.424 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 13 | Loss: 18.469 | KM Loss: 62.418 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[14/50] train_loss: 0.607 valid_loss: 0.602 valid_F1: 0.000 valid_AUC: 0.633 valid_Feature_p: 0.411 valid_Silhouette: 0.434 Complexity Term: 0.000
+EarlyStopping counter: 4 out of 7
+Epoch: 14 | Loss: 15.621 | KM Loss: 58.045 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 15 | Loss: 18.560 | KM Loss: 61.289 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[16/50] train_loss: 0.607 valid_loss: 0.602 valid_F1: 0.000 valid_AUC: 0.625 valid_Feature_p: 0.385 valid_Silhouette: 0.281 Complexity Term: 0.000
+EarlyStopping counter: 5 out of 7
+Epoch: 16 | Loss: 14.145 | KM Loss: 54.491 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 17 | Loss: 13.798 | KM Loss: 53.651 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[18/50] train_loss: 0.607 valid_loss: 0.602 valid_F1: 0.000 valid_AUC: 0.585 valid_Feature_p: 0.419 valid_Silhouette: 0.189 Complexity Term: 0.000
+EarlyStopping counter: 6 out of 7
+Epoch: 18 | Loss: 13.573 | KM Loss: 52.013 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 19 | Loss: 12.915 | KM Loss: 50.698 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[20/50] train_loss: 0.603 valid_loss: 0.602 valid_F1: 0.000 valid_AUC: 0.408 valid_Feature_p: 0.257 valid_Silhouette: 0.053 Complexity Term: 0.000
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.0, 0.6440705203798505]
+
+[20/50] train_loss: 0.266 valid_loss: 0.290 valid_F1: 0.000 valid_AUC: 0.646 valid_Sil: 0.836
+
+[20/50] train_loss: 0.250 valid_loss: 0.272 valid_F1: 0.000 valid_AUC: 0.695 valid_Sil: 0.836
+
+[20/50] train_loss: 0.240 valid_loss: 0.261 valid_F1: 0.000 valid_AUC: 0.740 valid_Sil: 0.836
+
+[20/50] train_loss: 0.234 valid_loss: 0.254 valid_F1: 0.000 valid_AUC: 0.749 valid_Sil: 0.836
+
+[20/50] train_loss: 0.231 valid_loss: 0.251 valid_F1: 0.012 valid_AUC: 0.752 valid_Sil: 0.836
+
+[20/50] train_loss: 0.230 valid_loss: 0.249 valid_F1: 0.082 valid_AUC: 0.755 valid_Sil: 0.836
+
+[20/50] train_loss: 0.230 valid_loss: 0.249 valid_F1: 0.087 valid_AUC: 0.758 valid_Sil: 0.836
+
+[20/50] train_loss: 0.227 valid_loss: 0.247 valid_F1: 0.101 valid_AUC: 0.760 valid_Sil: 0.836
+
+[20/50] train_loss: 0.227 valid_loss: 0.247 valid_F1: 0.100 valid_AUC: 0.762 valid_Sil: 0.836
+
+[20/50] train_loss: 0.227 valid_loss: 0.246 valid_F1: 0.116 valid_AUC: 0.764 valid_Sil: 0.836
+
+[20/50] train_loss: 0.226 valid_loss: 0.246 valid_F1: 0.076 valid_AUC: 0.765 valid_Sil: 0.836
+
+[20/50] train_loss: 0.225 valid_loss: 0.246 valid_F1: 0.100 valid_AUC: 0.768 valid_Sil: 0.836
+
+[20/50] train_loss: 0.223 valid_loss: 0.244 valid_F1: 0.115 valid_AUC: 0.768 valid_Sil: 0.836
+
+[20/50] train_loss: 0.222 valid_loss: 0.244 valid_F1: 0.118 valid_AUC: 0.771 valid_Sil: 0.836
+
+[20/50] train_loss: 0.223 valid_loss: 0.244 valid_F1: 0.111 valid_AUC: 0.773 valid_Sil: 0.836
+
+[20/50] train_loss: 0.222 valid_loss: 0.244 valid_F1: 0.118 valid_AUC: 0.773 valid_Sil: 0.836
+
+[20/50] train_loss: 0.221 valid_loss: 0.243 valid_F1: 0.118 valid_AUC: 0.773 valid_Sil: 0.836
+EarlyStopping counter: 1 out of 7
+
+[20/50] train_loss: 0.220 valid_loss: 0.243 valid_F1: 0.125 valid_AUC: 0.775 valid_Sil: 0.836
+
+[20/50] train_loss: 0.218 valid_loss: 0.243 valid_F1: 0.131 valid_AUC: 0.770 valid_Sil: 0.836
+EarlyStopping counter: 1 out of 7
+
+[20/50] train_loss: 0.218 valid_loss: 0.243 valid_F1: 0.133 valid_AUC: 0.775 valid_Sil: 0.836
+
+[20/50] train_loss: 0.219 valid_loss: 0.243 valid_F1: 0.125 valid_AUC: 0.775 valid_Sil: 0.836
+
+[20/50] train_loss: 0.219 valid_loss: 0.243 valid_F1: 0.131 valid_AUC: 0.777 valid_Sil: 0.836
+
+[20/50] train_loss: 0.221 valid_loss: 0.245 valid_F1: 0.131 valid_AUC: 0.781 valid_Sil: 0.836
+
+[20/50] train_loss: 0.216 valid_loss: 0.242 valid_F1: 0.144 valid_AUC: 0.777 valid_Sil: 0.836
+EarlyStopping counter: 1 out of 7
+
+[20/50] train_loss: 0.218 valid_loss: 0.243 valid_F1: 0.142 valid_AUC: 0.778 valid_Sil: 0.836
+EarlyStopping counter: 2 out of 7
+
+[20/50] train_loss: 0.217 valid_loss: 0.243 valid_F1: 0.141 valid_AUC: 0.779 valid_Sil: 0.836
+EarlyStopping counter: 3 out of 7
+
+[20/50] train_loss: 0.218 valid_loss: 0.243 valid_F1: 0.137 valid_AUC: 0.781 valid_Sil: 0.836
+
+[20/50] train_loss: 0.216 valid_loss: 0.242 valid_F1: 0.146 valid_AUC: 0.779 valid_Sil: 0.836
+EarlyStopping counter: 1 out of 7
+
+[20/50] train_loss: 0.219 valid_loss: 0.245 valid_F1: 0.127 valid_AUC: 0.782 valid_Sil: 0.836
+
+[20/50] train_loss: 0.216 valid_loss: 0.243 valid_F1: 0.126 valid_AUC: 0.777 valid_Sil: 0.836
+EarlyStopping counter: 1 out of 7
+
+[20/50] train_loss: 0.213 valid_loss: 0.241 valid_F1: 0.149 valid_AUC: 0.776 valid_Sil: 0.836
+EarlyStopping counter: 2 out of 7
+
+[20/50] train_loss: 0.216 valid_loss: 0.243 valid_F1: 0.136 valid_AUC: 0.780 valid_Sil: 0.836
+EarlyStopping counter: 3 out of 7
+
+[20/50] train_loss: 0.215 valid_loss: 0.243 valid_F1: 0.135 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 4 out of 7
+
+[20/50] train_loss: 0.216 valid_loss: 0.244 valid_F1: 0.130 valid_AUC: 0.782 valid_Sil: 0.836
+EarlyStopping counter: 5 out of 7
+
+[20/50] train_loss: 0.214 valid_loss: 0.243 valid_F1: 0.143 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 6 out of 7
+
+[20/50] train_loss: 0.217 valid_loss: 0.244 valid_F1: 0.129 valid_AUC: 0.783 valid_Sil: 0.836
+
+[20/50] train_loss: 0.214 valid_loss: 0.243 valid_F1: 0.138 valid_AUC: 0.780 valid_Sil: 0.836
+EarlyStopping counter: 1 out of 7
+
+[20/50] train_loss: 0.213 valid_loss: 0.242 valid_F1: 0.139 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 2 out of 7
+
+[20/50] train_loss: 0.214 valid_loss: 0.243 valid_F1: 0.132 valid_AUC: 0.782 valid_Sil: 0.836
+EarlyStopping counter: 3 out of 7
+
+[20/50] train_loss: 0.212 valid_loss: 0.243 valid_F1: 0.140 valid_AUC: 0.779 valid_Sil: 0.836
+EarlyStopping counter: 4 out of 7
+
+[20/50] train_loss: 0.214 valid_loss: 0.244 valid_F1: 0.138 valid_AUC: 0.784 valid_Sil: 0.836
+
+[20/50] train_loss: 0.212 valid_loss: 0.244 valid_F1: 0.142 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 1 out of 7
+
+[20/50] train_loss: 0.214 valid_loss: 0.244 valid_F1: 0.130 valid_AUC: 0.782 valid_Sil: 0.836
+EarlyStopping counter: 2 out of 7
+
+[20/50] train_loss: 0.213 valid_loss: 0.244 valid_F1: 0.132 valid_AUC: 0.780 valid_Sil: 0.836
+EarlyStopping counter: 3 out of 7
+
+[20/50] train_loss: 0.212 valid_loss: 0.244 valid_F1: 0.141 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 4 out of 7
+
+[20/50] train_loss: 0.212 valid_loss: 0.244 valid_F1: 0.134 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 5 out of 7
+
+[20/50] train_loss: 0.211 valid_loss: 0.244 valid_F1: 0.145 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 6 out of 7
+
+[20/50] train_loss: 0.211 valid_loss: 0.244 valid_F1: 0.141 valid_AUC: 0.781 valid_Sil: 0.836
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  True
+Loading Best model with score:  [0.1384335154826958, 0.7838072779394103]
+Run #3
+Loss Metrics - Test Loss 0.252, E-Test Loss 0.250, Local Sum Test Loss 0.229
+Clustering Metrics     - Acc 0.0000 , nmi 0.0000 , ari 0.0000, NHFD 0.472
+Classification Metrics - Test F1 0.137, Test AUC 0.776, Test ACC 0.916 , E-Test F1 0.136, E-Test AUC 0.779, E-Test ACC 0.916
+Run : 4
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model/wid_mortality.pth
+Starting Training
+
+[ 0/50] train_loss: 0.609 valid_loss: 0.634 valid_F1: 0.200 valid_AUC: 0.675 valid_Feature_p: 0.559 valid_Silhouette: 0.227 Complexity Term: 0.000
+Epoch: 00 | Loss: 5354.075 | KM Loss: 2749.042 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 01 | Loss: 327.223 | KM Loss: 246.692 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 2/50] train_loss: 0.651 valid_loss: 0.651 valid_F1: 0.229 valid_AUC: 0.648 valid_Feature_p: 0.451 valid_Silhouette: 0.786 Complexity Term: 0.000
+EarlyStopping counter: 1 out of 7
+Epoch: 02 | Loss: 135.807 | KM Loss: 148.621 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 03 | Loss: 83.579 | KM Loss: 117.027 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 4/50] train_loss: 0.655 valid_loss: 0.655 valid_F1: 0.228 valid_AUC: 0.655 valid_Feature_p: 0.457 valid_Silhouette: 0.845 Complexity Term: 0.000
+EarlyStopping counter: 2 out of 7
+Epoch: 04 | Loss: 59.334 | KM Loss: 100.776 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 05 | Loss: 45.504 | KM Loss: 90.717 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 6/50] train_loss: 0.657 valid_loss: 0.658 valid_F1: 0.229 valid_AUC: 0.666 valid_Feature_p: 0.446 valid_Silhouette: 0.832 Complexity Term: 0.000
+EarlyStopping counter: 3 out of 7
+Epoch: 06 | Loss: 36.241 | KM Loss: 82.990 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 07 | Loss: 31.822 | KM Loss: 79.344 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[ 8/50] train_loss: 0.660 valid_loss: 0.664 valid_F1: 0.229 valid_AUC: 0.654 valid_Feature_p: 0.447 valid_Silhouette: 0.789 Complexity Term: 0.000
+EarlyStopping counter: 4 out of 7
+Epoch: 08 | Loss: 29.355 | KM Loss: 77.919 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 09 | Loss: 22.603 | KM Loss: 68.842 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[10/50] train_loss: 0.662 valid_loss: 0.668 valid_F1: 0.229 valid_AUC: 0.648 valid_Feature_p: 0.445 valid_Silhouette: 0.708 Complexity Term: 0.000
+EarlyStopping counter: 5 out of 7
+Epoch: 10 | Loss: 23.390 | KM Loss: 69.842 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 11 | Loss: 20.142 | KM Loss: 64.568 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[12/50] train_loss: 0.664 valid_loss: 0.674 valid_F1: 0.228 valid_AUC: 0.654 valid_Feature_p: 0.450 valid_Silhouette: 0.566 Complexity Term: 0.000
+EarlyStopping counter: 6 out of 7
+Epoch: 12 | Loss: 18.071 | KM Loss: 61.010 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+Epoch: 13 | Loss: 19.658 | KM Loss: 63.242 | Classification Loss: 0.000 | Cluster Balance Loss: 0.000
+
+[14/50] train_loss: 0.665 valid_loss: 0.679 valid_F1: 0.221 valid_AUC: 0.651 valid_Feature_p: 0.457 valid_Silhouette: 0.426 Complexity Term: 0.000
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.1995283018867925, 0.6750386531704037]
+
+[14/50] train_loss: 0.167 valid_loss: 0.261 valid_F1: 0.000 valid_AUC: 0.719 valid_Sil: 0.227
+
+[14/50] train_loss: 0.148 valid_loss: 0.232 valid_F1: 0.000 valid_AUC: 0.807 valid_Sil: 0.227
+
+[14/50] train_loss: 0.140 valid_loss: 0.222 valid_F1: 0.238 valid_AUC: 0.834 valid_Sil: 0.227
+
+[14/50] train_loss: 0.138 valid_loss: 0.220 valid_F1: 0.254 valid_AUC: 0.838 valid_Sil: 0.227
+
+[14/50] train_loss: 0.137 valid_loss: 0.218 valid_F1: 0.297 valid_AUC: 0.844 valid_Sil: 0.227
+
+[14/50] train_loss: 0.135 valid_loss: 0.217 valid_F1: 0.296 valid_AUC: 0.844 valid_Sil: 0.227
+
+[14/50] train_loss: 0.134 valid_loss: 0.216 valid_F1: 0.303 valid_AUC: 0.847 valid_Sil: 0.227
+
+[14/50] train_loss: 0.133 valid_loss: 0.215 valid_F1: 0.317 valid_AUC: 0.848 valid_Sil: 0.227
+
+[14/50] train_loss: 0.132 valid_loss: 0.214 valid_F1: 0.324 valid_AUC: 0.850 valid_Sil: 0.227
+
+[14/50] train_loss: 0.132 valid_loss: 0.214 valid_F1: 0.327 valid_AUC: 0.850 valid_Sil: 0.227
+
+[14/50] train_loss: 0.131 valid_loss: 0.213 valid_F1: 0.333 valid_AUC: 0.852 valid_Sil: 0.227
+
+[14/50] train_loss: 0.132 valid_loss: 0.213 valid_F1: 0.341 valid_AUC: 0.853 valid_Sil: 0.227
+
+[14/50] train_loss: 0.131 valid_loss: 0.212 valid_F1: 0.320 valid_AUC: 0.852 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.130 valid_loss: 0.212 valid_F1: 0.329 valid_AUC: 0.853 valid_Sil: 0.227
+
+[14/50] train_loss: 0.130 valid_loss: 0.211 valid_F1: 0.331 valid_AUC: 0.854 valid_Sil: 0.227
+
+[14/50] train_loss: 0.129 valid_loss: 0.211 valid_F1: 0.346 valid_AUC: 0.855 valid_Sil: 0.227
+
+[14/50] train_loss: 0.129 valid_loss: 0.211 valid_F1: 0.340 valid_AUC: 0.856 valid_Sil: 0.227
+
+[14/50] train_loss: 0.129 valid_loss: 0.211 valid_F1: 0.353 valid_AUC: 0.855 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.128 valid_loss: 0.211 valid_F1: 0.359 valid_AUC: 0.858 valid_Sil: 0.227
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.362 valid_AUC: 0.858 valid_Sil: 0.227
+
+[14/50] train_loss: 0.129 valid_loss: 0.210 valid_F1: 0.344 valid_AUC: 0.857 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.350 valid_AUC: 0.859 valid_Sil: 0.227
+
+[14/50] train_loss: 0.127 valid_loss: 0.210 valid_F1: 0.354 valid_AUC: 0.859 valid_Sil: 0.227
+
+[14/50] train_loss: 0.127 valid_loss: 0.209 valid_F1: 0.334 valid_AUC: 0.859 valid_Sil: 0.227
+
+[14/50] train_loss: 0.127 valid_loss: 0.209 valid_F1: 0.355 valid_AUC: 0.860 valid_Sil: 0.227
+
+[14/50] train_loss: 0.126 valid_loss: 0.209 valid_F1: 0.336 valid_AUC: 0.861 valid_Sil: 0.227
+
+[14/50] train_loss: 0.126 valid_loss: 0.209 valid_F1: 0.353 valid_AUC: 0.860 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.126 valid_loss: 0.209 valid_F1: 0.353 valid_AUC: 0.859 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.325 valid_AUC: 0.860 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.331 valid_AUC: 0.859 valid_Sil: 0.227
+EarlyStopping counter: 4 out of 7
+
+[14/50] train_loss: 0.125 valid_loss: 0.209 valid_F1: 0.342 valid_AUC: 0.861 valid_Sil: 0.227
+
+[14/50] train_loss: 0.125 valid_loss: 0.208 valid_F1: 0.338 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.209 valid_F1: 0.354 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.209 valid_F1: 0.339 valid_AUC: 0.860 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.347 valid_AUC: 0.862 valid_Sil: 0.227
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.351 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.124 valid_loss: 0.209 valid_F1: 0.352 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.344 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.210 valid_F1: 0.368 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 4 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.341 valid_AUC: 0.862 valid_Sil: 0.227
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.360 valid_AUC: 0.862 valid_Sil: 0.227
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.357 valid_AUC: 0.862 valid_Sil: 0.227
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.348 valid_AUC: 0.862 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.210 valid_F1: 0.357 valid_AUC: 0.862 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.123 valid_loss: 0.209 valid_F1: 0.353 valid_AUC: 0.862 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.356 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 4 out of 7
+
+[14/50] train_loss: 0.121 valid_loss: 0.209 valid_F1: 0.352 valid_AUC: 0.863 valid_Sil: 0.227
+
+[14/50] train_loss: 0.122 valid_loss: 0.210 valid_F1: 0.326 valid_AUC: 0.861 valid_Sil: 0.227
+EarlyStopping counter: 1 out of 7
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.355 valid_AUC: 0.862 valid_Sil: 0.227
+EarlyStopping counter: 2 out of 7
+
+[14/50] train_loss: 0.122 valid_loss: 0.209 valid_F1: 0.361 valid_AUC: 0.862 valid_Sil: 0.227
+EarlyStopping counter: 3 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  True
+Loading Best model with score:  [0.3518145161290322, 0.8625252294260803]
+Run #4
+Loss Metrics - Test Loss 0.218, E-Test Loss 0.216, Local Sum Test Loss 0.137
+Clustering Metrics     - Acc 0.0000 , nmi 0.0000 , ari 0.0000, NHFD 0.603
+Classification Metrics - Test F1 0.319, Test AUC 0.854, Test ACC 0.920 , E-Test F1 0.320, E-Test AUC 0.858, E-Test ACC 0.921
+Test F1:  [0.04364694471387003, 0.33766233766233766, 0.34698275862068967, 0.1355475763016158, 0.32012080030200074]
+Test AUC:  [0.7452361487737562, 0.8556939504845733, 0.8557931599870867, 0.7791573855718317, 0.858489743676154]
+Sil scores:  [0.22058493, 0.83658797]
+NHFD:  [0.7563199144382585, 0.5780851169005974]
+MIFD:  [2.582536402678666, 3.3501780585774066]
+Train Loss:  [0.12010879069566727, 0.2111111283302307]
+E-Train Loss:  [0.1894172728061676, 0.23108819127082825]
+Test Loss:  [0.271172434091568, 0.22313956916332245, 0.21868976950645447, 0.251545250415802, 0.2176876813173294]
+E-Test Loss:  [0.2692614495754242, 0.21654582023620605, 0.21566320955753326, 0.24985605478286743, 0.21585975587368011]
+Local Test Loss:  [0.256695419549942, 0.14087340235710144, 0.13793794810771942, 0.2290336638689041, 0.1372426599264145]
+Model Complexity:  [118.09591674804688, 13.097420692443848]
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+wid_mortality	2	0.237	0.819	0.919	0.529	0.667	2.966
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+DCN
+Diabetes
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+DCN
+Wid_Mortality
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+wid_mortality
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+wid_mortality	1	0.200	0.815	0.918	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+wid_mortality
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+wid_mortality	2	0.277	0.843	0.920	0.352	0.644	3.743
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+wid_mortality
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  wid_mortality
+wid_mortality
+DCN
+Diabetes
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+diabetes	1	0.081	0.558	0.595	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+diabetes	2	0.122	0.571	0.597	0.365	0.868	0.585
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+diabetes	3	0.087	0.566	0.596	0.492	0.503	0.541
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Loading Dataset  diabetes
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	MIFD
+diabetes	4	0.117	0.572	0.598	0.432	0.703	0.629
+
+

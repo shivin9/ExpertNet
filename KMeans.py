@@ -91,7 +91,10 @@ column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
 X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
-blockPrint()
+
+if args.verbose == False:
+    blockPrint()
+
 ####################################################################################
 ####################################################################################
 ####################################################################################
@@ -100,7 +103,7 @@ blockPrint()
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, sil_scores, nhfd_scores, mifd_scores = [], [], [], [], []
+f1_scores, auc_scores, acc_scores, sil_scores, nhfd_scores, mifd_scores = [], [], [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -128,8 +131,9 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
+    if args.verbose == 'False':
+        blockPrint()
     print(iteration_name, ":", iter_array[r])
-    # blockPrint()
 
     if args.ablation == "beta":
         args.beta = iter_array[r]
@@ -164,7 +168,7 @@ for r in range(len(iter_array)):
     q_train = qs[0]
 
     kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
-    train_cluster_indices = kmeans.fit_predict(z_train.data.cpu().numpy())
+    cluster_ids_train = kmeans.fit_predict(z_train.data.cpu().numpy())
     original_cluster_centers = kmeans.cluster_centers_
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
 
@@ -183,7 +187,7 @@ for r in range(len(iter_array)):
     print("Training Local Networks")
     es = EarlyStoppingCAC(dataset=suffix)
 
-    X_latents_data_loader = list(zip(z_train, train_cluster_indices, y_train))
+    X_latents_data_loader = list(zip(z_train, cluster_ids_train, y_train))
 
     train_loader_latents = torch.utils.data.DataLoader(X_latents_data_loader,
         batch_size=args.batch_size, shuffle=False)
@@ -261,9 +265,9 @@ for r in range(len(iter_array)):
         es([val_f1, val_auc], model)
         if es.early_stop == True:
             train_losses.append(train_loss.item())
-            sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), train_cluster_indices, metric='euclidean'))
-            nhfd_scores.append(calculate_nhfd(X_train, torch.Tensor(train_cluster_indices)))
-            mifd_scores.append(calculate_MIFD(X_train, torch.Tensor(train_cluster_indices)))
+            sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
+            nhfd_scores.append(calculate_nhfd(X_train, torch.Tensor(cluster_ids_train)))
+            mifd_scores.append(calculate_MIFD(X_train, torch.Tensor(cluster_ids_train)))
             # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
 
@@ -321,6 +325,7 @@ for r in range(len(iter_array)):
 
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
+    acc_scores.append(test_acc)
 
     ####################################################################################
     ####################################################################################
@@ -392,6 +397,17 @@ print("Local Test Loss: ", local_sum_test_losses)
 print("Model Complexity: ", model_complexity)
 
 enablePrint()
-print("Dataset\t{}\tk\t{}\tF1\t{:.3f}\tAUC\t{:.3f}\tSIL\t{:.3f}\tNHFD\t{:.3f}\tMIFD\t{:.3f}".format\
+print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tMIFD")
+
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(sil_scores), np.average(nhfd_scores), np.average(mifd_scores)))
+    np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores),\
+    np.average(mifd_scores)))
+
+print("\n")
+
+MIFD_Cluster_Analysis(X_train, torch.Tensor(cluster_ids_train), column_names)
+
+print("\n")
+
+NHFD_Cluster_Analysis(X_train, torch.Tensor(cluster_ids_train), column_names)

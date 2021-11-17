@@ -1,2 +1,0 @@
-Dataset,Classifier,alpha,k,Base_F1_mean,Base_AUC_mean,Base_F1_std,Base_AUC_std,KM_F1_mean,KM_AUC_mean,KM_F1_std,KM_AUC_std,CAC_F1_mean,CAC_AUC_mean,CAC_F1_std,CAC_AUC_std
-cic,DMNN,0,2,0.0,0.0,0.0,0.0,0.42382271468144045,0.7981497361956951,0.0,0.0,0.0,0.0,0.0,0.0

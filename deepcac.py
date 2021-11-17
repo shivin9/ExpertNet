@@ -125,8 +125,9 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
-    if args.verbose == False:
+    if args.verbose == 'False':
         blockPrint()
+
     print(iteration_name, ":", iter_array[r])
 
     if args.ablation == "beta":
@@ -732,3 +733,6 @@ print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     np.average(mifd_scores), np.average(w_nhfd_scores)))
 
 print("\n")
+
+# MIFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+# NHFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)

@@ -53,7 +53,8 @@ def calculate_nhfd(X, cluster_ids):
     feature_diff = 0
     cntr = 0
     n_clusters = len(torch.unique(cluster_ids))
-    input_dim = X.shape[1]
+    n_columns = X.shape[1]
+    top_quartile = np.int(n_columns/4)
     for i in range(n_clusters):
         for j in range(n_clusters):
             if i > j:
@@ -61,10 +62,10 @@ def calculate_nhfd(X, cluster_ids):
                 cj = torch.where(cluster_ids == j)[0]
                 Xi = X[ci]
                 Xj = X[cj]
-                # feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/input_dim
-                # Take the max element and take negative exp weighted by 0.05
-                max_p_val = np.max(np.nan_to_num(ttest_ind(Xi, Xj, axis=0)[1]))
-                feature_diff += np.exp(-max_p_val/0.05)
+                # feature_diff += sum(ttest_ind(Xi, Xj, axis=0)[1] < 0.05)/n_columns
+                # Take the max element and take negative exp weighted by 0.05, top 5 features
+                col_p_val = np.sort(np.nan_to_num(ttest_ind(Xi, Xj, axis=0, equal_var=True)[1]))[::-1]
+                feature_diff += np.sum(np.exp(-col_p_val[:top_quartile]/0.05))/top_quartile
                 # feature_diff += torch.nn.functional.kl_div(Xi.log(), Xj, reduction='batchmean')
                 cntr += 1
     if cntr == 0:
@@ -72,18 +73,56 @@ def calculate_nhfd(X, cluster_ids):
     return feature_diff/cntr
 
 
-def calc_MI(x, y, bins=10):
+def shannon_entropy(A, mode="auto", verbose=False):
+     """
+     https://stackoverflow.com/questions/42683287/python-numpy-shannon-entropy-array
+     """
+     A = np.asarray(A)
+ 
+     # Determine distribution type
+     if mode == "auto":
+         condition = np.all(A.astype(float) == A.astype(int))
+         if condition:
+             mode = "discrete"
+         else:
+             mode = "continuous"
+     if verbose:
+         print(mode, file=sys.stderr)
+     # Compute shannon entropy
+     pA = A / A.sum()
+     # Remove zeros
+     pA = pA[np.nonzero(pA)[0]]
+     if mode == "continuous":
+         return -np.sum(pA*np.log2(A))
+     if mode == "discrete":
+         return -np.sum(pA*np.log2(pA))
+
+
+def calc_MI(x, y, c, bins=10):
     minn = min(np.min(x), np.min(y))
     maxx = max(np.max(x), np.max(y))
-    h1 = np.histogram(x, np.arange(minn, maxx, 0.1))[0]
-    h2 = np.histogram(y, np.arange(minn, maxx, 0.1))[0]
+    range_x = np.max(x) - np.min(x)
+    range_y = np.max(y) - np.min(y)
+    gap = min(range_x, range_y)/bins
+
+    if gap < 1e-5:
+        return 0
+
+    h1 = np.histogram(x, np.arange(minn-gap, maxx+gap, gap))[0]
+    h2 = np.histogram(y, np.arange(minn-gap, maxx+gap, gap))[0]
     c_xy = np.histogram2d(h1, h2, bins)[0]
+
     if np.sum(c_xy) == 0:
         return 0
-    # print(minn, maxx)
-    # print(h1, h2, x, y)
-    # print(c_xy)
-    mi = mutual_info_score(None, None, contingency=c_xy)
+
+    h_x = shannon_entropy(h1)
+    h_y = shannon_entropy(h2)
+    # https://stats.stackexchange.com/questions/468585/mutual-information-between-a-vector-and-a-constant
+    if h_x * h_y == 0:
+        # print("Column: ", c, x, y)
+        # print(h1, h2, range_x, range_y, mutual_info_score(None, None, contingency=c_xy))
+        return 0
+    mi = mutual_info_score(None, None, contingency=c_xy)/np.sqrt(h_x * h_y)
     return mi
 
 
@@ -92,22 +131,91 @@ def calculate_MIFD(X, cluster_ids):
     cntr = 0
     n_columns = X.shape[1]
     n_clusters = len(torch.unique(cluster_ids))
+    top_quartile = np.int(n_columns/4)
+    col_entrpy = np.zeros(n_columns)
     for i in range(n_clusters):
         for j in range(n_clusters):
             if i > j:
+                col_entrpy *= 0
                 ci = torch.where(cluster_ids == i)[0]
                 cj = torch.where(cluster_ids == j)[0]
                 Xi = X[ci]
                 Xj = X[cj]
-                col_entrpy = 0
                 for c in range(n_columns):
-                    col_entrpy += calc_MI(Xi[:,c], Xj[:,c])
-                cluster_entrpy += col_entrpy/n_columns
+                    col_entrpy[c] = calc_MI(Xi[:,c], Xj[:,c], c)
+                # Sort col_entrpy
+                col_entrpy = np.sort(col_entrpy)[::-1]
+                cluster_entrpy += np.sum(col_entrpy[:top_quartile])/top_quartile
                 cntr += 1
     if cntr == 0:
         return 0
     return cluster_entrpy/cntr
 
+
+def MIFD_Cluster_Analysis(X_train, cluster_ids, column_names):
+    print("\nCluster Wise discriminative features (MIFD)")
+    cluster_entrpy = 0
+    cntr = 0
+    n_columns = X_train.shape[1]
+    n_clusters = len(torch.unique(cluster_ids))
+    input_dim = X_train.shape[1]
+    mi_scores = {}
+    for i in range(n_clusters):
+        for j in range(n_clusters):
+            if i > j:
+                joint_col_name = str(i) + "," + str(j)
+                mi_scores[joint_col_name] = {}
+                ci = torch.where(cluster_ids == i)[0]
+                cj = torch.where(cluster_ids == j)[0]
+                Xi = X_train[ci]
+                Xj = X_train[cj]
+                col_entrpy = 0
+                for c in range(n_columns):
+                    c_entropy = calc_MI(Xi[:,c], Xj[:,c], 0)
+                    col_entrpy += c_entropy
+                    mi_scores[joint_col_name][c] = np.round(c_entropy, 3)
+                    # print(column_names[c], ":", c_entropy)
+                cluster_entrpy += col_entrpy/n_columns
+                cntr += 1
+                print("\n========\n")
+                print(joint_col_name)
+                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:10]
+                for k, v in sorted_dict:
+                    c = column_names[k]
+                    print("Feature:", c, "Val:", v, "C1:")
+                    print(np.mean(Xi[:,k]), "C2:", np.mean(Xj[:,k]))
+
+
+def NHFD_Cluster_Analysis(X_train, cluster_ids, column_names):
+    print("\nCluster Wise discriminative features (NHFD)")
+    cluster_entrpy = 0
+    cntr = 0
+    n_columns = X_train.shape[1]
+    n_clusters = len(torch.unique(cluster_ids))
+    input_dim = X_train.shape[1]
+    mi_scores = {}
+    for i in range(n_clusters):
+        for j in range(n_clusters):
+            if i > j:
+                joint_col_name = str(i) + "," + str(j)
+                mi_scores[joint_col_name] = {}
+                ci = torch.where(cluster_ids == i)[0]
+                cj = torch.where(cluster_ids == j)[0]
+                Xi = X_train[ci]
+                Xj = X_train[cj]
+                col_entrpy = 0
+                p_vals = np.nan_to_num(ttest_ind(Xi, Xj, axis=0, equal_var=True))[1]
+                for c in range(n_columns):
+                    mi_scores[joint_col_name][c] = np.round(p_vals[c], 3)
+                    # print(column_names[c], ":", c_entropy)
+                cntr += 1
+                print("\n========\n")
+                print(joint_col_name)
+                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:10]
+                for k, v in sorted_dict:
+                    c = column_names[k]
+                    print("Feature:", c, "Val:", v)
+                    print("C1:", np.round(np.mean(Xi[:,k]),3), "C2:", np.round(np.mean(Xj[:,k]), 3))
 
 def is_non_zero_file(fpath):
     return os.path.isfile(fpath) and os.path.getsize(fpath) > 0
@@ -219,6 +327,13 @@ def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
         plt.show()
 
 
+def drop_constant_column(df):
+    """
+    Drops constant value columns of pandas dataframe.
+    """
+    return df.loc[:, (df != df.iloc[0]).any()]
+
+
 def get_dataset(DATASET, DATA_DIR):
     if DATASET == "cic":
         Xa = pd.read_csv(DATA_DIR + "/CIC/cic_set_a.csv")
@@ -254,36 +369,19 @@ def get_dataset(DATASET, DATA_DIR):
         X_test = Xc
         y_test = yc
 
-        X = pd.concat([X_train, X_test]).to_numpy()
+        X = pd.concat([X_train, X_test])
         y = pd.concat([y_train, y_test]).to_numpy()
         columns = cols
 
-    elif DATASET == "titanic":
-        X_train = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X_train.csv")
-        columns = X_train.columns
-        X_train = X_train.to_numpy()
-        X_test = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X_test.csv").to_numpy()
-        y_train = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y_train.csv").to_numpy()
-        y_test = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y_test.csv").to_numpy()
-
-        X = np.vstack([X_train, X_test])
-        y = np.vstack([y_train, y_test])
-        y1 = []
-        for i in range(len(y)):
-            y1.append(y[i][0])
-        y = np.array(y1)
-        # X = pd.concat([X_train, X_test]).to_numpy()
-        # y = pd.concat([y_train, y_test]).to_numpy()
-    
     elif DATASET == "infant":
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
-        X = X.to_numpy()
         y = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y.csv").to_numpy()
         y1 = []
         
         for i in range(len(y)):
             y1.append(y[i][0])
+
         y = np.array(y1)
         y = y.astype(int)
         enc = OneHotEncoder(handle_unknown='ignore')
@@ -292,12 +390,14 @@ def get_dataset(DATASET, DATA_DIR):
     else:
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
-        X = X.to_numpy()
         y = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y.csv").to_numpy()
         y1 = []
         for i in range(len(y)):
             y1.append(y[i][0])
         y = np.array(y1)
+
+    # X, columns = drop_constant_column(X, columns)
+    X = X.to_numpy()
     return X, y, columns
 
 

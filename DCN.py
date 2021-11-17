@@ -97,7 +97,7 @@ X_test, y_test, test_loader = test_data
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, sil_scores, nhfd_scores, mifd_scores = [], [], [], [], []
+f1_scores, auc_scores, acc_scores, sil_scores, nhfd_scores, mifd_scores = [], [], [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -129,8 +129,9 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
+    if args.verbose == 'False':
+        blockPrint()
     print(iteration_name, ":", iter_array[r])
-    blockPrint()
 
     if args.ablation == "beta":
         args.beta = iter_array[r]
@@ -423,7 +424,7 @@ for r in range(len(iter_array)):
             X_cluster = z_train[cluster_id]
             cluster_preds = model.classifiers[j][0](X_cluster)
             train_loss += torch.sum(q_train[cluster_id,j]*criterion(cluster_preds, y_cluster))
-            B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
+            # B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
 
 
         train_loss /= len(z_train)
@@ -475,7 +476,7 @@ for r in range(len(iter_array)):
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             nhfd_scores.append(calculate_nhfd(X_train,  cluster_ids_train))
             mifd_scores.append(calculate_MIFD(X_train,  cluster_ids_train))
-            model_complexity.append(calculate_bound(model, B, len(z_train)))
+            # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
 
 
@@ -552,6 +553,7 @@ for r in range(len(iter_array)):
 
     f1_scores.append(e_test_f1)
     auc_scores.append(e_test_auc)
+    acc_scores.append(e_test_acc)
 
     ####################################################################################
     ####################################################################################
@@ -625,9 +627,13 @@ print("Local Test Loss: ", local_sum_test_losses)
 
 print("Model Complexity: ", model_complexity)
 
-enablePrint()
-print("Dataset\tk\tF1\tAUC\tSIL\tNHFD\tMIFD")
 
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+enablePrint()
+print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tMIFD")
+
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(sil_scores), np.average(nhfd_scores), np.average(mifd_scores)))
+    np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores),\
+    np.average(mifd_scores)))
+
+print("\n")
