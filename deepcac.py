@@ -121,7 +121,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(1)
+    iter_array = range(5)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -208,6 +208,7 @@ for r in range(len(iter_array)):
 
             z_train, _, q_train = model(torch.Tensor(X_train).to(args.device), output="decoded")
             q_train, q_train_p, q_train_n = q_train
+            p_train = target_distribution(q_train.detach())
 
             # evaluate clustering performance
             cluster_indices = q_train.detach().cpu().numpy().argmax(1)
@@ -249,10 +250,10 @@ for r in range(len(iter_array)):
                     preds[:,0] += q_val[:,j]*cluster_preds[:,0]
                     preds[:,1] += q_val[:,j]*cluster_preds[:,1]
 
-            print("qval", torch.sum(q_val, axis=0))
-            print("Cluster Counts", np.bincount(cluster_ids))
-            print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
-                                    torch.ones(args.n_clusters)/args.n_clusters))
+            # print("qval", torch.sum(q_val, axis=0))
+            # print("Cluster Counts", np.bincount(cluster_ids))
+            # print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
+            #                         torch.ones(args.n_clusters)/args.n_clusters))
 
             # Classification Matrics
             val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
@@ -361,25 +362,25 @@ for r in range(len(iter_array)):
             km_loss             = 0
             class_sep_loss      = 0
 
-            for j in range(args.n_clusters):
-                pts_index = np.where(cluster_id == j)[0]
-                cluster_pts = X_latents[pts_index]
-                n_class_index = np.where(y_batch[pts_index] == 0)[0]
-                p_class_index = np.where(y_batch[pts_index] == 1)[0]
+            # for j in range(args.n_clusters):
+            #     pts_index = np.where(cluster_id == j)[0]
+            #     cluster_pts = X_latents[pts_index]
+            #     n_class_index = np.where(y_batch[pts_index] == 0)[0]
+            #     p_class_index = np.where(y_batch[pts_index] == 1)[0]
 
-                n_class = cluster_pts[n_class_index]
-                p_class = cluster_pts[p_class_index]
+            #     n_class = cluster_pts[n_class_index]
+            #     p_class = cluster_pts[p_class_index]
 
-                delta_mu_p[j,:] = p_class.sum(axis=0)/(1+len(p_class))
-                delta_mu_n[j,:] = n_class.sum(axis=0)/(1+len(n_class))
-                delta_mu[j,:]   = cluster_pts.sum(axis=0)/(1+len(cluster_pts))
+            #     delta_mu_p[j,:] = p_class.sum(axis=0)/(1+len(p_class))
+            #     delta_mu_n[j,:] = n_class.sum(axis=0)/(1+len(n_class))
+            #     delta_mu[j,:]   = cluster_pts.sum(axis=0)/(1+len(cluster_pts))
 
-                s1 = torch.linalg.vector_norm(X_latents[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
-                s2 = torch.linalg.vector_norm(X_latents[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
-                m12 = torch.linalg.vector_norm(model.p_cluster_layer[j] - model.n_cluster_layer[j])
+            #     s1 = torch.linalg.vector_norm(X_latents[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
+            #     s2 = torch.linalg.vector_norm(X_latents[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
+            #     m12 = torch.linalg.vector_norm(model.p_cluster_layer[j] - model.n_cluster_layer[j])
 
-                class_sep_loss += (s1+s2)/m12
-                km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
+            #     class_sep_loss += (s1+s2)/m12
+            #     km_loss += torch.linalg.vector_norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
 
             q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
@@ -390,6 +391,8 @@ for r in range(len(iter_array)):
                 cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
             else:
                 cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P) - torch.sqrt(Q))
+
+            km_loss = F.kl_div(q_batch.log(), p_train[idx], reduction='batchmean')
 
             loss = reconstr_loss
             if args.beta != 0:
@@ -410,17 +413,17 @@ for r in range(len(iter_array)):
             optimizer.step()
 
             # Update the positive and negative centroids
-            for j in range(args.n_clusters):
-                pts_index = np.where(cluster_id == j)[0]
-                n_class_index = np.where(y[pts_index] == 0)[0]
-                p_class_index = np.where(y[pts_index] == 1)[0]
+            # for j in range(args.n_clusters):
+            #     pts_index = np.where(cluster_id == j)[0]
+            #     n_class_index = np.where(y[pts_index] == 0)[0]
+            #     p_class_index = np.where(y[pts_index] == 1)[0]
 
-                N  = len(pts_index)
-                Np = len(p_class_index)
-                Nn = len(n_class_index)
-                model.p_cluster_layer.data[j:] -= (1/(100+Np))*delta_mu_p[j:]
-                model.n_cluster_layer.data[j:] -= (1/(100+Nn))*delta_mu_n[j:]
-                model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
+            #     N  = len(pts_index)
+            #     Np = len(p_class_index)
+            #     Nn = len(n_class_index)
+            #     model.p_cluster_layer.data[j:] -= (1/(100+Np))*delta_mu_p[j:]
+            #     model.n_cluster_layer.data[j:] -= (1/(100+Nn))*delta_mu_n[j:]
+            #     model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
 
         print('Epoch: {:02d} | Loss: {:.3f} | KM Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
                     epoch, epoch_km_loss, epoch_loss, epoch_class_loss, epoch_balance_loss))
