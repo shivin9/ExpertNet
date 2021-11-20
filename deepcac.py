@@ -3,7 +3,6 @@ import copy
 import torch
 import argparse
 import numpy as np
-import umap
 import os
 from torchvision import datasets, transforms
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score,\
@@ -84,7 +83,7 @@ base_suffix += args.dataset + "_"
 base_suffix += str(args.n_clusters) + "_"
 base_suffix += str(args.attention)
 
-column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
+scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
 X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
@@ -121,7 +120,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(5)
+    iter_array = range(1)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -201,7 +200,7 @@ for r in range(len(iter_array)):
         delta = args.delta
         eta = args.eta
         if epoch % args.log_interval == 0:
-            # plot(model, torch.FloatTensor(X_val).to(args.device), y_val, labels=None)
+            plot(model, torch.FloatTensor(X_val).to(args.device), y_val, labels=None)
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
@@ -250,8 +249,8 @@ for r in range(len(iter_array)):
                     preds[:,0] += q_val[:,j]*cluster_preds[:,0]
                     preds[:,1] += q_val[:,j]*cluster_preds[:,1]
 
-            # print("qval", torch.sum(q_val, axis=0))
-            # print("Cluster Counts", np.bincount(cluster_ids))
+            print("qval", torch.sum(q_val, axis=0))
+            print("Cluster Counts", np.bincount(cluster_ids))
             # print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
             #                         torch.ones(args.n_clusters)/args.n_clusters))
 
@@ -390,7 +389,9 @@ for r in range(len(iter_array)):
             if args.cluster_balance == "kl":
                 cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
             else:
-                cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P) - torch.sqrt(Q))
+                # cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P) - torch.sqrt(Q))
+                cluster_balance_loss = torch.linalg.vector_norm(torch.log(P) + torch.log(1-P))
+                # cluster_balance_loss = torch.linalg.vector_norm(1/P + 1/(1-P))
 
             km_loss = F.kl_div(q_batch.log(), p_train[idx], reduction='batchmean')
 
@@ -737,5 +738,5 @@ print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
 
 print("\n")
 
-# MIFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-# NHFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+MIFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+NHFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)

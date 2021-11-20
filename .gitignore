@@ -1,3 +1,4 @@
 pretrained_model/*.pt
 ./pretrained_model/*.pt
 __pycache__/
+/Results/*

@@ -13,6 +13,8 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from scipy.stats import ttest_ind
 from read_patients import get_aki
+from matplotlib import pyplot as plt
+import umap
 import sys
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
@@ -335,6 +337,7 @@ def drop_constant_column(df):
 
 
 def get_dataset(DATASET, DATA_DIR):
+    scale = None
     if DATASET == "cic":
         Xa = pd.read_csv(DATA_DIR + "/CIC/cic_set_a.csv")
         Xb = pd.read_csv(DATA_DIR + "/CIC/cic_set_b.csv")
@@ -398,7 +401,7 @@ def get_dataset(DATASET, DATA_DIR):
 
     # X, columns = drop_constant_column(X, columns)
     X = X.to_numpy()
-    return X, y, columns
+    return X, y, columns, scale
 
 
 def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=5, n_classes=2,\
@@ -448,7 +451,7 @@ def get_train_val_test_loaders(args):
                 print(args.input_dim)
 
             else:
-                X, y, columns = get_dataset(args.dataset, DATA_DIR)
+                X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
                 print(args.dataset)
                 args.input_dim = X.shape[1]
 
@@ -465,7 +468,7 @@ def get_train_val_test_loaders(args):
 
         elif args.dataset == "aki":
             print("Loading aki Train")
-            X, y, columns = get_dataset(args.dataset, DATA_DIR)
+            X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
@@ -478,7 +481,7 @@ def get_train_val_test_loaders(args):
 
         else:
             print("Loading ards Train")
-            X, y, columns = get_dataset(args.dataset, DATA_DIR)
+            X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
@@ -499,7 +502,7 @@ def get_train_val_test_loaders(args):
         test_loader = torch.utils.data.DataLoader(X_test_data_loader, 
             batch_size=args.batch_size, shuffle=False)
 
-        return columns, (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
+        return scale, columns, (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
     else:
         return None
 
