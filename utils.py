@@ -100,7 +100,32 @@ def shannon_entropy(A, mode="auto", verbose=False):
          return -np.sum(pA*np.log2(pA))
 
 
-def calc_MI(x, y, c, bins=10):
+def plot_hist(x, y, bins=10):
+    minn = min(np.min(x), np.min(y))
+    maxx = max(np.max(x), np.max(y))
+    range_x = np.max(x) - np.min(x)
+    range_y = np.max(y) - np.min(y)
+    gap = min(range_x, range_y)/bins
+
+    if gap < 1e-5:
+        return 0
+
+    h1, r1 = np.histogram(x, np.arange(minn-gap, maxx+gap, gap))
+    h2, r2 = np.histogram(y, np.arange(minn-gap, maxx+gap, gap))
+    k1 = [(r1[j]+r1[j-1])/2 for j in range(1, len(r1))]
+    k2 = [(r2[j]+r2[j-1])/2 for j in range(1, len(r2))]
+    # print(h1, h2, k1)
+
+    fig, axes = plt.subplots(1, 2)
+
+    axes[0].bar(k1, h1, label='X1', alpha=.5)
+    axes[1].bar(k2, h2, label='X2', alpha=.5)
+    # axes[0].hist(h1, bins=r1, label='X1', alpha=.5)
+    # axes[1].hist(h2, bins=r2, label='X2', alpha=.5)
+    plt.show()
+
+
+def calc_MI(x, y, c=0, bins=10):
     minn = min(np.min(x), np.min(y))
     maxx = max(np.max(x), np.max(y))
     range_x = np.max(x) - np.min(x)
@@ -218,6 +243,44 @@ def NHFD_Cluster_Analysis(X_train, cluster_ids, column_names):
                     c = column_names[k]
                     print("Feature:", c, "Val:", v)
                     print("C1:", np.round(np.mean(Xi[:,k]),3), "C2:", np.round(np.mean(Xj[:,k]), 3))
+
+
+def NHFD_Single_Cluster_Analysis(X_train, cluster_ids, column_names):
+    print("\nCluster Wise discriminative features (NHFD)")
+    cluster_entrpy = 0
+    cntr = 0
+    n_columns = X_train.shape[1]
+    n_clusters = len(torch.unique(cluster_ids))
+    input_dim = X_train.shape[1]
+    mi_scores = {}
+    for i in range(n_clusters):
+        mi_scores[i] = {}
+        ci = torch.where(cluster_ids == i)[0]
+        for c in range(n_columns):
+            Xi_c = X_train[ci][:,c]
+            Zc = []
+            # Collect values from other clusters
+            for j in range(n_clusters):
+                if i != j:
+                    cj = torch.where(cluster_ids == j)[0]                    
+                    Xj_c = X_train[cj][:,c]
+                    Zc = np.concatenate([Zc, Xj_c])
+
+            col_entrpy = 0
+            p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
+            mi_scores[i][c] = np.round(p_vals, 3)
+
+        print("\n========\n")
+        print("Cluster:", i)
+        sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])
+        for feature, pval in sorted_dict:
+            f = column_names[feature]
+            print("Feature:", f, "PVal:", pval)
+            for cluster_id in range(n_clusters):
+                    c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
+                    X_cluster_f = X_train[c_cluster_id][:,feature]
+                    print("Cluster:", cluster_id, np.round(np.mean(X_cluster_f),3))
+
 
 def is_non_zero_file(fpath):
     return os.path.isfile(fpath) and os.path.getsize(fpath) > 0
