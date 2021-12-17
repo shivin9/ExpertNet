@@ -96,14 +96,20 @@ X_test, y_test, test_loader = test_data
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores , sil_scores, mifd_scores, nhfd_scores, w_nhfd_scores = [], [], [], [], [], [], []
+f1_scores, auc_scores, acc_scores = [], [], [] #Inattentive test results
+e_f1_scores, e_auc_scores, e_acc_scores = [], [], [] #Attentive test results
+sil_scores, wdfd_scores, nhfd_scores, w_nhfd_scores = [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
 test_losses, e_test_losses, local_sum_test_losses = [], [], []
 model_complexity = []
 
-if args.ablation == "beta":
+if args.ablation == "alpha":
+    iter_array = alphas
+    iteration_name = "Alpha"
+
+elif args.ablation == "beta":
     iter_array = betas
     iteration_name = "Beta"
 
@@ -120,7 +126,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(1)
+    iter_array = range(5)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -200,7 +206,7 @@ for r in range(len(iter_array)):
         delta = args.delta
         eta = args.eta
         if epoch % args.log_interval == 0:
-            plot(model, torch.FloatTensor(X_val).to(args.device), y_val, labels=None)
+            # plot(model, torch.FloatTensor(X_val).to(args.device), y_val, labels=None)
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
@@ -261,7 +267,8 @@ for r in range(len(iter_array)):
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
             val_feature_diff = calculate_nhfd(X_val, cluster_ids)
-            val_MIFD = calculate_MIFD(X_val, cluster_ids)
+            # val_wdfd = calculate_WDFD(X_val, cluster_ids)
+            val_wdfd = 0
             complexity_term = 0
             # complexity_term  = calculate_bound(model, B, len(z_train))
 
@@ -281,8 +288,8 @@ for r in range(len(iter_array)):
                          f'valid_loss: {val_loss:.3f} '  +
                          f'valid_F1: {val_f1:.3f} '  +
                          f'valid_AUC: {val_auc:.3f} ' + 
-                         f'valid_Feature_p: {val_feature_diff:.3f} ' + 
-                         f'valid_MIFD: {val_MIFD:.3f} ' + 
+                         f'valid_NHFD: {val_feature_diff:.3f} ' + 
+                         f'valid_WDFD: {val_wdfd:.3f} ' + 
                          f'valid_Silhouette: {val_sil:.3f} ' + 
                          f'Complexity Term: {complexity_term:.3f}')
 
@@ -389,8 +396,8 @@ for r in range(len(iter_array)):
             if args.cluster_balance == "kl":
                 cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
             else:
-                # cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P) - torch.sqrt(Q))
-                cluster_balance_loss = torch.linalg.vector_norm(torch.log(P) + torch.log(1-P))
+                cluster_balance_loss = torch.linalg.vector_norm(torch.sqrt(P) - torch.sqrt(Q))
+                # cluster_balance_loss = torch.linalg.vector_norm(torch.log(P) + torch.log(1-P))
                 # cluster_balance_loss = torch.linalg.vector_norm(1/P + 1/(1-P))
 
             km_loss = F.kl_div(q_batch.log(), p_train[idx], reduction='batchmean')
@@ -570,7 +577,7 @@ for r in range(len(iter_array)):
             e_train_losses.append(e_train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             nhfd_scores.append(calculate_nhfd(X_train,  cluster_ids_train))
-            mifd_scores.append(calculate_MIFD(X_train,  cluster_ids_train))
+            wdfd_scores.append(calculate_WDFD(X_train,  cluster_ids_train))
             # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
 
@@ -616,7 +623,7 @@ for r in range(len(iter_array)):
 
     test_preds = torch.zeros((len(z_test), 2))
 
-    # Hard local predictions
+    # Hard local predictions without Attention
     for j in range(model.n_clusters):
         cluster_id = np.where(cluster_ids == j)[0]
         X_cluster = z_test[cluster_id]
@@ -647,9 +654,13 @@ for r in range(len(iter_array)):
         ', E-Test F1 {:.3f}, E-Test AUC {:.3f}, E-Test ACC {:.3f}'.format(e_test_f1, e_test_auc, e_test_acc))
 
     print("\n")
-    f1_scores.append(e_test_f1)
-    auc_scores.append(e_test_auc)
-    acc_scores.append(e_test_acc)
+    e_f1_scores.append(e_test_f1)
+    e_auc_scores.append(e_test_auc)
+    e_acc_scores.append(e_test_acc)
+
+    f1_scores.append(test_f1)
+    auc_scores.append(test_auc)
+    acc_scores.append(test_acc)
 
     ####################################################################################
     ####################################################################################
@@ -711,13 +722,17 @@ for r in range(len(iter_array)):
     else:
         w_nhfd_scores.append(feature_diff/cntr)
 
+enablePrint()
+
 print("\n")
+print("Experiment ", iteration_name)
+print(iter_array)
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
 
 print("Sil scores: ", sil_scores)
 print("NHFD: ", nhfd_scores)
-print("MIFD: ", mifd_scores)
+print("WDFD: ", wdfd_scores)
 
 print("Train Loss: ", train_losses)
 print("E-Train Loss: ", e_train_losses)
@@ -728,15 +743,29 @@ print("Local Test Loss: ", local_sum_test_losses)
 
 print("Model Complexity: ", model_complexity)
 
-enablePrint()
-print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tMIFD\tW-NHFD")
+print('Dataset\tk')
+print("{}\t{}\n".format(args.dataset, args.n_clusters))
 
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores),\
-    np.average(mifd_scores), np.average(w_nhfd_scores)))
+print("E-F1\tE-AUC\tE-ACC")
 
-print("\n")
+print("{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.average(e_f1_scores), np.average(e_auc_scores), np.average(e_acc_scores)))
 
-MIFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-NHFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+print("F1\tAUC\tACC")
+
+print("{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
+
+
+print('SIL\tNHFD\tWDFD\tW-NHFD')
+print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.average(sil_scores),\
+    np.average(nhfd_scores), np.average(wdfd_scores), np.average(w_nhfd_scores)))
+
+print("Train Loss\tE-Train Loss\tTest Loss\tE-Test Loss")
+
+print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.average(train_losses), np.average(e_train_losses),\
+    np.average(test_losses), np.average(e_test_losses)))
+
+# WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+# NHFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)

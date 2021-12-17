@@ -86,7 +86,7 @@ args = parameters(parser)
 ####################################################################################
 
 
-column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
+scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
 X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data

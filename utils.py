@@ -11,7 +11,7 @@ from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
 from scipy.optimize import linear_sum_assignment as linear_assignment
-from scipy.stats import ttest_ind
+from scipy.stats import ttest_ind, wasserstein_distance as wd
 from read_patients import get_aki
 from matplotlib import pyplot as plt
 import umap
@@ -170,6 +170,32 @@ def calculate_MIFD(X, cluster_ids):
                 Xj = X[cj]
                 for c in range(n_columns):
                     col_entrpy[c] = calc_MI(Xi[:,c], Xj[:,c], c)
+                # Sort col_entrpy
+                col_entrpy = np.sort(col_entrpy)[::-1]
+                cluster_entrpy += np.sum(col_entrpy[:top_quartile])/top_quartile
+                cntr += 1
+    if cntr == 0:
+        return 0
+    return cluster_entrpy/cntr
+
+
+def calculate_WDFD(X, cluster_ids):
+    cluster_entrpy = 0
+    cntr = 0
+    n_columns = X.shape[1]
+    n_clusters = len(torch.unique(cluster_ids))
+    top_quartile = np.int(n_columns/4)
+    col_entrpy = np.zeros(n_columns)
+    for i in range(n_clusters):
+        for j in range(n_clusters):
+            if i > j:
+                col_entrpy *= 0
+                ci = torch.where(cluster_ids == i)[0]
+                cj = torch.where(cluster_ids == j)[0]
+                Xi = X[ci]
+                Xj = X[cj]
+                for c in range(n_columns):
+                    col_entrpy[c] = wd(Xi[:,c], Xj[:,c])
                 # Sort col_entrpy
                 col_entrpy = np.sort(col_entrpy)[::-1]
                 cluster_entrpy += np.sum(col_entrpy[:top_quartile])/top_quartile
@@ -499,7 +525,6 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
 def get_train_val_test_loaders(args):
     if args.dataset in DATASETS:
         if args.dataset != "aki" and args.dataset != "ards":
-            print("Loading Dataset ", args.dataset)
             if args.dataset == "synthetic":
                 n_feat = 45
                 X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
@@ -581,6 +606,7 @@ def paper_synthetic(n_pts=1000, centers=4):
     return X2.T, y
 
 ## Ablation Parameter Ranges ##
+alphas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
 betas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
 gammas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
 deltas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]

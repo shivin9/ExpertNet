@@ -85,7 +85,7 @@ base_suffix += args.dataset + "_"
 base_suffix += str(args.n_clusters) + "_"
 base_suffix += str(args.attention)
 
-column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
+scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
 X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
@@ -98,7 +98,7 @@ X_test, y_test, test_loader = test_data
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores, sil_scores, nhfd_scores, mifd_scores = [], [], [], [], [], []
+f1_scores, auc_scores, acc_scores, sil_scores, nhfd_scores, wdfd_scores = [], [], [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -419,7 +419,7 @@ for r in range(len(iter_array)):
             X_cluster = z_train[cluster_id]
             cluster_preds = model.classifiers[j][0](X_cluster)
             train_loss += torch.sum(q_train[cluster_id,j]*criterion(cluster_preds, y_cluster))
-            B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
+            # B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
 
 
         train_loss /= len(z_train)
@@ -470,8 +470,8 @@ for r in range(len(iter_array)):
             e_train_losses.append(e_train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             nhfd_scores.append(calculate_nhfd(X_train,  cluster_ids_train))
-            mifd_scores.append(calculate_MIFD(X_train,  cluster_ids_train))
-            model_complexity.append(calculate_bound(model, B, len(z_train)))
+            wdfd_scores.append(calculate_WDFD(X_train,  cluster_ids_train))
+            # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
 
 
@@ -610,7 +610,7 @@ print("Test AUC: ", auc_scores)
 
 print("Sil scores: ", sil_scores)
 print("NHFD: ", nhfd_scores)
-print("MIFD: ", mifd_scores)
+print("WDFD: ", wdfd_scores)
 
 print("Train Loss: ", train_losses)
 print("E-Train Loss: ", e_train_losses)
@@ -621,11 +621,11 @@ print("Local Test Loss: ", local_sum_test_losses)
 print("Model Complexity: ", model_complexity)
 
 enablePrint()
-print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tMIFD")
+print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tWDFD")
 
 print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
     np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores),\
-    np.average(mifd_scores)))
+    np.average(wdfd_scores)))
 
 print("\n")
