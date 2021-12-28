@@ -90,6 +90,7 @@ class NNClassifier(nn.Module):
         self.args = args
         self.n_classes = args.n_classes
         self.criterion = nn.CrossEntropyLoss(reduction='mean')
+        # self.criterion = torch.nn.HingeEmbeddingLoss(reduction='mean')
         self.ae = ae
 
         if self.ae == None:

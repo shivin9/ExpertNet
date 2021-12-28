@@ -17,7 +17,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -127,7 +127,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(5)
+    iter_array = range(1)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -163,12 +163,11 @@ for r in range(len(iter_array)):
 
     # cluster parameter initiate
     device = args.device
-    y = y_train
     qs, z_train = model(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
     q_train = qs[0]
 
     kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
-    cluster_ids_train = kmeans.fit_predict(z_train.data.cpu().numpy())
+    cluster_ids_train = torch.Tensor(kmeans.fit_predict(z_train.data.cpu().numpy()))
     original_cluster_centers = kmeans.cluster_centers_
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
 
@@ -335,52 +334,53 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
 
-    # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
-    # qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
-    # q_train = qs[0]
-    # cluster_ids = torch.argmax(q_train, axis=1)
-    # train_preds_e = torch.zeros((len(z_train), 2))
-    # feature_importances = np.zeros((args.n_clusters, args.input_dim))
+    regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
+    qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
+    q_train = qs[0]
+    cluster_ids = torch.argmax(q_train, axis=1)
+    train_preds_e = torch.zeros((len(z_train), 2))
+    feature_importances = np.zeros((args.n_clusters, args.input_dim))
 
-    # # Weighted predictions
-    # for j in range(model.n_clusters):
-    #     X_cluster = z_train
-    #     cluster_preds = model.classifiers[j][0](X_cluster)
-    #     # print(q_test, cluster_preds[:,0])
-    #     train_preds_e[:,0] += q_train[:,j]*cluster_preds[:,0]
-    #     train_preds_e[:,1] += q_train[:,j]*cluster_preds[:,1]
+    # Weighted predictions
+    for j in range(model.n_clusters):
+        X_cluster = z_train
+        cluster_preds = model.classifiers[j][0](X_cluster)
+        # print(q_test, cluster_preds[:,0])
+        train_preds_e[:,0] += q_train[:,j]*cluster_preds[:,0]
+        train_preds_e[:,1] += q_train[:,j]*cluster_preds[:,1]
 
-    # for j in range(model.n_clusters):
-    #     cluster_id = torch.where(cluster_ids == j)[0]
-    #     X_cluster = X_train[cluster_id]
-    #     if args.attention == True:
-    #         y_cluster = train_preds_e[cluster_id][:,1]
-    #     else:
-    #         y_cluster = train_preds[cluster_id][:,1]
+    for j in range(model.n_clusters):
+        cluster_id = torch.where(cluster_ids == j)[0]
+        X_cluster = X_train[cluster_id]
+        y_cluster = torch.Tensor(y_train[cluster_id])
+        # if args.attention == True:
+        #     y_cluster = train_preds_e[cluster_id][:,1]
+        # else:
+        #     y_cluster = train_preds[cluster_id][:,1]
 
-    #     # Some test data might not belong to any cluster
-    #     if len(cluster_id) > 0:
-    #         regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
-    #         best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-    #         feature_importances[j,:] = regs[j].feature_importances_
-    #         print("Cluster # ", j, "sized: ", len(cluster_id))
-    #         print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-    #         print("=========================\n")
+        # Some test data might not belong to any cluster
+        if len(cluster_id) > 0:
+            regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
+            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
+            feature_importances[j,:] = regs[j].feature_importances_
+            print("|C{}|={}, +/total = {:.3f}".format(j, len(cluster_id), sum(y_cluster.cpu().data.numpy())/len(cluster_id)))
+            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+            print("=========================\n")
 
-    # feature_diff = 0
-    # cntr = 0
-    # for i in range(args.n_clusters):
-    #     for j in range(args.n_clusters):
-    #         if i > j:
-    #             ci = torch.where(cluster_ids == i)[0]
-    #             cj = torch.where(cluster_ids == j)[0]
-    #             Xi = X_train[ci]
-    #             Xj = X_train[cj]
-    #             feature_diff += sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
-    #             print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
-    #             cntr += 1
+    feature_diff = 0
+    cntr = 0
+    for i in range(args.n_clusters):
+        for j in range(args.n_clusters):
+            if i > j:
+                ci = torch.where(cluster_ids == i)[0]
+                cj = torch.where(cluster_ids == j)[0]
+                Xi = X_train[ci]
+                Xj = X_train[cj]
+                feature_diff += sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
+                # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
+                cntr += 1
 
-    # print("Average Feature Difference: ", feature_diff/cntr)
+    print("Average Feature Difference: ", feature_diff/cntr)
 
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
@@ -411,3 +411,4 @@ print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
 # print("\n")
 
 # NHFD_Cluster_Analysis(X_train, torch.Tensor(cluster_ids_train), column_names)
+WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

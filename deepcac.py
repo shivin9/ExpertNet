@@ -16,7 +16,8 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier, RandomForestClassifier
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.parameter import Parameter
@@ -126,7 +127,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(5)
+    iter_array = range(1)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -671,7 +672,9 @@ for r in range(len(iter_array)):
     ####################################################################################
 
 
-    regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
+    # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
+    regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
+    # regs = [RandomForestClassifier(random_state=0) for _ in range(args.n_clusters)]
     qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
     q_train = qs[0]
     cluster_ids = torch.argmax(q_train, axis=1)
@@ -689,19 +692,23 @@ for r in range(len(iter_array)):
     for j in range(model.n_clusters):
         cluster_id = torch.where(cluster_ids == j)[0]
         X_cluster = X_train[cluster_id]
-        if args.attention == True:
-            y_cluster = train_preds_e[cluster_id][:,1]
-        else:
-            y_cluster = train_preds[cluster_id][:,1]
+        # y_cluster = y_train[cluster_id]
+        y_cluster = torch.Tensor(y_train[cluster_id])
+
+        # if args.attention == True:
+        #     y_cluster = train_preds_e[cluster_id][:,1]
+        # else:
+        #     y_cluster = train_preds[cluster_id][:,1]
 
         # Some test data might not belong to any cluster
         if len(cluster_id) > 0:
-            regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
+            # regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
+            regs[j].fit(X_cluster, y_cluster)
             best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
             feature_importances[j,:] = regs[j].feature_importances_
-            # print("Cluster # ", j, "sized: ", len(cluster_id))
-            # print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-            # print("=========================\n")
+            print("|C{}|={}, +/total = {:.3f}".format(j, len(cluster_id), sum(y_cluster.cpu().data.numpy())/len(cluster_id)))
+            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+            print("=========================\n")
 
     feature_diff = 0
     cntr = 0

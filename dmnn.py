@@ -60,7 +60,7 @@ res = pd.DataFrame(columns=['Dataset', 'Classifier', 'alpha', 'k', \
 DATASET = args.dataset
 alphas = [0.01, 0.02, 0.05, 0.08, 0.1, 0.15, 0.2, 0.3, 0.5, 0.8, 1]
 
-column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
+scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
 X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
@@ -85,23 +85,9 @@ class EarlyStoppingByLossVal(Callback):
 
 
 def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cluster_algo, args):
-    # alpha = 0.04 # change this value only
-    beta = -np.infty # do not change this
     data_len = X_train.shape[1]
     ## Define Neural Network
     experts = []
-
-    # fname = os.path.sep.join([args.dataset,
-    #     "weights-{epoch:03d}-{val_loss:.4f}.hdf5"])
-    # checkpoint = ModelCheckpoint(fname, monitor="val_loss", mode="min",
-    #     save_best_only=True, verbose=1)
-    # callbacks = [checkpoint]
-    # callback = [
-    #     EarlyStoppingByLossVal(monitor='val_loss', value=0.00001, verbose=1)
-    #     ]
-    # callback = [EarlyStopping(monitor='loss', patience=5)]
-    # callback = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)]
-
     inputTensor = layers.Input(shape=(data_len,))
     # encode = layers.Dense(units=64, name='encode_1', activation=None, activity_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4))(inputTensor)
     # encode = layers.Dense(units=32, name='encode_2', activation=None, activity_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4))(encode)
@@ -170,15 +156,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
         use_multiprocessing=True,
         verbose=0
         )
-    # print("AutoEncoder Trained")
 
-    ## Check autoencoder loss
-    # plt.plot(history_dae.history['loss'], label='Training loss')
-    # plt.title('Loss')
-    # plt.ylabel('Loss')
-    # plt.xlabel('No. epoch')
-    # plt.legend(loc="best")
-    # plt.show()
     test_loss = dae.evaluate(x=X_test, y=X_test)
     # print('Autoencoder loss:', test_loss)
 
@@ -209,8 +187,11 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
         )
 
     ## Check cluster gating accuracy
-    # y_pred = cluster.predict(X_train) 
+    cluster_ids_train = np.argmax(cluster.predict(X_train), axis=1)
     # scores = precision_recall_fscore_support(X_train_clusters_sparse, y_pred > 0.5, average='weighted')
+    sil_score = silhouette_new(X_train_embeddings, cluster_ids_train, metric='euclidean')
+    nhfd_score = calculate_nhfd(X_train, torch.tensor(cluster_ids_train))
+    wdfd_score = calculate_WDFD(X_train, torch.tensor(cluster_ids_train))
 
     ## Train full model
     history_full = full.fit(
@@ -241,7 +222,10 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
 
     return {'f1_score': fscore_ls,
           'auroc': auroc_ls,
-          'accuracy': accuracy_ls}
+          'accuracy': accuracy_ls,
+          'sil_score': sil_score,
+          'nhfd_score': nhfd_score,
+          'wdfd_score': wdfd_score}
 
 
 param_grid = {
@@ -263,7 +247,7 @@ params = {'titanic': [0.2, 2],
 
 best_alpha = 0
 best_score = 0
-test_f1_auc = [0, 0, 0, 0, 0, 0]
+test_f1_auc = [0, 0, 0, 0, 0]
 keys, values = zip(*param_grid.items())
 combs = list(itertools.product(*values))
 # random.shuffle(combs)
@@ -272,38 +256,24 @@ scale = StandardScaler()
 res_idx = 0
 
 if args.cv == "False":
-    print("Testing on HELD OUT test set (5 times) with best alpha")
-
     n_clusters = args.n_clusters
 
     print("Testing on ", DATASET, " with n_clusters = ", args.n_clusters)
 
-    n_runs = 3
-    base_scores = np.zeros((n_runs, 2))
-    km_scores = np.zeros((n_runs, 2))
-    cac_scores = np.zeros((n_runs, 2))
+    n_runs = 5
+    km_scores = np.zeros((n_runs, 5))
 
     for i in range(n_runs):
-        # scores_cac = neural_network(X1, y1, X_test, y_test, n_clusters, 'CAC', alpha)
-        # scores_base = neural_network(X_train, y_train, X_val, y_val, X_test, y_test, 1, 'KMeans', args)
         scores_km = neural_network(X_train, y_train, X_val, y_val, X_test, y_test, args.n_clusters, 'KMeans', args)
-                
-        # cac_scores[i, 0] = scores_cac['f1_score']
-        # cac_scores[i, 1] = scores_cac['auroc']
+
         km_scores[i, 0] = scores_km['f1_score']
         km_scores[i, 1] = scores_km['auroc']
-        # base_scores[i, 0] = scores_base['f1_score']
-        # base_scores[i, 1] = scores_base['auroc']
+        km_scores[i, 2] = scores_km['sil_score']
+        km_scores[i, 3] = scores_km['nhfd_score']
+        km_scores[i, 4] = scores_km['wdfd_score']
 
-    # print("Base final test performance: ", "F1: ", scores_base['f1_score'], "AUC: ", scores_base['auroc'], alpha)
-    print("KM final test performance: ", "F1: ", scores_km['f1_score'], "AUC: ", scores_km['auroc'])
-    print("KM final test performance: ", "F1, AUC ", np.mean(km_scores, axis=0))
-    # print("CAC final test performance: ", "F1: ", scores_cac['f1_score'], "AUC: ", scores_cac['auroc'], alpha)
-    # test_results.loc[0] = [DATASET, "DMNN", 0, n_clusters] + list(np.mean(base_scores, axis=0)) + list(np.std(base_scores, axis=0)) + \
-    #         list(np.mean(km_scores, axis=0)) + list(np.std(km_scores, axis=0)) + \
-    #         list(np.mean(cac_scores, axis=0)) + list(np.std(cac_scores, axis=0))
-    # print(test_results)
-    # test_results.to_csv("./Results/Best_DMNN_alpha_test_" + args.dataset + "" + ".csv", index=None)
+    print("k\tF1\tAUC\tSIL\tNHFD\tWDFD")
+    print(n_clusters, np.mean(km_scores, axis=0))
 
 else:
     for v in combs:

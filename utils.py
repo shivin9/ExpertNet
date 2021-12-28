@@ -288,7 +288,7 @@ def NHFD_Single_Cluster_Analysis(X_train, cluster_ids, column_names):
             # Collect values from other clusters
             for j in range(n_clusters):
                 if i != j:
-                    cj = torch.where(cluster_ids == j)[0]                    
+                    cj = torch.where(cluster_ids == j)[0]
                     Xj_c = X_train[cj][:,c]
                     Zc = np.concatenate([Zc, Xj_c])
 
@@ -306,6 +306,48 @@ def NHFD_Single_Cluster_Analysis(X_train, cluster_ids, column_names):
                     c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
                     X_cluster_f = X_train[c_cluster_id][:,feature]
                     print("Cluster:", cluster_id, np.round(np.mean(X_cluster_f),3))
+
+
+def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
+    print("\nCluster Wise discriminative features (NHFD)")
+    cluster_entrpy = 0
+    cntr = 0
+    n_columns = X_train.shape[1]
+    n_clusters = len(torch.unique(cluster_ids))
+    input_dim = X_train.shape[1]
+    mi_scores = {}
+    for i in range(n_clusters):
+        mi_scores[i] = {}
+        ci = torch.where(cluster_ids == i)[0]
+        for c in range(n_columns):
+            Xi_c = X_train[ci][:,c]
+            Zc = []
+            # Collect values from other clusters
+            for j in range(n_clusters):
+                if i != j:
+                    cj = torch.where(cluster_ids == j)[0]                    
+                    Xj_c = X_train[cj][:,c]
+                    Zc = np.concatenate([Zc, Xj_c])
+
+            col_entrpy = 0
+            # p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
+            p_vals = -np.nan_to_num(wd(Xi_c, Zc))
+            # p_vals = np.nan_to_num(calc_MI(Xi_c, Zc,0))
+            mi_scores[i][c] = p_vals
+
+        print("\n========\n")
+        print("|C{}| = {}".format(i, len(ci)))
+        print("|C{}| = {:.3f}".format(i, sum(y_train[ci])/len(ci)))
+
+        sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])
+        for feature, pval in sorted_dict:
+            f = column_names[feature]
+            print(f, "\t", -pval, end='\t')
+            for cluster_id in range(n_clusters):
+                    c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
+                    X_cluster_f = X_train[c_cluster_id][:,feature]
+                    # print(np.round(np.mean(X_cluster_f),3), end='\t')
+            print('')
 
 
 def is_non_zero_file(fpath):
