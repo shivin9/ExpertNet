@@ -51,3 +51,12 @@ do
     echo "k = $(($j))" >> Results/results_DMNN.txt
     python3 ../dmnn.py --dataset diabetes --n_clusters $j >> Results/results_DMNN.txt
 done
+
+echo "DMNN" >> Results/results_DMNN.txt
+echo "CIC_LOS" >> Results/results_DMNN.txt
+
+for j in 1 2 3 4
+do
+    echo "k = $(($j))" >> Results/results_DMNN.txt
+    python3 ../dmnn.py --dataset cic_los --n_clusters $j  --n_classes 3 >> Results/results_DMNN.txt
+done

@@ -84,7 +84,7 @@ class EarlyStoppingByLossVal(Callback):
             self.model.stop_training = True
 
 
-def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cluster_algo, args):
+def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cluster_algo, args, n_classes=2):
     data_len = X_train.shape[1]
     ## Define Neural Network
     experts = []
@@ -108,7 +108,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
     for i in range(n_experts):
       layer_var = layers.Dense(16, activation='relu', name='dense_{}_2'.format(i))(embed)
       layer_var = layers.Dense(8, activation='relu', name='dense_{}_3'.format(i))(layer_var)
-      layer_var = layers.Dense(1, activation='relu', name='dense_{}_4'.format(i))(layer_var)
+      layer_var = layers.Dense(n_classes, activation='relu', name='dense_{}_4'.format(i))(layer_var)
       experts.append(layer_var)
       del layer_var
 
@@ -142,7 +142,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
 
     full.compile(
         optimizer=optimizers.Adam(learning_rate=0.001),
-        loss='binary_crossentropy',
+        loss='categorical_crossentropy',
         metrics=['binary_crossentropy'],
     )
 

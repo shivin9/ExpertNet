@@ -233,7 +233,7 @@ for r in range(len(iter_array)):
         qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
         q_val = qs[0]
         cluster_ids_val = kmeans.predict(z_val.detach().data.cpu().numpy())
-        preds = torch.zeros((len(z_val), 2))
+        preds = torch.zeros((len(z_val), args.n_classes))
 
         # Normal Hard Classification
         for j in range(model.n_clusters):
@@ -243,8 +243,8 @@ for r in range(len(iter_array)):
             cluster_preds = model.classifiers[j][0](X_cluster)
             preds[cluster_id] = cluster_preds
 
-        val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1))
-        val_auc = roc_auc_score(y_val, preds[:,1].detach().numpy())
+        val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
+        val_auc = multi_class_auc(y_val, preds.detach().numpy(), args.n_classes)
         val_sil = silhouette_new(z_val.detach().data.cpu().numpy(), cluster_ids_val, metric='euclidean')
 
         val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
@@ -291,7 +291,7 @@ for r in range(len(iter_array)):
     test_loss = 0
     local_sum_loss = 0
 
-    test_preds = torch.zeros((len(z_test), 2))
+    test_preds = torch.zeros((len(z_test), args.n_classes))
 
     # Hard local predictions
     for j in range(model.n_clusters):
@@ -302,8 +302,8 @@ for r in range(len(iter_array)):
         test_preds[cluster_id,:] = cluster_test_preds
         local_sum_loss += torch.sum(q_test[cluster_id,j]*criterion(cluster_test_preds, y_cluster))
     
-    test_f1 = f1_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1))
-    test_auc = roc_auc_score(y_test, test_preds[:,1].detach().numpy())
+    test_f1 = f1_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1), average="macro")
+    test_auc = multi_class_auc(y_test, test_preds.detach().numpy(), args.n_classes)
     test_acc = accuracy_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1))
     test_loss = torch.mean(criterion(test_preds, torch.Tensor(y_test).type(torch.LongTensor)))
     test_nhfd = calculate_nhfd(X_test, torch.Tensor(test_cluster_indices).type(torch.LongTensor))
@@ -338,7 +338,7 @@ for r in range(len(iter_array)):
     qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
     q_train = qs[0]
     cluster_ids = torch.argmax(q_train, axis=1)
-    train_preds_e = torch.zeros((len(z_train), 2))
+    train_preds_e = torch.zeros((len(z_train), args.n_classes))
     feature_importances = np.zeros((args.n_clusters, args.input_dim))
 
     # Weighted predictions
@@ -346,17 +346,13 @@ for r in range(len(iter_array)):
         X_cluster = z_train
         cluster_preds = model.classifiers[j][0](X_cluster)
         # print(q_test, cluster_preds[:,0])
-        train_preds_e[:,0] += q_train[:,j]*cluster_preds[:,0]
-        train_preds_e[:,1] += q_train[:,j]*cluster_preds[:,1]
+        for c in range(args.n_classes):
+            train_preds_e[:,c] += q_train[:,j]*cluster_preds[:,c]
 
     for j in range(model.n_clusters):
         cluster_id = torch.where(cluster_ids == j)[0]
         X_cluster = X_train[cluster_id]
         y_cluster = torch.Tensor(y_train[cluster_id])
-        # if args.attention == True:
-        #     y_cluster = train_preds_e[cluster_id][:,1]
-        # else:
-        #     y_cluster = train_preds[cluster_id][:,1]
 
         # Some test data might not belong to any cluster
         if len(cluster_id) > 0:
@@ -411,4 +407,4 @@ print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
 # print("\n")
 
 # NHFD_Cluster_Analysis(X_train, torch.Tensor(cluster_ids_train), column_names)
-WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+# WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

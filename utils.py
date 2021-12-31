@@ -6,10 +6,10 @@ import os
 import torch
 from torch.utils.data import Dataset
 from sklearn.datasets import make_classification, make_blobs
-from sklearn.metrics import mutual_info_score
+from sklearn.metrics import mutual_info_score, roc_auc_score
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from scipy.stats import ttest_ind, wasserstein_distance as wd
 from read_patients import get_aki
@@ -18,7 +18,7 @@ import umap
 import sys
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
-DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic']
+DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic', 'cic_los']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
@@ -271,7 +271,7 @@ def NHFD_Cluster_Analysis(X_train, cluster_ids, column_names):
                     print("C1:", np.round(np.mean(Xi[:,k]),3), "C2:", np.round(np.mean(Xj[:,k]), 3))
 
 
-def NHFD_Single_Cluster_Analysis(X_train, cluster_ids, column_names):
+def NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
     print("\nCluster Wise discriminative features (NHFD)")
     cluster_entrpy = 0
     cntr = 0
@@ -297,7 +297,8 @@ def NHFD_Single_Cluster_Analysis(X_train, cluster_ids, column_names):
             mi_scores[i][c] = np.round(p_vals, 3)
 
         print("\n========\n")
-        print("Cluster:", i)
+        print("|C{}| = {}".format(i, len(ci)))
+        print("|C{}| = {:.3f}".format(i, np.bincount(y_train[ci])/len(ci)))
         sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])
         for feature, pval in sorted_dict:
             f = column_names[feature]
@@ -337,7 +338,7 @@ def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
-        print("|C{}| = {:.3f}".format(i, sum(y_train[ci])/len(ci)))
+        print("|C{}| = {:.3f}".format(i, np.bincount(y_train[ci])/len(ci)))
 
         sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])
         for feature, pval in sorted_dict:
@@ -417,6 +418,14 @@ def cluster_acc(y_true, y_pred):
         w[y_pred[i], y_true[i]] += 1
     row, col = linear_assignment(w.max() - w)
     return sum([w[i, j] for i, j in zip(row, col)]) * 1.0 / y_pred.size
+
+
+def multi_class_auc(y_true, y_scores, n_classes):
+    y = label_binarize(y_true, classes=range(n_classes))
+    scores = []
+    for i in range(n_classes):
+        scores.append(roc_auc_score(y[:,i], y_scores[:,i]))
+    return np.average(scores)
 
 
 def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
@@ -566,7 +575,7 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
 
 def get_train_val_test_loaders(args):
     if args.dataset in DATASETS:
-        if args.dataset != "aki" and args.dataset != "ards":
+        if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los":
             if args.dataset == "synthetic":
                 n_feat = 45
                 X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
@@ -595,6 +604,38 @@ def get_train_val_test_loaders(args):
             X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
+
+        elif args.dataset == "cic_los":
+            X, y, columns, scale = get_dataset("cic", DATA_DIR)
+            print(args.dataset)
+
+            los_quantiles = np.quantile(X[:,2], [0, 0.33, 0.66, 1])
+            y_los = []
+            for i in range(len(X)):
+                lbl = 0
+                if X[i,2] < los_quantiles[1]:
+                    lbl = 0
+                elif los_quantiles[1] < X[i,2] < los_quantiles[2]:
+                    lbl = 1
+                elif los_quantiles[2] < X[i,2] < los_quantiles[3]:
+                    lbl = 2
+                y_los.append(lbl)
+
+            X_los = np.delete(X, 2, 1) # 2nd column is LOS
+            y = np.array(y_los)
+            args.input_dim = X_los.shape[1]
+
+            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=0)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+
+            sc = StandardScaler()
+            X_train = sc.fit_transform(X_train)
+            X_val = sc.fit_transform(X_val)
+            X_test = sc.fit_transform(X_test)
+            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
+            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
+            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
+
 
         elif args.dataset == "aki":
             print("Loading aki Train")

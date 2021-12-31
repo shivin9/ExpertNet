@@ -112,8 +112,8 @@ for r in range(5):
             y_pred, train_loss = m.fit(X_batch, y_batch)
             epoch_loss += train_loss
 
-            f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy())
-            auc = roc_auc_score(y_batch, y_pred[:,1])
+            f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy(), average="macro")
+            auc = multi_class_auc(y_batch, y_pred, args.n_classes)
             epoch_auc += auc.item()
             epoch_f1 += f1.item()
 
@@ -121,8 +121,8 @@ for r in range(5):
         val_pred = m(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
 
-        val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val)
-        val_auc = roc_auc_score(y_val, val_pred[:,1].detach().numpy())
+        val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
+        val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
         es([val_f1, val_auc], m)
 
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
@@ -130,7 +130,7 @@ for r in range(5):
         	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
 
         if es.early_stop == True:
-    	    break
+            break
 
 
     ####################################################################################
@@ -150,8 +150,8 @@ for r in range(5):
     test_pred = m(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
 
-    test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
-    test_auc = roc_auc_score(y_test, test_pred[:,1].detach().numpy())
+    test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
+    test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
