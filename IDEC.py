@@ -122,7 +122,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(1)
+    iter_array = range(5)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
@@ -453,7 +453,7 @@ for r in range(len(iter_array)):
         
         epoch_len = len(str(N_EPOCHS))
         
-        print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
+        print_msg = (f'\n[{e:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
                      f'train_loss: {train_loss:.3f} ' +
                      f'valid_loss: {val_loss:.3f} '  +
                      f'valid_F1: {val_f1:.3f} '  +
@@ -465,7 +465,7 @@ for r in range(len(iter_array)):
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
         es([val_f1, val_auc], model)
-        if es.early_stop == True:
+        if es.early_stop == True or e == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             e_train_losses.append(e_train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
