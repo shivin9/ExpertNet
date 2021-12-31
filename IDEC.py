@@ -46,6 +46,7 @@ parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
+parser.add_argument('--n_runs', default= 5, type=int)
 parser.add_argument('--pre_epoch', default= 40, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
@@ -122,7 +123,7 @@ elif args.ablation == "k":
     iteration_name = "K"
 
 else:
-    iter_array = range(5)
+    iter_array = range(args.n_runs)
     iteration_name = "Run"
 
 for r in range(len(iter_array)):

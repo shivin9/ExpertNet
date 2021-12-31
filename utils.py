@@ -366,6 +366,7 @@ class parameters(object):
         self.wd = parser.wd
         self.batch_size = parser.batch_size
         self.n_epochs = parser.n_epochs
+        self.n_runs = parser.n_runs
         self.pre_epoch = parser.pre_epoch
         self.pretrain = parser.pretrain
         self.load_ae = parser.load_ae
@@ -421,7 +422,8 @@ def cluster_acc(y_true, y_pred):
 
 
 def multi_class_auc(y_true, y_scores, n_classes):
-    y = label_binarize(y_true, classes=range(n_classes))
+    # If n_classes = 2, then label_binarize doesn't give a 2d array
+    y = label_binarize(y_true, classes=list(range(n_classes+1)))[:,:n_classes]
     scores = []
     for i in range(n_classes):
         scores.append(roc_auc_score(y[:,i], y_scores[:,i]))
@@ -663,7 +665,7 @@ def get_train_val_test_loaders(args):
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
-            
+
         train_loader = torch.utils.data.DataLoader(X_train_data_loader,
             batch_size=args.batch_size, shuffle=True)
 
