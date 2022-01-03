@@ -8,7 +8,8 @@ from sklearn.preprocessing import StandardScaler, MultiLabelBinarizer
 import itertools
 import random
 import warnings
-from sklearn.metrics import classification_report, roc_curve, confusion_matrix, precision_recall_fscore_support, roc_auc_score, accuracy_score, f1_score
+from sklearn.metrics import classification_report, roc_curve, confusion_matrix, precision_recall_fscore_support,\
+roc_auc_score, accuracy_score, f1_score
 from sklearn.utils import class_weight, shuffle
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
@@ -18,6 +19,7 @@ from keras import models, layers, losses, optimizers, initializers, regularizers
 from keras.utils.vis_utils import plot_model
 from keras import backend
 import matplotlib.pyplot as plt
+import tensorflow.keras.backend as K
 from utils import *
 
 
@@ -102,8 +104,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
     decode = layers.Dense(units=64, name='decode_2', activation=None)(decode)
     decode = layers.Dense(units=128, name='decode_1', activation=None)(decode)
     decode = layers.Dense(units=data_len, name='decode_0', activation=None)(decode)
-
-    gate = layers.Dense(n_experts, activation='softmax', name='gating')(embed)
+    gate   = layers.Dense(n_experts*n_classes, activation='softmax', name='gating')(embed)
 
     for i in range(n_experts):
       layer_var = layers.Dense(16, activation='relu', name='dense_{}_2'.format(i))(embed)
@@ -114,6 +115,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
 
     if n_experts == 1:
       outputTensor = experts
+
     else: 
       mergedTensor = layers.Concatenate(axis=1)(experts)
       outputTensor = layers.Dot(axes=1)([gate, mergedTensor])
@@ -143,7 +145,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
     full.compile(
         optimizer=optimizers.Adam(learning_rate=0.001),
         loss='categorical_crossentropy',
-        metrics=['binary_crossentropy'],
+        metrics=['categorical_crossentropy'],
     )
 
     ## Train autoencoder
@@ -164,11 +166,13 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
     encoder = models.Model(inputs=inputTensor, outputs=encode)
     X_train_embeddings = encoder.predict(x=X_train)
 
-    
     if cluster_algo == 'KMeans':
       ## KMeans Clustering
       cluster_alg = KMeans(n_clusters=n_experts, random_state=0)
       X_train_clusters = cluster_alg.fit_predict(X_train_embeddings)
+      temp = np.zeros(n_classes*len(X_train_clusters))
+      for i in range(len(temp)):
+        temp[i] = X_train_clusters[int(i/2)]
     else:
       raise ValueError('Method not supported')
 

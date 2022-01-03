@@ -15,6 +15,7 @@ from scipy.spatial import distance_matrix
 import argparse
 import numpy as np
 from sklearn.cluster import KMeans
+from scipy.cluster.vq import kmeans2
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
 from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
@@ -161,9 +162,7 @@ for r in range(len(iter_array)):
     device = args.device
     x_bar, hidden = model.ae(torch.Tensor(X_train).to(args.device))
 
-    kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
-    cluster_indices = kmeans.fit_predict(hidden.data.cpu().numpy())
-    original_cluster_centers = kmeans.cluster_centers_
+    original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
     for i in range(args.n_clusters):
         cluster_idx = np.where(cluster_indices == i)[0]
@@ -592,20 +591,20 @@ for r in range(len(iter_array)):
             print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
             print("=========================\n")
 
-    feature_diff = 0
-    cntr = 0
-    for i in range(args.n_clusters):
-        for j in range(args.n_clusters):
-            if i > j:
-                ci = torch.where(cluster_ids == i)[0]
-                cj = torch.where(cluster_ids == j)[0]
-                Xi = X_train[ci]
-                Xj = X_train[cj]
-                feature_diff += sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
-                # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
-                cntr += 1
+    # feature_diff = 0
+    # cntr = 0
+    # for i in range(args.n_clusters):
+    #     for j in range(args.n_clusters):
+    #         if i > j:
+    #             ci = torch.where(cluster_ids == i)[0]
+    #             cj = torch.where(cluster_ids == j)[0]
+    #             Xi = X_train[ci]
+    #             Xj = X_train[cj]
+    #             feature_diff += sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
+    #             # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
+    #             cntr += 1
 
-    print("Average Feature Difference: ", feature_diff/cntr)
+    # print("Average Feature Difference: ", feature_diff/cntr)
 
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)

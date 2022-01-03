@@ -13,7 +13,7 @@ from scipy.spatial import distance_matrix
 
 import argparse
 import numpy as np
-from sklearn.cluster import KMeans
+from scipy.cluster.vq import kmeans2
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
 from sklearn.linear_model import LogisticRegression
@@ -167,10 +167,7 @@ for r in range(len(iter_array)):
     device = args.device
     y = y_train
     x_bar, hidden = model.ae(torch.Tensor(X_train).to(args.device))
-
-    kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
-    cluster_indices = kmeans.fit_predict(hidden.data.cpu().numpy())
-    original_cluster_centers = kmeans.cluster_centers_
+    original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
 
     for i in range(args.n_clusters):
@@ -772,3 +769,4 @@ print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
 
 # WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
 # NHFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+NHFD_Single_Cluster_Analysis(torch.Tensor(X_train), y_train, cluster_ids_train, column_names)

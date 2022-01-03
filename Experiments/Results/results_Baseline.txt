@@ -1,8 +1,16 @@
-Baseline
 
-cic	3	0.381	0.756
-sepsis	3	0.671	0.898
-aki	3	0.654	0.697
-ards	3	0.181	0.778
-wid_mortality	3	0.403	0.875
-diabetes	3	0.216	0.565
+Baseline
+CIC
+cic
+Sepsis
+sepsis
+Kidney
+Loading aki Train
+Respiratory
+Loading ards Train
+Wid_Mortality
+wid_mortality
+Diabetes
+diabetes
+CIC-LOS
+cic_los
