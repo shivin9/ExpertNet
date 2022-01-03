@@ -14,7 +14,6 @@ from scipy.optimize import linear_sum_assignment as linear_assignment
 from scipy.stats import ttest_ind, wasserstein_distance as wd
 from read_patients import get_aki
 from matplotlib import pyplot as plt
-import umap
 import sys
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
@@ -279,6 +278,7 @@ def NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
     n_clusters = len(torch.unique(cluster_ids))
     input_dim = X_train.shape[1]
     mi_scores = {}
+    top_quartile = np.int(n_columns/4)
     for i in range(n_clusters):
         mi_scores[i] = {}
         ci = torch.where(cluster_ids == i)[0]
@@ -294,7 +294,7 @@ def NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
             col_entrpy = 0
             p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            np.sum(np.exp(-col_p_val[:top_quartile]/0.05))
+            np.sum(np.exp(-p_vals[:top_quartile]/0.05))
             mi_scores[i][c] = np.round(np.exp(-p_vals/0.05), 3)
 
         print("\n========\n")

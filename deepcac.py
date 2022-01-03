@@ -266,7 +266,7 @@ for r in range(len(iter_array)):
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
             val_feature_diff = calculate_nhfd(X_val, cluster_ids)
-            val_MIFD = calculate_MIFD(X_val, cluster_ids)
+            val_WDFD = calculate_WDFD(X_val, cluster_ids)
             complexity_term = 0
             # complexity_term  = calculate_bound(model, B, len(z_train))
 
@@ -287,7 +287,7 @@ for r in range(len(iter_array)):
                          f'valid_F1: {val_f1:.3f} '  +
                          f'valid_AUC: {val_auc:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
-                         f'valid_MIFD: {val_MIFD:.3f} ' + 
+                         f'valid_WDFD: {val_WDFD:.3f} ' + 
                          f'valid_Silhouette: {val_sil:.3f} ' + 
                          f'Complexity Term: {complexity_term:.3f}')
 

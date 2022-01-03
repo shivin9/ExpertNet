@@ -3,7 +3,6 @@ import copy
 import torch
 import argparse
 import numpy as np
-import umap
 import os
 from torchvision import datasets, transforms
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score,\
@@ -15,7 +14,7 @@ import argparse
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
-from sklearn.metrics import adjusted_rand_score as ari_score
+from sklearn.metrics import adjusted_rand_score as ari_score, confusion_matrix
 from sklearn.ensemble import GradientBoostingRegressor
 import torch
 import torch.nn as nn
@@ -154,6 +153,9 @@ for r in range(args.n_runs):
 
     test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
     test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
+
+    y_preds = np.argmax(test_pred.detach().numpy(), axis=1)
+    print(confusion_matrix(y_test, y_preds))
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
