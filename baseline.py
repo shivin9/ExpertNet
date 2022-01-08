@@ -71,6 +71,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 
 
@@ -100,7 +101,7 @@ for r in range(args.n_runs):
     device = args.device
 
     N_EPOCHS = args.n_epochs
-    es = EarlyStopping(dataset=args.dataset, path="./pretrained_model/checkpoint_base")
+    es = EarlyStopping(dataset=args.dataset)
 
     for e in range(1, N_EPOCHS):
         epoch_loss = 0

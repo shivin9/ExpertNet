@@ -1,16 +1,29 @@
-
 Baseline
 CIC
 cic
+Dataset	k	F1	AUC
+cic	3	0.604	0.853
 Sepsis
 sepsis
+Dataset	k	F1	AUC
+sepsis	3	0.819	0.878
 Kidney
 Loading aki Train
+Dataset	k	F1	AUC
+aki	3	0.640	0.677
 Respiratory
 Loading ards Train
+Dataset	k	F1	AUC
+ards	3	0.551	0.779
 Wid_Mortality
 wid_mortality
+Dataset	k	F1	AUC
+wid_mortality	3	0.689	0.881
 Diabetes
 diabetes
+Dataset	k	F1	AUC
+diabetes	3	0.471	0.566
 CIC-LOS
 cic_los
+Dataset	k	F1	AUC
+cic_los	3	0.399	0.646

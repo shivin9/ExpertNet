@@ -294,12 +294,11 @@ def NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
             col_entrpy = 0
             p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            np.sum(np.exp(-p_vals[:top_quartile]/0.05))
             mi_scores[i][c] = np.round(np.exp(-p_vals/0.05), 3)
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
-        print("|C{}| = {:.3f}".format(i, np.bincount(y_train[ci])/len(ci)))
+        print("|C{}| = {}".format(i, np.bincount(y_train[ci])/len(ci)))
         sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])[::-1]
         for feature, pval in sorted_dict:
             f = column_names[feature]
@@ -392,6 +391,7 @@ class parameters(object):
         # Utility parameters
         self.device = parser.device
         self.verbose = parser.verbose
+        self.cluster_analysis = parser.cluster_analysis
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
 

@@ -71,6 +71,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 # parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
@@ -215,7 +216,6 @@ for r in range(len(iter_array)):
                 X_cluster = X_latents[idx_cluster]
                 # B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
                 y_cluster = y_batch[idx_cluster]
-
                 classifier_k, optimizer_k = model.classifiers[k]
                 # Do not backprop the error to encoder
                 y_pred_cluster = classifier_k(X_cluster.detach())

@@ -6,7 +6,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	1	0.217	0.722	0.860	0.000	0.000	0.000
+cic	1	0.582	0.820	0.865	0.000	0.000	0.000
 
 
 k = 2
@@ -15,7 +15,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	2	0.232	0.773	0.777	0.488	0.545	0.500
+cic	2	0.593	0.804	0.867	0.530	0.507	0.573
 
 
 k = 3
@@ -24,7 +24,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	3	0.214	0.693	0.750	0.401	0.282	0.592
+cic	3	0.580	0.796	0.866	0.419	0.283	0.767
 
 
 k = 4
@@ -33,7 +33,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	4	0.235	0.817	0.865	0.507	0.261	0.617
+cic	4	0.556	0.785	0.864	0.396	0.265	1.057
 
 
 IDEC
@@ -44,7 +44,7 @@ alpha 1.0
 beta 0.5
 sepsis
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-sepsis	1	0.419	0.822	0.938	0.000	0.000	0.000
+sepsis	1	0.700	0.827	0.939	0.000	0.000	0.000
 
 
 k = 2
@@ -53,7 +53,7 @@ alpha 1.0
 beta 0.5
 sepsis
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-sepsis	2	0.473	0.838	0.944	0.454	0.692	0.999
+sepsis	2	0.699	0.803	0.941	0.513	0.702	0.863
 
 
 k = 3
@@ -62,7 +62,7 @@ alpha 1.0
 beta 0.5
 sepsis
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-sepsis	3	0.352	0.791	0.939	0.400	0.678	0.979
+sepsis	3	0.663	0.806	0.939	0.372	0.522	3.016
 
 
 k = 4
@@ -71,7 +71,7 @@ alpha 1.0
 beta 0.5
 sepsis
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-sepsis	4	0.332	0.809	0.939	0.149	0.638	1.295
+sepsis	4	0.619	0.815	0.936	0.354	0.545	1.756
 
 
 IDEC
@@ -82,7 +82,7 @@ alpha 1.0
 beta 0.5
 Loading aki Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-aki	1	0.548	0.613	0.566	0.000	0.000	0.000
+aki	1	0.482	0.600	0.550	0.000	0.000	0.000
 
 
 k = 2
@@ -91,7 +91,7 @@ alpha 1.0
 beta 0.5
 Loading aki Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-aki	2	0.566	0.599	0.578	0.729	0.306	0.155
+aki	2	0.571	0.596	0.573	0.739	0.334	0.160
 
 
 k = 3
@@ -100,7 +100,7 @@ alpha 1.0
 beta 0.5
 Loading aki Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-aki	3	0.566	0.599	0.572	0.615	0.238	0.185
+aki	3	0.566	0.584	0.568	0.679	0.230	0.183
 
 
 k = 4
@@ -109,7 +109,7 @@ alpha 1.0
 beta 0.5
 Loading aki Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-aki	4	0.542	0.595	0.578	0.732	0.174	0.188
+aki	4	0.575	0.585	0.579	0.817	0.203	0.195
 
 
 IDEC
@@ -120,7 +120,7 @@ alpha 1.0
 beta 0.5
 Loading ards Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-ards	1	0.105	0.678	0.926	nan	nan	nan
+ards	1	0.533	0.680	0.926	0.000	0.000	0.000
 
 
 k = 2
@@ -129,7 +129,7 @@ alpha 1.0
 beta 0.5
 Loading ards Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-ards	2	0.008	0.670	0.928	0.611	0.409	0.218
+ards	2	0.462	0.657	0.795	0.558	0.220	0.210
 
 
 k = 3
@@ -138,7 +138,7 @@ alpha 1.0
 beta 0.5
 Loading ards Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-ards	3	0.010	0.682	0.928	0.399	0.107	0.242
+ards	3	0.481	0.630	0.928	0.607	0.153	0.222
 
 
 k = 4
@@ -147,7 +147,7 @@ alpha 1.0
 beta 0.5
 Loading ards Train
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-ards	4	0.009	0.670	0.928	0.418	0.152	0.225
+ards	4	0.491	0.605	0.911	0.745	0.130	0.225
 
 
 IDEC
@@ -158,7 +158,7 @@ alpha 1.0
 beta 0.5
 wid_mortality
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-wid_mortality	1	0.198	0.643	0.918	0.000	0.000	0.000
+wid_mortality	1	0.645	0.854	0.921	0.000	0.000	0.000
 
 
 k = 2
@@ -166,17 +166,13 @@ n_clusters 2
 alpha 1.0
 beta 0.5
 wid_mortality
-Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-wid_mortality	2	0.163	0.690	0.918	0.450	0.820	0.832
-
-
 k = 3
 n_clusters 3
 alpha 1.0
 beta 0.5
 wid_mortality
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-wid_mortality	3	0.255	0.838	0.920	0.529	0.730	0.827
+wid_mortality	3	0.618	0.831	0.920	0.437	0.644	0.844
 
 
 k = 4
@@ -185,7 +181,7 @@ alpha 1.0
 beta 0.5
 wid_mortality
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-wid_mortality	4	0.286	0.809	0.921	0.596	0.645	0.832
+wid_mortality	4	0.627	0.855	0.921	0.155	0.555	1.009
 
 
 IDEC
@@ -196,7 +192,7 @@ alpha 1.0
 beta 0.5
 diabetes
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-diabetes	1	0.206	0.579	0.597	0.000	0.000	0.000
+diabetes	1	0.466	0.576	0.597	0.000	0.000	0.000
 
 
 k = 2
@@ -205,7 +201,7 @@ alpha 1.0
 beta 0.5
 diabetes
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-diabetes	2	0.176	0.557	0.597	0.801	1.000	0.744
+diabetes	2	0.456	0.554	0.597	0.490	0.998	0.833
 
 
 k = 3
@@ -214,7 +210,7 @@ alpha 1.0
 beta 0.5
 diabetes
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-diabetes	3	0.147	0.564	0.596	0.593	0.859	1.513
+diabetes	3	0.448	0.565	0.597	0.441	0.801	1.238
 
 
 k = 4
@@ -223,110 +219,7 @@ alpha 1.0
 beta 0.5
 diabetes
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-diabetes	4	0.162	0.566	0.597	0.623	0.638	1.675
-IDEC
-CIC_LOS
-k = 1
-k = 2
-k = 3
-IDEC
-CIC_LOS
-k = 1
-n_clusters 1
-alpha 1.0
-beta 0.5
-diabetes
-k = 2
-n_clusters 2
-alpha 1.0
-beta 0.5
-diabetes
-k = 3
-n_clusters 3
-alpha 1.0
-beta 0.5
-diabetes
-k = 4
-n_clusters 4
-alpha 1.0
-beta 0.5
-diabetes
-IDEC
-CIC_LOS
-k = 1
-n_clusters 1
-alpha 1.0
-beta 0.5
-diabetes
-k = 2
-n_clusters 2
-alpha 1.0
-beta 0.5
-diabetes
-k = 3
-n_clusters 3
-alpha 1.0
-beta 0.5
-diabetes
-k = 4
-n_clusters 4
-alpha 1.0
-beta 0.5
-diabetes
-IDEC
-CIC_LOS
-k = 1
-n_clusters 1
-alpha 1.0
-beta 0.5
-diabetes
-k = 2
-n_clusters 2
-alpha 1.0
-beta 0.5
-diabetes
-k = 3
-n_clusters 3
-alpha 1.0
-beta 0.5
-diabetes
-k = 4
-n_clusters 4
-alpha 1.0
-beta 0.5
-diabetes
-IDEC
-CIC_LOS
-k = 1
-n_clusters 1
-alpha 1.0
-beta 0.5
-cic_los
-k = 2
-n_clusters 2
-alpha 1.0
-beta 0.5
-cic_los
-Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic_los	2	0.404	0.648	0.494	0.543	0.548	0.564
-
-
-k = 3
-n_clusters 3
-alpha 1.0
-beta 0.5
-cic_los
-Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic_los	3	0.393	0.639	0.492	0.402	0.263	0.742
-
-
-k = 4
-n_clusters 4
-alpha 1.0
-beta 0.5
-cic_los
-Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic_los	4	0.398	0.637	0.495	0.364	0.186	1.083
+diabetes	4	0.418	0.559	0.597	0.522	0.751	1.586
 
 
 IDEC
@@ -337,7 +230,7 @@ alpha 1.0
 beta 0.5
 cic_los
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic_los	1	0.385	0.634	0.478	0.000	0.000	0.000
+cic_los	1	0.430	0.638	0.496	0.000	0.000	0.000
 
 
 k = 2
@@ -346,7 +239,7 @@ alpha 1.0
 beta 0.5
 cic_los
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic_los	2	0.392	0.638	0.487	0.542	0.348	0.665
+cic_los	2	0.390	0.632	0.489	0.559	0.504	0.570
 
 
 k = 3
@@ -355,7 +248,7 @@ alpha 1.0
 beta 0.5
 cic_los
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic_los	3	0.384	0.635	0.484	0.387	0.272	0.709
+cic_los	3	0.400	0.638	0.495	0.445	0.256	0.639
 
 
 k = 4
@@ -364,6 +257,6 @@ alpha 1.0
 beta 0.5
 cic_los
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic_los	4	0.394	0.630	0.485	0.282	0.133	1.043
+cic_los	4	0.402	0.644	0.494	0.327	0.213	0.889
 
 
