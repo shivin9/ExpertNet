@@ -392,6 +392,7 @@ class parameters(object):
         self.device = parser.device
         self.verbose = parser.verbose
         self.cluster_analysis = parser.cluster_analysis
+        self.other = parser.other
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
 

@@ -91,36 +91,32 @@ class NNClassifier(nn.Module):
         self.n_classes = args.n_classes
         self.criterion = nn.CrossEntropyLoss(reduction='mean')
         # self.criterion = torch.nn.HingeEmbeddingLoss(reduction='mean')
-        self.ae = ae
+        self.input_dim = args.input_dim
+        self.alpha = args.alpha
+        self.gamma = args.gamma
 
-        if self.ae == None:
-            self.input_dim = args.input_dim
-        else:
-            self.input_dim = args.latent_dim
-        if input_dim != None:
-            self.input_dim = input_dim
-
-        # self.classifier = nn.Sequential(
-        #     nn.Linear(input_dim, 64),
-        #     nn.ReLU(),
-        #     nn.Linear(64, 32),
-        #     nn.ReLU(),
-        #     nn.Linear(32, 16),
-        #     nn.ReLU(),
-        #     nn.Linear(16, 8),
-        #     nn.ReLU(),
-        #     nn.Linear(8, args.n_classes),
-        # )
-        self.classifier = nn.Sequential(
+        self.encoder = nn.Sequential(
             nn.Linear(input_dim, 128),
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),
             nn.Linear(64, 32),
             nn.ReLU(),
-            nn.Linear(32, 20),
+            nn.Linear(32, args.n_z),
+        )
+
+        self.decoder = nn.Sequential(
+            nn.Linear(args.n_z, 32),
             nn.ReLU(),
-            nn.Linear(20, 64),
+            nn.Linear(32, 64),
+            nn.ReLU(),
+            nn.Linear(64, 128),
+            nn.ReLU(),
+            nn.Linear(128, args.input_dim),
+        )
+
+        self.classifier = nn.Sequential(
+            nn.Linear(args.n_z, 64),
             nn.ReLU(),
             nn.Linear(64, 32),
             nn.ReLU(),
@@ -130,21 +126,39 @@ class NNClassifier(nn.Module):
             nn.ReLU(),
             nn.Linear(8, args.n_classes),
         )
+        # self.classifier = nn.Sequential(
+        #     nn.Linear(input_dim, 128),
+        #     nn.ReLU(),
+        #     nn.Linear(128, 64),
+        #     nn.ReLU(),
+        #     nn.Linear(64, 32),
+        #     nn.ReLU(),
+        #     nn.Linear(32, 20),
+        #     nn.ReLU(),
+        #     nn.Linear(20, 64),
+        #     nn.ReLU(),
+        #     nn.Linear(64, 32),
+        #     nn.ReLU(),
+        #     nn.Linear(32, 16),
+        #     nn.ReLU(),
+        #     nn.Linear(16, 8),
+        #     nn.ReLU(),
+        #     nn.Linear(8, args.n_classes),
+        # )
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
 
     def forward(self, inputs):
-        if self.ae == None:
-            return self.classifier(inputs)
-        else:
-            input_z = self.ae(inputs, output="latent")
-            return self.classifier(input_z)
+        z = self.encoder(inputs)
+        return self.classifier(z), self.decoder(z)
 
     def fit(self, X_batch, y_batch):
         self.optimizer.zero_grad()
         self.classifier.train()
-        y_pred = self.forward(X_batch.detach())
+        y_pred, x_bar = self.forward(X_batch.detach())
         train_loss = self.criterion(y_pred, y_batch)
-        train_loss.backward()
+        reconstr_loss = F.mse_loss(x_bar, X_batch)
+        total_loss = self.alpha*reconstr_loss + self.gamma*train_loss
+        total_loss.backward()
         self.optimizer.step()
         return y_pred.detach().numpy(), train_loss.item()
 
@@ -182,22 +196,19 @@ class MultiHeadIDEC(nn.Module):
         self.p_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         self.n_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
-        torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
-        torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
         
         self.classifiers = []
         for _ in range(self.n_clusters):
             classifier = nn.Sequential(
                 nn.Linear(self.n_z, 64),
                 nn.ReLU(),
-                # nn.Linear(128, 64),
-                # nn.ReLU(),
                 nn.Linear(64, 32),
                 nn.ReLU(),
                 nn.Linear(32, 16),
                 nn.ReLU(),
                 nn.Linear(16, 8),
                 nn.ReLU(),
+                # nn.Linear(self.n_z, args.n_classes),
                 nn.Linear(8, args.n_classes),
             ).to(self.device)
 

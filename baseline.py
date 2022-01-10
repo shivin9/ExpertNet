@@ -71,6 +71,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--other', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 
@@ -120,7 +121,7 @@ for r in range(args.n_runs):
             epoch_f1 += f1.item()
 
         m.classifier.eval()
-        val_pred = m(torch.FloatTensor(np.array(X_val)).to(args.device))
+        val_pred, _ = m(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
 
         val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
@@ -149,7 +150,7 @@ for r in range(args.n_runs):
     # Load best model trained from local training phase
     m = es.load_checkpoint(m)
     m.classifier.eval()
-    test_pred = m(torch.FloatTensor(np.array(X_test)).to(args.device))
+    test_pred, _ = m(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
 
     test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
