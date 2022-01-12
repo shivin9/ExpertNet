@@ -631,5 +631,5 @@ print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     np.average(wdfd_scores)))
 
 print("\n")
-NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
-WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+# NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+# WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

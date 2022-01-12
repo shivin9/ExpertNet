@@ -154,7 +154,7 @@ class NNClassifier(nn.Module):
     def fit(self, X_batch, y_batch):
         self.optimizer.zero_grad()
         self.classifier.train()
-        y_pred, x_bar = self.forward(X_batch.detach())
+        y_pred, x_bar = self.forward(X_batch)
         train_loss = self.criterion(y_pred, y_batch)
         reconstr_loss = F.mse_loss(x_bar, X_batch)
         total_loss = self.alpha*reconstr_loss + self.gamma*train_loss

@@ -93,12 +93,12 @@ X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
 
-f1_scores, auc_scores = [], []
+f1_scores, auc_scores, acc_scores = [], [], []
 if args.verbose == "False":
     blockPrint()
 
 for r in range(args.n_runs):
-    m = NNClassifier(args, input_dim=args.input_dim)
+    model = NNClassifier(args, input_dim=args.input_dim)
     device = args.device
 
     N_EPOCHS = args.n_epochs
@@ -109,10 +109,10 @@ for r in range(args.n_runs):
         epoch_auc = 0
         epoch_f1 = 0
         auc = 0
-        m.train()
+        model.train()
         for X_batch, y_batch, _ in train_loader:
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-            y_pred, train_loss = m.fit(X_batch, y_batch)
+            y_pred, train_loss = model.fit(X_batch, y_batch)
             epoch_loss += train_loss
 
             f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy(), average="macro")
@@ -120,13 +120,13 @@ for r in range(args.n_runs):
             epoch_auc += auc.item()
             epoch_f1 += f1.item()
 
-        m.classifier.eval()
-        val_pred, _ = m(torch.FloatTensor(np.array(X_val)).to(args.device))
+        model.classifier.eval()
+        val_pred, _ = model(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
 
         val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
         val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
-        es([val_f1, val_auc], m)
+        es([val_f1, val_auc], model)
 
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
         	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f} | ',
@@ -148,16 +148,17 @@ for r in range(args.n_runs):
     print("Evaluating Test Data")
 
     # Load best model trained from local training phase
-    m = es.load_checkpoint(m)
-    m.classifier.eval()
-    test_pred, _ = m(torch.FloatTensor(np.array(X_test)).to(args.device))
+    model = es.load_checkpoint(model)
+    model.classifier.eval()
+    test_pred, _ = model(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
 
     test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
     test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
+    test_acc = accuracy_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
 
     y_preds = np.argmax(test_pred.detach().numpy(), axis=1)
-    print(confusion_matrix(y_test, y_preds))
+    # print(confusion_matrix(y_test, y_preds))
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
@@ -166,6 +167,7 @@ for r in range(args.n_runs):
     print("\n####################################################################################\n")
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
+    acc_scores.append(test_acc)
 
     # reg = GradientBoostingRegressor(random_state=0)
 
@@ -176,6 +178,8 @@ for r in range(args.n_runs):
     # print("=========================\n")
 
 enablePrint()
-print("Dataset\tk\tF1\tAUC")
-
-print("{}\t{}\t{:.3f}\t{:.3f}".format(args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores)))
+print("F1:", f1_scores)
+print("AUC:", auc_scores)
+print("ACC:", acc_scores)
+print("Dataset\tk\tF1\tAUC\tACC")
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}".format(args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))

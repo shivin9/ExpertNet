@@ -15,6 +15,7 @@ from scipy.stats import ttest_ind, wasserstein_distance as wd
 from read_patients import get_aki
 from matplotlib import pyplot as plt
 import sys
+import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic', 'cic_los']
@@ -50,7 +51,7 @@ def silhouette_new(X, labels, metric="euclidean"):
         return silhouette_score(X, labels, metric=metric)
 
 
-def calculate_nhfd(X, cluster_ids):
+def calculate_mutual_nhfd(X, cluster_ids):
     feature_diff = 0
     cntr = 0
     n_clusters = len(torch.unique(cluster_ids))
@@ -72,6 +73,43 @@ def calculate_nhfd(X, cluster_ids):
     if cntr == 0:
         return 0
     return feature_diff/cntr
+
+
+def calculate_nhfd(X_train, cluster_ids):
+    print("\nCluster Wise discriminative features (NHFD)")
+    cluster_entrpy = 0
+    cntr = 0
+    n_features = X_train.shape[1]
+    n_clusters = len(torch.unique(cluster_ids))
+    input_dim = X_train.shape[1]
+    nhfd_scores = {}
+    top_quartile = np.int(n_features/4)
+    final_score = 0
+    for i in range(n_clusters):
+        nhfd_scores[i] = {}
+        ci = torch.where(cluster_ids == i)[0]
+        # Collect features of all the columns
+        for c in range(n_features):
+            Xi_c = X_train[ci][:,c]
+            Zc = []
+            # Collect values from other clusters
+            for j in range(n_clusters):
+                if i != j:
+                    cj = torch.where(cluster_ids == j)[0]
+                    Xj_c = X_train[cj][:,c]
+                    Zc = np.concatenate([Zc, Xj_c])
+
+            col_entrpy = 0
+            p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
+            nhfd_scores[i][c] = np.round(np.exp(-p_vals/0.05), 3)
+
+        sorted_dict = sorted(nhfd_scores[i].items(), key=lambda item: item[1])[::-1]
+        nhfd_cluster_score = 0
+        for feature, p_val in sorted_dict:
+            nhfd_cluster_score += p_val
+
+        final_score += nhfd_cluster_score/n_features
+    return final_score/n_clusters
 
 
 def shannon_entropy(A, mode="auto", verbose=False):
@@ -277,10 +315,10 @@ def NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
     n_columns = X_train.shape[1]
     n_clusters = len(torch.unique(cluster_ids))
     input_dim = X_train.shape[1]
-    mi_scores = {}
+    nhfd_scores = {}
     top_quartile = np.int(n_columns/4)
     for i in range(n_clusters):
-        mi_scores[i] = {}
+        nhfd_scores[i] = {}
         ci = torch.where(cluster_ids == i)[0]
         for c in range(n_columns):
             Xi_c = X_train[ci][:,c]
@@ -294,12 +332,12 @@ def NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
             col_entrpy = 0
             p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            mi_scores[i][c] = np.round(np.exp(-p_vals/0.05), 3)
+            nhfd_scores[i][c] = np.round(np.exp(-p_vals/0.05), 3)
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
         print("|C{}| = {}".format(i, np.bincount(y_train[ci])/len(ci)))
-        sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])[::-1]
+        sorted_dict = sorted(nhfd_scores[i].items(), key=lambda item: item[1])[::-1]
         for feature, pval in sorted_dict:
             f = column_names[feature]
             print("Feature:", f, "PVal:", pval)
@@ -392,7 +430,6 @@ class parameters(object):
         self.device = parser.device
         self.verbose = parser.verbose
         self.cluster_analysis = parser.cluster_analysis
-        self.other = parser.other
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
 
