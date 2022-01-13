@@ -79,7 +79,7 @@ parser = parser.parse_args()
 args = parameters(parser)
 base_suffix = ""
 
-for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta']:
+for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'attention']:
     print(key, args.__dict__[key])
 
 base_suffix += args.dataset + "_"
@@ -287,8 +287,8 @@ for r in range(len(iter_array)):
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
             es([val_f1, val_auc], model)
-            # if es.early_stop == True:
-            #     break
+            if es.early_stop == True:
+                break
 
         # Normal Training
         epoch_loss = 0
@@ -409,7 +409,7 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
     ####################################################################################
-    print('Train Losses: ', train_losses)
+    # print('Train Losses: ', train_losses)
     print("\n####################################################################################\n")
     print("Training Local Networks")
     model = es.load_checkpoint(model)
@@ -667,9 +667,9 @@ for r in range(len(iter_array)):
             regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
             best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
             feature_importances[j,:] = regs[j].feature_importances_
-            # print("Cluster # ", j, "sized: ", len(cluster_id))
-            # print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-            # print("=========================\n")
+            print("Cluster # ", j, "sized: ", len(cluster_id))
+            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+            print("=========================\n")
 
     feature_diff = 0
     cntr = 0
@@ -684,7 +684,7 @@ for r in range(len(iter_array)):
                 # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
                 cntr += 1
 
-    # print("Average Feature Difference: ", feature_diff/cntr)
+    print("Average Feature Difference: ", feature_diff/cntr)
     if cntr == 0:
         w_nhfd_scores.append(0)
     else:

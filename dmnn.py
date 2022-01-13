@@ -8,8 +8,7 @@ from sklearn.preprocessing import StandardScaler, MultiLabelBinarizer
 import itertools
 import random
 import warnings
-from sklearn.metrics import classification_report, roc_curve, confusion_matrix, precision_recall_fscore_support,\
-roc_auc_score, accuracy_score, f1_score
+from sklearn.metrics import classification_report, roc_curve, confusion_matrix, precision_recall_fscore_support, roc_auc_score, accuracy_score, f1_score
 from sklearn.utils import class_weight, shuffle
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
@@ -19,7 +18,6 @@ from keras import models, layers, losses, optimizers, initializers, regularizers
 from keras.utils.vis_utils import plot_model
 from keras import backend
 import matplotlib.pyplot as plt
-import tensorflow.keras.backend as K
 from utils import *
 
 
@@ -43,6 +41,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
+parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 
@@ -86,7 +85,7 @@ class EarlyStoppingByLossVal(Callback):
             self.model.stop_training = True
 
 
-def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cluster_algo, args, n_classes=2):
+def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cluster_algo, args):
     data_len = X_train.shape[1]
     ## Define Neural Network
     experts = []
@@ -104,18 +103,18 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
     decode = layers.Dense(units=64, name='decode_2', activation=None)(decode)
     decode = layers.Dense(units=128, name='decode_1', activation=None)(decode)
     decode = layers.Dense(units=data_len, name='decode_0', activation=None)(decode)
-    gate   = layers.Dense(n_experts*n_classes, activation='softmax', name='gating')(embed)
+
+    gate = layers.Dense(n_experts, activation='softmax', name='gating')(embed)
 
     for i in range(n_experts):
       layer_var = layers.Dense(16, activation='relu', name='dense_{}_2'.format(i))(embed)
       layer_var = layers.Dense(8, activation='relu', name='dense_{}_3'.format(i))(layer_var)
-      layer_var = layers.Dense(n_classes, activation='relu', name='dense_{}_4'.format(i))(layer_var)
+      layer_var = layers.Dense(1, activation='relu', name='dense_{}_4'.format(i))(layer_var)
       experts.append(layer_var)
       del layer_var
 
     if n_experts == 1:
       outputTensor = experts
-
     else: 
       mergedTensor = layers.Concatenate(axis=1)(experts)
       outputTensor = layers.Dot(axes=1)([gate, mergedTensor])
@@ -144,8 +143,8 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
 
     full.compile(
         optimizer=optimizers.Adam(learning_rate=0.001),
-        loss='categorical_crossentropy',
-        metrics=['categorical_crossentropy'],
+        loss='binary_crossentropy',
+        metrics=['binary_crossentropy'],
     )
 
     ## Train autoencoder
@@ -166,13 +165,11 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
     encoder = models.Model(inputs=inputTensor, outputs=encode)
     X_train_embeddings = encoder.predict(x=X_train)
 
+    
     if cluster_algo == 'KMeans':
       ## KMeans Clustering
       cluster_alg = KMeans(n_clusters=n_experts, random_state=0)
       X_train_clusters = cluster_alg.fit_predict(X_train_embeddings)
-      temp = np.zeros(n_classes*len(X_train_clusters))
-      for i in range(len(temp)):
-        temp[i] = X_train_clusters[int(i/2)]
     else:
       raise ValueError('Method not supported')
 
@@ -259,6 +256,9 @@ n_splits = 5
 scale = StandardScaler()
 res_idx = 0
 
+if args.verbose == 'False':
+    blockPrint()
+
 if args.cv == "False":
     n_clusters = args.n_clusters
 
@@ -276,6 +276,7 @@ if args.cv == "False":
         km_scores[i, 3] = scores_km['nhfd_score']
         km_scores[i, 4] = scores_km['wdfd_score']
 
+    enablePrint()
     print("k\tF1\tAUC\tSIL\tNHFD\tWDFD")
     print(n_clusters, np.mean(km_scores, axis=0))
 

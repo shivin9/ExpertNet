@@ -88,6 +88,8 @@ def calculate_nhfd(X_train, cluster_ids):
     for i in range(n_clusters):
         nhfd_scores[i] = {}
         ci = torch.where(cluster_ids == i)[0]
+        if len(ci) == 0:
+            return 0
         # Collect features of all the columns
         for c in range(n_features):
             Xi_c = X_train[ci][:,c]
@@ -101,7 +103,7 @@ def calculate_nhfd(X_train, cluster_ids):
 
             col_entrpy = 0
             p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            nhfd_scores[i][c] = np.round(np.exp(-p_vals/0.05), 3)
+            nhfd_scores[i][c] = np.round(-np.log(p_vals + np.finfo(float).eps)*0.05, 3)
 
         sorted_dict = sorted(nhfd_scores[i].items(), key=lambda item: item[1])[::-1]
         nhfd_cluster_score = 0

@@ -1,3 +1,4 @@
+DCN
 CIC
 k = 1
 n_clusters 1
@@ -5,7 +6,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	1	0.521	0.739	0.722	0.000	1.000	0.000
+cic	1	0.628	0.817	0.869	0.000	1.802	0.000
 
 
 k = 2
@@ -14,7 +15,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	2	0.604	0.805	0.866	0.522	0.878	0.595
+cic	2	0.569	0.787	0.826	0.510	1.175	0.629
 
 
 k = 3
@@ -23,7 +24,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	3	0.598	0.795	0.867	0.424	0.837	0.753
+cic	3	0.606	0.817	0.867	0.354	1.081	1.027
 
 
 k = 4
@@ -32,7 +33,7 @@ alpha 1.0
 beta 0.5
 cic
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-cic	4	0.552	0.758	0.840	0.373	0.807	0.782
+cic	4	0.582	0.811	0.866	0.326	0.971	0.917
 
 
 IDEC
@@ -43,7 +44,7 @@ alpha 1.0
 beta 0.5
 sepsis
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-sepsis	1	0.694	0.804	0.938	0.000	1.000	0.000
+sepsis	1	0.684	0.823	0.938	0.000	1.802	0.000
 
 
 k = 2
@@ -51,13 +52,215 @@ n_clusters 2
 alpha 1.0
 beta 0.5
 sepsis
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+sepsis	2	0.686	0.806	0.939	0.325	1.406	0.627
+
+
 k = 3
 n_clusters 3
 alpha 1.0
 beta 0.5
 sepsis
 Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
-sepsis	3	0.682	0.789	0.941	0.400	0.898	1.441
+sepsis	3	0.653	0.772	0.939	0.406	1.301	1.308
 
 
 k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+sepsis
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+sepsis	4	0.612	0.804	0.936	0.307	1.361	1.717
+
+
+IDEC
+Kidney
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+Loading aki Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+aki	1	0.578	0.613	0.583	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+Loading aki Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+aki	2	0.527	0.585	0.562	0.769	1.110	0.146
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+Loading aki Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+aki	3	0.541	0.570	0.558	0.828	1.166	0.185
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+Loading aki Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+aki	4	0.574	0.596	0.577	0.622	1.141	0.193
+
+
+IDEC
+Respiratory
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+Loading ards Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+ards	1	0.525	0.722	0.926	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+Loading ards Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+ards	2	0.483	0.638	0.877	0.746	1.283	0.205
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+Loading ards Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+ards	3	0.492	0.666	0.928	0.553	1.171	0.231
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+Loading ards Train
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+ards	4	0.481	0.635	0.928	0.856	1.119	0.235
+
+
+IDEC
+Wid_Mortality
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+wid_mortality
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+wid_mortality	1	0.650	0.853	0.921	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+wid_mortality
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+wid_mortality	2	0.621	0.800	0.921	0.423	1.571	0.816
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+wid_mortality
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+wid_mortality	3	0.616	0.809	0.920	0.450	1.501	0.869
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+wid_mortality
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+wid_mortality	4	0.606	0.806	0.919	0.544	1.388	0.883
+
+
+IDEC
+Diabetes
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+diabetes	1	0.486	0.582	0.596	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+diabetes	2	0.468	0.567	0.597	0.378	1.707	0.885
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+diabetes	3	0.439	0.563	0.597	0.503	1.698	1.156
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+diabetes
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+diabetes	4	0.451	0.563	0.596	0.423	1.578	1.652
+
+
+IDEC
+CIC_LOS
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+cic_los
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+cic_los	1	0.431	0.642	0.495	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+cic_los
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+cic_los	2	0.409	0.648	0.496	0.546	1.148	0.611
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+cic_los
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+cic_los	3	0.403	0.642	0.495	0.447	1.052	0.746
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+cic_los
+Dataset	k	F1	AUC	ACC	SIL	NHFD	WDFD
+cic_los	4	0.398	0.640	0.494	0.349	0.955	0.828
+
+
