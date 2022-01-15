@@ -105,7 +105,7 @@ if args.verbose == False:
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores, sil_scores, nhfd_scores, wdfd_scores = [], [], [], [], [], []
+f1_scores, auc_scores, acc_scores, sil_scores, HTFD_scores, wdfd_scores = [], [], [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -265,7 +265,7 @@ for r in range(len(iter_array)):
         if es.early_stop == True or epoch == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(hidden.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
-            nhfd_scores.append(calculate_nhfd(X_train, torch.Tensor(cluster_ids_train)))
+            HTFD_scores.append(calculate_HTFD(X_train, torch.Tensor(cluster_ids_train)))
             wdfd_scores.append(calculate_WDFD(X_train, torch.Tensor(cluster_ids_train)))
             # model_complexity.append(calculate_bound(model, B, len(hidden)))
             break
@@ -306,7 +306,7 @@ for r in range(len(iter_array)):
     test_auc = multi_class_auc(y_test, test_preds.detach().numpy(), args.n_classes)
     test_acc = accuracy_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1))
     test_loss = torch.mean(criterion(test_preds, torch.Tensor(y_test).type(torch.LongTensor)))
-    # test_nhfd = calculate_nhfd(X_test, torch.Tensor(test_cluster_indices).type(torch.LongTensor))
+    # test_HTFD = calculate_HTFD(X_test, torch.Tensor(test_cluster_indices).type(torch.LongTensor))
 
     local_sum_loss /= len(X_test)
 
@@ -318,7 +318,7 @@ for r in range(len(iter_array)):
     print('Loss Metrics - Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, local_sum_loss))
 
     # print('Clustering Metrics     - Acc {:.4f}'.format(acc),\
-          # ', NHFD {:.3f}'.format(test_nhfd))
+          # ', HTFD {:.3f}'.format(test_HTFD))
 
     print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test ACC {:.3f}'.format(test_f1, test_auc, test_acc))
 
@@ -382,7 +382,7 @@ print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
 
 print("Sil scores: ", sil_scores)
-print("NHFD: ", nhfd_scores)
+print("HTFD: ", HTFD_scores)
 print("WDFD: ", wdfd_scores)
 
 print("Train Loss: ", train_losses)
@@ -393,11 +393,11 @@ print("Local Test Loss: ", local_sum_test_losses)
 print("Model Complexity: ", model_complexity)
 
 enablePrint()
-print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tWDFD")
+print("Dataset\tk\tF1\tAUC\tACC\tSIL\tHTFD\tWDFD")
 
 print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores),\
+    np.average(acc_scores), np.average(sil_scores), np.average(HTFD_scores),\
     np.average(wdfd_scores)))
 
 # print("\n")
@@ -406,5 +406,5 @@ print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
 
 # print("\n")
 
-# NHFD_Cluster_Analysis(X_train, torch.Tensor(cluster_ids_train), column_names)
+# HTFD_Cluster_Analysis(X_train, torch.Tensor(cluster_ids_train), column_names)
 # WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

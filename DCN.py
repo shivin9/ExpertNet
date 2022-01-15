@@ -99,7 +99,7 @@ X_test, y_test, test_loader = test_data
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores, sil_scores, nhfd_scores, wdfd_scores = [], [], [], [], [], []
+f1_scores, auc_scores, acc_scores, sil_scores, HTFD_scores, wdfd_scores = [], [], [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -255,7 +255,7 @@ for r in range(len(iter_array)):
 
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
-            val_feature_diff = calculate_nhfd(X_val, cluster_ids)
+            val_feature_diff = calculate_HTFD(X_val, cluster_ids)
             complexity_term = 0
             # complexity_term  = calculate_bound(model, B, len(z_train))
 
@@ -476,7 +476,7 @@ for r in range(len(iter_array)):
             train_losses.append(train_loss.item())
             e_train_losses.append(e_train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            nhfd_scores.append(calculate_nhfd(X_train,  cluster_ids_train))
+            HTFD_scores.append(calculate_HTFD(X_train,  cluster_ids_train))
             wdfd_scores.append(calculate_WDFD(X_train,  cluster_ids_train))
             # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
@@ -519,7 +519,7 @@ for r in range(len(iter_array)):
     e_test_f1 = f1_score(y_test, np.argmax(test_preds_e.detach().numpy(), axis=1), average="macro")
     e_test_auc = multi_class_auc(y_test, test_preds_e.detach().numpy(), args.n_classes)
     e_test_acc = accuracy_score(y_test, np.argmax(test_preds_e.detach().numpy(), axis=1))
-    e_test_nhfd = calculate_nhfd(X_test, cluster_ids)
+    e_test_HTFD = calculate_HTFD(X_test, cluster_ids)
 
     test_preds = torch.zeros((len(z_test), args.n_classes))
 
@@ -548,7 +548,7 @@ for r in range(len(iter_array)):
     print('Loss Metrics - Test Loss {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
 
     print('Clustering Metrics     - Acc {:.4f}'.format(acc), ', nmi {:.4f}'.format(nmi),\
-          ', ari {:.4f}, NHFD {:.3f}'.format(ari, e_test_nhfd))
+          ', ari {:.4f}, HTFD {:.3f}'.format(ari, e_test_HTFD))
 
     print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test ACC {:.3f}'.format(test_f1, test_auc, test_acc),\
         ', E-Test F1 {:.3f}, E-Test AUC {:.3f}, E-Test ACC {:.3f}'.format(e_test_f1, e_test_auc, e_test_acc))
@@ -620,7 +620,7 @@ print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
 
 print("Sil scores: ", sil_scores)
-print("NHFD: ", nhfd_scores)
+print("HTFD: ", HTFD_scores)
 print("WDFD: ", wdfd_scores)
 
 print("Train Loss: ", train_losses)
@@ -634,14 +634,14 @@ print("Model Complexity: ", model_complexity)
 
 
 enablePrint()
-print("Dataset\tk\tF1\tAUC\tACC\tSIL\tNHFD\tWDFD")
+print("Dataset\tk\tF1\tAUC\tACC\tSIL\tHTFD\tWDFD")
 
 print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(acc_scores), np.average(sil_scores), np.average(nhfd_scores),\
+    np.average(acc_scores), np.average(sil_scores), np.average(HTFD_scores),\
     np.average(wdfd_scores)))
 
 print("\n")
 
-# NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+# HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
 # WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

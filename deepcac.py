@@ -101,7 +101,7 @@ X_test, y_test, test_loader = test_data
 
 f1_scores, auc_scores, acc_scores = [], [], [] #Inattentive test results
 e_f1_scores, e_auc_scores, e_acc_scores = [], [], [] #Attentive test results
-sil_scores, wdfd_scores, nhfd_scores, w_nhfd_scores = [], [], [], []
+sil_scores, wdfd_scores, HTFD_scores, w_HTFD_scores = [], [], [], []
 
 # to track the training loss as the model trains
 test_losses, e_test_losses, local_sum_test_losses = [], [], []
@@ -163,7 +163,7 @@ for r in range(len(iter_array)):
 
     optimizer = Adam(model.parameters(), lr=args.lr)
 
-    # cluster parameter initiate
+    # Initiate cluster parameters
     device = args.device
     y = y_train
     x_bar, hidden = model.ae(torch.Tensor(X_train).to(args.device))
@@ -188,9 +188,7 @@ for r in range(len(iter_array)):
     train_losses, e_train_losses = [], []
 
     for epoch in range(N_EPOCHS):
-        # beta = args.beta*(epoch*0.1)/(1+epoch*0.1)
         beta = args.beta
-        # gamma = args.gamma - args.gamma*(epoch*0.1)/(1+epoch*0.1)
         gamma = args.gamma
         delta = args.delta
         eta = args.eta
@@ -223,6 +221,7 @@ for r in range(len(iter_array)):
                 train_loss += torch.sum(criterion(cluster_preds, y_cluster))
 
             train_loss /= len(z_train)
+
             # Evaluate model on Validation dataset
             qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
             q_val = qs[0]
@@ -244,10 +243,6 @@ for r in range(len(iter_array)):
                     for c in range(args.n_classes):
                         preds[:,c] += q_val[:,j]*cluster_preds[:,c]
 
-            # print("qval", torch.sum(q_val, axis=0))
-            # print("Cluster Counts", np.bincount(cluster_ids))
-            # print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
-            #                         torch.ones(args.n_clusters)/args.n_clusters))
 
             # Classification Matrics
             val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
@@ -256,19 +251,9 @@ for r in range(len(iter_array)):
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
             val_feature_diff, val_WDFD = 0, 0
-            # val_feature_diff = calculate_nhfd(X_val, cluster_ids)
-            # val_WDFD = calculate_WDFD(X_val, cluster_ids)
-            complexity_term = 0
-            # complexity_term  = calculate_bound(model, B, len(z_train))
-
+            val_feature_diff = calculate_HTFD(X_val, cluster_ids)
+            val_WDFD = calculate_WDFD(X_val, cluster_ids)
             val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
-
-            # # record validation loss
-            # valid_losses.append(loss.item())
-
-            # # calculate average loss over an epoch
-            # valid_loss = np.average(valid_losses)
-            # avg_valid_losses.append(valid_loss)
 
             epoch_len = len(str(N_EPOCHS))
 
@@ -279,8 +264,7 @@ for r in range(len(iter_array)):
                          f'valid_AUC: {val_auc:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
                          f'valid_WDFD: {val_WDFD:.3f} ' + 
-                         f'valid_Silhouette: {val_sil:.3f} ' + 
-                         f'Complexity Term: {complexity_term:.3f}')
+                         f'valid_Silhouette: {val_sil:.3f}')
 
             print(print_msg)
 
@@ -348,7 +332,6 @@ for r in range(len(iter_array)):
             class_loss /= len(X_latents)
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
             cluster_id = torch.argmax(q_batch, 1)
-            # print(np.bincount(cluster_id.cpu().numpy()))
 
             km_loss             = 0
             dcn_loss            = 0
@@ -409,7 +392,6 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
     ####################################################################################
-    # print('Train Losses: ', train_losses)
     print("\n####################################################################################\n")
     print("Training Local Networks")
     model = es.load_checkpoint(model)
@@ -420,7 +402,6 @@ for r in range(len(iter_array)):
     q_train = qs[0]
     cluster_id_train = torch.argmax(q_train, axis=1)
 
-    # X_latents_data_loader = list(zip(z_train, cluster_id_train, y_train))
     X_latents_data_loader = list(zip(z_train.to(args.device),q_train, y_train))
 
     train_loader_latents = torch.utils.data.DataLoader(X_latents_data_loader,
@@ -438,15 +419,13 @@ for r in range(len(iter_array)):
         epoch_f1 = 0
         acc = 0
 
-        # model.ae.train() # prep model for evaluation
         for j in range(model.n_clusters):
             model.classifiers[j][0].train()
 
         # Full training of local networks
         for batch_idx, (X_latents, q_batch, y_batch) in enumerate(train_loader_latents):
-            # torch.autograd.set_detect_anomaly(True)
-
             classifier_labels = np.zeros(len(X_latents))
+
             # Choose classifier for a point probabilistically
             if args.attention == True:
                 for j in range(len(X_latents)):
@@ -460,6 +439,7 @@ for r in range(len(iter_array)):
                 y_cluster = y_batch[idx_cluster]
 
                 classifier_k, optimizer_k = model.classifiers[k]
+
                 # Do not backprop the error to encoder
                 y_pred_cluster = classifier_k(X_cluster.detach())
                 cluster_loss = torch.mean(criterion(y_pred_cluster, y_cluster))
@@ -467,7 +447,6 @@ for r in range(len(iter_array)):
                 cluster_loss.backward(retain_graph=True)
                 optimizer_k.step()
         
-        # model.ae.eval() # prep model for evaluation
         for j in range(model.n_clusters):
             model.classifiers[j][0].eval()
 
@@ -515,15 +494,7 @@ for r in range(len(iter_array)):
         val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
         val_auc = multi_class_auc(y_val, preds.detach().numpy(), args.n_classes)
         val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids_val.data.cpu().numpy(), metric='euclidean')
-
         val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
-        # record validation loss
-        # valid_losses.append(loss.item())
-
-        # calculate average loss over an epoch
-        # valid_loss = np.average(valid_losses)
-        # avg_valid_losses.append(valid_loss)
-        
         epoch_len = len(str(N_EPOCHS))
         
         print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
@@ -540,12 +511,9 @@ for r in range(len(iter_array)):
         es([val_f1, val_auc], model)
         if es.early_stop == True:
             # train_losses.append(train_loss.item())
-            # e_train_losses.append(e_train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            nhfd_scores.append(calculate_nhfd(X_train,  cluster_ids_train))
-            wdfd_scores.append(calculate_WDFD(X_train,  cluster_ids_train))
-            # mifd_scores.append(calculate_MIFD(X_train,  cluster_ids_train))
-            # model_complexity.append(calculate_bound(model, B, len(z_train)))
+            HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
+            wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
 
 
@@ -567,7 +535,6 @@ for r in range(len(iter_array)):
     qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
     q_test = qs[0]
     cluster_ids = torch.argmax(q_test, axis=1)
-    # cluster_ids = np.argmax(distance_matrix(z_test.data.cpu().numpy(), model.cluster_layer.data.cpu().numpy()), axis=1)
     test_preds_e = torch.zeros((len(z_test), args.n_classes))
 
     test_loss = 0
@@ -586,7 +553,7 @@ for r in range(len(iter_array)):
     e_test_f1 = f1_score(y_test, np.argmax(test_preds_e.detach().numpy(), axis=1), average="macro")
     e_test_auc = multi_class_auc(y_test, test_preds_e.detach().numpy(), args.n_classes)
     e_test_acc = accuracy_score(y_test, np.argmax(test_preds_e.detach().numpy(), axis=1))
-    e_test_nhfd = calculate_nhfd(X_test, cluster_ids)
+    e_test_HTFD = calculate_HTFD(X_test, cluster_ids)
 
     test_preds = torch.zeros((len(z_test), args.n_classes))
 
@@ -610,12 +577,11 @@ for r in range(len(iter_array)):
     e_test_losses.append(e_test_loss.item())
     local_sum_test_losses.append(local_sum_loss.item())
 
-    # enablePrint()
     print("Run #{}".format(r))
     print('Loss Metrics - Test Loss {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
 
     print('Clustering Metrics     - Acc {:.4f}'.format(acc), ', nmi {:.4f}'.format(nmi),\
-          ', ari {:.4f}, NHFD {:.3f}'.format(ari, e_test_nhfd))
+          ', ari {:.4f}, HTFD {:.3f}'.format(ari, e_test_HTFD))
 
     print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test ACC {:.3f}'.format(test_f1, test_auc, test_acc),\
         ', E-Test F1 {:.3f}, E-Test AUC {:.3f}, E-Test ACC {:.3f}'.format(e_test_f1, e_test_auc, e_test_acc))
@@ -686,9 +652,9 @@ for r in range(len(iter_array)):
 
     print("Average Feature Difference: ", feature_diff/cntr)
     if cntr == 0:
-        w_nhfd_scores.append(0)
+        w_HTFD_scores.append(0)
     else:
-        w_nhfd_scores.append(feature_diff/cntr)
+        w_HTFD_scores.append(feature_diff/cntr)
 
 
 enablePrint()
@@ -700,7 +666,7 @@ print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
 
 print("Sil scores: ", sil_scores)
-print("NHFD: ", nhfd_scores)
+print("HTFD: ", HTFD_scores)
 print("WDFD: ", wdfd_scores)
 
 print("Train Loss: ", train_losses)
@@ -726,9 +692,9 @@ print("{:.3f}\t{:.3f}\t{:.3f}\n".format\
     (np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
 
 
-print('SIL\tNHFD\tWDFD\tW-NHFD')
+print('SIL\tHTFD\tWDFD\tW-HTFD')
 print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.average(sil_scores),\
-    np.average(nhfd_scores), np.average(wdfd_scores), np.average(w_nhfd_scores)))
+    np.average(HTFD_scores), np.average(wdfd_scores), np.average(w_HTFD_scores)))
 
 print("Train Loss\tE-Train Loss\tTest Loss\tE-Test Loss")
 
@@ -738,5 +704,5 @@ print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
 
 if args.cluster_analysis == "True":
     WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-    NHFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-    NHFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+    HTFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+    HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

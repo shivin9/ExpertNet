@@ -191,7 +191,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
     cluster_ids_train = np.argmax(cluster.predict(X_train), axis=1)
     # scores = precision_recall_fscore_support(X_train_clusters_sparse, y_pred > 0.5, average='weighted')
     sil_score = silhouette_new(X_train_embeddings, cluster_ids_train, metric='euclidean')
-    nhfd_score = calculate_nhfd(X_train, torch.tensor(cluster_ids_train))
+    HTFD_score = calculate_HTFD(X_train, torch.tensor(cluster_ids_train))
     wdfd_score = calculate_WDFD(X_train, torch.tensor(cluster_ids_train))
 
     ## Train full model
@@ -225,7 +225,7 @@ def neural_network(X_train, y_train, X_val, y_val, X_test, y_test, n_experts, cl
           'auroc': auroc_ls,
           'accuracy': accuracy_ls,
           'sil_score': sil_score,
-          'nhfd_score': nhfd_score,
+          'HTFD_score': HTFD_score,
           'wdfd_score': wdfd_score}
 
 
@@ -273,11 +273,11 @@ if args.cv == "False":
         km_scores[i, 0] = scores_km['f1_score']
         km_scores[i, 1] = scores_km['auroc']
         km_scores[i, 2] = scores_km['sil_score']
-        km_scores[i, 3] = scores_km['nhfd_score']
+        km_scores[i, 3] = scores_km['HTFD_score']
         km_scores[i, 4] = scores_km['wdfd_score']
 
     enablePrint()
-    print("k\tF1\tAUC\tSIL\tNHFD\tWDFD")
+    print("k\tF1\tAUC\tSIL\tHTFD\tWDFD")
     print(n_clusters, np.mean(km_scores, axis=0))
 
 else:
