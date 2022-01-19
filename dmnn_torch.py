@@ -1,0 +1,196 @@
+from __future__ import print_function, division
+import copy
+import torch
+import argparse
+import numpy as np
+import os
+from torchvision import datasets, transforms
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score,\
+f1_score, roc_auc_score, roc_curve, accuracy_score, matthews_corrcoef as mcc
+from torch.utils.data import Subset
+import pandas as pd
+
+import argparse
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
+from sklearn.metrics import adjusted_rand_score as ari_score, confusion_matrix
+from sklearn.ensemble import GradientBoostingRegressor
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.nn.parameter import Parameter
+from torch.optim import Adam
+from torch.utils.data import DataLoader, random_split
+from torch.nn import Linear
+from pytorchtools import EarlyStopping
+from scipy.cluster.vq import kmeans2
+
+import numbers
+from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as ari
+from matplotlib import pyplot as plt
+color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
+
+from models import NNClassifier
+from utils import *
+
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--dataset', default= 'creditcard')
+parser.add_argument('--input_dim', default= '-1')
+
+# Training parameters
+parser.add_argument('--lr', default= 0.002, type=float)
+parser.add_argument('--alpha', default= 1, type=float)
+parser.add_argument('--wd', default= 5e-4, type=float)
+parser.add_argument('--batch_size', default= 512, type=int)
+parser.add_argument('--n_epochs', default= 10, type=int)
+parser.add_argument('--n_runs', default= 5, type=int)
+parser.add_argument('--pre_epoch', default= 40, type=int)
+parser.add_argument('--pretrain', default= True, type=bool)
+parser.add_argument("--load_ae",  default=False, type=bool)
+parser.add_argument("--classifier", default="LR")
+parser.add_argument("--tol", default=0.01, type=float)
+parser.add_argument("--attention", default="True")
+parser.add_argument('--ablation', default='None')
+parser.add_argument('--cluster_balance', default='hellinger')
+
+# Model parameters
+parser.add_argument('--lamda', default= 1, type=float)
+parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
+parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--hidden_dims', default= [64, 32])
+parser.add_argument('--n_z', default= 20, type=int)
+parser.add_argument('--n_clusters', default= 3, type=int)
+parser.add_argument('--clustering', default= 'cac')
+parser.add_argument('--n_classes', default= 2, type=int)
+
+# Utility parameters
+parser.add_argument('--device', default= 'cpu')
+parser.add_argument('--log_interval', default= 10, type=int)
+parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--other', default= 'False')
+parser.add_argument('--cluster_analysis', default= 'False')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+
+
+parser = parser.parse_args()
+args = parameters(parser)
+
+####################################################################################
+####################################################################################
+####################################################################################
+###################################### Training ####################################
+####################################################################################
+####################################################################################
+####################################################################################
+
+
+scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
+X_train, y_train, train_loader = train_data
+X_val, y_val, val_loader = val_data
+X_test, y_test, test_loader = test_data
+
+f1_scores, auc_scores, acc_scores = [], [], []
+if args.verbose == "False":
+    blockPrint()
+
+for r in range(args.n_runs):
+    model = DMNN(args, input_dim=args.input_dim)
+    device = args.device
+
+    N_EPOCHS = args.n_epochs
+    es = EarlyStopping(dataset=args.dataset)
+    model.pretrain(train_loader, args.pretrain_path)
+
+    z_train, _, gate_vals = model(X_train)
+    original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
+
+
+    for e in range(1, N_EPOCHS):
+        epoch_loss = 0
+        epoch_auc = 0
+        epoch_f1 = 0
+        auc = 0
+        model.train()
+        for X_batch, y_batch, _ in train_loader:
+            X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+            z_bar, x_bar, gate_vals = model(X_batch, y_batch)
+            train_loss = 0
+            for j in range(args.n_clusters):
+                preds_j = model.classifiers[j](X_batch)
+                loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_batch)
+                train_loss += gate_vals[j]*loss_j
+
+            epoch_loss += train_loss
+            f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy(), average="macro")
+            auc = multi_class_auc(y_batch, y_pred, args.n_classes)
+            epoch_auc += auc.item()
+            epoch_f1 += f1.item()
+
+        model.classifier.eval()
+        val_pred, _ = model(torch.FloatTensor(np.array(X_val)).to(args.device))
+        val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
+
+        val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
+        val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
+        es([val_f1, val_auc], model)
+
+        print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
+        	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f} | ',
+        	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
+
+        if es.early_stop == True:
+            break
+
+
+    ####################################################################################
+    ####################################################################################
+    ####################################################################################
+    ###################################### Testing #####################################
+    ####################################################################################
+    ####################################################################################
+    ####################################################################################
+
+    print("\n####################################################################################\n")
+    print("Evaluating Test Data")
+
+    # Load best model trained from local training phase
+    model = es.load_checkpoint(model)
+    model.classifier.eval()
+    test_pred, _ = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
+
+    test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
+    test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
+    test_acc = accuracy_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
+
+    y_preds = np.argmax(test_pred.detach().numpy(), axis=1)
+    # print(confusion_matrix(y_test, y_preds))
+
+    print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
+    	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
+    	f'Test F1: {test_f1:.3f} | Test Auc: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
+
+    print("\n####################################################################################\n")
+    f1_scores.append(test_f1)
+    auc_scores.append(test_auc)
+    acc_scores.append(test_acc)
+
+    # reg = GradientBoostingRegressor(random_state=0)
+
+    # reg.fit(X_test, y_test)
+    # best_features = np.argsort(reg.feature_importances_)[::-1][:10]
+    # print("Best Features ")
+    # print(column_names[best_features])
+    # print("=========================\n")
+
+enablePrint()
+print("F1:", f1_scores)
+print("AUC:", auc_scores)
+print("ACC:", acc_scores)
+print("Dataset\tk\tF1\tAUC\tACC")
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}".format(args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))

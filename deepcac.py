@@ -79,7 +79,7 @@ parser = parser.parse_args()
 args = parameters(parser)
 base_suffix = ""
 
-for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'attention']:
+for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'eta', 'attention']:
     print(key, args.__dict__[key])
 
 base_suffix += args.dataset + "_"
@@ -150,13 +150,10 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
+    # ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+    ae_layers = [64, 32, 64]
     model = MultiHeadIDEC(
-            n_enc_1=128,
-            n_enc_2=64,
-            n_enc_3=32,
-            n_dec_1=32,
-            n_dec_2=64,
-            n_dec_3=128,
+            ae_layers,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
@@ -171,6 +168,16 @@ for r in range(len(iter_array)):
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
     criterion = nn.CrossEntropyLoss(reduction='none')
 
+
+    for i in range(args.n_clusters):
+        cluster_idx = np.where(cluster_indices == i)[0]
+        cluster_idx_p = np.where(y[cluster_idx] == 1)[0]
+        cluster_idx_n = np.where(y[cluster_idx] == 0)[0]
+        hidden_p = hidden[cluster_idx][cluster_idx_p]
+        hidden_n = hidden[cluster_idx][cluster_idx_n]
+        
+        model.p_cluster_layer.data[i,:] = torch.mean(hidden_p, axis=0)
+        model.n_cluster_layer.data[i,:] = torch.mean(hidden_n, axis=0)
 
     ####################################################################################
     ####################################################################################
@@ -294,7 +301,10 @@ for r in range(len(iter_array)):
             reconstr_loss = F.mse_loss(x_bar, x_batch)
 
             classifier_labels = np.zeros(len(idx))
-            sub_epochs = min(10, 1 + int(epoch/5))
+            if args.eta > 0:
+                sub_epochs = 1
+            else:
+                sub_epochs = min(10, 1 + int(epoch/5))
 
             if args.attention == False:
                 classifier_labels = np.argmax(q_batch.detach().cpu().numpy(), axis=1)
@@ -332,7 +342,12 @@ for r in range(len(iter_array)):
             class_loss /= len(X_latents)
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
             cluster_id = torch.argmax(q_batch, 1)
+            delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
+            delta_mu_p = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
+            delta_mu_n = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
 
+            positive_class_dist = 0
+            negative_class_dist = 0
             km_loss             = 0
             dcn_loss            = 0
             class_sep_loss      = 0
@@ -341,8 +356,19 @@ for r in range(len(iter_array)):
                 for j in range(args.n_clusters):
                     pts_index = np.where(cluster_id == j)[0]
                     cluster_pts = X_latents[pts_index]
+                    n_class_index = np.where(y_batch[pts_index] == 0)[0]
+                    p_class_index = np.where(y_batch[pts_index] == 1)[0]
+                    n_class = cluster_pts[n_class_index]
+                    p_class = cluster_pts[p_class_index]
+                    delta_mu_p[j,:] = p_class.sum(axis=0)/(1+len(p_class))
+                    delta_mu_n[j,:] = n_class.sum(axis=0)/(1+len(n_class))
                     delta_mu[j,:]   = cluster_pts.sum(axis=0)/(1+len(cluster_pts))
+                    s1 = torch.linalg.norm(X_latents[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
+                    s2 = torch.linalg.norm(X_latents[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
+                    m12 = torch.linalg.norm(model.p_cluster_layer[j] - model.n_cluster_layer[j])
+                    class_sep_loss += (s1+s2)/m12
                     dcn_loss += torch.linalg.norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
+                    dcn_loss -= args.eta*class_sep_loss
 
             q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
@@ -364,7 +390,7 @@ for r in range(len(iter_array)):
             if args.delta != 0:
                 loss += delta*cluster_balance_loss
             if args.eta != 0:
-                loss += eta*dcn_loss
+                loss += dcn_loss
 
             epoch_loss += loss
             epoch_class_loss += class_loss
@@ -378,8 +404,14 @@ for r in range(len(iter_array)):
             if args.eta > 0:
                 for j in range(args.n_clusters):
                     pts_index = np.where(cluster_id == j)[0]
+                    n_class_index = np.where(y[pts_index] == 0)[0]
+                    p_class_index = np.where(y[pts_index] == 1)[0]
                     N  = len(pts_index)
-                    model.cluster_layer.data[j:] -= (1/(100+N))*delta_mu[j:]
+                    Np = len(p_class_index)
+                    Nn = len(n_class_index)
+                    model.p_cluster_layer.data[j:] -= (1/(100+Np))*delta_mu_p[j:]
+                    model.n_cluster_layer.data[j:] -= (1/(100+Nn))*delta_mu_n[j:]
+                    model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
 
         print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
                     epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))

@@ -6,42 +6,81 @@ from torch.utils.data import DataLoader
 from torch.nn import Linear
 import torch
 from utils import is_non_zero_file
+from collections import OrderedDict
+
+# layers = OrderedDict()
+# for idx, hidden_dim in enumerate(self.hidden_dims):
+#     if idx == 0:
+#         layers.update(
+#             {'linear0': nn.Linear(self.input_dim, hidden_dim),
+#              'activation0': nn.ReLU()
+#             })
+#     else:
+#         layers.update(
+#             {'linear{}'.format(idx): nn.Linear(
+#                 self.hidden_dims[idx-1], hidden_dim),
+#              'activation{}'.format(idx): nn.ReLU(),
+#              'bn{}'.format(idx): nn.BatchNorm1d(self.hidden_dims[idx])
+#             })
+# self.encoder = nn.Sequential(layers)
+
+# # Decoder Network
+# layers = OrderedDict()
+# tmp_hidden_dims = self.hidden_dims[::-1]
+# for idx, hidden_dim in enumerate(tmp_hidden_dims):
+#     if idx == len(tmp_hidden_dims) - 1:
+#         layers.update(
+#             {'linear{}'.format(idx): nn.Linear(
+#                 hidden_dim, self.output_dim),
+#             })
+#     else:
+#         layers.update(
+#             {'linear{}'.format(idx): nn.Linear(
+#                 hidden_dim, tmp_hidden_dims[idx+1]),
+#              'activation{}'.format(idx): nn.ReLU(),
+#              'bn{}'.format(idx): nn.BatchNorm1d(tmp_hidden_dims[idx+1])
+#             })
+# self.decoder = nn.Sequential(layers)
+
 
 class AE(nn.Module):
-    def __init__(self, n_enc_1, n_enc_2, n_enc_3, n_dec_1, n_dec_2, n_dec_3,
-                 input_dim, n_z):
+    def __init__(self, layers):
         super(AE, self).__init__()
 
-        # encoder
-        self.enc_1 = Linear(input_dim, n_enc_1)
-        self.enc_2 = Linear(n_enc_1, n_enc_2)
-        self.enc_3 = Linear(n_enc_2, n_enc_3)
+        self.encoder = OrderedDict()
+        self.decoder = OrderedDict()
+        n_layers = int(len(layers)/2)
+        for i in range(n_layers-1):
+            self.encoder.update(
+                {"layer{}".format(i): Linear(layers[i], layers[i+1]),
+                'activation{}'.format(i): nn.ReLU(),
+                })
 
-        self.z_layer = Linear(n_enc_3, n_z)
 
-        # decoder
-        self.dec_1 = Linear(n_z, n_dec_1)
-        self.dec_2 = Linear(n_dec_1, n_dec_2)
-        self.dec_3 = Linear(n_dec_2, n_dec_3)
+        self.encoder = nn.Sequential(self.encoder)
+        self.z_layer = Linear(layers[n_layers-1], layers[n_layers])
 
-        self.x_bar_layer = Linear(n_dec_3, input_dim)
+        for i in range(n_layers, 2*n_layers-1):
+            self.decoder.update(
+                {"layer{}".format(i): Linear(layers[i], layers[i+1]),
+                'activation{}'.format(i): nn.ReLU(),
+                })
+
+        self.decoder = nn.Sequential(self.decoder   )
+        self.x_bar_layer = Linear(layers[2*n_layers-1], layers[2*n_layers])
+
 
     def forward(self, x, output="decoded"):
 
         # encoder
-        enc_h1 = F.relu(self.enc_1(x))
-        enc_h2 = F.relu(self.enc_2(enc_h1))
-        enc_h3 = F.relu(self.enc_3(enc_h2))
-
-        z = self.z_layer(enc_h3)
+        enc = self.encoder(x)
+        z = self.z_layer(enc)
         if output == "latent":
             return z
 
         # decoder
-        dec_h1 = F.relu(self.dec_1(z))
-        dec_h2 = F.relu(self.dec_2(dec_h1))
-        dec_h3 = F.relu(self.dec_3(dec_h2))
-        x_bar = self.x_bar_layer(dec_h3)
+        dec = self.decoder(z)
+        x_bar = self.x_bar_layer(dec)
 
         return x_bar, z
 
@@ -165,12 +204,7 @@ class NNClassifier(nn.Module):
 
 class MultiHeadIDEC(nn.Module):
     def __init__(self,
-                 n_enc_1,
-                 n_enc_2,
-                 n_enc_3,
-                 n_dec_1,
-                 n_dec_2,
-                 n_dec_3,
+                 ae_layers,
                  args):
         super(MultiHeadIDEC, self).__init__()
         self.alpha = args.alpha
@@ -180,36 +214,37 @@ class MultiHeadIDEC(nn.Module):
         self.input_dim = args.input_dim
         self.n_z = args.n_z
         self.args = args
-
-        self.ae = AE(
-            n_enc_1=n_enc_1,
-            n_enc_2=n_enc_2,
-            n_enc_3=n_enc_3,
-            n_dec_1=n_dec_1,
-            n_dec_2=n_dec_2,
-            n_dec_3=n_dec_3,
-            input_dim=self.input_dim,
-            n_z=self.n_z)
-
+        ae_layers.append(self.input_dim)
+        ae_layers = [self.input_dim] + ae_layers
+        self.ae = AE(ae_layers)
+        print(dict(self.ae.named_modules()))
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         self.p_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         self.n_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
+        torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
+        torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
         
         self.classifiers = []
+        # for _ in range(self.n_clusters):
+        #     classifier = nn.Sequential(
+        #         nn.Linear(self.n_z, 64),
+        #         nn.ReLU(),
+        #         nn.Linear(64, 32),
+        #         nn.ReLU(),
+        #         nn.Linear(32, 16),
+        #         nn.ReLU(),
+        #         nn.Linear(16, 8),
+        #         nn.ReLU(),
+        #         # nn.Linear(self.n_z, args.n_classes),
+        #         nn.Linear(8, args.n_classes),
+        #     ).to(self.device)
         for _ in range(self.n_clusters):
             classifier = nn.Sequential(
-                nn.Linear(self.n_z, 64),
+                nn.Linear(self.n_z, 30),
                 nn.ReLU(),
-                nn.Linear(64, 32),
-                nn.ReLU(),
-                nn.Linear(32, 16),
-                nn.ReLU(),
-                nn.Linear(16, 8),
-                nn.ReLU(),
-                # nn.Linear(self.n_z, args.n_classes),
-                nn.Linear(8, args.n_classes),
+                nn.Linear(30, args.n_classes),
             ).to(self.device)
 
             # classifier = nn.Sequential(
@@ -265,3 +300,105 @@ class MultiHeadIDEC(nn.Module):
         
         else:
             return z, x_bar, (q, q_p, q_n)
+
+
+class DMNN(nn.Module):
+    def __init__(self,
+                 n_enc_1,
+                 n_enc_2,
+                 n_enc_3,
+                 n_dec_1,
+                 n_dec_2,
+                 n_dec_3,
+                 args):
+        super(DMNN, self).__init__()
+        self.alpha = args.alpha
+        self.pretrain_path = args.pretrain_path
+        self.device = args.device
+        self.n_clusters = args.n_clusters
+        self.input_dim = args.input_dim
+        self.n_z = args.n_z
+        self.args = args
+        self.classes = args.n_classes
+
+        self.ae = AE(
+            n_enc_1=n_enc_1,
+            n_enc_2=n_enc_2,
+            n_enc_3=n_enc_3,
+            n_dec_1=n_dec_1,
+            n_dec_2=n_dec_2,
+            n_dec_3=n_dec_3,
+            input_dim=self.input_dim,
+            n_z=self.n_z)
+
+        # Gating layer
+        self.gate = nn.Sequential(
+            nn.linear(self.n_z, self.n_clusters),
+            nn.Softmax()
+            ).to(self.device)
+
+        # cluster layer
+        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        torch.nn.init.xavier_normal_(self.cluster_layer.data)
+        
+        self.classifiers = []
+        for _ in range(self.n_clusters):
+            classifier = nn.Sequential(
+                nn.Linear(self.n_z, 64),
+                nn.ReLU(),
+                nn.Linear(64, 32),
+                nn.ReLU(),
+                nn.Linear(32, 16),
+                nn.ReLU(),
+                nn.Linear(16, 8),
+                nn.ReLU(),
+                # nn.Linear(self.n_z, args.n_classes),
+                nn.Linear(8, self.n_classes),
+            ).to(self.device)
+            optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
+            self.classifiers.append([classifier, optimizer])
+            
+
+    def pretrain(self, train_loader, path=''):
+        print(path)
+        if not is_non_zero_file(path):
+            path = ''
+        if path == '':
+            pretrain_ae(self.ae, train_loader, self.args)
+        else:
+            # load pretrain weights
+            self.ae.load_state_dict(torch.load(self.pretrain_path))
+            print('load pretrained ae from', path)
+
+
+    def predict(self, X_test):
+        qs, z_test = self.forward(X_test)
+        q_test = qs[0]
+        cluster_ids = torch.argmax(q_test, axis=1)
+        preds = torch.zeros((self.n_clusters, self.n_classes))
+        for j in range(self.n_clusters):
+            preds[j,:] = self.classifiers[cluster_ids[j]]
+        return preds
+
+
+    def forward(self, x, output="default"):
+        x_bar, z = self.ae(x)
+        g = self.gate(z)
+
+        if output == "latent":
+            return z
+        
+        else:
+            return z, x_bar, g
+
+
+    def fit(self, X_batch, y_batch):
+        self.optimizer.zero_grad()
+        self.classifier.train()
+        y_pred, x_bar = self.forward(X_batch)
+        train_loss = self.criterion(y_pred, y_batch)
+        reconstr_loss = F.mse_loss(x_bar, X_batch)
+        total_loss = self.alpha*reconstr_loss + self.gamma*train_loss
+        total_loss.backward()
+        self.optimizer.step()
+        return y_pred.detach().numpy(), train_loss.item()
