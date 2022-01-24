@@ -217,7 +217,6 @@ class MultiHeadIDEC(nn.Module):
         ae_layers.append(self.input_dim)
         ae_layers = [self.input_dim] + ae_layers
         self.ae = AE(ae_layers)
-        print(dict(self.ae.named_modules()))
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         self.p_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
@@ -227,25 +226,25 @@ class MultiHeadIDEC(nn.Module):
         torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
         
         self.classifiers = []
-        # for _ in range(self.n_clusters):
-        #     classifier = nn.Sequential(
-        #         nn.Linear(self.n_z, 64),
-        #         nn.ReLU(),
-        #         nn.Linear(64, 32),
-        #         nn.ReLU(),
-        #         nn.Linear(32, 16),
-        #         nn.ReLU(),
-        #         nn.Linear(16, 8),
-        #         nn.ReLU(),
-        #         # nn.Linear(self.n_z, args.n_classes),
-        #         nn.Linear(8, args.n_classes),
-        #     ).to(self.device)
         for _ in range(self.n_clusters):
             classifier = nn.Sequential(
-                nn.Linear(self.n_z, 30),
+                nn.Linear(self.n_z, 64),
                 nn.ReLU(),
-                nn.Linear(30, args.n_classes),
+                nn.Linear(64, 32),
+                nn.ReLU(),
+                nn.Linear(32, 16),
+                nn.ReLU(),
+                nn.Linear(16, 8),
+                nn.ReLU(),
+                # nn.Linear(self.n_z, args.n_classes),
+                nn.Linear(8, args.n_classes),
             ).to(self.device)
+        # for _ in range(self.n_clusters):
+        #     classifier = nn.Sequential(
+        #         nn.Linear(self.n_z, 30),
+        #         nn.ReLU(),
+        #         nn.Linear(30, args.n_classes),
+        #     ).to(self.device)
 
             # classifier = nn.Sequential(
             #     nn.Linear(self.n_z, 100),
@@ -304,12 +303,7 @@ class MultiHeadIDEC(nn.Module):
 
 class DMNN(nn.Module):
     def __init__(self,
-                 n_enc_1,
-                 n_enc_2,
-                 n_enc_3,
-                 n_dec_1,
-                 n_dec_2,
-                 n_dec_3,
+                 ae_layers,
                  args):
         super(DMNN, self).__init__()
         self.alpha = args.alpha
@@ -319,22 +313,15 @@ class DMNN(nn.Module):
         self.input_dim = args.input_dim
         self.n_z = args.n_z
         self.args = args
-        self.classes = args.n_classes
-
-        self.ae = AE(
-            n_enc_1=n_enc_1,
-            n_enc_2=n_enc_2,
-            n_enc_3=n_enc_3,
-            n_dec_1=n_dec_1,
-            n_dec_2=n_dec_2,
-            n_dec_3=n_dec_3,
-            input_dim=self.input_dim,
-            n_z=self.n_z)
+        self.n_classes = args.n_classes
+        ae_layers.append(self.input_dim)
+        ae_layers = [self.input_dim] + ae_layers
+        self.ae = AE(ae_layers)
 
         # Gating layer
         self.gate = nn.Sequential(
-            nn.linear(self.n_z, self.n_clusters),
-            nn.Softmax()
+            Linear(self.n_z, self.n_clusters),
+            nn.Softmax(dim=1)
             ).to(self.device)
 
         # cluster layer
@@ -344,16 +331,9 @@ class DMNN(nn.Module):
         self.classifiers = []
         for _ in range(self.n_clusters):
             classifier = nn.Sequential(
-                nn.Linear(self.n_z, 64),
+                nn.Linear(self.n_z, 30),
                 nn.ReLU(),
-                nn.Linear(64, 32),
-                nn.ReLU(),
-                nn.Linear(32, 16),
-                nn.ReLU(),
-                nn.Linear(16, 8),
-                nn.ReLU(),
-                # nn.Linear(self.n_z, args.n_classes),
-                nn.Linear(8, self.n_classes),
+                nn.Linear(30, self.n_classes),
             ).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
@@ -390,15 +370,3 @@ class DMNN(nn.Module):
         
         else:
             return z, x_bar, g
-
-
-    def fit(self, X_batch, y_batch):
-        self.optimizer.zero_grad()
-        self.classifier.train()
-        y_pred, x_bar = self.forward(X_batch)
-        train_loss = self.criterion(y_pred, y_batch)
-        reconstr_loss = F.mse_loss(x_bar, X_batch)
-        total_loss = self.alpha*reconstr_loss + self.gamma*train_loss
-        total_loss.backward()
-        self.optimizer.step()
-        return y_pred.detach().numpy(), train_loss.item()

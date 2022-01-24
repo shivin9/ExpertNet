@@ -19,7 +19,7 @@ import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic', 'cic_los',\
-            'titanic', 'magic', 'adult', 'creditcard']
+            'titanic', 'magic', 'adult', 'creditcard', 'heart']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"

@@ -23,7 +23,7 @@ from torch.nn.parameter import Parameter
 from torch.optim import Adam
 from torch.utils.data import DataLoader, random_split
 from torch.nn import Linear
-from pytorchtools import EarlyStopping
+from pytorchtools import EarlyStoppingDMNN
 from scipy.cluster.vq import kmeans2
 
 import numbers
@@ -31,7 +31,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import NNClassifier
+from models import DMNN
 from utils import *
 
 
@@ -63,7 +63,7 @@ parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss w
 parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
-parser.add_argument('--n_z', default= 20, type=int)
+parser.add_argument('--n_z', default= 32, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
 parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
@@ -93,23 +93,36 @@ scale, column_names, train_data, val_data, test_data = get_train_val_test_loader
 X_train, y_train, train_loader = train_data
 X_val, y_val, val_loader = val_data
 X_test, y_test, test_loader = test_data
+criterion = nn.CrossEntropyLoss(reduction='mean')
 
 f1_scores, auc_scores, acc_scores = [], [], []
 if args.verbose == "False":
     blockPrint()
 
 for r in range(args.n_runs):
-    model = DMNN(args, input_dim=args.input_dim)
+    ae_layers = [64, 32, 64]
+    model = DMNN(ae_layers, args)
     device = args.device
 
     N_EPOCHS = args.n_epochs
-    es = EarlyStopping(dataset=args.dataset)
+    es = EarlyStoppingDMNN(dataset=args.dataset)
     model.pretrain(train_loader, args.pretrain_path)
+    optimizer = Adam(model.parameters(), lr=args.lr)
 
-    z_train, _, gate_vals = model(X_train)
-    original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
+    z_train, _, gate_vals = model(torch.FloatTensor(X_train))
+    original_cluster_centers, cluster_indices = kmeans2(z_train.data.cpu().numpy(), k=args.n_clusters, minit='++')
+    one_hot_cluster_indices = label_binarize(cluster_indices, classes=list(range(args.n_clusters+1)))[:,:args.n_clusters]
+    one_hot_cluster_indices = torch.FloatTensor(one_hot_cluster_indices)
+    # train gating network
+    for e in range(1, N_EPOCHS):
+        z_train, _, gate_vals = model(torch.FloatTensor(X_train))
+        model.train()
+        optimizer.zero_grad()
+        gating_err = criterion(gate_vals, one_hot_cluster_indices)
+        gating_err.backward()
+        optimizer.step()
 
-
+    # train Local Experts
     for e in range(1, N_EPOCHS):
         epoch_loss = 0
         epoch_auc = 0
@@ -118,23 +131,39 @@ for r in range(args.n_runs):
         model.train()
         for X_batch, y_batch, _ in train_loader:
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-            z_bar, x_bar, gate_vals = model(X_batch, y_batch)
-            train_loss = 0
-            for j in range(args.n_clusters):
-                preds_j = model.classifiers[j](X_batch)
-                loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_batch)
-                train_loss += gate_vals[j]*loss_j
+            z_train, x_bar, gate_vals = model(X_batch)
+            train_loss = torch.tensor(0.).to(args.device)
+            y_pred = torch.zeros((len(X_batch), args.n_classes))
 
+            for j in range(args.n_clusters):
+                preds_j = model.classifiers[j][0](z_train.detach())
+                optimizer_j = model.classifiers[j][1]
+                optimizer_j.zero_grad()
+                loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_batch)
+                local_loss = torch.sum(gate_vals.detach()[:,j]*loss_j)
+                loss_j.backward(retain_graph=True)
+                optimizer_j.step()
+                y_pred += torch.reshape(gate_vals[:,j], shape=(len(preds_j), 1)) * preds_j
+                train_loss += local_loss
+
+            # print(train_loss)
             epoch_loss += train_loss
-            f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy(), average="macro")
-            auc = multi_class_auc(y_batch, y_pred, args.n_classes)
+            # train_loss.backward(retain_graph=True)
+            f1 = f1_score(np.argmax(y_pred.detach().numpy(), axis=1), y_batch.detach().numpy(), average="macro")
+            auc = multi_class_auc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
             epoch_auc += auc.item()
             epoch_f1 += f1.item()
 
-        model.classifier.eval()
-        val_pred, _ = model(torch.FloatTensor(np.array(X_val)).to(args.device))
-        val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
+        z_val, x_bar, gate_vals = model(torch.FloatTensor(X_val).to(args.device))
+        val_pred = torch.zeros((len(X_val), args.n_classes))
+        for j in range(args.n_clusters):
+            model.classifiers[j][0].eval()
+            preds_j = model.classifiers[j][0](z_val)
+            loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, torch.Tensor(y_val).type(torch.LongTensor))
+            train_loss += torch.sum(gate_vals[:,j]*loss_j)
+            val_pred += torch.reshape(gate_vals[:,j], shape=(len(preds_j), 1)) * preds_j
 
+        val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
         val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
         val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
         es([val_f1, val_auc], model)
@@ -160,16 +189,24 @@ for r in range(args.n_runs):
 
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
-    model.classifier.eval()
-    test_pred, _ = model(torch.FloatTensor(np.array(X_test)).to(args.device))
-    test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
+    z_test, _, gate_test = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    test_pred = torch.zeros((len(X_test), args.n_classes))
 
+    for j in range(args.n_clusters):
+        model.classifiers[j][0].eval()
+        preds_j = model.classifiers[j][0](z_test)
+        loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, torch.Tensor(y_test).type(torch.LongTensor))
+        train_loss += torch.sum(gate_test[:,j]*loss_j)
+        test_pred += torch.reshape(gate_test[:,j], shape=(len(preds_j), 1)) * preds_j
+
+    test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
     test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
     test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
     test_acc = accuracy_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
+    es([val_f1, val_auc], model)
 
     y_preds = np.argmax(test_pred.detach().numpy(), axis=1)
-    # print(confusion_matrix(y_test, y_preds))
+    print(confusion_matrix(y_test, y_preds))
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
