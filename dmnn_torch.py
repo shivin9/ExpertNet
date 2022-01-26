@@ -115,7 +115,7 @@ for r in range(args.n_runs):
     one_hot_cluster_indices = torch.FloatTensor(one_hot_cluster_indices)
     # train gating network
     for e in range(1, N_EPOCHS):
-        z_train, _, gate_vals = model(torch.FloatTensor(X_train))
+        z_batch, _, gate_vals = model(torch.FloatTensor(X_train))
         model.train()
         optimizer.zero_grad()
         gating_err = criterion(gate_vals, one_hot_cluster_indices)
@@ -129,21 +129,24 @@ for r in range(args.n_runs):
         epoch_f1 = 0
         auc = 0
         model.train()
-        for X_batch, y_batch, _ in train_loader:
+        for X_batch, y_batch, idx in train_loader:
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-            z_train, x_bar, gate_vals = model(X_batch)
+            z_batch, x_bar, gate_vals = model(X_batch)
             train_loss = torch.tensor(0.).to(args.device)
             y_pred = torch.zeros((len(X_batch), args.n_classes))
 
             for j in range(args.n_clusters):
-                preds_j = model.classifiers[j][0](z_train.detach())
+                # cluster_ids = np.where(cluster_indices[idx] == j)[0]
+                cluster_ids = range(len(X_batch))
+                z_cluster, y_cluster = z_train[cluster_ids], torch.Tensor(y_train[cluster_ids]).type(torch.LongTensor)
+                preds_j = model.classifiers[j][0](z_cluster.detach())
                 optimizer_j = model.classifiers[j][1]
                 optimizer_j.zero_grad()
-                loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_batch)
-                local_loss = torch.sum(gate_vals.detach()[:,j]*loss_j)
-                loss_j.backward(retain_graph=True)
+                loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
+                local_loss = torch.sum(gate_vals.detach()[cluster_ids,j]*loss_j)
+                local_loss.backward(retain_graph=True)
                 optimizer_j.step()
-                y_pred += torch.reshape(gate_vals[:,j], shape=(len(preds_j), 1)) * preds_j
+                y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids,j], shape=(len(preds_j), 1)) * preds_j
                 train_loss += local_loss
 
             # print(train_loss)

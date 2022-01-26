@@ -302,7 +302,7 @@ for r in range(len(iter_array)):
 
             classifier_labels = np.zeros(len(idx))
             if args.eta > 0:
-                sub_epochs = 1
+                sub_epochs = 0
             else:
                 sub_epochs = min(10, 1 + int(epoch/5))
 
@@ -366,7 +366,7 @@ for r in range(len(iter_array)):
                     s1 = torch.linalg.norm(X_latents[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
                     s2 = torch.linalg.norm(X_latents[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
                     m12 = torch.linalg.norm(model.p_cluster_layer[j] - model.n_cluster_layer[j])
-                    class_sep_loss = m12
+                    class_sep_loss = -(s1 + s1)/m12
                     dcn_loss += torch.linalg.norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
                     dcn_loss -= args.eta*class_sep_loss
 
