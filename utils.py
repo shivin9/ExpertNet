@@ -232,6 +232,8 @@ def calculate_WDFD(X, cluster_ids):
                 col_entrpy *= 0
                 ci = torch.where(cluster_ids == i)[0]
                 cj = torch.where(cluster_ids == j)[0]
+                if len(ci) == 0 or len(cj) == 0:
+                    return 0
                 Xi = X[ci]
                 Xj = X[cj]
                 for c in range(n_columns):
@@ -367,7 +369,9 @@ def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
             # Collect values from other clusters
             for j in range(n_clusters):
                 if i != j:
-                    cj = torch.where(cluster_ids == j)[0]                    
+                    cj = torch.where(cluster_ids == j)[0]
+                    if len(cj) == 0:
+                        return 0                    
                     Xj_c = X_train[cj][:,c]
                     Zc = np.concatenate([Zc, Xj_c])
 

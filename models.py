@@ -202,11 +202,81 @@ class NNClassifier(nn.Module):
         return y_pred.detach().numpy(), train_loss.item()
 
 
-class MultiHeadIDEC(nn.Module):
+class DeepCAC(nn.Module):
     def __init__(self,
                  ae_layers,
                  args):
-        super(MultiHeadIDEC, self).__init__()
+        super(DeepCAC, self).__init__()
+        self.alpha = args.alpha
+        self.pretrain_path = args.pretrain_path
+        self.device = args.device
+        self.n_clusters = args.n_clusters
+        self.input_dim = args.input_dim
+        self.n_z = args.n_z
+        self.args = args
+        ae_layers.append(self.input_dim)
+        ae_layers = [self.input_dim] + ae_layers
+        self.ae = AE(ae_layers)
+        # cluster layer
+        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        self.class_cluster_layer = torch.Tensor(args.n_classes,self.n_clusters, self.n_z)
+
+        torch.nn.init.xavier_normal_(self.cluster_layer.data)
+        torch.nn.init.xavier_normal_(self.class_cluster_layer.data)
+        
+        self.classifiers = []
+        for _ in range(self.n_clusters):
+            classifier = nn.Sequential(
+                nn.Linear(self.n_z, 30),
+                nn.ReLU(),
+                nn.Linear(30, args.n_classes),
+            ).to(self.device)
+            optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
+            self.classifiers.append([classifier, optimizer])
+            
+
+    def pretrain(self, train_loader, path=''):
+        print(path)
+        if not is_non_zero_file(path):
+            path = ''
+        if path == '':
+            pretrain_ae(self.ae, train_loader, self.args)
+        else:
+            # load pretrain weights
+            self.ae.load_state_dict(torch.load(self.pretrain_path))
+            print('load pretrained ae from', path)
+
+
+    def predict(self, X_test):
+        z_test = self.forward(X_test)
+        # cluster_ids = torch.argmax(q_test, axis=1)
+        preds = torch.zeros((self.n_clusters, 2))
+        for j in range(self.n_clusters):
+            preds[j,:] = self.classifiers[cluster_ids[j]]
+        return preds
+
+
+    def forward(self, x, output="default"):
+        x_bar, z = self.ae(x)
+
+        if output == "latent":
+            return z
+
+        elif output == "classifier":
+            preds = torch.zeros((len(z), 2))
+            for j in range(len(z)):
+                preds[j,:] = self.classifiers[j](z)
+            return preds
+        
+        else:
+            return z, x_bar
+
+
+class ExpertNet(nn.Module):
+    def __init__(self,
+                 ae_layers,
+                 args):
+        super(ExpertNet, self).__init__()
         self.alpha = args.alpha
         self.pretrain_path = args.pretrain_path
         self.device = args.device
@@ -239,22 +309,6 @@ class MultiHeadIDEC(nn.Module):
                 # nn.Linear(self.n_z, args.n_classes),
                 nn.Linear(8, args.n_classes),
             ).to(self.device)
-        # for _ in range(self.n_clusters):
-        #     classifier = nn.Sequential(
-        #         nn.Linear(self.n_z, 30),
-        #         nn.ReLU(),
-        #         nn.Linear(30, args.n_classes),
-        #     ).to(self.device)
-
-            # classifier = nn.Sequential(
-            #     nn.Linear(self.n_z, 100),
-            #     nn.ReLU(),
-            #     nn.Linear(100, 100),
-            #     nn.ReLU(),
-            #     nn.Linear(100, 50),
-            #     nn.ReLU(),
-            #     nn.Linear(50, args.n_classes),
-            # )
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             

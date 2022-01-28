@@ -31,7 +31,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import DeepCAC,  target_distribution, source_distribution
+from models import ExpertNet,  target_distribution, source_distribution
 from utils import *
 
 parser = argparse.ArgumentParser()
@@ -150,9 +150,8 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    # ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
-    ae_layers = [64, 32, 64]
-    model = DeepCAC(
+    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+    model = ExpertNet(
             ae_layers,
             args=args).to(args.device)
 
@@ -171,10 +170,13 @@ for r in range(len(iter_array)):
 
     for i in range(args.n_clusters):
         cluster_idx = np.where(cluster_indices == i)[0]
-        for c in range(args.n_classes):
-            cluster_idx_c = np.where(y[cluster_idx] == c)[0]
-            hidden_c = hidden[cluster_idx][cluster_idx_c]    
-            model.class_cluster_layer.data[c,i,:] = torch.mean(hidden_c, axis=0)
+        cluster_idx_p = np.where(y[cluster_idx] == 1)[0]
+        cluster_idx_n = np.where(y[cluster_idx] == 0)[0]
+        hidden_p = hidden[cluster_idx][cluster_idx_p]
+        hidden_n = hidden[cluster_idx][cluster_idx_n]
+        
+        model.p_cluster_layer.data[i,:] = torch.mean(hidden_p, axis=0)
+        model.n_cluster_layer.data[i,:] = torch.mean(hidden_n, axis=0)
 
     ####################################################################################
     ####################################################################################
@@ -202,10 +204,11 @@ for r in range(len(iter_array)):
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
 
-            z_train = model(torch.Tensor(X_train).to(args.device), output="decoded")
+            z_train, _, q_train = model(torch.Tensor(X_train).to(args.device), output="decoded")
+            q_train, q_train_p, q_train_n = q_train
+            p_train = target_distribution(q_train.detach())
 
             # evaluate clustering performance
-
             cluster_indices = q_train.detach().cpu().numpy().argmax(1)
             preds = torch.zeros((len(z_train), args.n_classes))
 
