@@ -24,7 +24,7 @@ from torch.nn.parameter import Parameter
 from torch.optim import Adam
 from torch.utils.data import DataLoader, random_split
 from torch.nn import Linear
-from pytorchtools import EarlyStoppingCAC
+from pytorchtools import EarlyStoppingEN
 
 import numbers
 from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as ari
@@ -190,7 +190,7 @@ for r in range(len(iter_array)):
     print("Starting Training")
     model.train()
     N_EPOCHS = args.n_epochs
-    es = EarlyStoppingCAC(dataset=suffix)
+    es = EarlyStoppingEN(dataset=suffix)
     train_losses, e_train_losses = [], []
 
     for epoch in range(N_EPOCHS):
@@ -339,7 +339,6 @@ for r in range(len(iter_array)):
                 class_loss += torch.sum(q_batch[idx_cluster,k]*criterion(y_pred_cluster, y_cluster))
 
             class_loss /= len(X_latents)
-            delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
             cluster_id = torch.argmax(q_batch, 1)
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
             delta_mu_p = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
@@ -427,7 +426,7 @@ for r in range(len(iter_array)):
     print("Training Local Networks")
     model = es.load_checkpoint(model)
 
-    es = EarlyStoppingCAC(dataset=suffix)
+    es = EarlyStoppingEN(dataset=suffix)
 
     qs, z_train = model(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
     q_train = qs[0]

@@ -219,7 +219,7 @@ class DeepCAC(nn.Module):
         self.ae = AE(ae_layers)
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
-        self.class_cluster_layer = torch.Tensor(args.n_classes,self.n_clusters, self.n_z)
+        self.class_cluster_layer = torch.Tensor(self.n_clusters, args.n_classes, self.n_z)
 
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
         torch.nn.init.xavier_normal_(self.class_cluster_layer.data)
@@ -260,7 +260,7 @@ class DeepCAC(nn.Module):
         x_bar, z = self.ae(x)
 
         if output == "latent":
-            return z
+            return z, x_bar
 
         elif output == "classifier":
             preds = torch.zeros((len(z), 2))
@@ -269,7 +269,7 @@ class DeepCAC(nn.Module):
             return preds
         
         else:
-            return z, x_bar
+            return z
 
 
 class ExpertNet(nn.Module):
