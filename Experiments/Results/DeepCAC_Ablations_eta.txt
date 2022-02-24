@@ -1,0 +1,61 @@
+
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+eta 0.0
+attention True
+cic
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.635491583169284, 0.6220893243415193, 0.600874125183262]
+Test AUC:  [0.8110138297408467, 0.7936062884260403, 0.7809138856993358]
+Sil scores:  [0.23875038, 0.23039088, 0.23067328]
+HTFD:  []
+WDFD:  []
+Train Cluster Counts:  [5046   71 1633]
+Dataset	k
+cic	3
+
+F1	AUC	ACC
+0.619	0.795	0.867
+
+SIL	HTFD	WDFD	W-HTFD
+0.233	nan	nan	0.013
+
+Train Loss	Test Loss
+5.615	0.328
+
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+eta 0.001
+attention True
+cic
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.609638703227502, 0.6070025467776136, 0.6206557791633028]
+Test AUC:  [0.8206594017528814, 0.8275379354951236, 0.8282278782285141]
+Sil scores:  [0.08978309, 0.061070606, 0.08692377]
+HTFD:  []
+WDFD:  []
+Train Cluster Counts:  [2920 1598 2232]
+Dataset	k
+cic	3
+
+F1	AUC	ACC
+0.612	0.825	0.865
+
+SIL	HTFD	WDFD	W-HTFD
+0.079	nan	nan	0.016
+
+Train Loss	Test Loss
+10.937	0.320
+

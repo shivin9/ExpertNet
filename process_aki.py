@@ -60,8 +60,6 @@ X_test[non_binary_columns] = scaler.transform(np.nan_to_num(X_test[non_binary_co
 train_case_1(X, X_test)
 train_case_2(X, X_test, ENSEMBLE=True)
 
-boost = AdaBoostClassifier(base_estimator = DecisionTreeClassifier(max_depth = 1, max_leaf_nodes=2), algorithm = 'SAMME',n_estimators=100, learning_rate=1.0)
-
 ################################################################
 ######################### ARDS Dataset #########################
 ################################################################

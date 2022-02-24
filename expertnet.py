@@ -151,6 +151,8 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+    ae_layers = [64, 32, 64]
+
     model = ExpertNet(
             ae_layers,
             args=args).to(args.device)
@@ -166,6 +168,8 @@ for r in range(len(iter_array)):
     original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
     criterion = nn.CrossEntropyLoss(reduction='none')
+
+    plot_data(torch.Tensor(X_train).to(args.device), y_train, cluster_indices)
 
 
     for i in range(args.n_clusters):
@@ -248,7 +252,6 @@ for r in range(len(iter_array)):
                     cluster_preds = model.classifiers[j][0](X_cluster)
                     for c in range(args.n_classes):
                         preds[:,c] += q_val[:,j]*cluster_preds[:,c]
-
 
             # Classification Matrics
             val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
@@ -356,13 +359,13 @@ for r in range(len(iter_array)):
                     cluster_pts = X_latents[pts_index]
                     n_class_index = np.where(y_batch[pts_index] == 0)[0]
                     p_class_index = np.where(y_batch[pts_index] == 1)[0]
-                    n_class = cluster_pts[n_class_index]
-                    p_class = cluster_pts[p_class_index]
+                    n_class = X_latents[n_class_index]
+                    p_class = X_latents[p_class_index]
                     delta_mu_p[j,:] = p_class.sum(axis=0)/(1+len(p_class))
                     delta_mu_n[j,:] = n_class.sum(axis=0)/(1+len(n_class))
                     delta_mu[j,:]   = cluster_pts.sum(axis=0)/(1+len(cluster_pts))
-                    s1 = torch.linalg.norm(X_latents[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
-                    s2 = torch.linalg.norm(X_latents[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
+                    s1 = torch.linalg.norm(cluster_pts[p_class_index] - model.p_cluster_layer[j])/(1+len(p_class))
+                    s2 = torch.linalg.norm(cluster_pts[n_class_index] - model.n_cluster_layer[j])/(1+len(n_class))
                     m12 = torch.linalg.norm(model.p_cluster_layer[j] - model.n_cluster_layer[j])
                     class_sep_loss = -(s1 + s1)/m12
                     dcn_loss += torch.linalg.norm(X_latents[pts_index] - model.cluster_layer[j])/(1+len(cluster_pts))
@@ -411,8 +414,8 @@ for r in range(len(iter_array)):
                     model.n_cluster_layer.data[j:] -= (1/(100+Nn))*delta_mu_n[j:]
                     model.cluster_layer.data[j:]   -= (1/(100+N))*delta_mu[j:]
 
-        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'.format(
-                    epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))
+        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} |\
+        Cluster Balance Loss: {:.3f}'.format(epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))
         train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
 
     ####################################################################################
@@ -439,8 +442,9 @@ for r in range(len(iter_array)):
 
     B = []
 
-    # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train,\
-    #      torch.FloatTensor(np.array(X_test)).to(args.device), y_test)
+    print(np.bincount(cluster_id_train))
+    plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train,\
+         torch.FloatTensor(np.array(X_test)).to(args.device), y_test)
 
     # Post clustering training
     for e in range(N_EPOCHS):

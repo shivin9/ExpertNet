@@ -4,9 +4,11 @@ import numpy as np
 import pandas as pd
 import os
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 from torch.utils.data import Dataset
 from sklearn.datasets import make_classification, make_blobs
-from sklearn.metrics import mutual_info_score, roc_auc_score
+from sklearn.metrics import mutual_info_score, roc_auc_score, davies_bouldin_score as dbs
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
@@ -18,8 +20,8 @@ import sys
 import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
-DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic', 'cic_los',\
-            'titanic', 'magic', 'adult', 'creditcard', 'heart']
+DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic',\
+            'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'paper_synthetic']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
@@ -50,6 +52,7 @@ def silhouette_new(X, labels, metric="euclidean"):
         return 0
     else:
         return silhouette_score(X, labels, metric=metric)
+        # return dbs(X, labels)
 
 
 def calculate_mutual_HTFD(X, cluster_ids):
@@ -89,7 +92,7 @@ def calculate_HTFD(X_train, cluster_ids):
     for i in range(n_clusters):
         HTFD_scores[i] = {}
         ci = torch.where(cluster_ids == i)[0]
-        if len(ci) == 0:
+        if len(ci) < 1:
             return 0
         # Collect features of all the columns
         for c in range(n_features):
@@ -99,7 +102,10 @@ def calculate_HTFD(X_train, cluster_ids):
             for j in range(n_clusters):
                 if i != j:
                     cj = torch.where(cluster_ids == j)[0]
-                    Xj_c = X_train[cj][:,c]
+                    if len(X_train[cj].shape) == 1:
+                        Xj_c = X_train[cj].reshape(1,n_features)[:,c]
+                    else:
+                        Xj_c = X_train[cj][:,c]
                     Zc = np.concatenate([Zc, Xj_c])
 
             col_entrpy = 0
@@ -232,7 +238,7 @@ def calculate_WDFD(X, cluster_ids):
                 col_entrpy *= 0
                 ci = torch.where(cluster_ids == i)[0]
                 cj = torch.where(cluster_ids == j)[0]
-                if len(ci) == 0 or len(cj) == 0:
+                if len(ci) < 1 or len(cj) < 1:
                     return 0
                 Xi = X[ci]
                 Xj = X[cj]
@@ -370,9 +376,10 @@ def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
             for j in range(n_clusters):
                 if i != j:
                     cj = torch.where(cluster_ids == j)[0]
-                    if len(cj) == 0:
-                        return 0                    
-                    Xj_c = X_train[cj][:,c]
+                    if len(X_train[cj].shape) == 1:
+                        Xj_c = X_train[cj].reshape(1,n_features)[:,c]
+                    else:
+                        Xj_c = X_train[cj][:,c]
                     Zc = np.concatenate([Zc, Xj_c])
 
             col_entrpy = 0
@@ -441,6 +448,40 @@ class parameters(object):
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
 
 
+
+class AdMSoftmaxLoss(nn.Module):
+
+    def __init__(self, in_features, out_features, s=30.0, m=0.4):
+        '''
+        AM Softmax Loss
+        '''
+        super(AdMSoftmaxLoss, self).__init__()
+        self.s = s
+        self.m = m
+        self.in_features = in_features
+        self.out_features = out_features
+        self.fc = nn.Linear(in_features, out_features, bias=False)
+
+    def forward(self, x, labels):
+        '''
+        input shape (N, in_features)
+        '''
+        assert len(x) == len(labels)
+        # assert torch.min(labels, dim=1)[0] >= 0
+        # assert torch.max(labels, dim=1)[0] < self.out_features
+        
+        for W in self.fc.parameters():
+            W = F.normalize(W, dim=1)
+
+        x = F.normalize(x, dim=1)
+
+        wf = self.fc(x)
+        numerator = self.s * (torch.diagonal(wf.transpose(0, 1)[labels]) - self.m)
+        excl = torch.cat([torch.cat((wf[i, :y], wf[i, y+1:])).unsqueeze(0) for i, y in enumerate(labels)], dim=0)
+        denominator = torch.exp(numerator) + torch.sum(torch.exp(self.s * excl), dim=1)
+        L = numerator - torch.log(denominator)
+        return -torch.mean(L)
+
 #######################################################
 # Evaluate Critiron
 #######################################################
@@ -476,8 +517,20 @@ def multi_class_auc(y_true, y_scores, n_classes):
     return np.average(scores)
 
 
-def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
+def plot_data(X, y, cluster_ids):
     reducer = umap.UMAP(random_state=42)
+    X2 = reducer.fit_transform(X.cpu().detach().numpy())
+    c_clusters = [color[int(cluster_ids[i])] for i in range(len(cluster_ids))]
+    c_labels = [color[int(y[i])] for i in range(len(cluster_ids))]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.suptitle('Clusters vs Labels')
+    ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
+    ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
+    plt.show()
+
+
+def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
     # idx = torch.Tensor(np.random.randint(0,len(X_train), int(0.1*len(X_train)))).type(torch.LongTensor).to(device)
     idx = range(int(0.2*len(X_train)))
     qs, latents_X = model(X_train[idx], output="latent")
@@ -489,32 +542,16 @@ def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
     else:
         cluster_id_train = torch.argmax(q_train, axis=1)
 
-    X2 = reducer.fit_transform(latents_X.cpu().detach().numpy())
-
     print("Training data")
+    plot_data(latents_X, y_train, cluster_id_train)
 
-    c_clusters = [color[int(cluster_id_train[i])] for i in range(len(cluster_id_train))]
-    c_labels = [color[int(y_train[i])] for i in range(len(cluster_id_train))]
-
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.suptitle('Clusters vs Labels')
-    ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
-    ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
-    plt.show()
     if X_test is not None:
         qs, latents_test = model(X_test, output="latent")
         q_test = qs[0]
-        X2 = reducer.transform(latents_test.cpu().detach().numpy())
         cluster_id_test = torch.argmax(q_test, axis=1)
-        c_clusters = [color[int(cluster_id_test[i])] for i in range(len(cluster_id_test))]
-        c_labels = [color[int(y_test[i])] for i in range(len(cluster_id_test))]
 
         print("Test data")
-        fig, (ax1, ax2) = plt.subplots(1, 2)
-        fig.suptitle('Clusters vs Labels')
-        ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
-        ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
-        plt.show()
+        plot_data(latents_test, y_test, cluster_id_test)
 
 
 def drop_constant_column(df):
@@ -628,14 +665,16 @@ def get_train_val_test_loaders(args):
                 n_feat = 45
                 X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
                        n_clusters=args.n_clusters, n_features = n_feat,\
-                       inner_class_sep=0.2, outer_class_sep=2, seed=0)
+                       inner_class_sep=0.2, outer_class_sep=5, seed=0)
                 args.input_dim = n_feat
 
             elif args.dataset == "paper_synthetic":
                 n_feat = 100
-                X, y = paper_synthetic(2500, centers=4)
+                X, y = paper_synthetic(2500, centers=args.n_clusters)
                 args.input_dim = n_feat
                 print(args.input_dim)
+                scale = None
+                columns = ["feature_"+str(i) for i in range(n_feat)]
 
             else:
                 X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
@@ -645,10 +684,10 @@ def get_train_val_test_loaders(args):
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
 
-            sc = StandardScaler()
-            X_train = sc.fit_transform(X_train)
-            X_val = sc.fit_transform(X_val)
-            X_test = sc.fit_transform(X_test)
+            scale = StandardScaler()
+            X_train = scale.fit_transform(X_train)
+            X_val = scale.fit_transform(X_val)
+            X_test = scale.fit_transform(X_test)
             X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
@@ -711,7 +750,6 @@ def get_train_val_test_loaders(args):
             X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
             X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
-
         train_loader = torch.utils.data.DataLoader(X_train_data_loader,
             batch_size=args.batch_size, shuffle=True)
 
@@ -734,6 +772,7 @@ def paper_synthetic(n_pts=1000, centers=4):
     X1 = X1*(X1>0)
     X2 = U.dot(X1)
     X2 = X2*(X2>0)
+    y = np.random.randint(0,2,len(y))
     return X2.T, y
 
 ## Ablation Parameter Ranges ##
