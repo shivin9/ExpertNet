@@ -489,7 +489,7 @@ for r in range(len(iter_array)):
     B = []
 
     # print(np.bincount(cluster_ids_train))
-    # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train, labels=cluster_ids_train)
+    plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train, labels=cluster_ids_train)
 
     # Post clustering training
     for e in range(1000):
@@ -719,13 +719,13 @@ print("Train Cluster Counts: ", np.bincount(cluster_ids_train))
 
 # print("Model Complexity: ", model_complexity)
 
-print('Dataset\tk')
-print("{}\t{}\n".format(args.dataset, args.n_clusters))
+# print('Dataset\tk')
+# print("{}\t{}\n".format(args.dataset, args.n_clusters))
 
-print("F1\tAUC\tACC")
+print("Dataset\tk\tF1\tAUC\tACC")
 
-print("{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
 
 print('SIL\tHTFD\tWDFD\tW-HTFD')
 print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.average(sil_scores),\
