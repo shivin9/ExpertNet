@@ -32,7 +32,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import MultiHeadIDEC,  target_distribution, source_distribution
+from models import ExpertNet,  target_distribution, source_distribution
 from utils import *
 
 parser = argparse.ArgumentParser()
@@ -149,14 +149,17 @@ for r in range(len(iter_array)):
     elif args.ablation == "k":
         args.n_clusters = iter_array[r]
 
+
+    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+    model = ExpertNet(
+            ae_layers,
+            args=args).to(args.device)
+
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    model = MultiHeadIDEC(
-            n_enc_1=128,
-            n_enc_2=64,
-            n_enc_3=32,
-            n_dec_1=32,
-            n_dec_2=64,
-            n_dec_3=128,
+    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+    
+    model = ExpertNet(
+            ae_layers,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)

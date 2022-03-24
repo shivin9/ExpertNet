@@ -80,7 +80,7 @@ def get_processed_data(direc, hours):
 
 
 # Tell directory where records are
-def get_aki(direc):
+def get_aki(direc, ori_direc):
 	os.chdir(direc)
 	cnt = 0
 	data = {}
@@ -93,7 +93,7 @@ def get_aki(direc):
 			data[cnt]['y'] = int(labels[labels.stay == file].y_true)
 			cnt += 1
 
-	os.chdir('../../../')
+	os.chdir(ori_direc)
 	return data
 
 

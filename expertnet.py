@@ -72,7 +72,7 @@ parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 # parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
@@ -151,7 +151,7 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
-    ae_layers = [64, 32, 64]
+    # ae_layers = [64, 32, 64]
 
     model = ExpertNet(
             ae_layers,

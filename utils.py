@@ -20,11 +20,11 @@ import sys
 import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
-DATASETS = ['diabetes', 'ards', 'cic', 'sepsis', 'aki', 'infant', 'wid_mortality', 'synthetic',\
-            'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'paper_synthetic']
+DATASETS = ['diabetes', 'ards', 'ards_new', 'cic', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
+            'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'paper_synthetic']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
-BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/DeepCAC"
+BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
 
 # Disable Print
 def blockPrint():

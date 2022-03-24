@@ -8,41 +8,6 @@ import torch
 from utils import is_non_zero_file
 from collections import OrderedDict
 
-# layers = OrderedDict()
-# for idx, hidden_dim in enumerate(self.hidden_dims):
-#     if idx == 0:
-#         layers.update(
-#             {'linear0': nn.Linear(self.input_dim, hidden_dim),
-#              'activation0': nn.ReLU()
-#             })
-#     else:
-#         layers.update(
-#             {'linear{}'.format(idx): nn.Linear(
-#                 self.hidden_dims[idx-1], hidden_dim),
-#              'activation{}'.format(idx): nn.ReLU(),
-#              'bn{}'.format(idx): nn.BatchNorm1d(self.hidden_dims[idx])
-#             })
-# self.encoder = nn.Sequential(layers)
-
-# # Decoder Network
-# layers = OrderedDict()
-# tmp_hidden_dims = self.hidden_dims[::-1]
-# for idx, hidden_dim in enumerate(tmp_hidden_dims):
-#     if idx == len(tmp_hidden_dims) - 1:
-#         layers.update(
-#             {'linear{}'.format(idx): nn.Linear(
-#                 hidden_dim, self.output_dim),
-#             })
-#     else:
-#         layers.update(
-#             {'linear{}'.format(idx): nn.Linear(
-#                 hidden_dim, tmp_hidden_dims[idx+1]),
-#              'activation{}'.format(idx): nn.ReLU(),
-#              'bn{}'.format(idx): nn.BatchNorm1d(tmp_hidden_dims[idx+1])
-#             })
-# self.decoder = nn.Sequential(layers)
-
-
 class AE(nn.Module):
     def __init__(self, layers):
         super(AE, self).__init__()
@@ -165,25 +130,7 @@ class NNClassifier(nn.Module):
             nn.ReLU(),
             nn.Linear(8, args.n_classes),
         )
-        # self.classifier = nn.Sequential(
-        #     nn.Linear(input_dim, 128),
-        #     nn.ReLU(),
-        #     nn.Linear(128, 64),
-        #     nn.ReLU(),
-        #     nn.Linear(64, 32),
-        #     nn.ReLU(),
-        #     nn.Linear(32, 20),
-        #     nn.ReLU(),
-        #     nn.Linear(20, 64),
-        #     nn.ReLU(),
-        #     nn.Linear(64, 32),
-        #     nn.ReLU(),
-        #     nn.Linear(32, 16),
-        #     nn.ReLU(),
-        #     nn.Linear(16, 8),
-        #     nn.ReLU(),
-        #     nn.Linear(8, args.n_classes),
-        # )
+
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
 
     def forward(self, inputs):
