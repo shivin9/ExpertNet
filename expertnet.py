@@ -152,12 +152,11 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
-    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    # expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
     # ae_layers = [64, 32, 64]
 
     model = ExpertNet(
             ae_layers,
-            expert_layers,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
