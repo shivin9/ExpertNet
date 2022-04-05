@@ -19,3 +19,12 @@ python3 ../baseline.py --dataset diabetes --n_epochs 50 --alpha 1 --gamma 0.01 -
 
 echo "CIC-LOS" >> Results/results_SAE.txt
 python3 ../baseline.py --dataset cic_los --n_epochs 50 --alpha 1 --gamma 0.01 --n_runs 11 --n_classes 3 >> Results/results_SAE.txt
+
+echo "Kidney New" >> Results/results_SAE.txt
+python3 ../baseline.py --dataset aki_new --n_epochs 50 --alpha 1 --gamma 0.01 --n_runs 11 >> Results/results_SAE.txt
+
+echo "Respiratory New" >> Results/results_SAE.txt
+python3 ../baseline.py --dataset ards_new --n_epochs 50 --alpha 1 --gamma 0.01 --n_runs 11 >> Results/results_SAE.txt
+
+echo "CIC New" >> Results/results_SAE.txt
+python3 ../baseline.py --dataset cic_new --n_epochs 50 --alpha 1 --gamma 0.01 --n_runs 11 >> Results/results_SAE.txt

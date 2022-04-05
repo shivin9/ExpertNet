@@ -87,17 +87,16 @@ args = parameters(parser)
 ####################################################################################
 ####################################################################################
 
-
-scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
-X_train, y_train, train_loader = train_data
-X_val, y_val, val_loader = val_data
-X_test, y_test, test_loader = test_data
-
 f1_scores, auc_scores, acc_scores = [], [], []
 if args.verbose == "False":
     blockPrint()
 
 for r in range(args.n_runs):
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+    X_train, y_train, train_loader = train_data
+    X_val, y_val, val_loader = val_data
+    X_test, y_test, test_loader = test_data
+
     model = NNClassifier(args, input_dim=args.input_dim)
     device = args.device
 

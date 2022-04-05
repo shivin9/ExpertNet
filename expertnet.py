@@ -86,11 +86,6 @@ base_suffix += args.dataset + "_"
 base_suffix += str(args.n_clusters) + "_"
 base_suffix += str(args.attention)
 
-scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
-X_train, y_train, train_loader = train_data
-X_val, y_val, val_loader = val_data
-X_test, y_test, test_loader = test_data
-
 ####################################################################################
 ####################################################################################
 ####################################################################################
@@ -132,6 +127,12 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=0)
+    X_train, y_train, train_loader = train_data
+    X_val, y_val, val_loader = val_data
+    X_test, y_test, test_loader = test_data
+    print(sum(y_train), len(y_train))
+
     if args.verbose == 'False':
         blockPrint()
 
@@ -151,10 +152,12 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
     # ae_layers = [64, 32, 64]
 
     model = ExpertNet(
             ae_layers,
+            expert_layers,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
@@ -169,8 +172,7 @@ for r in range(len(iter_array)):
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
     criterion = nn.CrossEntropyLoss(reduction='none')
 
-    plot_data(torch.Tensor(X_train).to(args.device), y_train, cluster_indices)
-
+    # plot_data(torch.Tensor(X_train).to(args.device), y_train, cluster_indices)
 
     for i in range(args.n_clusters):
         cluster_idx = np.where(cluster_indices == i)[0]
@@ -443,8 +445,8 @@ for r in range(len(iter_array)):
     B = []
 
     print(np.bincount(cluster_id_train))
-    plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train,\
-         torch.FloatTensor(np.array(X_test)).to(args.device), y_test)
+    # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train,\
+         # torch.FloatTensor(np.array(X_test)).to(args.device), y_test)
 
     # Post clustering training
     for e in range(N_EPOCHS):

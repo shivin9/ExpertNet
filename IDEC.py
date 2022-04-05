@@ -26,18 +26,21 @@ from torch.nn.parameter import Parameter
 from torch.optim import Adam
 from torch.utils.data import DataLoader, random_split
 from torch.nn import Linear
-from pytorchtools import EarlyStoppingCAC
+from pytorchtools import EarlyStoppingEN
 
 import numbers
 from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as ari
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-        ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
-from mod
-    model = ExpertNet(
-            ae_layers,
-            args=args).to(args.device)
+from models import ExpertNet,  target_distribution, source_distribution
+from utils import *
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--dataset', default= 'creditcard')
+parser.add_argument('--input_dim', default= '-1')
+
 # Training parameters
 parser.add_argument('--lr', default= 0.002, type=float)
 parser.add_argument('--alpha', default= 1, type=float)
@@ -71,7 +74,7 @@ parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 # parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
@@ -84,11 +87,6 @@ for key in ['n_clusters', 'alpha', 'beta']:
 base_suffix += args.dataset + "_"
 base_suffix += str(args.n_clusters) + "_"
 base_suffix += str(args.attention)
-
-scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
-X_train, y_train, train_loader = train_data
-X_val, y_val, val_loader = val_data
-X_test, y_test, test_loader = test_data
 
 ####################################################################################
 ####################################################################################
@@ -126,6 +124,11 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
+    X_train, y_train, train_loader = train_data
+    X_val, y_val, val_loader = val_data
+    X_test, y_test, test_loader = test_data
+
     if args.verbose == 'False':
         blockPrint()
     print(iteration_name, ":", iter_array[r])
@@ -150,7 +153,6 @@ for r in range(len(iter_array)):
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
-
     optimizer = Adam(model.parameters(), lr=args.lr)
 
     # cluster parameter initiate
@@ -177,7 +179,7 @@ for r in range(len(iter_array)):
     print("Starting Training")
     model.train()
     N_EPOCHS = args.n_epochs
-    es = EarlyStoppingCAC(dataset=suffix)
+    es = EarlyStoppingEN(dataset=suffix)
 
     for epoch in range(N_EPOCHS):
         # beta = args.beta*(epoch*0.1)/(1+epoch*0.1)
@@ -336,7 +338,7 @@ for r in range(len(iter_array)):
     print("Training Local Networks")
     model = es.load_checkpoint(model)
 
-    es = EarlyStoppingCAC(dataset=suffix)
+    es = EarlyStoppingEN(dataset=suffix)
 
     qs, z_train = model(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
     q_train = qs[0]

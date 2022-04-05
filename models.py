@@ -31,7 +31,7 @@ class AE(nn.Module):
                 'activation{}'.format(i): nn.ReLU(),
                 })
 
-        self.decoder = nn.Sequential(self.decoder   )
+        self.decoder = nn.Sequential(self.decoder)
         self.x_bar_layer = Linear(layers[2*n_layers-1], layers[2*n_layers])
 
 
@@ -152,6 +152,7 @@ class NNClassifier(nn.Module):
 class DeepCAC(nn.Module):
     def __init__(self,
                  ae_layers,
+                 expert_layers,
                  args):
         super(DeepCAC, self).__init__()
         self.alpha = args.alpha
@@ -172,12 +173,16 @@ class DeepCAC(nn.Module):
         torch.nn.init.xavier_normal_(self.class_cluster_layer.data)
         
         self.classifiers = []
+        n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):
-            classifier = nn.Sequential(
-                nn.Linear(self.n_z, 30),
-                nn.ReLU(),
-                nn.Linear(30, args.n_classes),
-            ).to(self.device)
+            classifier = OrderedDict()
+            for i in range(n_layers-1):
+                classifier.update(
+                    {"layer{}".format(i): Linear(expert_layers[i], expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    })
+
+            classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             
@@ -222,6 +227,7 @@ class DeepCAC(nn.Module):
 class ExpertNet(nn.Module):
     def __init__(self,
                  ae_layers,
+                 expert_layers,
                  args):
         super(ExpertNet, self).__init__()
         self.alpha = args.alpha
@@ -241,21 +247,18 @@ class ExpertNet(nn.Module):
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
         torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
         torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
-        
+
         self.classifiers = []
+        n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):
-            classifier = nn.Sequential(
-                nn.Linear(self.n_z, 64),
-                nn.ReLU(),
-                nn.Linear(64, 32),
-                nn.ReLU(),
-                nn.Linear(32, 16),
-                nn.ReLU(),
-                nn.Linear(16, 8),
-                nn.ReLU(),
-                # nn.Linear(self.n_z, args.n_classes),
-                nn.Linear(8, args.n_classes),
-            ).to(self.device)
+            classifier = OrderedDict()
+            for i in range(n_layers-1):
+                classifier.update(
+                    {"layer{}".format(i): Linear(expert_layers[i], expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    })
+
+            classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             
@@ -305,6 +308,7 @@ class ExpertNet(nn.Module):
 class DMNN(nn.Module):
     def __init__(self,
                  ae_layers,
+                 expert_layers,
                  args):
         super(DMNN, self).__init__()
         self.alpha = args.alpha
@@ -328,17 +332,20 @@ class DMNN(nn.Module):
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
-        
+
         self.classifiers = []
+        n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):
-            classifier = nn.Sequential(
-                nn.Linear(self.n_z, 30),
-                nn.ReLU(),
-                nn.Linear(30, self.n_classes),
-            ).to(self.device)
+            classifier = OrderedDict()
+            for i in range(n_layers-1):
+                classifier.update(
+                    {"layer{}".format(i): Linear(expert_layers[i], expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    })
+
+            classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
-            self.classifiers.append([classifier, optimizer])
-            
+            self.classifiers.append([classifier, optimizer])            
 
     def pretrain(self, train_loader, path=''):
         print(path)

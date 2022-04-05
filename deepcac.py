@@ -87,10 +87,6 @@ base_suffix += args.dataset + "_"
 base_suffix += str(args.n_clusters) + "_"
 base_suffix += str(args.attention)
 
-scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
-X_train, y_train, train_loader = train_data
-X_val, y_val, val_loader = val_data
-X_test, y_test, test_loader = test_data
 softmin = torch.nn.Softmin(dim=0)
 U = torch.eye(args.n_classes, args.n_classes)*1000
 
@@ -135,6 +131,11 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
+    X_train, y_train, train_loader = train_data
+    X_val, y_val, val_loader = val_data
+    X_test, y_test, test_loader = test_data
+
     if args.verbose == 'False':
         blockPrint()
 

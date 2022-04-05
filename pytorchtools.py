@@ -188,7 +188,7 @@ class EarlyStoppingDMNN:
         '''Saves model when validation loss decrease.'''
         if self.verbose:
             self.trace_func(f'Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ...')
-        torch.save(model.ae.state_dict(), self.path+".pt")
+        torch.save(model.ae.state_dict(), self.path+"_dmnn.pt")
         torch.save(model.gate.state_dict(), self.path+"_gate"+".pt")
 
         for j in range(model.n_clusters):
@@ -197,7 +197,7 @@ class EarlyStoppingDMNN:
 
     def load_checkpoint(self, model):
         print("Loading Best model with score: ", self.best_score)
-        model.ae.load_state_dict(torch.load(self.path+".pt"))
+        model.ae.load_state_dict(torch.load(self.path+"_dmnn.pt"))
         model.gate.load_state_dict(torch.load(self.path+"_gate"+".pt"))
 
         for j in range(model.n_clusters):

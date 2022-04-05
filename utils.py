@@ -20,7 +20,7 @@ import sys
 import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
-DATASETS = ['diabetes', 'ards', 'ards_new', 'cic', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
+DATASETS = ['diabetes', 'ards', 'ards_new', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
             'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'paper_synthetic']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
@@ -563,10 +563,10 @@ def drop_constant_column(df):
 
 def get_dataset(DATASET, DATA_DIR):
     scale = None
-    if DATASET == "cic":
-        Xa = pd.read_csv(DATA_DIR + "/CIC/cic_set_a.csv")
-        Xb = pd.read_csv(DATA_DIR + "/CIC/cic_set_b.csv")
-        Xc = pd.read_csv(DATA_DIR + "/CIC/cic_set_c.csv")
+    if DATASET == "cic" or DATASET == "cic_new":
+        Xa = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_a.csv")
+        Xb = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_b.csv")
+        Xc = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_c.csv")
 
         ya = Xa['In-hospital_death']
         yb = Xb['In-hospital_death']
@@ -658,7 +658,7 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
     return X, np.array(Y).astype('int'), columns
 
 
-def get_train_val_test_loaders(args):
+def get_train_val_test_loaders(args, r_state=0):
     if args.dataset in DATASETS:
         if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los":
             if args.dataset == "synthetic":
@@ -678,7 +678,6 @@ def get_train_val_test_loaders(args):
 
             else:
                 X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
-                print(args.dataset)
                 args.input_dim = X.shape[1]
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
@@ -694,7 +693,6 @@ def get_train_val_test_loaders(args):
 
         elif args.dataset == "cic_los":
             X, y, columns, scale = get_dataset("cic", DATA_DIR)
-            print(args.dataset)
 
             los_quantiles = np.quantile(X[:,2], [0, 0.33, 0.66, 1])
             y_los = []
@@ -712,8 +710,8 @@ def get_train_val_test_loaders(args):
             y = np.array(y_los)
             args.input_dim = X_los.shape[1]
 
-            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=0)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
 
             sc = StandardScaler()
             X_train = sc.fit_transform(X_train)
@@ -728,8 +726,8 @@ def get_train_val_test_loaders(args):
             print("Loading aki Train")
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
 
             args.input_dim = X_train.shape[1]
 
@@ -741,8 +739,8 @@ def get_train_val_test_loaders(args):
             print("Loading ards Train")
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
 
             args.input_dim = X_train.shape[1]
 

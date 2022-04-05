@@ -74,7 +74,7 @@ parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--other', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 
 
 parser = parser.parse_args()
@@ -88,11 +88,6 @@ args = parameters(parser)
 ####################################################################################
 ####################################################################################
 
-
-scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
-X_train, y_train, train_loader = train_data
-X_val, y_val, val_loader = val_data
-X_test, y_test, test_loader = test_data
 criterion = nn.CrossEntropyLoss(reduction='mean')
 
 f1_scores, auc_scores, acc_scores = [], [], []
@@ -100,7 +95,14 @@ if args.verbose == "False":
     blockPrint()
 
 for r in range(args.n_runs):
-    ae_layers = [64, 32, 64]
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+    X_train, y_train, train_loader = train_data
+    X_val, y_val, val_loader = val_data
+    X_test, y_test, test_loader = test_data
+
+    # ae_layers = [64, 32, 64]
+    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+    # ae_layers = [128, 64, 32]
     model = DMNN(ae_layers, args)
     device = args.device
 
