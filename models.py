@@ -245,13 +245,13 @@ class ExpertNet(nn.Module):
         self.classifiers = []
         for _ in range(self.n_clusters):
             classifier = nn.Sequential(
-                nn.Linear(self.n_z, 64),
+                nn.Linear(self.n_z, 32),
                 nn.ReLU(),
-                nn.Linear(64, 32),
-                nn.ReLU(),
-                nn.Linear(32, 16),
-                nn.ReLU(),
-                nn.Linear(16, 8),
+                # nn.Linear(64, 32),
+                # nn.ReLU(),
+                # nn.Linear(32, 16),
+                # nn.ReLU(),
+                nn.Linear(32, 8),
                 nn.ReLU(),
                 # nn.Linear(self.n_z, args.n_classes),
                 nn.Linear(8, args.n_classes),

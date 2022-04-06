@@ -151,7 +151,7 @@ def get_classifier(classifier):
 f1_scores, auc_scores, acc_scores = [], [], []
 
 for classifier in classifiers:
-    f1_scores, auc_scores = [], []
+    f1_scores, auc_scores, acc_scores = [], [], []
     for r in range(args.n_runs):
         scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
         X_train, y_train, train_loader = train_data
@@ -171,9 +171,10 @@ for classifier in classifiers:
         pred_proba = clf.predict_proba(X_test)
         f1_scores.append(f1_score(preds, y_test))
         auc_scores.append(roc_auc_score(y_test.ravel(), pred_proba[:,1]))
+        acc_scores.append(accuracy_score(preds, y_test))
 
-    print("Dataset\tClassifier\tF1\tAUC")
-    print("{}\t{}\t{:.3f}\t{:.3f}".format\
-        (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores)))
+    print("Dataset\tCLF\tF1\tAUC\tACC")
+    print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
 
 print("\n\n")
