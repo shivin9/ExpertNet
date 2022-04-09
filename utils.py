@@ -658,6 +658,22 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
     return X, np.array(Y).astype('int'), columns
 
 
+def extract_column(X, col_idx, n_classes):
+    los_quantiles = np.quantile(X[:,col_idx], np.arange(n_classes+1)/n_classes)
+    y_new = []
+    for i in range(len(X)):
+        lbl = int(X[i,col_idx]/args.n_classes)
+        for j in range(args.n_classes):
+            if los_quantiles[j] < X[i,col_idx] < los_quantiles[j+1]:
+                lbl = j
+        y_new.append(lbl)
+
+    X_new = np.delete(X, col_idx, 1) # delete col_idx column
+    y_new = np.array(y_new)
+
+    return X_new, y_new
+
+
 def get_train_val_test_loaders(args, r_state=0):
     if args.dataset in DATASETS:
         if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los":

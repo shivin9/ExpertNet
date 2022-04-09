@@ -152,11 +152,12 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     ae_layers = [64, 32, args.n_z, 32, 64]
-    # expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
     # ae_layers = [64, 32, 64]
 
     model = ExpertNet(
             ae_layers,
+            expert_layers,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
@@ -190,7 +191,6 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
     ####################################################################################
-
 
     print("Starting Training")
     model.train()
@@ -615,7 +615,7 @@ for r in range(len(iter_array)):
     print("Run #{}".format(r))
     print('Loss Metrics - Test Loss {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
 
-    print('Clustering Metrics     - Acc {:.4f}'.format(acc), ', nmi {:.4f}'.format(nmi),\
+    print('Clustering Metrics - Acc {:.4f}'.format(acc), ', nmi {:.4f}'.format(nmi),\
           ', ari {:.4f}, HTFD {:.3f}'.format(ari, e_test_HTFD))
 
     print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test ACC {:.3f}'.format(test_f1, test_auc, test_acc),\
@@ -671,6 +671,41 @@ for r in range(len(iter_array)):
             print("Cluster # ", j, "sized: ", len(cluster_id))
             print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
             print("=========================\n")
+
+        for c in range(args.n_classes):
+            test_preds_e[:,c] += q_test[:,j]*cluster_test_preds[:,c]
+    
+    e_test_loss = torch.mean(criterion(test_preds_e, torch.Tensor(y_test).type(torch.LongTensor)))
+    e_test_f1 = f1_score(y_test, np.argmax(test_preds_e.detach().numpy(), axis=1), average="macro")
+    e_test_auc = multi_class_auc(y_test, test_preds_e.detach().numpy(), args.n_classes)
+
+    # Testing performance of downstream classifier on cluster embeddings
+    qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
+    q_test = qs[0]
+    cluster_ids = torch.argmax(q_test, axis=1)
+    test_preds_e = torch.zeros((len(z_test), args.n_classes))
+    y_test_pred_proba = torch.zeros((len(z_test), args.n_classes))
+    y_test_preds = torch.zeros(len(z_test))
+
+    for j in range(model.n_clusters):
+        X_cluster = z_test
+        cluster_preds = model.classifiers[j][0](X_cluster)
+        for c in range(args.n_classes):
+            test_preds_e[:,c] += q_test[:,j]*cluster_preds[:,c]
+
+    for j in range(model.n_clusters):
+        cluster_id = torch.where(cluster_ids == j)[0]
+        X_cluster = X_test[cluster_id]
+        if args.attention == True:
+            y_cluster = test_preds_e[cluster_id][:,1]
+        else:
+            y_cluster = test_preds[cluster_id][:,1]
+
+        # Some test data might not belong to any cluster
+        if len(cluster_id) > 0:
+            y_test_pred_proba[:,j] += regs[j].predict_proba(X_cluster, y_cluster.detach().cpu().numpy())
+            y_test_preds = regs[j].predict(X_cluster, y_cluster.detach().cpu().numpy())
+
 
     feature_diff = 0
     cntr = 0

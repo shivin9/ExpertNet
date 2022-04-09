@@ -30,7 +30,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import NNClassifier
+from models import NNClassifier, NNClassifierBase
 from utils import *
 
 
@@ -96,8 +96,11 @@ for r in range(args.n_runs):
     X_train, y_train, train_loader = train_data
     X_val, y_val, val_loader = val_data
     X_test, y_test, test_loader = test_data
+    # print(sum(y_train), len(y_train))
 
-    model = NNClassifier(args, input_dim=args.input_dim)
+    # model = NNClassifier(args, input_dim=args.input_dim)
+    layers = [args.input_dim, 128, 64, 32, 16, 8, args.n_classes]
+    model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
     device = args.device
 
     N_EPOCHS = args.n_epochs
@@ -120,7 +123,7 @@ for r in range(args.n_runs):
             epoch_f1 += f1.item()
 
         model.classifier.eval()
-        val_pred, _ = model(torch.FloatTensor(np.array(X_val)).to(args.device))
+        val_pred = model(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
 
         val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
@@ -149,7 +152,7 @@ for r in range(args.n_runs):
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
     model.classifier.eval()
-    test_pred, _ = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    test_pred = model(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
 
     test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")

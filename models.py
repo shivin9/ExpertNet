@@ -17,22 +17,22 @@ class AE(nn.Module):
         n_layers = int(len(layers)/2)
         for i in range(n_layers-1):
             self.encoder.update(
-                {"layer{}".format(i): Linear(layers[i], layers[i+1]),
+                {"layer{}".format(i): nn.Linear(layers[i], layers[i+1]),
                 'activation{}'.format(i): nn.ReLU(),
                 })
 
 
         self.encoder = nn.Sequential(self.encoder)
-        self.z_layer = Linear(layers[n_layers-1], layers[n_layers])
+        self.z_layer = nn.Linear(layers[n_layers-1], layers[n_layers])
 
         for i in range(n_layers, 2*n_layers-1):
             self.decoder.update(
-                {"layer{}".format(i): Linear(layers[i], layers[i+1]),
+                {"layer{}".format(i): nn.Linear(layers[i], layers[i+1]),
                 'activation{}'.format(i): nn.ReLU(),
                 })
 
-        self.decoder = nn.Sequential(self.decoder   )
-        self.x_bar_layer = Linear(layers[2*n_layers-1], layers[2*n_layers])
+        self.decoder = nn.Sequential(self.decoder)
+        self.x_bar_layer = nn.Linear(layers[2*n_layers-1], layers[2*n_layers])
 
 
     def forward(self, x, output="decoded"):
@@ -149,9 +149,52 @@ class NNClassifier(nn.Module):
         return y_pred.detach().numpy(), train_loss.item()
 
 
+class NNClassifierBase(nn.Module):
+    def __init__(self, args, input_dim, layers):
+        super(NNClassifierBase, self).__init__()
+        self.args = args
+        self.n_classes = args.n_classes
+        self.criterion = nn.CrossEntropyLoss(reduction='mean')
+        # self.criterion = torch.nn.HingeEmbeddingLoss(reduction='mean')
+        self.device = args.device
+        self.input_dim = args.input_dim
+        self.alpha = args.alpha
+        self.gamma = args.gamma
+        n_layers = len(layers)
+
+        self.classifier = OrderedDict()
+        for i in range(n_layers-2):
+            self.classifier.update(
+                {"layer{}".format(i): nn.Linear(layers[i], layers[i+1]),
+                'activation{}'.format(i): nn.ReLU(),
+                })
+
+        i = n_layers - 2
+        self.classifier.update(
+            {"layer{}".format(i): nn.Linear(layers[i], layers[i+1]),
+            })
+
+        self.classifier = nn.Sequential(self.classifier).to(self.device)
+        self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
+
+    def forward(self, inputs):
+        return self.classifier(inputs)
+
+    def fit(self, X_batch, y_batch):
+        self.optimizer.zero_grad()
+        self.classifier.train()
+        y_pred = self.forward(X_batch)
+        train_loss = self.criterion(y_pred, y_batch)
+        total_loss = train_loss
+        total_loss.backward()
+        self.optimizer.step()
+        return y_pred.detach().numpy(), train_loss.item()
+
+
 class DeepCAC(nn.Module):
     def __init__(self,
                  ae_layers,
+                 expert_layers,
                  args):
         super(DeepCAC, self).__init__()
         self.alpha = args.alpha
@@ -172,12 +215,22 @@ class DeepCAC(nn.Module):
         torch.nn.init.xavier_normal_(self.class_cluster_layer.data)
         
         self.classifiers = []
+        n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):
-            classifier = nn.Sequential(
-                nn.Linear(self.n_z, 30),
-                nn.ReLU(),
-                nn.Linear(30, args.n_classes),
-            ).to(self.device)
+            classifier = OrderedDict()
+            for i in range(n_layers-2):
+                classifier.update(
+                    {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    })
+
+            i = n_layers-2
+            classifier.update(
+                {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                })
+
+
+            classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             
@@ -222,6 +275,7 @@ class DeepCAC(nn.Module):
 class ExpertNet(nn.Module):
     def __init__(self,
                  ae_layers,
+                 expert_layers,
                  args):
         super(ExpertNet, self).__init__()
         self.alpha = args.alpha
@@ -241,21 +295,23 @@ class ExpertNet(nn.Module):
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
         torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
         torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
-        
+
         self.classifiers = []
+        n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):
-            classifier = nn.Sequential(
-                nn.Linear(self.n_z, 32),
-                nn.ReLU(),
-                # nn.Linear(64, 32),
-                # nn.ReLU(),
-                # nn.Linear(32, 16),
-                # nn.ReLU(),
-                nn.Linear(32, 8),
-                nn.ReLU(),
-                # nn.Linear(self.n_z, args.n_classes),
-                nn.Linear(8, args.n_classes),
-            ).to(self.device)
+            classifier = OrderedDict()
+            for i in range(n_layers-2):
+                classifier.update(
+                    {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    })
+
+            i = n_layers - 2
+            classifier.update(
+                {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                })
+
+            classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             
@@ -305,6 +361,7 @@ class ExpertNet(nn.Module):
 class DMNN(nn.Module):
     def __init__(self,
                  ae_layers,
+                 expert_layers,
                  args):
         super(DMNN, self).__init__()
         self.alpha = args.alpha
@@ -328,17 +385,20 @@ class DMNN(nn.Module):
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
-        
+
         self.classifiers = []
+        n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):
-            classifier = nn.Sequential(
-                nn.Linear(self.n_z, 30),
-                nn.ReLU(),
-                nn.Linear(30, self.n_classes),
-            ).to(self.device)
+            classifier = OrderedDict()
+            for i in range(n_layers-1):
+                classifier.update(
+                    {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    })
+
+            classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
-            self.classifiers.append([classifier, optimizer])
-            
+            self.classifiers.append([classifier, optimizer])            
 
     def pretrain(self, train_loader, path=''):
         print(path)
@@ -354,23 +414,6 @@ class DMNN(nn.Module):
 
     def predict(self, X_test):
         qs, z_test = self.forward(X_test)
-        q_test = qs[0]
-        cluster_ids = torch.argmax(q_test, axis=1)
-        preds = torch.zeros((self.n_clusters, self.n_classes))
-        for j in range(self.n_clusters):
-            preds[j,:] = self.classifiers[cluster_ids[j]]
-        return preds
-
-
-    def forward(self, x, output="default"):
-        x_bar, z = self.ae(x)
-        g = self.gate(z)
-
-        if output == "latent":
-            return z
-        
-        else:
-            return z, x_bar, g
         q_test = qs[0]
         cluster_ids = torch.argmax(q_test, axis=1)
         preds = torch.zeros((self.n_clusters, self.n_classes))
