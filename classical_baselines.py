@@ -115,7 +115,7 @@ def get_classifier(classifier):
         model = LinearSVC(max_iter=5000)
         model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
     elif classifier == "Perceptron":
-        model = Perceptron()
+        model = Perceptron(max_iter=1000)
         model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
     elif classifier == "ADB":
         model = AdaBoostClassifier(n_estimators = 100)
@@ -126,7 +126,7 @@ def get_classifier(classifier):
     elif classifier == "NB":
         model = MultinomialNB()
     elif classifier == "SGD":
-        model = SGDClassifier(loss='log')
+        model = SGDClassifier(loss='log', max_iter=1000)
     elif classifier == "Ridge":
         model = RidgeClassifier()
         model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
@@ -134,7 +134,7 @@ def get_classifier(classifier):
         model = KNeighborsClassifier(n_neighbors=5)
     elif classifier == "MLP":
         model = MLPClassifier(alpha=1e-3,
-                     hidden_layer_sizes=(16, 8), random_state=108)
+                     hidden_layer_sizes=(16, 8), random_state=108, max_iter=1000)
     else:
         model = LogisticRegression(class_weight='balanced', max_iter=1000)
     return model
@@ -148,20 +148,19 @@ def get_classifier(classifier):
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores = [], [], []
+f1_scores, auc_scores, acc_scores, auprc_scores = [], [], [], []
 
 for classifier in classifiers:
     f1_scores, auc_scores, acc_scores = [], [], []
     for r in range(args.n_runs):
         scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
-        X_train, y_train, train_loader = train_data
-        X_val, y_val, val_loader = val_data
-        X_test, y_test, test_loader = test_data
+        X_train, y_train = train_data
+        X_val, y_val = val_data
+        X_test, y_test = test_data
 
-        X_train = scale.fit_transform(X_train)
-        X_val = scale.fit_transform(X_val)
-        X_test = scale.fit_transform(X_test)
-
+        train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
+        val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
+        test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
         clf = get_classifier(classifier)
         # X_train = scale.fit_transform(X_train)
@@ -171,10 +170,11 @@ for classifier in classifiers:
         pred_proba = clf.predict_proba(X_test)
         f1_scores.append(f1_score(preds, y_test))
         auc_scores.append(roc_auc_score(y_test.ravel(), pred_proba[:,1]))
+        auprc_scores.append(average_precision_score(y_test.ravel(), pred_proba[:,1]))
         acc_scores.append(accuracy_score(preds, y_test))
 
-    print("Dataset\tCLF\tF1\tAUC\tACC")
-    print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-        (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
+    print("Dataset\tCLF\tF1\tAUC\tAUPRC\tACC")
+    print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores) ,np.average(acc_scores)))
 
 print("\n\n")

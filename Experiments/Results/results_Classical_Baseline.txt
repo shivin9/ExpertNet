@@ -1,146 +1,135 @@
 Classical Baseline
 CIC
-Dataset	Classifier	F1	AUC
-cic	LR	0.420	0.836
-Dataset	Classifier	F1	AUC
-cic	SVM	0.390	0.833
-Dataset	Classifier	F1	AUC
-cic	LDA	0.455	0.840
-Dataset	Classifier	F1	AUC
-cic	RF	0.289	0.789
-Dataset	Classifier	F1	AUC
-cic	KNN	0.169	0.696
-Dataset	Classifier	F1	AUC
-cic	SGD	0.423	0.791
-Dataset	Classifier	F1	AUC
-cic	Ridge	0.311	0.840
-Dataset	Classifier	F1	AUC
-cic	MLP	0.430	0.789
+cic	LR	0.420	0.836	0.501	0.871
+cic	SVM	0.389	0.833	0.499	0.873
+cic	LDA	0.455	0.840	0.501	0.876
+cic	RF	0.310	0.790	0.479	0.869
+cic	KNN	0.169	0.696	0.441	0.856
+cic	SGD	0.404	0.788	0.438	0.860
+cic	Ridge	0.311	0.840	0.448	0.870
+cic	MLP	0.430	0.789	0.447	0.836
 
 
 
 Sepsis
-Dataset	Classifier	F1	AUC
-sepsis	LR	0.489	0.838
-Dataset	Classifier	F1	AUC
-sepsis	SVM	0.428	0.834
-Dataset	Classifier	F1	AUC
-sepsis	LDA	0.537	0.829
-Dataset	Classifier	F1	AUC
-sepsis	RF	0.594	0.879
-Dataset	Classifier	F1	AUC
-sepsis	KNN	0.461	0.736
-Dataset	Classifier	F1	AUC
-sepsis	SGD	0.482	0.801
-Dataset	Classifier	F1	AUC
-sepsis	Ridge	0.383	0.829
-Dataset	Classifier	F1	AUC
-sepsis	MLP	0.636	0.881
+sepsis	LR	0.489	0.838	0.566	0.948
+sepsis	SVM	0.429	0.834	0.563	0.945
+sepsis	LDA	0.537	0.829	0.561	0.948
+sepsis	RF	0.533	0.869	0.570	0.949
+sepsis	KNN	0.461	0.736	0.536	0.941
+sepsis	SGD	0.456	0.790	0.514	0.935
+sepsis	Ridge	0.383	0.829	0.521	0.943
+sepsis	MLP	0.636	0.881	0.540	0.950
 
 
 
 Kidney
-Loading aki Train
 Respiratory
-Loading ards Train
 Wid_Mortality
-Dataset	Classifier	F1	AUC
-wid_mortality	LR	0.392	0.875
-Dataset	Classifier	F1	AUC
-wid_mortality	SVM	0.339	0.873
-Dataset	Classifier	F1	AUC
-wid_mortality	LDA	0.458	0.869
-Dataset	Classifier	F1	AUC
-wid_mortality	RF	0.335	0.819
-Dataset	Classifier	F1	AUC
-wid_mortality	KNN	0.196	0.700
-Dataset	Classifier	F1	AUC
-wid_mortality	SGD	0.398	0.859
-Dataset	Classifier	F1	AUC
-wid_mortality	Ridge	0.272	0.870
-Dataset	Classifier	F1	AUC
-wid_mortality	MLP	0.417	0.838
+wid_mortality	LR	0.392	0.875	0.500	0.924
+wid_mortality	SVM	0.340	0.873	0.503	0.925
+wid_mortality	LDA	0.458	0.869	0.500	0.921
+wid_mortality	RF	0.339	0.822	0.478	0.923
+wid_mortality	KNN	0.196	0.700	0.431	0.916
+wid_mortality	SGD	0.379	0.844	0.433	0.919
+wid_mortality	Ridge	0.272	0.870	0.442	0.923
+wid_mortality	MLP	0.417	0.838	0.441	0.911
 
 
 
 Diabetes
-Dataset	Classifier	F1	AUC
-diabetes	LR	0.131	0.567
-Dataset	Classifier	F1	AUC
-diabetes	SVM	0.126	0.567
-Dataset	Classifier	F1	AUC
-diabetes	LDA	0.132	0.567
-Dataset	Classifier	F1	AUC
-diabetes	RF	0.408	0.555
-Dataset	Classifier	F1	AUC
-diabetes	KNN	0.414	0.545
-Dataset	Classifier	F1	AUC
-diabetes	SGD	0.169	0.552
-Dataset	Classifier	F1	AUC
-diabetes	Ridge	0.126	0.567
-Dataset	Classifier	F1	AUC
-diabetes	MLP	0.252	0.577
+diabetes	LR	0.131	0.567	0.452	0.592
+diabetes	SVM	0.126	0.567	0.452	0.594
+diabetes	LDA	0.132	0.567	0.452	0.592
+diabetes	RF	0.411	0.556	0.450	0.568
+diabetes	KNN	0.414	0.545	0.447	0.560
+diabetes	SGD	0.120	0.544	0.445	0.589
+diabetes	Ridge	0.126	0.567	0.446	0.594
+diabetes	MLP	0.252	0.577	0.448	0.594
 
 
 
 CIC-LOS
 Kidney New
-Dataset	Classifier	F1	AUC
-aki_new	LR	0.610	0.622
-Dataset	Classifier	F1	AUC
-aki_new	SVM	0.611	0.623
-Dataset	Classifier	F1	AUC
-aki_new	LDA	0.611	0.630
-Dataset	Classifier	F1	AUC
-aki_new	RF	0.525	0.572
-Dataset	Classifier	F1	AUC
-aki_new	KNN	0.550	0.589
-Dataset	Classifier	F1	AUC
-aki_new	SGD	0.563	0.554
-Dataset	Classifier	F1	AUC
-aki_new	Ridge	0.613	0.630
-Dataset	Classifier	F1	AUC
-aki_new	MLP	0.567	0.582
+aki_new	LR	0.610	0.622	0.605	0.590
+aki_new	SVM	0.610	0.622	0.605	0.587
+aki_new	LDA	0.611	0.630	0.603	0.593
+aki_new	RF	0.504	0.578	0.591	0.548
+aki_new	KNN	0.550	0.589	0.583	0.557
+aki_new	SGD	0.532	0.543	0.576	0.536
+aki_new	Ridge	0.613	0.630	0.579	0.593
+aki_new	MLP	0.567	0.582	0.580	0.572
 
 
 
 Respiratory New
-Dataset	Classifier	F1	AUC
-ards_new	LR	0.516	0.927
-Dataset	Classifier	F1	AUC
-ards_new	SVM	0.517	0.918
-Dataset	Classifier	F1	AUC
-ards_new	LDA	0.594	0.918
-Dataset	Classifier	F1	AUC
-ards_new	RF	0.426	0.862
-Dataset	Classifier	F1	AUC
-ards_new	KNN	0.319	0.829
-Dataset	Classifier	F1	AUC
-ards_new	SGD	0.505	0.888
-Dataset	Classifier	F1	AUC
-ards_new	Ridge	0.520	0.921
-Dataset	Classifier	F1	AUC
-ards_new	MLP	0.455	0.849
+ards_new	LR	0.516	0.927	0.645	0.896
+ards_new	SVM	0.517	0.918	0.635	0.892
+ards_new	LDA	0.594	0.918	0.635	0.888
+ards_new	RF	0.424	0.858	0.580	0.835
+ards_new	KNN	0.319	0.829	0.549	0.865
+ards_new	SGD	0.466	0.880	0.549	0.877
+ards_new	Ridge	0.520	0.921	0.561	0.896
+ards_new	MLP	0.455	0.849	0.553	0.871
 
 
 
 CIC New
-Dataset	Classifier	F1	AUC
-cic_new	LR	0.339	0.804
-Dataset	Classifier	F1	AUC
-cic_new	SVM	0.273	0.801
-Dataset	Classifier	F1	AUC
-cic_new	LDA	0.358	0.804
-Dataset	Classifier	F1	AUC
-cic_new	RF	0.193	0.749
-Dataset	Classifier	F1	AUC
-cic_new	KNN	0.188	0.662
-Dataset	Classifier	F1	AUC
-cic_new	SGD	0.329	0.751
-Dataset	Classifier	F1	AUC
-cic_new	Ridge	0.193	0.804
-Dataset	Classifier	F1	AUC
-cic_new	MLP	0.369	0.744
+cic_new	LR	0.339	0.804	0.438	0.866
+cic_new	SVM	0.274	0.801	0.435	0.866
+cic_new	LDA	0.358	0.804	0.433	0.863
+cic_new	RF	0.213	0.737	0.408	0.861
+cic_new	KNN	0.188	0.662	0.377	0.859
+cic_new	SGD	0.329	0.759	0.375	0.849
+cic_new	Ridge	0.193	0.804	0.383	0.861
+cic_new	MLP	0.369	0.744	0.380	0.827
+
+
+
+Kidney
+aki	LR	0.639	0.691	0.685	0.639
+aki	SVM	0.634	0.690	0.684	0.637
+aki	LDA	0.635	0.690	0.684	0.637
+aki	RF	0.570	0.633	0.666	0.593
+aki	KNN	0.573	0.614	0.651	0.585
+aki	SGD	0.562	0.689	0.656	0.619
+aki	Ridge	0.634	0.690	0.660	0.637
+aki	MLP	0.655	0.680	0.662	0.632
+
+
+
+Respiratory
+ards	LR	0.110	0.761	0.276	0.925
+ards	SVM	0.036	0.759	0.275	0.925
+ards	LDA	0.315	0.758	0.275	0.916
+ards	RF	0.110	0.709	0.257	0.924
+ards	KNN	0.159	0.654	0.238	0.922
+ards	SGD	0.082	0.758	0.244	0.925
+ards	Ridge	0.030	0.758	0.248	0.925
+ards	MLP	0.202	0.773	0.252	0.922
+
+
+Kidney
+aki	LR	0.637	0.690	0.684	0.638
+aki	SVM	0.635	0.690	0.683	0.638
+aki	LDA	0.635	0.690	0.683	0.637
+aki	RF	0.569	0.631	0.665	0.593
+aki	KNN	0.547	0.601	0.649	0.576
+aki	SGD	0.609	0.640	0.647	0.601
+aki	Ridge	0.635	0.690	0.652	0.638
+aki	MLP	0.599	0.622	0.648	0.589
+
+
+
+Respiratory
+ards	LR	0.126	0.762	0.267	0.924
+ards	SVM	0.044	0.760	0.270	0.925
+ards	LDA	0.315	0.758	0.271	0.916
+ards	RF	0.124	0.693	0.254	0.925
+ards	KNN	0.140	0.655	0.236	0.922
+ards	SGD	0.122	0.707	0.231	0.921
+ards	Ridge	0.031	0.758	0.237	0.925
+ards	MLP	0.220	0.668	0.230	0.898
 
 
 

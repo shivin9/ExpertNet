@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 from sklearn.datasets import make_classification, make_blobs
-from sklearn.metrics import mutual_info_score, roc_auc_score, davies_bouldin_score as dbs
+from sklearn.metrics import mutual_info_score, roc_auc_score, average_precision_score, davies_bouldin_score as dbs
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
@@ -517,6 +517,15 @@ def multi_class_auc(y_true, y_scores, n_classes):
     return np.average(scores)
 
 
+def multi_class_auprc(y_true, y_scores, n_classes):
+    # If n_classes = 2, then label_binarize doesn't give a 2d array
+    y = label_binarize(y_true, classes=list(range(n_classes+1)))[:,:n_classes]
+    scores = []
+    for i in range(n_classes):
+        scores.append(average_precision_score(y[:,i], y_scores[:,i]))
+    return np.average(scores)
+
+
 def plot_data(X, y, cluster_ids):
     reducer = umap.UMAP(random_state=42)
     X2 = reducer.fit_transform(X.cpu().detach().numpy())
@@ -600,6 +609,8 @@ def get_dataset(DATASET, DATA_DIR):
         X = pd.concat([X_train, X_test])
         y = pd.concat([y_train, y_test]).to_numpy()
         columns = cols
+        X = X.to_numpy()
+
 
     elif DATASET == "infant":
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
@@ -614,6 +625,7 @@ def get_dataset(DATASET, DATA_DIR):
         y = y.astype(int)
         enc = OneHotEncoder(handle_unknown='ignore')
         X = enc.fit_transform(X).toarray()
+        X = scale.fit_transform(X)
 
     else:
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
@@ -623,9 +635,10 @@ def get_dataset(DATASET, DATA_DIR):
         for i in range(len(y)):
             y1.append(y[i][0])
         y = np.array(y1)
+        scale = StandardScaler()
+        X = scale.fit_transform(X)
 
     # X, columns = drop_constant_column(X, columns)
-    X = X.to_numpy()
     return X, y, columns, scale
 
 
@@ -662,9 +675,9 @@ def extract_column(X, col_idx, n_classes):
     los_quantiles = np.quantile(X[:,col_idx], np.arange(n_classes+1)/n_classes)
     y_new = []
     for i in range(len(X)):
-        lbl = int(X[i,col_idx]/args.n_classes)
-        for j in range(args.n_classes):
-            if los_quantiles[j] < X[i,col_idx] < los_quantiles[j+1]:
+        lbl = int(X[i,col_idx]/n_classes)
+        for j in range(n_classes):
+            if los_quantiles[j] <= X[i,col_idx] < los_quantiles[j+1]:
                 lbl = j
         y_new.append(lbl)
 
@@ -672,6 +685,13 @@ def extract_column(X, col_idx, n_classes):
     y_new = np.array(y_new)
 
     return X_new, y_new
+
+
+def generate_data_loaders(X, y, batch_size):
+    X_data_loader = list(zip(X.astype(np.float32), y, range(len(X))))
+    data_loader = torch.utils.data.DataLoader(X_data_loader,\
+        batch_size=batch_size, shuffle=True)
+    return data_loader
 
 
 def get_train_val_test_loaders(args, r_state=0):
@@ -703,9 +723,6 @@ def get_train_val_test_loaders(args, r_state=0):
             X_train = scale.fit_transform(X_train)
             X_val = scale.fit_transform(X_val)
             X_test = scale.fit_transform(X_test)
-            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
-            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
-            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
         elif args.dataset == "cic_los":
             X, y, columns, scale = get_dataset("cic", DATA_DIR)
@@ -733,26 +750,16 @@ def get_train_val_test_loaders(args, r_state=0):
             X_train = sc.fit_transform(X_train)
             X_val = sc.fit_transform(X_val)
             X_test = sc.fit_transform(X_test)
-            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
-            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
-            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
-
 
         elif args.dataset == "aki":
-            print("Loading aki Train")
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
 
             args.input_dim = X_train.shape[1]
-
-            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
-            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
-            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
 
         else:
-            print("Loading ards Train")
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
@@ -760,20 +767,7 @@ def get_train_val_test_loaders(args, r_state=0):
 
             args.input_dim = X_train.shape[1]
 
-            X_train_data_loader = list(zip(X_train.astype(np.float32), y_train, range(len(X_train))))
-            X_val_data_loader = list(zip(X_val.astype(np.float32), y_val, range(len(X_val))))
-            X_test_data_loader  = list(zip(X_test.astype(np.float32), y_test, range(len(X_train))))
-
-        train_loader = torch.utils.data.DataLoader(X_train_data_loader,
-            batch_size=args.batch_size, shuffle=True)
-
-        val_loader = torch.utils.data.DataLoader(X_val_data_loader,
-            batch_size=args.batch_size, shuffle=True)
-
-        test_loader = torch.utils.data.DataLoader(X_test_data_loader, 
-            batch_size=args.batch_size, shuffle=False)
-
-        return scale, columns, (X_train, y_train, train_loader), (X_val, y_val, val_loader), (X_test, y_test, test_loader)
+        return scale, columns, (X_train, y_train), (X_val, y_val), (X_test, y_test)
     else:
         return None
 
