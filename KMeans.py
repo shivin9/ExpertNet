@@ -100,7 +100,7 @@ if args.verbose == False:
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores, sil_scores, HTFD_scores, wdfd_scores = [], [], [], [], [], []
+f1_scores, auc_scores, auprc_scores, acc_scores, sil_scores, HTFD_scores, wdfd_scores = [], [], [], [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -128,10 +128,15 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
-    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
-    X_train, y_train, train_loader = train_data
-    X_val, y_val, val_loader = val_data
-    X_test, y_test, test_loader = test_data
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+    X_train, y_train = train_data
+    X_val, y_val = val_data
+    X_test, y_test = test_data
+
+    train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
+    val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
+    test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
+
 
     if args.verbose == 'False':
         blockPrint()
@@ -150,10 +155,13 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
-    
+    ae_layers = [64, 32, args.n_z, 32, 64]
+    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    # ae_layers = [64, 32, 64]
+
     model = ExpertNet(
             ae_layers,
+            expert_layers,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
@@ -240,25 +248,32 @@ for r in range(len(iter_array)):
             cluster_preds = model.classifiers[j][0](X_cluster)
             preds[cluster_id] = cluster_preds
 
+        # Classification Matrics
         val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
         val_auc = multi_class_auc(y_val, preds.detach().numpy(), args.n_classes)
-        val_sil = silhouette_new(z_val.detach().data.cpu().numpy(), cluster_ids_val, metric='euclidean')
+        val_auprc = multi_class_auprc(y_val, preds.detach().numpy(), args.n_classes)
+
+        # Clustering Metrics
+        val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids_val, metric='euclidean')
+        val_feature_diff = calculate_HTFD(X_val, torch.Tensor(cluster_ids_val))
+        complexity_term = 0
 
         val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
         epoch_len = len(str(N_EPOCHS))
-        
+
         print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
                      f'train_loss: {train_loss:.3f} ' +
                      f'valid_loss: {val_loss:.3f} '  +
                      f'valid_F1: {val_f1:.3f} '  +
                      f'valid_AUC: {val_auc:.3f} ' +
+                     f'valid_AUPRC: {val_auprc:.3f} ' +
                      f'valid_Sil: {val_sil:.3f}')
         
         print(print_msg)
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_auc], model)
+        es([val_f1, val_auprc], model)
         if es.early_stop == True or epoch == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(hidden.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
@@ -301,6 +316,7 @@ for r in range(len(iter_array)):
     
     test_f1 = f1_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1), average="macro")
     test_auc = multi_class_auc(y_test, test_preds.detach().numpy(), args.n_classes)
+    test_auprc = multi_class_auprc(y_test, test_preds.detach().numpy(), args.n_classes)
     test_acc = accuracy_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1))
     test_loss = torch.mean(criterion(test_preds, torch.Tensor(y_test).type(torch.LongTensor)))
     # test_HTFD = calculate_HTFD(X_test, torch.Tensor(test_cluster_indices).type(torch.LongTensor))
@@ -314,13 +330,15 @@ for r in range(len(iter_array)):
 
     print('Loss Metrics - Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, local_sum_loss))
 
-    # print('Clustering Metrics     - Acc {:.4f}'.format(acc),\
-          # ', HTFD {:.3f}'.format(test_HTFD))
+    # print('Clustering Metrics - Acc {:.4f}'.format(acc),\
+    #       ', HTFD {:.3f}'.format(test_HTFD))
 
-    print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test ACC {:.3f}'.format(test_f1, test_auc, test_acc))
+    print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test AUPRC {:.3f}, Test ACC {:.3f}'.format(test_f1,\
+        test_auc, test_auprc, test_acc))
 
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
+    auprc_scores.append(test_auprc)
     acc_scores.append(test_acc)
 
     ####################################################################################
@@ -377,26 +395,31 @@ for r in range(len(iter_array)):
 
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
+print("Test AUPRC: ", auprc_scores)
 
 print("Sil scores: ", sil_scores)
 print("HTFD: ", HTFD_scores)
 print("WDFD: ", wdfd_scores)
 
 print("Train Loss: ", train_losses)
+print("E-Train Loss: ", e_train_losses)
 
 print("Test Loss: ", test_losses)
+print("E-Test Loss: ", e_test_losses)
 print("Local Test Loss: ", local_sum_test_losses)
-
 print("Model Complexity: ", model_complexity)
 
 enablePrint()
-print("Dataset\tk\tF1\tAUC\tACC\tSIL\tHTFD\tWDFD")
+print("Dataset\tk\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
 
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(acc_scores), np.average(sil_scores), np.average(HTFD_scores),\
-    np.average(wdfd_scores)))
+    np.average(auprc_scores), np.average(acc_scores), np.average(sil_scores), \
+    np.average(HTFD_scores), np.average(wdfd_scores)))
 
+print("\n")
+# HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+# WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
 # print("\n")
 
 # MIFD_Cluster_Analysis(X_train, torch.Tensor(cluster_ids_train), column_names)

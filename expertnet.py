@@ -287,7 +287,7 @@ for r in range(len(iter_array)):
 
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
-            es([val_f1, val_auc], model)
+            es([val_f1, val_auprc], model)
             if es.early_stop == True:
                 break
 
@@ -552,7 +552,7 @@ for r in range(len(iter_array)):
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_auc], model)
+        es([val_f1, val_auprc], model)
         if es.early_stop == True:
             # train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))

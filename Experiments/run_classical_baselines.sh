@@ -28,3 +28,6 @@ python3 ../classical_baselines.py --dataset ards_new >> Results/results_Classica
 
 echo "CIC New" >> Results/results_Classical_Baseline.txt
 python3 ../classical_baselines.py --dataset cic_new >> Results/results_Classical_Baseline.txt
+
+echo "CIC_LOS" >> Results/results_Classical_Baseline.txt
+python3 ../classical_baselines.py --dataset cic_los --n_classes 3 --verbose True >> Results/results_Classical_Baseline.txt
