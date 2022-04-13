@@ -11,3 +11,187 @@ cic	1	0.610	0.791	0.672	0.862	0.000	1.802	0.000
 
 
 k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+cic	2	0.602	0.701	0.623	0.853	0.643	0.957	1.016
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+cic	3	0.508	0.599	0.560	0.669	0.320	1.040	1.110
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+cic	4	0.465	0.649	0.583	0.522	0.206	0.896	1.226
+
+
+KMeans
+Sepsis
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+sepsis	1	0.742	0.833	0.749	0.939	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+sepsis	2	0.596	0.642	0.573	0.914	0.550	1.539	1.116
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+sepsis	3	0.548	0.551	0.527	0.858	0.337	1.433	1.222
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+sepsis	4	0.476	0.509	0.503	0.809	0.231	1.326	1.994
+
+
+KMeans
+Kidney
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+aki	1	0.621	0.668	0.652	0.622	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+aki	2	0.550	0.600	0.588	0.572	0.430	1.409	1.398
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+aki	3	0.424	0.583	0.569	0.527	0.327	1.218	1.706
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+aki	4	0.438	0.549	0.542	0.518	0.301	1.139	1.899
+
+
+KMeans
+Respiratory
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+ards	1	0.553	0.741	0.610	0.923	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+ards	2	0.525	0.624	0.549	0.916	0.544	1.218	1.916
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+ards	3	0.528	0.523	0.516	0.895	0.389	1.240	1.942
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+KMeans
+Wid_Mortality
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+wid_mortality	1	0.629	0.847	0.713	0.921	0.000	1.802	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+wid_mortality	2	0.622	0.725	0.617	0.906	0.215	1.591	0.788
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Dataset	k	F1	AUC	AUPRC	ACC	SIL	HTFD	WDFD
+wid_mortality	3	0.621	0.744	0.608	0.906	0.190	1.488	0.961
+
+
+k = 4

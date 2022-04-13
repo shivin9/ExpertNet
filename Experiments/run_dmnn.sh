@@ -107,6 +107,15 @@ do
 done
 
 echo "DMNN" >> Results/results_DMNN.txt
+echo "Heart" >> Results/results_DMNN.txt
+
+for j in 1 2 3 4
+do
+    echo "k = $(($j))" >> Results/results_DMNN.txt
+    python3 ../dmnn_torch.py --dataset heart --n_clusters $j >> Results/results_DMNN.txt
+done
+
+echo "DMNN" >> Results/results_DMNN.txt
 echo "Kidney New" >> Results/results_DMNN.txt
 
 for j in 1 2 3 4

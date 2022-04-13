@@ -490,7 +490,7 @@ for r in range(len(iter_array)):
     B = []
 
     # print(np.bincount(cluster_ids_train))
-    # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train, labels=cluster_ids_train)
+    plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train, labels=cluster_ids_train)
 
     # Post clustering training
     for e in range(1000):

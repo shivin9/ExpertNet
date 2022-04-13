@@ -386,15 +386,19 @@ class DMNN(nn.Module):
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
 
-        self.classifiers = []
         n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):
             classifier = OrderedDict()
-            for i in range(n_layers-1):
+            for i in range(n_layers-2):
                 classifier.update(
                     {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
                     'activation{}'.format(i): nn.ReLU(),
                     })
+
+            i = n_layers - 2
+            classifier.update(
+                {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                })
 
             classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
