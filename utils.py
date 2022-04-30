@@ -20,8 +20,8 @@ import sys
 import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
-DATASETS = ['diabetes', 'ards', 'ards_new', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
-            'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'paper_synthetic']
+DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
+            'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
@@ -92,7 +92,7 @@ def calculate_HTFD(X_train, cluster_ids):
     for i in range(n_clusters):
         HTFD_scores[i] = {}
         ci = torch.where(cluster_ids == i)[0]
-        if len(ci) < 1:
+        if len(ci) < 2:
             return 0
         # Collect features of all the columns
         for c in range(n_features):
@@ -238,7 +238,7 @@ def calculate_WDFD(X, cluster_ids):
                 col_entrpy *= 0
                 ci = torch.where(cluster_ids == i)[0]
                 cj = torch.where(cluster_ids == j)[0]
-                if len(ci) < 1 or len(cj) < 1:
+                if len(ci) < 2 or len(cj) < 2:
                     return 0
                 Xi = X[ci]
                 Xj = X[cj]
@@ -696,7 +696,7 @@ def generate_data_loaders(X, y, batch_size):
 
 def get_train_val_test_loaders(args, r_state=0):
     if args.dataset in DATASETS:
-        if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los":
+        if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los" and args.dataset != "cic_los_new":
             if args.dataset == "synthetic":
                 n_feat = 45
                 X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
@@ -716,16 +716,19 @@ def get_train_val_test_loaders(args, r_state=0):
                 X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
                 args.input_dim = X.shape[1]
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=0)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
 
             scale = StandardScaler()
             X_train = scale.fit_transform(X_train)
             X_val = scale.fit_transform(X_val)
             X_test = scale.fit_transform(X_test)
 
-        elif args.dataset == "cic_los":
-            X, y, columns, scale = get_dataset("cic", DATA_DIR)
+        elif args.dataset == "cic_los" or args.dataset == "cic_los_new":
+            if args.dataset == "cic_los":
+                X, y, columns, scale = get_dataset("cic", DATA_DIR)
+            else:
+                X, y, columns, scale = get_dataset("cic_new", DATA_DIR)
 
             los_quantiles = np.quantile(X[:,2], [0, 0.33, 0.66, 1])
             y_los = []
@@ -761,7 +764,6 @@ def get_train_val_test_loaders(args, r_state=0):
 
         else:
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
-
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
 

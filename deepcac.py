@@ -59,8 +59,8 @@ parser.add_argument('--cluster_balance', default='hellinger')
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class equalization wt
+parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.0, type=float) # Class equalization wt
 parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
@@ -73,7 +73,7 @@ parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 # parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
@@ -131,10 +131,15 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
-    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args)
-    X_train, y_train, train_loader = train_data
-    X_val, y_val, val_loader = val_data
-    X_test, y_test, test_loader = test_data
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+    X_train, y_train = train_data
+    X_val, y_val = val_data
+    X_test, y_test = test_data
+
+    train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
+    val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
+    test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
+
 
     if args.verbose == 'False':
         blockPrint()
@@ -155,9 +160,12 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     # ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
-    ae_layers = [64, 32, 64]
+    ae_layers = [64, args.n_z, 64]
+    expert_layers = [args.n_z, 30, args.n_classes]
+
     model = DeepCAC(
             ae_layers,
+            expert_layers,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
@@ -298,7 +306,8 @@ for r in range(len(iter_array)):
 
                 # minimum inter centroid distance overall
                 csl = (torch.nn.Softmin(dim=0)(10*min_dists)*min_dists).sum()
-                pt_dists = torch.cdist(X_cluster, model.class_cluster_layer[j].detach())
+                # pt_dists = torch.cdist(X_cluster, model.class_cluster_layer[j].detach())
+                pt_dists = torch.sqrt(torch.cdist(model.class_cluster_layer[j].detach(), model.class_cluster_layer[j].detach()).mean())
 
                 # csl = torch.mean(torch.nn.Softmax(dim=1)(2*pt_dists)*y_clstr)
                 csl = cac_criterion(X_cluster, y_cluster.clone().detach())
@@ -311,11 +320,12 @@ for r in range(len(iter_array)):
                 # print("den", torch.mean(den))
                 n_pts = np.where(y_cluster == 0)[0]
                 p_pts = np.where(y_cluster == 1)[0]
-                centroid_sep += pt_dists.mean()
+                centroid_sep += pt_dists*len(y_cluster)
 
                 dcn_loss += args.beta*torch.linalg.norm(X_cluster - model.cluster_layer[j])/len(cluster_idx)
                 dcn_loss += args.eta*csl
 
+            centroid_sep /= len(X_val)
             q_batch = source_distribution(z_val, model.cluster_layer, alpha=model.alpha)
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
             P = P/P.sum()
@@ -490,7 +500,7 @@ for r in range(len(iter_array)):
     B = []
 
     # print(np.bincount(cluster_ids_train))
-    plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train, labels=cluster_ids_train)
+    # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train, labels=cluster_ids_train)
 
     # Post clustering training
     for e in range(1000):
@@ -644,61 +654,6 @@ for r in range(len(iter_array)):
     auc_scores.append(test_auc)
     acc_scores.append(test_acc)
 
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
-    ################################### Feature Imp. ###################################
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
-
-
-    regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
-    z_train = model(torch.FloatTensor(X_train).to(args.device))
-    cluster_ids, _ = vq(z_train.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
-    cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
-
-    feature_importances = np.zeros((args.n_clusters, args.input_dim))
-
-    # Weighted predictions
-    for j in range(model.n_clusters):
-        X_cluster = z_train
-        cluster_preds = model.classifiers[j][0](X_cluster)
-
-    for j in range(model.n_clusters):
-        cluster_id = torch.where(cluster_ids == j)[0]
-        X_cluster = X_train[cluster_id]
-        y_cluster = train_preds[cluster_id][:,1]
-
-        # Some test data might not belong to any cluster
-        if len(cluster_id) > 0:
-            regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
-            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-            feature_importances[j,:] = regs[j].feature_importances_
-            print("Cluster # ", j, "sized: ", len(cluster_id))
-            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-            print("=========================\n")
-
-    feature_diff = 0
-    cntr = 0
-    for i in range(args.n_clusters):
-        for j in range(args.n_clusters):
-            if i > j:
-                ci = torch.where(cluster_ids == i)[0]
-                cj = torch.where(cluster_ids == j)[0]
-                Xi = X_train[ci]
-                Xj = X_train[cj]
-                feature_diff += 100*sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
-                # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
-                cntr += 1
-
-    print("Average Feature Difference: ", feature_diff/(cntr+1))
-    if cntr == 0:
-        w_HTFD_scores.append(0)
-    else:
-        w_HTFD_scores.append(feature_diff/(cntr+1))
-
-
 enablePrint()
 
 print("\n")
@@ -709,7 +664,6 @@ print("Test AUC: ", auc_scores)
 
 print("Sil scores: ", sil_scores)
 print("HTFD: ", HTFD_scores)
-print("WDFD: ", wdfd_scores)
 
 print("Train Cluster Counts: ", np.bincount(cluster_ids_train))
 
@@ -723,14 +677,13 @@ print("Train Cluster Counts: ", np.bincount(cluster_ids_train))
 # print('Dataset\tk')
 # print("{}\t{}\n".format(args.dataset, args.n_clusters))
 
-print("Dataset\tk\tF1\tAUC\tACC")
+print("Dataset\tk\tbeta\teta\tF1\tAUC\tACC")
 
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (args.dataset, args.n_clusters, args.beta, args.eta, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
 
-print('SIL\tHTFD\tWDFD\tW-HTFD')
-print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.average(sil_scores),\
-    np.average(HTFD_scores), np.average(wdfd_scores), np.average(w_HTFD_scores)))
+print('SIL\tHTFD')
+print("{:.3f}\t{:.3f}\n".format(np.average(sil_scores), np.average(HTFD_scores)))
 
 print("Train Loss\tTest Loss")
 

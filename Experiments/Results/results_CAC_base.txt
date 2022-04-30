@@ -239,4 +239,3 @@ SIL	HTFD	WDFD	W-HTFD
 
 Train Loss	Test Loss
 nan	0.407
-

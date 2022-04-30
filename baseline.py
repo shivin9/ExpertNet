@@ -30,7 +30,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import NNClassifier, NNClassifierBase
+from models import NNClassifier, NNClassifierBase, pretrain_ae
 from utils import *
 
 
@@ -73,7 +73,7 @@ parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--other', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 
 
 parser = parser.parse_args()
@@ -87,20 +87,32 @@ args = parameters(parser)
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores = [], [], []
+f1_scores, auc_scores, auprc_scores, acc_scores = [], [], [], []
 if args.verbose == "False":
     blockPrint()
 
 for r in range(args.n_runs):
     scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
-    X_train, y_train, train_loader = train_data
-    X_val, y_val, val_loader = val_data
-    X_test, y_test, test_loader = test_data
-    # print(sum(y_train), len(y_train))
+    X_train, y_train = train_data
+    X_val, y_val = val_data
+    X_test, y_test = test_data
 
-    # model = NNClassifier(args, input_dim=args.input_dim)
-    layers = [args.input_dim, 128, 64, 32, 16, 8, args.n_classes]
-    model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+    train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
+    val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
+    test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
+
+    ae_layers = [64, 32, args.n_z, 32, 64]
+    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+
+    model = NNClassifier(ae_layers, expert_layers, args).to(args.device)
+    model.pretrain(train_loader, args.pretrain_path)
+    # layers = [args.input_dim, 64, 32, 16, 8, args.n_classes]
+    # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+
+    # For DeepCAC baselines. Single Big NN
+    # layers = [args.input_dim, 64, 32, 30, args.n_classes]
+    # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+
     device = args.device
 
     N_EPOCHS = args.n_epochs
@@ -123,12 +135,13 @@ for r in range(args.n_runs):
             epoch_f1 += f1.item()
 
         model.classifier.eval()
-        val_pred = model(torch.FloatTensor(np.array(X_val)).to(args.device))
+        _, val_pred = model(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
 
         val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
         val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
-        es([val_f1, val_auc], model)
+        val_auprc = multi_class_auprc(y_val, val_pred.detach().numpy(), args.n_classes)
+        es([val_f1, val_auprc], model)
 
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
         	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f} | ',
@@ -152,11 +165,12 @@ for r in range(args.n_runs):
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
     model.classifier.eval()
-    test_pred = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    _, test_pred = model(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
 
     test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
     test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
+    test_auprc = multi_class_auprc(y_test, test_pred.detach().numpy(), args.n_classes)
     test_acc = accuracy_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
 
     y_preds = np.argmax(test_pred.detach().numpy(), axis=1)
@@ -169,19 +183,19 @@ for r in range(args.n_runs):
     print("\n####################################################################################\n")
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
+    auprc_scores.append(test_auprc)
     acc_scores.append(test_acc)
-
-    # reg = GradientBoostingRegressor(random_state=0)
-
-    # reg.fit(X_test, y_test)
-    # best_features = np.argsort(reg.feature_importances_)[::-1][:10]
-    # print("Best Features ")
-    # print(column_names[best_features])
-    # print("=========================\n")
 
 enablePrint()
 print("F1:", f1_scores)
 print("AUC:", auc_scores)
+print("AUPRC:", auprc_scores)
 print("ACC:", acc_scores)
-print("Dataset\tk\tF1\tAUC\tACC")
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}".format(args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
+
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tACC")
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
+    np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(acc_scores)))
+
+print("[Std]\tDataset\tk\tF1\tAUC\tAUPRC\tACC")
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.std(f1_scores), np.std(auc_scores), np.std(auprc_scores), np.std(acc_scores)))

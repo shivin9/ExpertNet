@@ -98,25 +98,32 @@ parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Rese
 parser = parser.parse_args()
 args = parameters(parser)
 
-classifiers = ["LR", "SVM", "LDA", "RF", "KNN", "SGD", "Ridge", "MLP"]
+# classifiers = ["LR", "SVM", "LDA", "RF", "KNN", "SGD", "Ridge", "MLP"]
+classifiers = ["LR", "LDA", "RF", "KNN", "Ridge"] # ISR paper baselines
 
 test_results = pd.DataFrame(columns=['Dataset', 'Classifier', 'alpha',\
     'Base_F1_mean', 'Base_AUC_mean', 'Base_F1_std', 'Base_AUC_std',\
     'KM_F1_mean', 'KM_AUC_mean', 'KM_F1_std', 'KM_AUC_std',\
     'CAC_F1_mean', 'CAC_AUC_mean', 'CAC_F1_std', 'CAC_AUC_std'], dtype=object)
 
-def get_classifier(classifier):
+def get_classifier(classifier, n_classes=2):
     if classifier == "LR":
-        model = LogisticRegression(random_state=0, max_iter=1000)
+        model = LogisticRegression(random_state=0, max_iter=1000, penalty='l2')
     elif classifier == "RF":
         model = RandomForestClassifier(n_estimators=10)
     elif classifier == "SVM":
         # model = SVC(kernel="linear", probability=True)
         model = LinearSVC(max_iter=5000)
-        model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
+        if n_classes > 2:
+            model.predict_proba = lambda X: model.decision_function(X)
+        else:
+            model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
     elif classifier == "Perceptron":
         model = Perceptron(max_iter=1000)
-        model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
+        if n_classes > 2:
+            model.predict_proba = lambda X: model.decision_function(X)
+        else:
+            model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
     elif classifier == "ADB":
         model = AdaBoostClassifier(n_estimators = 100)
     elif classifier == "DT":
@@ -129,7 +136,10 @@ def get_classifier(classifier):
         model = SGDClassifier(loss='log', max_iter=1000)
     elif classifier == "Ridge":
         model = RidgeClassifier()
-        model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
+        if n_classes > 2:
+            model.predict_proba = lambda X: model.decision_function(X)
+        else:
+            model.predict_proba = lambda X: np.array([model.decision_function(X), model.decision_function(X)]).transpose()
     elif classifier == "KNN":
         model = KNeighborsClassifier(n_neighbors=5)
     elif classifier == "MLP":
@@ -151,32 +161,35 @@ def get_classifier(classifier):
 f1_scores, auc_scores, acc_scores, auprc_scores = [], [], [], []
 
 for classifier in classifiers:
-    if classifier not in ['SVM', 'Ridge']:
-        f1_scores, auc_scores, acc_scores = [], [], []
-        for r in range(args.n_runs):
-            scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
-            X_train, y_train = train_data
-            X_val, y_val = val_data
-            X_test, y_test = test_data
+    # if classifier not in ['SVM', 'Ridge']:
+    f1_scores, auc_scores, acc_scores = [], [], []
+    for r in range(args.n_runs):
+        scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+        X_train, y_train = train_data
+        X_val, y_val = val_data
+        X_test, y_test = test_data
 
-            train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
-            val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
-            test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
+        train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
+        val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
+        test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
-            clf = get_classifier(classifier)
-            # X_train = scale.fit_transform(X_train)
-            # X_test = scale.fit_transform(X_test)
-            clf.fit(X_train, y_train.ravel())
-            preds = clf.predict(X_test)
-            pred_proba = clf.predict_proba(X_test)
-            print(pred_proba.shape, y_test.shape)
-            f1_scores.append(f1_score(preds, y_test, average="macro"))
-            auc_scores.append(multi_class_auc(y_test.ravel(), pred_proba, args.n_classes))
-            auprc_scores.append(multi_class_auprc(y_test.ravel(), pred_proba, args.n_classes))
-            acc_scores.append(accuracy_score(preds, y_test))
+        clf = get_classifier(classifier, len(np.unique(y_train)))
+        # X_train = scale.fit_transform(X_train)
+        # X_test = scale.fit_transform(X_test)
+        clf.fit(X_train, y_train.ravel())
+        preds = clf.predict(X_test)
+        pred_proba = clf.predict_proba(X_test)
+        f1_scores.append(f1_score(preds, y_test, average="macro"))
+        auc_scores.append(multi_class_auc(y_test.ravel(), pred_proba, args.n_classes))
+        auprc_scores.append(multi_class_auprc(y_test.ravel(), pred_proba, args.n_classes))
+        acc_scores.append(accuracy_score(preds, y_test))
 
-        print("Dataset\tCLF\tF1\tAUC\tAUPRC\tACC")
-        print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-            (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores) ,np.average(acc_scores)))
+    print("[Avg]\tDataset\tCLF\tF1\tAUC\tAUPRC\tACC")
+    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores) ,np.average(acc_scores)))
+
+    print("[Std]\tDataset\tCLF\tF1\tAUC\tAUPRC\tACC")
+    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (args.dataset, classifier, np.std(f1_scores), np.std(auc_scores), np.std(auprc_scores) ,np.std(acc_scores)))
 
 print("\n\n")

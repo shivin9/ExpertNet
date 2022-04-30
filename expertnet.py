@@ -653,68 +653,67 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
 
-    regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
-    qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
-    q_train = qs[0]
-    cluster_ids = torch.argmax(q_train, axis=1)
-    train_preds = torch.zeros((len(z_train), args.n_classes))
-    feature_importances = np.zeros((args.n_clusters, args.input_dim))
+    # regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
+    # qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
+    # q_train = qs[0]
+    # cluster_ids = torch.argmax(q_train, axis=1)
+    # train_preds = torch.zeros((len(z_train), args.n_classes))
+    # feature_importances = np.zeros((args.n_clusters, args.input_dim))
 
-    # Weighted predictions... should be wihout attention only
-    for j in range(model.n_clusters):
-        cluster_id = torch.where(cluster_ids == j)[0]
-        X_cluster = z_train[cluster_id]
-        cluster_preds = model.classifiers[j][0](X_cluster)
-        # print(q_test, cluster_preds[:,0])
-        train_preds[cluster_id,:] = cluster_preds
-        # y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
-        y_cluster = y_train[cluster_id]
+    # # Weighted predictions... should be wihout attention only
+    # for j in range(model.n_clusters):
+    #     cluster_id = torch.where(cluster_ids == j)[0]
+    #     X_cluster = z_train[cluster_id]
+    #     cluster_preds = model.classifiers[j][0](X_cluster)
+    #     # print(q_test, cluster_preds[:,0])
+    #     train_preds[cluster_id,:] = cluster_preds
+    #     # y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
+    #     y_cluster = y_train[cluster_id]
 
-        # Train the local regressors on the data embeddings
-        # Some test data might not belong to any cluster
-        if len(cluster_id) > 0:
-            regs[j].fit(X_train[cluster_id], y_cluster)
-            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-            feature_importances[j,:] = regs[j].feature_importances_
-            print("Cluster # ", j, "sized: ", len(cluster_id), "label distr: ", sum(y_cluster)/len(y_cluster))
-            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-            print("=========================\n")
+    #     # Train the local regressors on the data embeddings
+    #     # Some test data might not belong to any cluster
+    #     if len(cluster_id) > 0:
+    #         regs[j].fit(X_train[cluster_id], y_cluster)
+    #         best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
+    #         feature_importances[j,:] = regs[j].feature_importances_
+    #         print("Cluster # ", j, "sized: ", len(cluster_id), "label distr: ", sum(y_cluster)/len(y_cluster))
+    #         print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+    #         print("=========================\n")
 
-    # Testing performance of downstream classifier on cluster embeddings
-    qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
-    q_test = qs[0]
-    cluster_ids_test = torch.argmax(q_test, axis=1)
-    test_preds = torch.zeros((len(z_test), args.n_classes))
-    y_pred = np.zeros((len(z_test), args.n_classes))
+    # # Testing performance of downstream classifier on cluster embeddings
+    # qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
+    # q_test = qs[0]
+    # cluster_ids_test = torch.argmax(q_test, axis=1)
+    # test_preds = torch.zeros((len(z_test), args.n_classes))
+    # y_pred = np.zeros((len(z_test), args.n_classes))
 
-    for j in range(model.n_clusters):
-        cluster_id = torch.where(cluster_ids_test == j)[0]
-        X_cluster = X_test[cluster_id]
+    # for j in range(model.n_clusters):
+    #     cluster_id = torch.where(cluster_ids_test == j)[0]
+    #     X_cluster = X_test[cluster_id]
 
-        # Some test data might not belong to any cluster
-        if len(cluster_id) > 0:
-            y_pred[cluster_id] = regs[j].predict_proba(X_cluster)
+    #     # Some test data might not belong to any cluster
+    #     if len(cluster_id) > 0:
+    #         y_pred[cluster_id] = regs[j].predict_proba(X_cluster)
 
-    feature_diff = 0
-    cntr = 0
-    for i in range(args.n_clusters):
-        for j in range(args.n_clusters):
-            if i > j:
-                ci = torch.where(cluster_ids == i)[0]
-                cj = torch.where(cluster_ids == j)[0]
-                Xi = X_train[ci]
-                Xj = X_train[cj]
-                feature_diff += 100*sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
-                # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
-                cntr += 1
+    # feature_diff = 0
+    # cntr = 0
+    # for i in range(args.n_clusters):
+    #     for j in range(args.n_clusters):
+    #         if i > j:
+    #             ci = torch.where(cluster_ids == i)[0]
+    #             cj = torch.where(cluster_ids == j)[0]
+    #             Xi = X_train[ci]
+    #             Xj = X_train[cj]
+    #             feature_diff += 100*sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
+    #             # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
+    #             cntr += 1
 
-    if cntr == 0:
-        w_HTFD_scores.append(0)
-    else:
-        print("Average Feature Difference: ", feature_diff/cntr)
-        w_HTFD_scores.append(feature_diff/cntr)
+    # if cntr == 0:
+    #     w_HTFD_scores.append(0)
+    # else:
+    #     print("Average Feature Difference: ", feature_diff/cntr)
+    #     w_HTFD_scores.append(feature_diff/cntr)
 
-enablePrint()
 
 print("\n")
 print("Experiment ", iteration_name)
@@ -736,29 +735,34 @@ print("Local Test Loss: ", local_sum_test_losses)
 
 print("Model Complexity: ", model_complexity)
 
-print('Dataset\tk')
-print("{}\t{}\n".format(args.dataset, args.n_clusters))
+enablePrint()
 
-print("E-F1\tE-AUC\tE-AUPRC\tE-ACC")
+print("\tDataset\tk\tE-F1\tE-AUC\tE-AUPRC\tE-ACC")
+print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
+    np.average(e_f1_scores), np.average(e_auc_scores), np.average(e_auprc_scores), np.average(e_acc_scores)))
 
-print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (np.average(e_f1_scores), np.average(e_auc_scores), np.average(e_auprc_scores), np.average(e_acc_scores)))
+print("[Std]\tE-F1\tE-AUC\tE-AUPRC\tE-ACC")
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_acc_scores)))
 
-print("F1\tAUC\tAUPRC\tACC")
-
-print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(acc_scores)))
-
-
-print('SIL\tHTFD\tWDFD\tW-HTFD')
+print('[Avg]\tSIL\tHTFD\tWDFD\tW-HTFD')
 print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.average(sil_scores),\
     np.average(HTFD_scores), np.average(wdfd_scores), np.average(w_HTFD_scores)))
 
-print("Train Loss\tE-Train Loss\tTest Loss\tE-Test Loss")
+print('[Std]\tSIL\tHTFD\tWDFD\tW-HTFD')
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
+    np.std(HTFD_scores), np.std(wdfd_scores), np.std(w_HTFD_scores)))
 
-print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (np.average(train_losses), np.average(e_train_losses),\
-    np.average(test_losses), np.average(e_test_losses)))
+# print("F1\tAUC\tAUPRC\tACC")
+
+# print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+#     (np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(acc_scores)))
+
+# print("Train Loss\tE-Train Loss\tTest Loss\tE-Test Loss")
+
+# print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+#     (np.average(train_losses), np.average(e_train_losses),\
+#     np.average(test_losses), np.average(e_test_losses)))
 
 if args.cluster_analysis == "True":
     WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)

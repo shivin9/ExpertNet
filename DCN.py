@@ -154,7 +154,10 @@ for r in range(len(iter_array)):
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
     ae_layers = [64, 32, args.n_z, 32, 64]
     expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
-    # ae_layers = [64, 32, 64]
+
+    # DeepCAC expts
+    ae_layers = [64, args.n_z, 64]
+    expert_layers = [args.n_z, 30, args.n_classes]
 
     model = ExpertNet(
             ae_layers,
@@ -259,7 +262,8 @@ for r in range(len(iter_array)):
 
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
-            val_feature_diff = calculate_HTFD(X_val, cluster_ids)
+            # val_feature_diff = calculate_HTFD(X_val, cluster_ids)
+            val_feature_diff = 0
             complexity_term = 0
             # complexity_term  = calculate_bound(model, B, len(z_train))
 
@@ -619,6 +623,7 @@ for r in range(len(iter_array)):
     #             cntr += 1
 
     # print("Average Feature Difference: ", feature_diff/cntr)
+enablePrint()
 
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
@@ -636,13 +641,19 @@ print("E-Test Loss: ", e_test_losses)
 print("Local Test Loss: ", local_sum_test_losses)
 print("Model Complexity: ", model_complexity)
 
-enablePrint()
-print("Dataset\tk\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
 
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
     np.average(auprc_scores), np.average(acc_scores), np.average(sil_scores), \
     np.average(HTFD_scores), np.average(wdfd_scores)))
+
+print("[Std]\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (np.std(f1_scores), np.std(auc_scores),\
+    np.std(auprc_scores), np.std(acc_scores), np.std(sil_scores), \
+    np.std(HTFD_scores), np.std(wdfd_scores)))
 
 print("\n")
 # HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

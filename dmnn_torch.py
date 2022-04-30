@@ -91,18 +91,28 @@ args = parameters(parser)
 criterion = nn.CrossEntropyLoss(reduction='mean')
 
 f1_scores, auc_scores, auprc_scores, acc_scores = [], [], [], []
+sil_score, HTFD_score, wdfd_score = 0, 0, 0
 
 if args.verbose == "False":
     blockPrint()
 
 for r in range(args.n_runs):
     scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
-    X_train, y_train, train_loader = train_data
-    X_val, y_val, val_loader = val_data
-    X_test, y_test, test_loader = test_data
+    X_train, y_train = train_data
+    X_val, y_val = val_data
+    X_test, y_test = test_data
 
-    ae_layers = [64, 32, args.n_z, 32, 64]
-    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
+    val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
+    test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
+
+    # Architecture used in ExpertNet paper
+    # ae_layers = [64, 32, args.n_z, 32, 64]
+    # expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+
+    # Architecture for CAC paper
+    ae_layers = [64, args.n_z, 64]
+    expert_layers = [args.n_z, 30, args.n_classes]
 
     model = DMNN(ae_layers, expert_layers, args=args).to(args.device)
     device = args.device
@@ -116,6 +126,7 @@ for r in range(args.n_runs):
     original_cluster_centers, cluster_indices = kmeans2(z_train.data.cpu().numpy(), k=args.n_clusters, minit='++')
     one_hot_cluster_indices = label_binarize(cluster_indices, classes=list(range(args.n_clusters+1)))[:,:args.n_clusters]
     one_hot_cluster_indices = torch.FloatTensor(one_hot_cluster_indices)
+
     # train gating network
     for e in range(1, N_EPOCHS):
         z_batch, _, gate_vals = model(torch.FloatTensor(X_train))
@@ -124,6 +135,11 @@ for r in range(args.n_runs):
         gating_err = criterion(gate_vals, one_hot_cluster_indices)
         gating_err.backward()
         optimizer.step()
+
+    cluster_ids_train = torch.argmax(gate_vals, axis=1)
+    sil_score  = silhouette_new(z_train.detach().numpy(), cluster_ids_train, metric='euclidean')
+    HTFD_score = calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train)
+    wdfd_score = calculate_WDFD(torch.FloatTensor(X_train), cluster_ids_train)
 
     # train Local Experts
     for e in range(1, N_EPOCHS):
@@ -233,6 +249,15 @@ print("F1:", f1_scores)
 print("AUC:", auc_scores)
 print("AUPRC:", auprc_scores)
 print("ACC:", acc_scores)
-print("Dataset\tk\tF1\tAUC\tAUPRC\tACC")
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format(\
-    args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(acc_scores)))
+
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
+    np.average(auprc_scores), np.average(acc_scores), sil_score, HTFD_score, wdfd_score))
+
+print("[Std]\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (np.std(f1_scores), np.std(auc_scores),\
+    np.std(auprc_scores), np.std(acc_scores), 0, 0, 0))
