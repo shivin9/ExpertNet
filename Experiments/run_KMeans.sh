@@ -79,7 +79,9 @@
 #     python3 ../KMeans.py --dataset cic_new --n_clusters $j --log_interval 2 --n_epochs 50 >> Results/results_KM.txt
 # done
 
-
+###########################
+### DEEPCAC Experiments ###
+###########################
 echo "KMeans" >> Results/results_KM.txt
 echo "CIC_LOS" >> Results/results_KM.txt
 
@@ -143,3 +145,12 @@ do
     python3 ../KMeans.py --dataset creditcard --n_clusters $j --log_interval 2 --n_epochs 50 --n_z 32 >> Results/results_KM.txt
 done
 
+
+# echo "DeepCAC KMeans" >> Results/results_KM.txt
+# echo "Sepsis" >> Results/results_KM.txt
+
+# for j in 1 2 3 4
+# do
+#     echo "k = $(($j))" >> Results/results_KM.txt
+#     python3 ../KMeans.py --dataset sepsis --n_clusters $j --log_interval 2 --n_epochs 50  --n_z 32 >> Results/results_KM.txt
+# done

@@ -101,17 +101,22 @@ for r in range(args.n_runs):
     val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
     test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
-    ae_layers = [64, 32, args.n_z, 32, 64]
-    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    # ae_layers = [64, 32, args.n_z, 32, 64]
+    # expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+
+    ae_layers = [64, args.n_z, 64]
+    expert_layers = [args.n_z, 30, args.n_classes]
 
     model = NNClassifier(ae_layers, expert_layers, args).to(args.device)
     model.pretrain(train_loader, args.pretrain_path)
+    
+    # Single Big NN    
     # layers = [args.input_dim, 64, 32, 16, 8, args.n_classes]
     # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
     # For DeepCAC baselines. Single Big NN
-    # layers = [args.input_dim, 64, 32, 30, args.n_classes]
-    # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+    layers = [args.input_dim, 64, 32, 30, args.n_classes]
+    model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
     device = args.device
 

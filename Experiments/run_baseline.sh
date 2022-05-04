@@ -2,9 +2,6 @@
 # echo "CIC" >> Results/results_Baseline.txt
 # python3 ../baseline.py --dataset cic --n_epochs 50 --gamma 1 --n_runs 11 >> Results/results_Baseline.txt
 
-# echo "Sepsis" >> Results/results_Baseline.txt
-# python3 ../baseline.py --dataset sepsis --n_epochs 50 --gamma 1 --n_runs 11 >> Results/results_Baseline.txt
-
 # echo "Kidney" >> Results/results_Baseline.txt
 # python3 ../baseline.py --dataset aki --n_epochs 50 --gamma 1 --n_runs 11 >> Results/results_Baseline.txt
 
@@ -53,3 +50,6 @@ python3 ../baseline.py --dataset creditcard --n_epochs 50 --gamma 1 --n_runs 5 >
 
 echo "CIC-LOS" >> Results/results_Baseline.txt
 python3 ../baseline.py --dataset cic_los --n_epochs 50 --gamma 1 --n_runs 5 --n_classes 3 >> Results/results_Baseline.txt
+
+echo "Sepsis" >> Results/results_Baseline.txt
+python3 ../baseline.py --dataset sepsis --n_epochs 50 --gamma 1 --n_runs 11 >> Results/results_Baseline.txt

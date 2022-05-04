@@ -96,7 +96,8 @@ base_suffix += str(args.attention)
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, auprc_scores, acc_scores, sil_scores, HTFD_scores, wdfd_scores = [], [], [], [], [], [], []
+f1_scores, auc_scores, auprc_scores, minpse_scores, acc_scores = [], [], [], [], []
+sil_scores, HTFD_scores, wdfd_scores = [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -132,7 +133,6 @@ for r in range(len(iter_array)):
     train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
     val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
     test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
-
 
     if args.verbose == 'False':
         blockPrint()
@@ -255,9 +255,11 @@ for r in range(len(iter_array)):
             #                         torch.ones(args.n_clusters)/args.n_clusters))
 
             # Classification Matrics
-            val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
-            val_auc = multi_class_auc(y_val, preds.detach().numpy(), args.n_classes)
-            val_auprc = multi_class_auprc(y_val, preds.detach().numpy(), args.n_classes)
+            val_metrics = performance_metrics(y_val, preds.detach().numpy(), args.n_classes)
+            val_f1  = val_metrics['f1_score']
+            val_auc = val_metrics['auroc']
+            val_auprc = val_metrics['auprc']
+            val_minpse = val_metrics['minpse']
 
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
@@ -275,6 +277,7 @@ for r in range(len(iter_array)):
                          f'valid_F1: {val_f1:.3f} '  +
                          f'valid_AUC: {val_auc:.3f} ' + 
                          f'valid_AUPRC: {val_auprc:.3f} ' + 
+                         f'valid_MINPSE: {val_minpse:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
                          f'valid_Silhouette: {val_sil:.3f} ' + 
                          f'Complexity Term: {complexity_term:.3f}')
@@ -283,7 +286,7 @@ for r in range(len(iter_array)):
 
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
-            es([val_f1, val_auprc], model)
+            es([val_f1, val_minpse], model)
             if es.early_stop == True:
                 break
 
@@ -441,9 +444,12 @@ for r in range(len(iter_array)):
             for c in range(args.n_classes):
                 preds[:,c] += q_val[:,j]*cluster_preds[:,c]
 
-        val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
-        val_auc = multi_class_auc(y_val, preds.detach().numpy(), args.n_classes)
-        val_auprc = multi_class_auprc(y_val, preds.detach().numpy(), args.n_classes)
+        val_metrics = performance_metrics(y_val, preds.detach().numpy(), args.n_classes)
+        val_f1  = val_metrics['f1_score']
+        val_auc = val_metrics['auroc']
+        val_auprc = val_metrics['auprc']
+        val_minpse = val_metrics['minpse']
+
         val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids_val.data.cpu().numpy(), metric='euclidean')
 
         val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
@@ -462,13 +468,14 @@ for r in range(len(iter_array)):
                      f'valid_F1: {val_f1:.3f} '  +
                      f'valid_AUC: {val_auc:.3f} ' +
                      f'valid_AUPRC: {val_auprc:.3f} ' +
+                     f'valid_MINPSE: {val_minpse:.3f}' + 
                      f'valid_Sil: {val_sil:.3f}')
         
         print(print_msg)
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_auprc], model)
+        es([val_f1, val_minpse], model)
         if es.early_stop == True or e == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             e_train_losses.append(e_train_loss.item())
@@ -512,11 +519,15 @@ for r in range(len(iter_array)):
         for c in range(args.n_classes):
             test_preds_e[:,c] += q_test[:,j]*cluster_test_preds[:,c]
 
+
+    test_metrics = performance_metrics(y_test, test_preds_e.detach().numpy(), args.n_classes)
+    e_test_f1  = test_metrics['f1_score']
+    e_test_auc = test_metrics['auroc']
+    e_test_auprc = test_metrics['auprc']
+    e_test_minpse = test_metrics['minpse']
+    e_test_acc = test_metrics['acc']
+
     e_test_loss = torch.mean(criterion(test_preds_e, torch.Tensor(y_test).type(torch.LongTensor)))
-    e_test_f1 = f1_score(y_test, np.argmax(test_preds_e.detach().numpy(), axis=1), average="macro")
-    e_test_auc = multi_class_auc(y_test, test_preds_e.detach().numpy(), args.n_classes)
-    e_test_auprc = multi_class_auprc(y_test, test_preds_e.detach().numpy(), args.n_classes)
-    e_test_acc = accuracy_score(y_test, np.argmax(test_preds_e.detach().numpy(), axis=1))
     e_test_HTFD = calculate_HTFD(X_test, cluster_ids)
 
     test_preds = torch.zeros((len(z_test), args.n_classes))
@@ -529,11 +540,15 @@ for r in range(len(iter_array)):
         cluster_test_preds = model.classifiers[j][0](X_cluster)
         test_preds[cluster_id,:] = cluster_test_preds
         local_sum_loss += torch.sum(q_test[cluster_id,j]*criterion(cluster_test_preds, y_cluster))
+
+
+    test_metrics = performance_metrics(y_test, test_preds.detach().numpy(), args.n_classes)
+    test_f1  = test_metrics['f1_score']
+    test_auc = test_metrics['auroc']
+    test_auprc = test_metrics['auprc']
+    test_minpse = test_metrics['minpse']
+    test_acc = test_metrics['acc']
     
-    test_f1 = f1_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1), average="macro")
-    test_auc = multi_class_auc(y_test, test_preds.detach().numpy(), args.n_classes)
-    test_auprc = multi_class_auprc(y_test, test_preds.detach().numpy(), args.n_classes)
-    test_acc = accuracy_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1))
     test_loss = torch.mean(criterion(test_preds, torch.Tensor(y_test).type(torch.LongTensor)))
     local_sum_loss /= len(X_test)
 
@@ -555,6 +570,7 @@ for r in range(len(iter_array)):
     f1_scores.append(e_test_f1)
     auc_scores.append(e_test_auc)
     auprc_scores.append(e_test_auprc)
+    minpse_scores.append(e_test_minpse)
     acc_scores.append(e_test_acc)
 
     ####################################################################################
@@ -565,39 +581,39 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
 
-    # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
-    regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
-    qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
-    q_train = qs[0]
-    cluster_ids = torch.argmax(q_train, axis=1)
-    train_preds_e = torch.zeros((len(z_train), args.n_classes))
-    feature_importances = np.zeros((args.n_clusters, args.input_dim))
+    # # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
+    # regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
+    # qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
+    # q_train = qs[0]
+    # cluster_ids = torch.argmax(q_train, axis=1)
+    # train_preds_e = torch.zeros((len(z_train), args.n_classes))
+    # feature_importances = np.zeros((args.n_clusters, args.input_dim))
 
-    # Weighted predictions
-    for j in range(model.n_clusters):
-        X_cluster = z_train
-        cluster_preds = model.classifiers[j][0](X_cluster)
-        # print(q_test, cluster_preds[:,0])
-        for c in range(args.n_classes):
-            train_preds_e[:,c] += q_train[:,j]*cluster_preds[:,c]
+    # # Weighted predictions
+    # for j in range(model.n_clusters):
+    #     X_cluster = z_train
+    #     cluster_preds = model.classifiers[j][0](X_cluster)
+    #     # print(q_test, cluster_preds[:,0])
+    #     for c in range(args.n_classes):
+    #         train_preds_e[:,c] += q_train[:,j]*cluster_preds[:,c]
 
-    for j in range(model.n_clusters):
-        cluster_id = torch.where(cluster_ids == j)[0]
-        X_cluster = X_train[cluster_id]
-        y_cluster = torch.Tensor(y_train[cluster_id])
-        # if args.attention == True:
-        #     y_cluster = train_preds_e[cluster_id][:,1]
-        # else:
-        #     y_cluster = train_preds[cluster_id][:,1]
+    # for j in range(model.n_clusters):
+    #     cluster_id = torch.where(cluster_ids == j)[0]
+    #     X_cluster = X_train[cluster_id]
+    #     y_cluster = torch.Tensor(y_train[cluster_id])
+    #     # if args.attention == True:
+    #     #     y_cluster = train_preds_e[cluster_id][:,1]
+    #     # else:
+    #     #     y_cluster = train_preds[cluster_id][:,1]
 
-        # Some test data might not belong to any cluster
-        if len(cluster_id) > 0:
-            regs[j].fit(X_cluster, y_cluster)
-            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-            feature_importances[j,:] = regs[j].feature_importances_
-            print("|C{}|={}, +/total = {:.3f}".format(j, len(cluster_id), sum(y_cluster)/len(cluster_id)))
-            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-            print("=========================\n")
+    #     # Some test data might not belong to any cluster
+    #     if len(cluster_id) > 0:
+    #         regs[j].fit(X_cluster, y_cluster)
+    #         best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
+    #         feature_importances[j,:] = regs[j].feature_importances_
+    #         print("|C{}|={}, +/total = {:.3f}".format(j, len(cluster_id), sum(y_cluster)/len(cluster_id)))
+    #         print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+    #         print("=========================\n")
 
     # feature_diff = 0
     # cntr = 0
@@ -619,6 +635,7 @@ enablePrint()
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
 print("Test AUPRC: ", auprc_scores)
+print("Test MISPSE: ", minpse_scores)
 
 print("Sil scores: ", sil_scores)
 print("HTFD: ", HTFD_scores)
@@ -632,19 +649,19 @@ print("E-Test Loss: ", e_test_losses)
 print("Local Test Loss: ", local_sum_test_losses)
 print("Model Complexity: ", model_complexity)
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
 
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(auprc_scores), np.average(acc_scores), np.average(sil_scores), \
-    np.average(HTFD_scores), np.average(wdfd_scores)))
+    np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores),\
+    np.average(sil_scores), np.average(HTFD_scores)))
 
-print("[Std]\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
 
-print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-    (np.std(f1_scores), np.std(auc_scores),\
-    np.std(auprc_scores), np.std(acc_scores), np.std(sil_scores), \
-    np.std(HTFD_scores), np.std(wdfd_scores)))
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
+    np.std(minpse_scores), np.std(acc_scores), np.std(sil_scores),\
+    np.std(HTFD_scores)))
 
 print("\n")
 # HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

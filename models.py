@@ -183,12 +183,12 @@ class NNClassifierBase(nn.Module):
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
 
     def forward(self, inputs):
-        return self.classifier(inputs), None
+        return None, self.classifier(inputs)
 
     def fit(self, X_batch, y_batch):
         self.optimizer.zero_grad()
         self.classifier.train()
-        y_pred, _ = self.forward(X_batch)
+        _, y_pred = self.forward(X_batch)
         train_loss = self.criterion(y_pred, y_batch)
         total_loss = train_loss
         total_loss.backward()
@@ -413,6 +413,7 @@ class DMNN(nn.Module):
             classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])            
+
 
     def pretrain(self, train_loader, path=''):
         print(path)

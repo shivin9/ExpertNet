@@ -8,7 +8,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 from sklearn.datasets import make_classification, make_blobs
-from sklearn.metrics import mutual_info_score, roc_auc_score, average_precision_score, davies_bouldin_score as dbs
+from sklearn.metrics import mutual_info_score, roc_auc_score, average_precision_score, accuracy_score, davies_bouldin_score as dbs
+from sklearn import metrics
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
@@ -784,6 +785,35 @@ def paper_synthetic(n_pts=1000, centers=4):
     X2 = X2*(X2>0)
     y = np.random.randint(0,2,len(y))
     return X2.T, y
+
+
+def performance_metrics(y_true, y_pred, n_classes=2):
+    acc_scores, auroc_scores, auprc_scores, minpse_scores = [], [], [], []
+    y = label_binarize(y_true, classes=list(range(n_classes+1)))[:,:n_classes]
+    cm = metrics.confusion_matrix(y_true, y_pred.argmax(axis=1))
+    cm = cm.astype(np.float32)
+
+    for c in range(n_classes):
+        tp = cm[c,c]
+        fp = sum(cm[:,c]) - cm[c,c]
+        fn = sum(cm[c,:]) - cm[c,c]
+        tn = sum(np.delete(sum(cm)-cm[c,:],c))
+        
+        recall = tp/(tp+fn)
+        precision = tp/(tp+fp)
+        specificity = tn/(tn+fp)
+
+        auroc_scores.append(roc_auc_score(y[:,c], y_pred[:,c]))
+        auprc_scores.append(average_precision_score(y[:,c], y_pred[:,c]))
+        minpse_scores.append(min(precision, specificity))
+        acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
+
+    return {"acc": np.average(acc_scores),
+            "auroc": np.average(auroc_scores),
+            "auprc": np.average(auprc_scores),
+            "minpse": np.average(minpse_scores),
+            "f1_score":metrics.f1_score(y_true, y_pred.argmax(axis=1), average="macro")}
+
 
 ## Ablation Parameter Ranges ##
 alphas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]

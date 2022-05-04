@@ -98,8 +98,7 @@ U = torch.eye(args.n_classes, args.n_classes)*1000
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores = [], [], [] #Inattentive test results
-e_f1_scores, e_auc_scores, e_acc_scores = [], [], [] #Attentive test results
+f1_scores, auc_scores, auprc_scores, acc_scores, minpse_scores = [], [], [], [], [] #Inattentive test results
 sil_scores, wdfd_scores, HTFD_scores, w_HTFD_scores = [], [], [], []
 
 # to track the training loss as the model trains
@@ -279,8 +278,11 @@ for r in range(len(iter_array)):
                 preds[cluster_id,:] = cluster_preds_val
 
             # Classification Matrics
-            val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
-            val_auc = multi_class_auc(y_val, preds.detach().numpy(), args.n_classes)
+            val_metrics = performance_metrics(y_val, preds.detach().numpy(), args.n_classes)
+            val_f1  = val_metrics['f1_score']
+            val_auc = val_metrics['auroc']
+            val_auprc = val_metrics['auprc']
+            val_minpse = val_metrics['minpse']
 
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
@@ -349,6 +351,7 @@ for r in range(len(iter_array)):
                          f'valid_loss: {val_loss:.3f} '  +
                          f'valid_F1: {val_f1:.3f} '  +
                          f'valid_AUC: {val_auc:.3f} ' + 
+                         f'valid_AUPRC: {val_auprc:.3f} ' + 
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
                          f'valid_WDFD: {val_WDFD:.3f} ' + 
                          f'valid_SIL: {val_sil:.3f} ' + 
@@ -359,7 +362,7 @@ for r in range(len(iter_array)):
 
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
-            es([train_loss, val_loss], model)
+            es([-val_f1, -val_auc], model)
             if es.early_stop == True:
                 break
 
@@ -574,8 +577,13 @@ for r in range(len(iter_array)):
             cluster_preds = model.classifiers[j][0](X_cluster)
             preds[cluster_id,:] += cluster_preds
 
-        val_f1  = f1_score(y_val, np.argmax(preds.detach().numpy(), axis=1), average="macro")
-        val_auc = multi_class_auc(y_val, preds.detach().numpy(), args.n_classes)
+        # Classification Matrics
+        val_metrics = performance_metrics(y_val, preds.detach().numpy(), args.n_classes)
+        val_f1  = val_metrics['f1_score']
+        val_auc = val_metrics['auroc']
+        val_auprc = val_metrics['auprc']
+        val_minpse = val_metrics['minpse']
+
         val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids_val.data.cpu().numpy(), metric='euclidean')
         val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
         epoch_len = len(str(N_EPOCHS))
@@ -585,13 +593,14 @@ for r in range(len(iter_array)):
                      f'valid_loss: {val_loss:.3f} '  +
                      f'valid_F1: {val_f1:.3f} '  +
                      f'valid_AUC: {val_auc:.3f} ' +
+                     f'valid_AUPRC: {val_auprc:.3f} ' +
                      f'valid_Sil: {val_sil:.3f}')
         
         print(print_msg)
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([-val_f1, val_loss], model)
+        es([-val_f1, -val_auc], model)
         if es.early_stop == True:
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
@@ -631,9 +640,13 @@ for r in range(len(iter_array)):
         test_preds[cluster_id,:] = cluster_test_preds
         local_sum_loss += torch.sum(criterion(cluster_test_preds, y_cluster))
     
-    test_f1 = f1_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1), average="macro")
-    test_auc = multi_class_auc(y_test, test_preds.detach().numpy(), args.n_classes)
-    test_acc = accuracy_score(y_test, np.argmax(test_preds.detach().numpy(), axis=1))
+    test_metrics = performance_metrics(y_test, test_preds.detach().numpy(), args.n_classes)
+    test_f1  = test_metrics['f1_score']
+    test_auc = test_metrics['auroc']
+    test_auprc = test_metrics['auprc']
+    test_minpse = test_metrics['minpse']
+    test_acc = test_metrics['acc']
+
     test_loss = torch.mean(criterion(test_preds, torch.Tensor(y_test).type(torch.LongTensor)))
     local_sum_loss /= len(X_test)
 
@@ -646,13 +659,16 @@ for r in range(len(iter_array)):
     print('Clustering Metrics     - Acc {:.4f}'.format(acc), ', nmi {:.4f}'.format(nmi),\
           ', ari {:.4f}'.format(ari))
 
-    print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test ACC {:.3f}'.format(test_f1, test_auc, test_acc))
+    print('Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test AUPRC {:.3f},\
+        Test ACC {:.3f}'.format(test_f1, test_auc, test_auprc, test_acc))
 
     print("\n")
 
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
     acc_scores.append(test_acc)
+    auprc_scores.append(test_auprc)
+    minpse_scores.append(test_minpse)
 
 enablePrint()
 
@@ -677,13 +693,19 @@ print("Train Cluster Counts: ", np.bincount(cluster_ids_train))
 # print('Dataset\tk')
 # print("{}\t{}\n".format(args.dataset, args.n_clusters))
 
-print("Dataset\tk\tbeta\teta\tF1\tAUC\tACC")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
 
-print("{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (args.dataset, args.n_clusters, args.beta, args.eta, np.average(f1_scores), np.average(auc_scores), np.average(acc_scores)))
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
+    np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores),\
+    np.average(sil_scores), np.average(HTFD_scores)))
 
-print('SIL\tHTFD')
-print("{:.3f}\t{:.3f}\n".format(np.average(sil_scores), np.average(HTFD_scores)))
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
+
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
+    np.std(minpse_scores), np.std(acc_scores), np.std(sil_scores),\
+    np.std(HTFD_scores)))
 
 print("Train Loss\tTest Loss")
 
