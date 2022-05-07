@@ -713,6 +713,6 @@ print("{:.3f}\t{:.3f}\n".format\
     (np.average(train_losses), np.average(test_losses)))
 
 if args.cluster_analysis == "True":
-    WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-    HTFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+    # WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+    # HTFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
     HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

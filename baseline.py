@@ -87,7 +87,7 @@ args = parameters(parser)
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, auprc_scores, acc_scores = [], [], [], []
+f1_scores, auc_scores, auprc_scores, minpse_scores, acc_scores = [], [], [], [], []
 if args.verbose == "False":
     blockPrint()
 
@@ -115,8 +115,8 @@ for r in range(args.n_runs):
     # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
     # For DeepCAC baselines. Single Big NN
-    layers = [args.input_dim, 64, 32, 30, args.n_classes]
-    model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+    # layers = [args.input_dim, 64, 32, 30, args.n_classes]
+    # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
     device = args.device
 
@@ -140,12 +140,16 @@ for r in range(args.n_runs):
             epoch_f1 += f1.item()
 
         model.classifier.eval()
-        _, val_pred = model(torch.FloatTensor(np.array(X_val)).to(args.device))
-        val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
+        _, val_preds = model(torch.FloatTensor(np.array(X_val)).to(args.device))
+        val_loss = nn.CrossEntropyLoss(reduction='mean')(val_preds, torch.tensor(y_val).to(device))
 
-        val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
-        val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
-        val_auprc = multi_class_auprc(y_val, val_pred.detach().numpy(), args.n_classes)
+        val_metrics = performance_metrics(y_val, val_preds.detach().numpy(), args.n_classes)
+        val_f1  = val_metrics['f1_score']
+        val_auc = val_metrics['auroc']
+        val_auprc = val_metrics['auprc']
+        val_minpse = val_metrics['minpse']
+        val_acc = val_metrics['acc']
+
         es([val_f1, val_auprc], model)
 
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
@@ -170,15 +174,22 @@ for r in range(args.n_runs):
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
     model.classifier.eval()
-    _, test_pred = model(torch.FloatTensor(np.array(X_test)).to(args.device))
-    test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
+    _, test_preds = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    test_loss = nn.CrossEntropyLoss(reduction='mean')(test_preds, torch.tensor(y_test).to(device))
 
-    test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
-    test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
-    test_auprc = multi_class_auprc(y_test, test_pred.detach().numpy(), args.n_classes)
-    test_acc = accuracy_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
+    test_f1 = f1_score(np.argmax(test_preds.detach().numpy(), axis=1), y_test, average="macro")
+    test_auc = multi_class_auc(y_test, test_preds.detach().numpy(), args.n_classes)
+    test_auprc = multi_class_auprc(y_test, test_preds.detach().numpy(), args.n_classes)
+    test_acc = accuracy_score(np.argmax(test_preds.detach().numpy(), axis=1), y_test)
 
-    y_preds = np.argmax(test_pred.detach().numpy(), axis=1)
+    test_metrics = performance_metrics(y_test, test_preds.detach().numpy(), args.n_classes)
+    test_f1  = test_metrics['f1_score']
+    test_auc = test_metrics['auroc']
+    test_auprc = test_metrics['auprc']
+    test_minpse = test_metrics['minpse']
+    test_acc = test_metrics['acc']
+
+    y_preds = np.argmax(test_preds.detach().numpy(), axis=1)
     # print(confusion_matrix(y_test, y_preds))
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
@@ -189,18 +200,20 @@ for r in range(args.n_runs):
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
     auprc_scores.append(test_auprc)
+    minpse_scores.append(minpse_scores)
     acc_scores.append(test_acc)
 
 enablePrint()
 print("F1:", f1_scores)
 print("AUC:", auc_scores)
 print("AUPRC:", auprc_scores)
+print("MINPSE:", minpse_scores)
 print("ACC:", acc_scores)
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tACC")
-print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
-    np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(acc_scores)))
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
+    np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores)))
 
-print("[Std]\tDataset\tk\tF1\tAUC\tAUPRC\tACC")
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (np.std(f1_scores), np.std(auc_scores), np.std(auprc_scores), np.std(acc_scores)))
+print("[Std]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.std(f1_scores), np.std(auc_scores), np.std(auprc_scores), np.std(minpse_scores), np.std(acc_scores)))

@@ -35,6 +35,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import MultinomialNB
 from matplotlib import pyplot as plt
 from datetime import datetime
+import xgboost as xgb
 from tqdm import tqdm
 from sklearn.cluster import KMeans
 from typing import Tuple
@@ -99,7 +100,7 @@ parser = parser.parse_args()
 args = parameters(parser)
 
 # classifiers = ["LR", "SVM", "LDA", "RF", "KNN", "SGD", "Ridge", "MLP"]
-classifiers = ["LR", "LDA", "RF", "KNN", "Ridge"] # ISR paper baselines
+classifiers = ["LR", "LDA", "RF", "KNN", "Ridge", 'XBG'] # ISR paper baselines
 
 test_results = pd.DataFrame(columns=['Dataset', 'Classifier', 'alpha',\
     'Base_F1_mean', 'Base_AUC_mean', 'Base_F1_std', 'Base_AUC_std',\
@@ -128,6 +129,8 @@ def get_classifier(classifier, n_classes=2):
         model = AdaBoostClassifier(n_estimators = 100)
     elif classifier == "DT":
         model = DecisionTreeClassifier()
+    elif classifier == "XGB":
+        model = xgb.XGBClassifier(use_label_encoder=False, n_estimators=10)
     elif classifier == "LDA":
         model = LDA()
     elif classifier == "NB":
@@ -158,11 +161,10 @@ def get_classifier(classifier, n_classes=2):
 ####################################################################################
 ####################################################################################
 
-f1_scores, auc_scores, acc_scores, auprc_scores = [], [], [], []
 
 for classifier in classifiers:
     # if classifier not in ['SVM', 'Ridge']:
-    f1_scores, auc_scores, acc_scores = [], [], []
+    f1_scores, auc_scores, acc_scores, auprc_scores, minpse_scores = [], [], [], [], []
     for r in range(args.n_runs):
         scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
         X_train, y_train = train_data
@@ -178,18 +180,31 @@ for classifier in classifiers:
         # X_test = scale.fit_transform(X_test)
         clf.fit(X_train, y_train.ravel())
         preds = clf.predict(X_test)
-        pred_proba = clf.predict_proba(X_test)
-        f1_scores.append(f1_score(preds, y_test, average="macro"))
-        auc_scores.append(multi_class_auc(y_test.ravel(), pred_proba, args.n_classes))
-        auprc_scores.append(multi_class_auprc(y_test.ravel(), pred_proba, args.n_classes))
-        acc_scores.append(accuracy_score(preds, y_test))
+        preds_proba = clf.predict_proba(X_test)
 
-    print("[Avg]\tDataset\tCLF\tF1\tAUC\tAUPRC\tACC")
-    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-        (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores) ,np.average(acc_scores)))
+        test_metrics = performance_metrics(y_test, preds_proba, args.n_classes)
+        test_f1  = test_metrics['f1_score']
+        test_auc = test_metrics['auroc']
+        test_auprc = test_metrics['auprc']
+        test_minpse = test_metrics['minpse']
+        test_acc = test_metrics['acc']
 
-    print("[Std]\tDataset\tCLF\tF1\tAUC\tAUPRC\tACC")
-    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-        (args.dataset, classifier, np.std(f1_scores), np.std(auc_scores), np.std(auprc_scores) ,np.std(acc_scores)))
+        f1_scores.append(test_f1)
+        auc_scores.append(test_auc)
+        auprc_scores.append(test_auprc)
+        minpse_scores.append(minpse_scores)
+        acc_scores.append(test_acc)
+
+    print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
+
+    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
+        np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores)))
+
+    print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
+
+    print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
+        np.std(minpse_scores), np.std(acc_scores)))
 
 print("\n\n")
