@@ -446,3 +446,161 @@ class DMNN(nn.Module):
         
         else:
             return z, x_bar, g
+
+
+class GRUModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim, layer_dim=1, output_dim=1, dropout_prob=0):
+        super(GRUModel, self).__init__()
+
+        # Defining the number of layers and the nodes in each layer
+        self.layer_dim = layer_dim
+        self.hidden_dim = hidden_dim
+
+        # GRU layers
+        self.gru = nn.GRU(
+            input_dim, hidden_dim, layer_dim, batch_first=True, dropout=dropout_prob
+        )
+
+        # Fully connected layer
+        self.fc = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, x):
+        # Initializing hidden state for first input with zeros
+        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
+
+        # Forward propagation by passing in the input and hidden state into the model
+        gru_out, _ = self.gru(x, h0.detach())
+        # Reshaping the outputs in the shape of (batch_size, seq_length, hidden_size)
+        # so that it can fit into the fully connected layer
+        out = gru_out[:, -1, :]
+
+        # Convert the final state to our desired output shape (batch_size, output_dim)
+        out = self.fc(out)
+
+        return _, out, gru_out[:, -1, :].squeeze()
+
+
+class EncoderRNN(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(EncoderRNN, self).__init__()
+        self.hidden_size = hidden_size
+
+        self.embedding = nn.Embedding(input_size, hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size)
+
+    def forward(self, input, hidden):
+        embedded = self.embedding(input).view(1, 1, -1)
+        output = embedded
+        output, hidden = self.gru(output, hidden)
+        return output, hidden
+
+    def initHidden(self):
+        return torch.zeros(1, 1, self.hidden_size, device=device)
+
+
+class DecoderRNN(nn.Module):
+    def __init__(self, hidden_size, output_size):
+        super(DecoderRNN, self).__init__()
+        self.hidden_size = hidden_size
+
+        self.embedding = nn.Embedding(output_size, hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size)
+        self.out = nn.Linear(hidden_size, output_size)
+        self.softmax = nn.LogSoftmax(dim=1)
+
+    def forward(self, input, hidden):
+        output = self.embedding(input).view(1, 1, -1)
+        output = F.relu(output)
+        output, hidden = self.gru(output, hidden)
+        output = self.softmax(self.out(output[0]))
+        return output, hidden
+
+    def initHidden(self):
+        return torch.zeros(1, 1, self.hidden_size, device=device)
+
+
+class ExpertNet_GRU(nn.Module):
+    def __init__(self,
+                 expert_layers,
+                 args):
+        super(ExpertNet_GRU, self).__init__()
+        self.alpha = args.alpha
+        self.pretrain_path = args.pretrain_path
+        self.device = args.device
+        self.n_clusters = args.n_clusters
+        self.input_dim = args.input_dim
+        self.n_z = args.n_z
+        self.args = args
+
+        # append input_dim at the end
+        self.ae = GRUModel(self.input_dim, self.n_z)
+
+        # cluster layer
+        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        self.p_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        self.n_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        torch.nn.init.xavier_normal_(self.cluster_layer.data)
+        torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
+        torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
+
+        self.classifiers = []
+        n_layers = int(len(expert_layers))
+        for _ in range(self.n_clusters):
+            classifier = OrderedDict()
+            for i in range(n_layers-2):
+                classifier.update(
+                    {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    })
+
+            i = n_layers - 2
+            classifier.update(
+                {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                })
+
+            classifier = nn.Sequential(classifier).to(self.device)
+            optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
+            self.classifiers.append([classifier, optimizer])
+            
+
+    def pretrain(self, train_loader, path=''):
+        print(path)
+        return
+        # if not is_non_zero_file(path):
+        #     path = ''
+        # if path == '':
+        #     pretrain_ae(self.ae, train_loader, self.args)
+        # else:
+        #     # load pretrain weights
+        #     self.ae.load_state_dict(torch.load(self.pretrain_path))
+        #     print('load pretrained ae from', path)
+
+
+    def predict(self, X_test):
+        qs, z_test = self.forward(X_test)
+        q_test = qs[0]
+        cluster_ids = torch.argmax(q_test, axis=1)
+        preds = torch.zeros((self.n_clusters, 2))
+        for j in range(self.n_clusters):
+            preds[j,:] = self.classifiers[cluster_ids[j]]
+        return preds
+
+
+    def forward(self, x, output="default"):
+        _, _ , z = self.ae(x)
+        # Cluster
+        q   = source_distribution(z, self.cluster_layer, alpha=self.alpha)
+        q_p = source_distribution(z, self.p_cluster_layer, alpha=self.alpha)
+        q_n = source_distribution(z, self.n_cluster_layer, alpha=self.alpha)
+
+        if output == "latent":
+            return (q, q_p, q_n), z
+
+        elif output == "classifier":
+            preds = torch.zeros((len(z), 2))
+            for j in range(len(z)):
+                preds[j,:] = self.classifiers[j](z)
+            return preds
+        
+        else:
+            return z, _, (q, q_p, q_n)

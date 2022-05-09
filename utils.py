@@ -22,7 +22,8 @@ import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
-            'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic']
+            'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic',\
+            'sepsis_ts']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
@@ -437,6 +438,8 @@ class parameters(object):
         self.eta = parser.eta
         self.hidden_dims = parser.hidden_dims
         self.latent_dim = self.n_z = parser.n_z
+        self.n_feats = parser.n_feats
+        self.end_t = parser.end_t
         self.n_clusters = parser.n_clusters
         self.clustering = parser.clustering
         self.n_classes = parser.n_classes
