@@ -71,6 +71,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--plot', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
@@ -279,7 +280,7 @@ for r in range(len(iter_array)):
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_minpse], model)
+        es([val_f1, val_auprc], model)
         if es.early_stop == True or epoch == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(hidden.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
@@ -425,9 +426,9 @@ print("Model Complexity: ", model_complexity)
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
 
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores),\
-    np.average(sil_scores), np.average(HTFD_scores)))
+    (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
+    np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores),\
+    np.avg(sil_scores), np.avg(HTFD_scores)))
 
 print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
 

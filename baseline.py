@@ -200,7 +200,7 @@ for r in range(args.n_runs):
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
     auprc_scores.append(test_auprc)
-    minpse_scores.append(minpse_scores)
+    minpse_scores.append(test_minpse)
     acc_scores.append(test_acc)
 
 enablePrint()
@@ -212,7 +212,7 @@ print("ACC:", acc_scores)
 
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
-    np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores)))
+    np.avg(f1_scores), np.avg(auc_scores), np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores)))
 
 print("[Std]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\

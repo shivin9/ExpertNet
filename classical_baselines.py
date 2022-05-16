@@ -91,7 +91,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
-parser.add_argument('--other', default= 'False')
+parser.add_argument('--plot', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/DeepCAC/pretrained_model')
 
@@ -171,13 +171,9 @@ for classifier in classifiers:
         X_val, y_val = val_data
         X_test, y_test = test_data
 
-        train_loader = generate_data_loaders(X_train, y_train, args.batch_size)
-        val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
-        test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
-
         clf = get_classifier(classifier, len(np.unique(y_train)))
-        # X_train = scale.fit_transform(X_train)
-        # X_test = scale.fit_transform(X_test)
+        X_train = scale.fit_transform(X_train)
+        X_test = scale.fit_transform(X_test)
         clf.fit(X_train, y_train.ravel())
         preds = clf.predict(X_test)
         preds_proba = clf.predict_proba(X_test)
@@ -192,19 +188,17 @@ for classifier in classifiers:
         f1_scores.append(test_f1)
         auc_scores.append(test_auc)
         auprc_scores.append(test_auprc)
-        minpse_scores.append(minpse_scores)
+        minpse_scores.append(test_minpse)
         acc_scores.append(test_acc)
 
-    print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
+    print("[Avg]\tDataset\tCLF\tF1\tAUC\tAUPRC\tMINPSE\tACC")
+    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores),\
+            np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores)))
 
-    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-        (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-        np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores)))
-
-    print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
-
-    print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-        (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
+    print("[Std]\tDataset\tCLF\tF1\tAUC\tAUPRC\tMINPSE\tACC")
+    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+        (args.dataset, classifier, np.std(f1_scores), np.std(auc_scores), np.std(auprc_scores),\
         np.std(minpse_scores), np.std(acc_scores)))
 
 print("\n\n")

@@ -72,6 +72,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--plot', default= 'False')
 parser.add_argument('--other', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
@@ -253,8 +254,8 @@ print("ACC:", acc_scores)
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
 
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(auprc_scores), np.average(acc_scores), sil_score, HTFD_score, wdfd_score))
+    (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
+    np.avg(auprc_scores), np.avg(acc_scores), sil_score, HTFD_score, wdfd_score))
 
 print("[Std]\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
 

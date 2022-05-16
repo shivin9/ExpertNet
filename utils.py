@@ -20,12 +20,20 @@ from matplotlib import pyplot as plt
 import sys
 import umap
 
-color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
+color = ['grey', 'red', 'blue', 'pink', 'olive', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan']
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
             'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
+
+def avg(x):
+    if len(x) == 0:
+        return 0
+    else:
+        return np.average(x)
+
+np.avg = avg
 
 # Disable Print
 def blockPrint():
@@ -288,36 +296,41 @@ def MIFD_Cluster_Analysis(X_train, cluster_ids, column_names):
                     print(np.mean(Xi[:,k]), "C2:", np.mean(Xj[:,k]))
 
 
-def HTFD_Cluster_Analysis(X_train, cluster_ids, column_names):
+def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
     print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
     n_clusters = len(torch.unique(cluster_ids))
+    print(n_clusters)
     input_dim = X_train.shape[1]
     mi_scores = {}
     for i in range(n_clusters):
+        ci = torch.where(cluster_ids == i)[0]
+        print("|C{}| = {}".format(i, np.bincount(y_train[ci])/len(ci)))
         for j in range(n_clusters):
             if i > j:
                 joint_col_name = str(i) + "," + str(j)
                 mi_scores[joint_col_name] = {}
-                ci = torch.where(cluster_ids == i)[0]
                 cj = torch.where(cluster_ids == j)[0]
                 Xi = X_train[ci]
                 Xj = X_train[cj]
                 col_entrpy = 0
                 p_vals = np.nan_to_num(ttest_ind(Xi, Xj, axis=0, equal_var=True))[1]
                 for c in range(n_columns):
-                    mi_scores[joint_col_name][c] = np.round(p_vals[c], 3)
+                    # mi_scores[joint_col_name][c] = np.round(p_vals[c], 3)
+                    mi_scores[joint_col_name][c] = np.round(-np.log(p_vals[c] + np.finfo(float).eps)*0.05, 3)
                     # print(column_names[c], ":", c_entropy)
                 cntr += 1
                 print("\n========\n")
                 print(joint_col_name)
-                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:10]
+                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:50]
                 for k, v in sorted_dict:
                     c = column_names[k]
                     print("Feature:", c, "Val:", v)
                     print("C1:", np.round(np.mean(Xi[:,k]),3), "C2:", np.round(np.mean(Xj[:,k]), 3))
+
+    print(mi_scores)
 
 
 def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
@@ -344,7 +357,7 @@ def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
             col_entrpy = 0
             p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            HTFD_scores[i][c] = np.round(np.exp(-p_vals/0.05), 3)
+            HTFD_scores[i][c] = np.round(-np.log(p_vals + np.finfo(float).eps)*0.05, 3)
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
@@ -352,7 +365,7 @@ def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
         sorted_dict = sorted(HTFD_scores[i].items(), key=lambda item: item[1])[::-1]
         for feature, pval in sorted_dict:
             f = column_names[feature]
-            print("Feature:", f, "PVal:", pval)
+            print("Feature:", f, "HTFD score:", pval)
             for cluster_id in range(n_clusters):
                     c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
                     X_cluster_f = X_train[c_cluster_id][:,feature]
@@ -444,6 +457,7 @@ class parameters(object):
         # Utility parameters
         self.device = parser.device
         self.verbose = parser.verbose
+        self.plot = parser.plot
         self.cluster_analysis = parser.cluster_analysis
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
@@ -515,7 +529,7 @@ def multi_class_auc(y_true, y_scores, n_classes):
     scores = []
     for i in range(n_classes):
         scores.append(roc_auc_score(y[:,i], y_scores[:,i]))
-    return np.average(scores)
+    return np.avg(scores)
 
 
 def multi_class_auprc(y_true, y_scores, n_classes):
@@ -524,23 +538,24 @@ def multi_class_auprc(y_true, y_scores, n_classes):
     scores = []
     for i in range(n_classes):
         scores.append(average_precision_score(y[:,i], y_scores[:,i]))
-    return np.average(scores)
+    return np.avg(scores)
 
 
-def plot_data(X, y, cluster_ids):
+def plot_data(X, y, cluster_ids, args, e):
     reducer = umap.UMAP(random_state=42)
     X2 = reducer.fit_transform(X.cpu().detach().numpy())
-    c_clusters = [color[int(cluster_ids[i])] for i in range(len(cluster_ids))]
+    c_clusters = [color[3+int(cluster_ids[i])] for i in range(len(cluster_ids))]
     c_labels = [color[int(y[i])] for i in range(len(cluster_ids))]
 
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('Clusters vs Labels')
     ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
     ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
-    plt.show()
+    fig.savefig(BASE_DIR + "/figures/" + args.dataset + "_e" + str(e) + ".png")
+    # plt.show()
 
 
-def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
+def plot(model, X_train, y_train, args, X_test=None, y_test=None, labels=None, epoch=0):
     # idx = torch.Tensor(np.random.randint(0,len(X_train), int(0.1*len(X_train)))).type(torch.LongTensor).to(device)
     idx = range(int(0.2*len(X_train)))
     qs, latents_X = model(X_train[idx], output="latent")
@@ -553,7 +568,7 @@ def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
         cluster_id_train = torch.argmax(q_train, axis=1)
 
     print("Training data")
-    plot_data(latents_X, y_train, cluster_id_train)
+    plot_data(latents_X, y_train, cluster_id_train, args, epoch)
 
     if X_test is not None:
         qs, latents_test = model(X_test, output="latent")
@@ -561,7 +576,7 @@ def plot(model, X_train, y_train, X_test=None, y_test=None, labels=None):
         cluster_id_test = torch.argmax(q_test, axis=1)
 
         print("Test data")
-        plot_data(latents_test, y_test, cluster_id_test)
+        plot_data(latents_test, y_test, cluster_id_test, args, epoch)
 
 
 def drop_constant_column(df):
@@ -732,6 +747,7 @@ def get_train_val_test_loaders(args, r_state=0):
                 X, y, columns, scale = get_dataset("cic_new", DATA_DIR)
 
             los_quantiles = np.quantile(X[:,2], [0, 0.33, 0.66, 1])
+            columns = columns.delete(2)
             y_los = []
             for i in range(len(X)):
                 lbl = 0
@@ -743,17 +759,17 @@ def get_train_val_test_loaders(args, r_state=0):
                     lbl = 2
                 y_los.append(lbl)
 
-            X_los = np.delete(X, 2, 1) # 2nd column is LOS
+            X_los = np.delete(scale.inverse_transform(X), 2, 1) # 2nd column is LOS
             y = np.array(y_los)
             args.input_dim = X_los.shape[1]
 
             X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
 
-            sc = StandardScaler()
-            X_train = sc.fit_transform(X_train)
-            X_val = sc.fit_transform(X_val)
-            X_test = sc.fit_transform(X_test)
+            scale = StandardScaler()
+            X_train = scale.fit_transform(X_train)
+            X_val = scale.fit_transform(X_val)
+            X_test = scale.fit_transform(X_test)
 
         elif args.dataset == "aki":
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
@@ -808,10 +824,10 @@ def performance_metrics(y_true, y_pred, n_classes=2):
         minpse_scores.append(min(precision, specificity))
         acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
 
-    return {"acc": np.average(acc_scores),
-            "auroc": np.average(auroc_scores),
-            "auprc": np.average(auprc_scores),
-            "minpse": np.average(minpse_scores),
+    return {"acc": np.avg(acc_scores),
+            "auroc": np.avg(auroc_scores),
+            "auprc": np.avg(auprc_scores),
+            "minpse": np.avg(minpse_scores),
             "f1_score":metrics.f1_score(y_true, y_pred.argmax(axis=1), average="macro")}
 
 

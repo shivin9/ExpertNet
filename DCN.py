@@ -70,6 +70,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--plot', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')

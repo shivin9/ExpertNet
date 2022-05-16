@@ -70,6 +70,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--plot', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
@@ -757,15 +758,15 @@ enablePrint()
 
 print("[Avg]\tDataset\tk\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
-    np.average(e_f1_scores), np.average(e_auc_scores), np.average(e_auprc_scores), np.average(e_minpse_scores), np.average(e_acc_scores)))
+    np.avg(e_f1_scores), np.avg(e_auc_scores), np.avg(e_auprc_scores), np.avg(e_minpse_scores), np.avg(e_acc_scores)))
 
 print("[Std]\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
     (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_minpse_scores), np.std(e_acc_scores)))
 
 print('[Avg]\tSIL\tHTFD\tWDFD\tW-HTFD')
-print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.average(sil_scores),\
-    np.average(HTFD_scores), np.average(wdfd_scores), np.average(w_HTFD_scores)))
+print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
+    np.avg(HTFD_scores), np.avg(wdfd_scores), np.avg(w_HTFD_scores)))
 
 print('[Std]\tSIL\tHTFD\tWDFD\tW-HTFD')
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
@@ -774,13 +775,13 @@ print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
 # print("F1\tAUC\tAUPRC\tACC")
 
 # print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-#     (np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(acc_scores)))
+#     (np.avg(f1_scores), np.avg(auc_scores), np.avg(auprc_scores), np.avg(acc_scores)))
 
 # print("Train Loss\tE-Train Loss\tTest Loss\tE-Test Loss")
 
 # print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-#     (np.average(train_losses), np.average(e_train_losses),\
-#     np.average(test_losses), np.average(e_test_losses)))
+#     (np.avg(train_losses), np.avg(e_train_losses),\
+#     np.avg(test_losses), np.avg(e_test_losses)))
 
 if args.cluster_analysis == "True":
     WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
