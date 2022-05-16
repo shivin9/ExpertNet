@@ -16,7 +16,6 @@ def pad_sents(sents, pad_token, N_FEATS=7, END_T=-1):
     return np.array(sents_padded, dtype='float')
 
 
-
 def get_ts_datasets(args, r_state=0):
     DATASET = args.dataset
     train_x = np.load(DATA_DIR + '/' + DATASET + '/train.npy', allow_pickle=True)
@@ -65,7 +64,8 @@ def batch_iter(x, y, lens, batch_size, shuffle=False):
         batch_lens = [e[2] for e in examples]
        
 
-        yield batch_x, batch_y, batch_lens
+        yield indices, batch_x, batch_y, batch_lens
+
 
 def length_to_mask(length, max_len=None, dtype=None):
     """length: B.
@@ -79,3 +79,24 @@ def length_to_mask(length, max_len=None, dtype=None):
     if dtype is not None:
         mask = torch.as_tensor(mask, dtype=dtype, device=length.device)
     return mask
+
+
+def get_embeddings(model, X, args):
+    batch_size = args.batch_size
+    batch_num = math.ceil(len(X) / batch_size) 
+    index_array = list(range(len(X)))
+    z, q = [], []
+
+    for i in range(batch_num):
+        indices = index_array[i * batch_size: (i + 1) * batch_size] #  fetch out all the induces
+        
+        examples = []
+        for idx in indices:
+            examples.append(x[idx])
+           
+        batch_x = [e[0] for e in examples]
+        q_batch, z_batch = model(torch.FloatTensor(batch_x).to(args.device), output="latent")
+        z.append(z_batch.detach().numpy())
+        q.append(q_batch.detach().numpy())
+
+    return np.concatenate(z, axis=0), np.concatenate(q, axis=0)

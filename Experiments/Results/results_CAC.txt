@@ -888,3 +888,6 @@ gamma 0.0
 delta 0.0
 eta 5.0
 attention False
+DeepCAC
+Respiratory
+k = 1

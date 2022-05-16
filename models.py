@@ -537,11 +537,7 @@ class ExpertNet_GRU(nn.Module):
 
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
-        self.p_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
-        self.n_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
-        torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
-        torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
 
         self.classifiers = []
         n_layers = int(len(expert_layers))
@@ -577,8 +573,7 @@ class ExpertNet_GRU(nn.Module):
 
 
     def predict(self, X_test):
-        qs, z_test = self.forward(X_test)
-        q_test = qs[0]
+        q_test, z_test = self.forward(X_test)
         cluster_ids = torch.argmax(q_test, axis=1)
         preds = torch.zeros((self.n_clusters, 2))
         for j in range(self.n_clusters):
@@ -590,11 +585,9 @@ class ExpertNet_GRU(nn.Module):
         _, _ , z = self.ae(x)
         # Cluster
         q   = source_distribution(z, self.cluster_layer, alpha=self.alpha)
-        q_p = source_distribution(z, self.p_cluster_layer, alpha=self.alpha)
-        q_n = source_distribution(z, self.n_cluster_layer, alpha=self.alpha)
 
         if output == "latent":
-            return (q, q_p, q_n), z
+            return q, z
 
         elif output == "classifier":
             preds = torch.zeros((len(z), 2))
@@ -603,4 +596,4 @@ class ExpertNet_GRU(nn.Module):
             return preds
         
         else:
-            return z, _, (q, q_p, q_n)
+            return z, _, q
