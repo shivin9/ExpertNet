@@ -12,7 +12,7 @@ import pandas as pd
 
 import argparse
 import numpy as np
-from sklearn.cluster import KMeans
+from scipy.cluster.vq import vq, kmeans2
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score, confusion_matrix
 from sklearn.ensemble import GradientBoostingRegressor
@@ -71,7 +71,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
-parser.add_argument('--other', default= 'False')
+parser.add_argument('--plot', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 
@@ -140,10 +140,10 @@ for r in range(args.n_runs):
             epoch_f1 += f1.item()
 
         model.classifier.eval()
-        _, val_preds = model(torch.FloatTensor(np.array(X_val)).to(args.device))
+        _, last_vals, val_preds = model(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_preds, torch.tensor(y_val).to(device))
-
         val_metrics = performance_metrics(y_val, val_preds.detach().numpy(), args.n_classes)
+
         val_f1  = val_metrics['f1_score']
         val_auc = val_metrics['auroc']
         val_auprc = val_metrics['auprc']
@@ -152,6 +152,12 @@ for r in range(args.n_runs):
 
         es([val_f1, val_auprc], model)
 
+        # original_cluster_centers, cluster_indices = kmeans2(last_vals.data.cpu().numpy(), k=args.n_clusters, minit='++')
+        # plot(model, torch.FloatTensor(last_vals).to(args.device), y_val, args, labels=cluster_indices, epoch=e)
+        # idx = range(int(0.2*len(X_val)))
+
+        # plot_data(torch.FloatTensor(last_vals)[idx].to(args.device), y_val[idx], cluster_indices[idx], args, e)
+        
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
         	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f} | ',
         	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
@@ -174,7 +180,7 @@ for r in range(args.n_runs):
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
     model.classifier.eval()
-    _, test_preds = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    _, last_test, test_preds = model(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_preds, torch.tensor(y_test).to(device))
 
     test_f1 = f1_score(np.argmax(test_preds.detach().numpy(), axis=1), y_test, average="macro")

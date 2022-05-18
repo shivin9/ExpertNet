@@ -117,12 +117,13 @@ class NNClassifier(nn.Module):
                 })
 
         i = n_layers - 2
-        classifier.update(
-            {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
-            })
+        self.last_layer = nn.Linear(expert_layers[i], expert_layers[i+1])
+        # classifier.update(
+        #     {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+        #     })
 
         self.classifier = nn.Sequential(classifier).to(self.device)
-        self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr)
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=args.lr)
 
 
     def pretrain(self, train_loader, path=''):
@@ -139,13 +140,14 @@ class NNClassifier(nn.Module):
 
     def forward(self, inputs):
         input_bar, z = self.ae(inputs)
-        return input_bar, self.classifier(z)
+        last_tensor = self.classifier(z)
+        return input_bar, last_tensor, self.last_layer(last_tensor)
 
 
     def fit(self, X_batch, y_batch):
         self.optimizer.zero_grad()
         self.classifier.train()
-        x_bar, y_pred = self.forward(X_batch)
+        x_bar, _, y_pred = self.forward(X_batch)
         train_loss = self.criterion(y_pred, y_batch)
         reconstr_loss = F.mse_loss(x_bar, X_batch)
         total_loss = self.alpha*reconstr_loss + self.gamma*train_loss

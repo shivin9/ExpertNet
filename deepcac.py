@@ -161,7 +161,7 @@ for r in range(len(iter_array)):
     # ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
     ae_layers = [64, args.n_z, 64]
     expert_layers = [args.n_z, 30, args.n_classes]
-    sil_scores.append([])
+    # sil_scores.append([])
 
     model = DeepCAC(
             ae_layers,
@@ -205,7 +205,7 @@ for r in range(len(iter_array)):
     print("Starting Training")
     model.train()
     N_EPOCHS = args.n_epochs
-    es = EarlyStoppingCAC(dataset=suffix, patience=100)
+    es = EarlyStoppingCAC(dataset=suffix, patience=10)
     train_losses, e_train_losses = [], []
 
     for epoch in range(N_EPOCHS):
@@ -242,27 +242,13 @@ for r in range(len(iter_array)):
                 cluster_idx = np.where(cluster_indices == j)[0]
                 X_cluster = z_train[cluster_idx]
                 y_cluster = torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor)
-                print(np.bincount(y_cluster))
-
-                y_clstr = label_binarize(y_train[cluster_idx], classes=list(range(args.n_classes+1)))[:,:args.n_classes]
-                y_clstr = torch.Tensor(y_clstr).type(torch.LongTensor)
 
                 cluster_dist_mat = torch.cdist(model.class_cluster_layer[j].detach(), model.class_cluster_layer[j].detach()) + U
 
                 # point wise distanes for every cluster
                 min_dists = (softmin(10*cluster_dist_mat)*cluster_dist_mat).sum(axis=1)
-                # minimum inter centroid distance overall
-                # csl = (torch.nn.Softmin(dim=0)(10*min_dists)*min_dists).sum()
                 pt_dists = torch.cdist(X_cluster, model.class_cluster_layer[j].detach())
-                # csl = torch.mean(torch.nn.Softmax(dim=1)(2*pt_dists)*y_clstr)
                 csl = cac_criterion(X_cluster, y_cluster)
-
-                # print(torch.sum(torch.nn.Softmax(dim=1)(2*pt_dists)*y_clstr, dim=1))
-                # num = torch.sum((pt_dists*y_clstr), dim=1)/torch.sum(y_clstr, dim=1)
-                # den = torch.sum((pt_dists*(1-y_clstr)), dim=1)/torch.sum(1-y_clstr, dim=1)
-                # csl = torch.sum(torch.log(num/den))
-                # csl = torch.sum(num - torch.log(den))
-
                 dcn_loss  = args.beta*torch.linalg.norm(X_cluster - model.cluster_layer[j].detach())/len(cluster_idx)
                 dcn_loss += args.eta*csl
                 train_loss += dcn_loss
@@ -289,7 +275,8 @@ for r in range(len(iter_array)):
 
             # Clustering Metrics
             val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean')
-            sil_scores[r].append(train_sil)
+            # sil_scores[r].append(train_sil)
+            sil_scores.append(train_sil)
 
             val_feature_diff, val_WDFD = 0, 0
             # val_feature_diff = calculate_HTFD(X_val, cluster_ids)
@@ -298,41 +285,15 @@ for r in range(len(iter_array)):
             reconstr_loss = F.mse_loss(x_val_bar, torch.FloatTensor(X_val).to(args.device))
             val_loss = reconstr_loss
             dcn_loss = 0
-            centroid_sep = 0
             for j in range(model.n_clusters):
                 cluster_idx = np.where(cluster_ids == j)[0]
                 X_cluster = z_val[cluster_idx]
                 y_cluster = torch.Tensor(y_val[cluster_idx]).type(torch.LongTensor)
-                y_clstr = label_binarize(y_val[cluster_idx], classes=list(range(args.n_classes+1)))[:,:args.n_classes]
-                y_clstr = torch.Tensor(y_clstr).type(torch.LongTensor)
-
-                cluster_dist_mat = torch.cdist(model.class_cluster_layer[j].detach(), model.class_cluster_layer[j].detach()) + U
-
-                # point wise distanes for every cluster
-                min_dists = (softmin(10*cluster_dist_mat)*cluster_dist_mat).sum(axis=1)
-
-                # minimum inter centroid distance overall
-                csl = (torch.nn.Softmin(dim=0)(10*min_dists)*min_dists).sum()
-                # pt_dists = torch.cdist(X_cluster, model.class_cluster_layer[j].detach())
-                pt_dists = torch.sqrt(torch.cdist(model.class_cluster_layer[j].detach(), model.class_cluster_layer[j].detach()).mean())
-
-                # csl = torch.mean(torch.nn.Softmax(dim=1)(2*pt_dists)*y_clstr)
                 csl = cac_criterion(X_cluster, y_cluster.clone().detach())
-
-                # num = torch.sum((pt_dists*y_clstr), dim=1)/torch.sum(y_clstr, dim=1)
-                # den = torch.sum((pt_dists*(1-y_clstr)), dim=1)/torch.sum(1-y_clstr, dim=1)
-                # csl = torch.sum(torch.log(num/den))
-                # csl = torch.sum(num - torch.log(den))
-                # print("num", torch.mean(num))
-                # print("den", torch.mean(den))
-                n_pts = np.where(y_cluster == 0)[0]
-                p_pts = np.where(y_cluster == 1)[0]
-                centroid_sep += pt_dists*len(y_cluster)
 
                 dcn_loss += args.beta*torch.linalg.norm(X_cluster - model.cluster_layer[j])/len(cluster_idx)
                 dcn_loss += args.eta*csl
 
-            centroid_sep /= len(X_val)
             q_batch = source_distribution(z_val, model.cluster_layer, alpha=model.alpha)
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
             P = P/P.sum()
@@ -343,6 +304,8 @@ for r in range(len(iter_array)):
             else:
                 cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
 
+            if args.gamma != 0:
+                val_loss += args.gamma*val_class_loss
             if args.delta != 0:
                 val_loss += delta*cluster_balance_loss
             if args.eta != 0:
@@ -360,8 +323,7 @@ for r in range(len(iter_array)):
                          f'valid_Feature_p: {val_feature_diff:.3f} ' + 
                          f'valid_WDFD: {val_WDFD:.3f} ' + 
                          f'valid_SIL: {val_sil:.3f} ' + 
-                         f'valid_Class_Loss: {val_class_loss:.3f} ' +
-                         f'valid_Centroid_Sep: {centroid_sep:.3f}')
+                         f'valid_Class_Loss: {val_class_loss:.3f} ')
 
             print(print_msg)
 
@@ -395,42 +357,54 @@ for r in range(len(iter_array)):
             reconstr_loss = F.mse_loss(x_bar, x_batch)
 
             # classifier_labels = np.argmax(q_batch.detach().cpu().numpy(), axis=1)
-            cluster_id, _ = vq(X_latents.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
-            cluster_id = torch.Tensor(cluster_id).type(torch.LongTensor)
+            cluster_ids, _ = vq(X_latents.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+            cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
 
             for j in range(args.n_clusters):
-                cluster_pts_idx = torch.where(cluster_id == j)[0]
+                cluster_pts_idx = torch.where(cluster_ids == j)[0]
                 if len(cluster_pts_idx) > 0:
                     X_cluster = X_latents[cluster_pts_idx]
                     y_cluster = y_batch[cluster_pts_idx]
                     y_clstr = label_binarize(y_batch[cluster_pts_idx], classes=list(range(args.n_classes+1)))[:,:args.n_classes]
                     y_clstr = torch.Tensor(y_clstr).type(torch.LongTensor)
-                    # print(len(cluster_pts_idx))
+
                     # create centroid distance matrix for cluster 'j'
-
-                    # norm_vec = torch.sum(cluster_dist_mat, axis=1)
-                    # print(cluster_dist_mat, norm_vec)
-                    # norm_cluster_dist_mat = (cluster_dist_mat.T/norm_vec).T
-                    # csl = F.kl_div(softmin(10*norm_cluster_dist_mat).log(), U, reduction='none').sum(axis=1) + 0.01
-                    # csl = (csl).sum()
-
                     min_dists = (softmin(10*cluster_dist_mat)*cluster_dist_mat).sum()
                     csl = (torch.nn.Softmin(dim=0)(10*min_dists)*min_dists).sum()
                     pt_dists = torch.cdist(X_cluster, model.class_cluster_layer[j].detach())
-
-                    # num = torch.sum((pt_dists*y_clstr), dim=1)/torch.sum(y_clstr, dim=1)
-                    # den = torch.sum((pt_dists*(1-y_clstr)), dim=1)/torch.sum(1-y_clstr, dim=1)
-                    # csl = torch.sum(torch.log(num/den))
-                    # csl = torch.sum(num - torch.log(den))
-
                     csl = cac_criterion(X_cluster, y_cluster.clone().detach())
 
                     dcn_loss += args.beta*torch.linalg.norm(X_latents[cluster_pts_idx] - model.cluster_layer[j].detach())/len(cluster_pts_idx)
-                    # print("csl:", csl, "min_dists:", min_dists)
-                    # print(csl, dcn_loss)
-
                     dcn_loss += args.eta*csl
                     class_sep_loss += csl
+
+            sub_epochs = min(10, 1 + int(epoch/5))
+            class_loss = 0
+            if args.gamma > 0:
+                for _ in range(sub_epochs):
+                    for k in range(args.n_clusters):
+                        idx_cluster = np.where(cluster_ids == k)[0]
+                        X_cluster = X_latents[idx_cluster]
+                        y_cluster = y_batch[idx_cluster]
+
+                        classifier_k, optimizer_k = model.classifiers[k]
+                        # Do not backprop the error to encoder
+                        y_pred_cluster = classifier_k(X_cluster.detach())
+                        cluster_loss = torch.mean(criterion(y_pred_cluster, y_cluster))
+                        optimizer_k.zero_grad()
+                        cluster_loss.backward(retain_graph=True)
+                        optimizer_k.step()
+
+                # Back propagate the error corresponding to last clustering
+                class_loss = torch.tensor(0.).to(args.device)
+                for k in range(args.n_clusters):
+                    idx_cluster = np.where(cluster_ids == k)[0]
+                    X_cluster = X_latents[idx_cluster]
+                    y_cluster = y_batch[idx_cluster]
+
+                    classifier_k, optimizer_k = model.classifiers[k]
+                    y_pred_cluster = classifier_k(X_cluster)
+                    class_loss += torch.mean(criterion(y_pred_cluster, y_cluster))
 
             q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
@@ -447,6 +421,8 @@ for r in range(len(iter_array)):
                 loss += delta*cluster_balance_loss
             if args.eta != 0:
                 loss += dcn_loss
+            if args.gamma != 0:
+                loss += args.gamma*class_loss
 
             epoch_loss += loss
             epoch_balance_loss += cluster_balance_loss
@@ -490,11 +466,12 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
     ####################################################################################
+
     print("\n####################################################################################\n")
     print("Training Local Networks")
     model = es.load_checkpoint(model)
 
-    es = EarlyStoppingCAC(dataset=suffix, patience=100)
+    es = EarlyStoppingCAC(dataset=suffix, patience=10)
 
     z_train = model(torch.FloatTensor(np.array(X_train)).to(args.device))
     cluster_ids_train, _ = vq(z_train.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
@@ -604,7 +581,7 @@ for r in range(len(iter_array)):
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([-val_f1, val_auc], model)
+        es([-val_f1, val_auprc], model)
         if es.early_stop == True:
             # sil_scores[e].append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
@@ -775,6 +752,7 @@ print("Experiment ", iteration_name)
 print(iter_array)
 print("Test F1: ", f1_scores)
 print("Test AUC: ", auc_scores)
+print("Test AUPRC: ", auprc_scores)
 
 print("Sil scores: ", sil_scores)
 print("HTFD: ", HTFD_scores)
