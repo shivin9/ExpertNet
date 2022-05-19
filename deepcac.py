@@ -240,14 +240,15 @@ for r in range(len(iter_array)):
             # Training loss
             for j in range(model.n_clusters):
                 cluster_idx = np.where(cluster_indices == j)[0]
+                if len(cluster_idx) == 0:
+                    continue
+
                 X_cluster = z_train[cluster_idx]
                 y_cluster = torch.Tensor(y_train[cluster_idx]).type(torch.LongTensor)
 
                 cluster_dist_mat = torch.cdist(model.class_cluster_layer[j].detach(), model.class_cluster_layer[j].detach()) + U
 
                 # point wise distanes for every cluster
-                min_dists = (softmin(10*cluster_dist_mat)*cluster_dist_mat).sum(axis=1)
-                pt_dists = torch.cdist(X_cluster, model.class_cluster_layer[j].detach())
                 csl = cac_criterion(X_cluster, y_cluster)
                 dcn_loss  = args.beta*torch.linalg.norm(X_cluster - model.cluster_layer[j].detach())/len(cluster_idx)
                 dcn_loss += args.eta*csl
@@ -287,6 +288,8 @@ for r in range(len(iter_array)):
             dcn_loss = 0
             for j in range(model.n_clusters):
                 cluster_idx = np.where(cluster_ids == j)[0]
+                if len(cluster_idx) == 0:
+                    continue
                 X_cluster = z_val[cluster_idx]
                 y_cluster = torch.Tensor(y_val[cluster_idx]).type(torch.LongTensor)
                 csl = cac_criterion(X_cluster, y_cluster.clone().detach())
@@ -369,9 +372,6 @@ for r in range(len(iter_array)):
                     y_clstr = torch.Tensor(y_clstr).type(torch.LongTensor)
 
                     # create centroid distance matrix for cluster 'j'
-                    min_dists = (softmin(10*cluster_dist_mat)*cluster_dist_mat).sum()
-                    csl = (torch.nn.Softmin(dim=0)(10*min_dists)*min_dists).sum()
-                    pt_dists = torch.cdist(X_cluster, model.class_cluster_layer[j].detach())
                     csl = cac_criterion(X_cluster, y_cluster.clone().detach())
 
                     dcn_loss += args.beta*torch.linalg.norm(X_latents[cluster_pts_idx] - model.cluster_layer[j].detach())/len(cluster_pts_idx)

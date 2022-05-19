@@ -816,7 +816,10 @@ def performance_metrics(y_true, y_pred, n_classes=2):
         tn = sum(np.delete(sum(cm)-cm[c,:],c))
         
         recall = tp/(tp+fn)
-        precision = tp/(tp+fp)
+        if (tp+fp == 0):
+            precision = 0
+        else:
+            precision = tp/(tp+fp)
         specificity = tn/(tn+fp)
 
         auroc_scores.append(roc_auc_score(y[:,c], y_pred[:,c]))
@@ -830,6 +833,30 @@ def performance_metrics(y_true, y_pred, n_classes=2):
             "minpse": np.avg(minpse_scores),
             "f1_score":metrics.f1_score(y_true, y_pred.argmax(axis=1), average="macro")}
 
+
+'''
+In [122]: for d in datasets:
+     ...:     out = ""
+     ...:     for k in K:
+     ...:     # {Heart}  & $2$ & $0.908$ & $0.833$ & $0.505$ & $0.84$ & $0.84$ & {$\mathbf{0.925}$} & 
+     ...: $0.909$ \\
+     ...:         if k == 2:
+     ...:             out = d
+     ...:         out += " & " + str(k) + " & "
+     ...:         itr = 0
+     ...:         for df_idx in range(len(df_list)):
+     ...:             itr += 1
+     ...:             df = df_list[df_idx]
+     ...:             if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
+     ...:                 out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
+     ...:                 out += " \\pm "
+     ...:                 out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_std.values[0])  + "$}"
+     ...:                 if df_idx < len(df_list) - 1:
+     ...:                     out += " & "
+     ...:         out += "\\\\ \n"
+     ...:         if k == 4:
+     ...:             out += "\\midrule \n"
+     ...:         print(out)'''
 
 ## Ablation Parameter Ranges ##
 alphas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
