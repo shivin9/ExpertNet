@@ -1122,3 +1122,422 @@ Model Complexity:  []
 	0.063	0.059	0.048	0.121	0.000	0.134	0.479
 
 
+DCN
+CIC
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	cic	2	0.476	0.691	0.609	0.233	0.500	0.467	1.020
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.014	0.059	0.049	0.103	0.000	0.214	0.139
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	cic	3	0.465	0.659	0.589	0.269	0.500	0.132	1.093
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.003	0.017	0.010	0.207	0.000	0.069	0.056
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	cic	4	0.476	0.666	0.600	0.356	0.500	0.136	0.660
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.009	0.012	0.010	0.084	0.000	0.093	0.467
+
+
+DCN
+Diabetes
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	diabetes	2	0.443	0.573	0.561	0.302	0.500	0.156	1.283
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.020	0.007	0.006	0.015	0.000	0.032	0.395
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	diabetes	3	0.437	0.570	0.557	0.299	0.500	0.210	1.209
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.026	0.005	0.004	0.017	0.000	0.061	0.100
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	diabetes	4	0.383	0.569	0.555	0.197	0.500	0.203	1.287
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.015	0.002	0.003	0.065	0.000	0.067	0.185
+
+
+DCN
+Heart
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	heart	2	0.701	0.714	0.742	0.688	0.500	0.271	0.718
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.093	0.120	0.099	0.093	0.000	0.050	0.062
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	heart	3	0.751	0.855	0.855	0.717	0.500	0.231	0.495
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.032	0.042	0.039	0.048	0.000	0.033	0.008
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	heart	4	0.804	0.870	0.862	0.786	0.500	0.181	0.398
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.051	0.055	0.062	0.065	0.000	0.035	0.021
+
+================================================
+================================================
+DCN
+CIC
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	2	0.487	0.697	0.597	0.410	0.500	0.331	0.025	0.068
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.028	0.039	0.031	0.070	0.000	0.110	0.017
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	3	0.475	0.686	0.606	0.333	0.500	0.134	0.018	0.039
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.006	0.001	0.002	0.022	0.000	0.052	0.010
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	4	0.509	0.671	0.607	0.261	0.500	0.092	0.018	0.015
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.063	0.109	0.077	0.185	0.000	0.043	0.006
+
+
+DCN
+Diabetes
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	2	0.437	0.572	0.559	0.298	0.500	0.179	0.001	-0.002
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.016	0.002	0.002	0.007	0.000	0.064	0.001
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	3	0.416	0.568	0.556	0.225	0.500	0.263	0.001	-0.002
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.033	0.001	0.003	0.100	0.000	0.195	0.001
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	4	0.438	0.573	0.561	0.298	0.500	0.174	0.002	-0.003
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.010	0.003	0.002	0.011	0.000	0.049	0.000
+
+
+DCN
+CIC_LOS
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	2	0.304	0.574	0.401	0.334	0.522	0.309	0.002	0.004
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.060	0.032	0.029	0.073	0.089	0.177	0.003
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	3	0.324	0.595	0.417	0.347	0.494	0.079	0.001	0.001
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.094	0.056	0.050	0.150	0.119	0.015	0.001
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	4	0.380	0.632	0.446	0.513	0.425	0.093	0.009	0.006
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.020	0.011	0.012	0.085	0.024	0.042	0.009
+
+
+DCN
+Heart
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	2	0.786	0.873	0.876	0.759	0.500	0.271	0.245	0.309
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.068	0.058	0.064	0.082	0.000	0.077	0.058
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	3	0.799	0.884	0.884	0.777	0.500	0.160	0.252	0.278
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.066	0.047	0.049	0.076	0.000	0.037	0.075
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	4	0.750	0.845	0.841	0.741	0.500	0.175	0.187	0.206
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.081	0.055	0.053	0.082	0.000	0.029	0.139
+
+
+DeepCAC DCN
+Sepsis
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	2	0.505	0.740	0.593	0.158	0.500	0.364	0.006	-0.007
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.015	0.022	0.002	0.036	0.000	0.242	0.003
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	3	0.576	0.719	0.621	0.277	0.500	0.345	0.002	0.015
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.120	0.120	0.109	0.260	0.000	0.088	0.001
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	4	0.559	0.720	0.607	0.336	0.500	0.105	0.004	0.011
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.094	0.089	0.080	0.166	0.000	0.035	0.000
+
+
+DCN
+Kidney
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	2	0.582	0.592	0.572	0.575	0.500	0.757	0.001	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.029	0.036	0.039	0.034	0.000	0.015	0.001
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	3	0.613	0.649	0.634	0.605	0.500	0.324	0.004	-0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.017	0.020	0.020	0.021	0.000	0.027	0.002
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	4	0.586	0.612	0.597	0.576	0.500	0.281	0.009	0.005
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.028	0.028	0.025	0.030	0.000	0.104	0.009
+
+
+DCN
+Respiratory
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	2	0.502	0.629	0.547	0.132	0.500	0.795	0.001	0.001
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.027	0.070	0.033	0.121	0.000	0.174	0.002
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	3	0.501	0.668	0.570	0.316	0.500	0.491	0.008	0.028
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.022	0.040	0.027	0.146	0.000	0.100	0.006
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	4	0.498	0.674	0.578	0.229	0.500	0.323	0.007	0.028
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.018	0.017	0.013	0.044	0.000	0.063	0.005
+
+
+DCN
+Wid_Mortality
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	2	0.559	0.787	0.651	0.321	0.500	0.500	0.000	-0.011
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.079	0.074	0.061	0.147	0.000	0.199	0.000
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	3	0.489	0.723	0.592	0.294	0.500	0.359	0.011	0.005
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.012	0.039	0.020	0.037	0.000	0.220	0.011
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	4	0.625	0.845	0.701	0.409	0.500	0.222	0.012	0.027
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.050	0.027	0.033	0.053	0.000	0.078	0.007
+
+

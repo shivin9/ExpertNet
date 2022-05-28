@@ -835,28 +835,28 @@ def performance_metrics(y_true, y_pred, n_classes=2):
 
 
 '''
-In [122]: for d in datasets:
-     ...:     out = ""
-     ...:     for k in K:
-     ...:     # {Heart}  & $2$ & $0.908$ & $0.833$ & $0.505$ & $0.84$ & $0.84$ & {$\mathbf{0.925}$} & 
-     ...: $0.909$ \\
-     ...:         if k == 2:
-     ...:             out = d
-     ...:         out += " & " + str(k) + " & "
-     ...:         itr = 0
-     ...:         for df_idx in range(len(df_list)):
-     ...:             itr += 1
-     ...:             df = df_list[df_idx]
-     ...:             if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
-     ...:                 out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
-     ...:                 out += " \\pm "
-     ...:                 out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_std.values[0])  + "$}"
-     ...:                 if df_idx < len(df_list) - 1:
-     ...:                     out += " & "
-     ...:         out += "\\\\ \n"
-     ...:         if k == 4:
-     ...:             out += "\\midrule \n"
-     ...:         print(out)'''
+for d in datasets:
+    out = ""
+    for k in K:
+        if k == 2:
+            out = d
+        out += " & " + str(k) + " & "
+        itr = 0
+        for df_idx in range(len(df_list)):
+            itr += 1
+            df = df_list[df_idx]
+            if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
+                out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
+                out += " \\pm "
+                out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_std.values[0])  + "$}"
+                if df_idx < len(df_list) - 1:
+                    out += " & "
+        out += "\\ \n"
+    out += "\\\\ \n"
+    if k == 4:
+        out += "\\midrule \n"
+    print(out)
+'''
 
 ## Ablation Parameter Ranges ##
 alphas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]

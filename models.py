@@ -244,6 +244,7 @@ class DeepCAC(nn.Module):
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
             self.classifiers.append([classifier, optimizer])
             
+        # self.main = nn.Linear(expert_layers[i+1], args.n_classes)
 
     def pretrain(self, train_loader, path=''):
         print(path)
@@ -257,15 +258,6 @@ class DeepCAC(nn.Module):
             print('load pretrained ae from', path)
 
 
-    def predict(self, X_test):
-        z_test = self.forward(X_test)
-        # cluster_ids = torch.argmax(q_test, axis=1)
-        preds = torch.zeros((self.n_clusters, 2))
-        for j in range(self.n_clusters):
-            preds[j,:] = self.classifiers[cluster_ids[j]]
-        return preds
-
-
     def forward(self, x, output="default"):
         x_bar, z = self.ae(x)
 
@@ -273,7 +265,7 @@ class DeepCAC(nn.Module):
             return z, x_bar
 
         elif output == "classifier":
-            preds = torch.zeros((len(z), 2))
+            preds = torch.zeros((len(z), self.n_classes))
             for j in range(len(z)):
                 preds[j,:] = self.classifiers[j](z)
             return preds

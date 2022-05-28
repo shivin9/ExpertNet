@@ -97,6 +97,7 @@ base_suffix += str(args.attention)
 
 f1_scores, auc_scores, auprc_scores, minpse_scores, acc_scores = [], [], [], [], []
 sil_scores, HTFD_scores, wdfd_scores = [], [], []
+nmi_scores, ari_scores = [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -487,7 +488,7 @@ for r in range(len(iter_array)):
         if es.early_stop == True or e == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             e_train_losses.append(e_train_loss.item())
-            sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
+            # sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             HTFD_scores.append(calculate_HTFD(X_train,  cluster_ids_train))
             wdfd_scores.append(calculate_WDFD(X_train,  cluster_ids_train))
             # model_complexity.append(calculate_bound(model, B, len(z_train)))
@@ -580,6 +581,9 @@ for r in range(len(iter_array)):
     auprc_scores.append(e_test_auprc)
     minpse_scores.append(e_test_minpse)
     acc_scores.append(e_test_acc)
+    nmi_scores.append(nmi_score(cluster_ids.data.cpu().numpy(), y_test))
+    ari_scores.append(ari_score(cluster_ids.data.cpu().numpy(), y_test))
+    sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean'))
 
     ####################################################################################
     ####################################################################################
@@ -641,36 +645,36 @@ for r in range(len(iter_array)):
     # print("Average Feature Difference: ", feature_diff/cntr)
 enablePrint()
 
-print("Test F1: ", f1_scores)
-print("Test AUC: ", auc_scores)
-print("Test AUPRC: ", auprc_scores)
-print("Test MINPSE: ", minpse_scores)
+# print("Test F1: ", f1_scores)
+# print("Test AUC: ", auc_scores)
+# print("Test AUPRC: ", auprc_scores)
+# print("Test MINPSE: ", minpse_scores)
 
-print("Sil scores: ", sil_scores)
-print("HTFD: ", HTFD_scores)
-print("WDFD: ", wdfd_scores)
+# print("Sil scores: ", sil_scores)
+# print("HTFD: ", HTFD_scores)
+# print("WDFD: ", wdfd_scores)
 
-print("Train Loss: ", train_losses)
-print("E-Train Loss: ", e_train_losses)
+# print("Train Loss: ", train_losses)
+# print("E-Train Loss: ", e_train_losses)
 
-print("Test Loss: ", test_losses)
-print("E-Test Loss: ", e_test_losses)
-print("Local Test Loss: ", local_sum_test_losses)
-print("Model Complexity: ", model_complexity)
+# print("Test Loss: ", test_losses)
+# print("E-Test Loss: ", e_test_losses)
+# print("Local Test Loss: ", local_sum_test_losses)
+# print("Model Complexity: ", model_complexity)
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
 
-print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores),\
-    np.average(sil_scores), np.average(HTFD_scores)))
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
+    np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores),\
+    np.avg(np.array(sil_scores)), np.avg(nmi_scores), np.avg(ari_scores)))
 
-print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
 
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
-    np.std(minpse_scores), np.std(acc_scores), np.std(sil_scores),\
-    np.std(HTFD_scores)))
+    np.std(minpse_scores), np.std(acc_scores), np.std(np.array(sil_scores)),\
+    np.std(nmi_scores), np.std(ari_scores)))
 
 print("\n")
 # HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

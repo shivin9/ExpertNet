@@ -91,7 +91,8 @@ args = parameters(parser)
 
 criterion = nn.CrossEntropyLoss(reduction='mean')
 
-f1_scores, auc_scores, auprc_scores, acc_scores = [], [], [], []
+f1_scores, auc_scores, auprc_scores, minpse_scores, acc_scores = [], [], [], [0], []
+sil_scores, nmi_scores, ari_scores = [], [], []
 sil_score, HTFD_score, wdfd_score = 0, 0, 0
 
 if args.verbose == "False":
@@ -138,7 +139,6 @@ for r in range(args.n_runs):
         optimizer.step()
 
     cluster_ids_train = torch.argmax(gate_vals, axis=1)
-    sil_score  = silhouette_new(z_train.detach().numpy(), cluster_ids_train, metric='euclidean')
     HTFD_score = calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train)
     wdfd_score = calculate_WDFD(torch.FloatTensor(X_train), cluster_ids_train)
 
@@ -216,6 +216,7 @@ for r in range(args.n_runs):
     model = es.load_checkpoint(model)
     z_test, _, gate_test = model(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_pred = torch.zeros((len(X_test), args.n_classes))
+    cluster_ids_test = torch.argmax(gate_test, axis=1)
 
     for j in range(args.n_clusters):
         model.classifiers[j][0].eval()
@@ -243,22 +244,27 @@ for r in range(args.n_runs):
     auc_scores.append(test_auc)
     auprc_scores.append(test_auprc)
     acc_scores.append(test_acc)
+    nmi_scores.append(nmi_score(cluster_ids_test.data.cpu().numpy(), y_test))
+    ari_scores.append(ari_score(cluster_ids_test.data.cpu().numpy(), y_test))
+    sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids_test.data.cpu().numpy(), metric='euclidean'))
 
 
 enablePrint()
-print("F1:", f1_scores)
-print("AUC:", auc_scores)
-print("AUPRC:", auprc_scores)
-print("ACC:", acc_scores)
+# print("F1:", f1_scores)
+# print("AUC:", auc_scores)
+# print("AUPRC:", auprc_scores)
+# print("ACC:", acc_scores)
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
 
-print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
-    np.avg(auprc_scores), np.avg(acc_scores), sil_score, HTFD_score, wdfd_score))
+    np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores),\
+    np.avg(np.array(sil_scores)), np.avg(nmi_scores), np.avg(ari_scores)))
 
-print("[Std]\tF1\tAUC\tAUPRC\tACC\tSIL\tHTFD\tWDFD")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
 
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-    (np.std(f1_scores), np.std(auc_scores),\
-    np.std(auprc_scores), np.std(acc_scores), 0, 0, 0))
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
+    np.std(minpse_scores), np.std(acc_scores), np.std(np.array(sil_scores)),\
+    np.std(nmi_scores), np.std(ari_scores)))

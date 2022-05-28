@@ -2138,3 +2138,1559 @@ Train Cluster Counts:  [5226 2196 3500  934  786]
 Train Loss	Test Loss
 nan	0.234
 
+===================================
+===================================
+
+DeepCAC
+Respiratory
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+DeepCAC
+Wid_Mortality
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+DeepCAC
+Diabetes
+k = 3
+DeepCAC
+CIC
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.4615936826992103]
+Test AUC:  [0.5724846386680427]
+Test AUPRC:  [0.527276480450319]
+Sil scores:  [0.3954614]
+HTFD:  []
+Train Cluster Counts:  [2108 2131 2511]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	cic	3	0.462	0.572	0.527	0.000	0.500	0.395	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.000	0.000	0.000	0.000	0.000	0.000	nan
+Train Loss	Test Loss
+131.317	0.446
+
+DeepCAC
+Sepsis
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.48135843484680696]
+Test AUC:  [0.5614504162743729]
+Test AUPRC:  [0.5085772942508974]
+Sil scores:  []
+HTFD:  []
+Train Cluster Counts:  [3680 1839 7123]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	ards	3	0.481	0.561	0.509	0.000	0.500	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.000	0.000	0.000	0.000	0.000	nan	nan
+Train Loss	Test Loss
+92.647	0.256
+
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.48097812097812104]
+Test AUC:  [0.47438183949341856]
+Test AUPRC:  [0.5011407822095]
+Sil scores:  [0.27254975]
+HTFD:  []
+Train Cluster Counts:  [ 6408  6178 10098]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	sepsis	3	0.481	0.474	0.501	0.000	0.500	0.273	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.000	0.000	0.000	0.000	0.000	0.000	nan
+Train Loss	Test Loss
+141.329	0.594
+
+DeepCAC
+Kidney
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.586711682164354]
+Test AUC:  [0.6408580669710806]
+Test AUPRC:  [0.619481156594834]
+Sil scores:  [0.33703768]
+HTFD:  []
+Train Cluster Counts:  [3120 2120 2683]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	aki	3	0.587	0.641	0.619	0.544	0.500	0.337	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.000	0.000	0.000	0.000	0.000	0.000	nan
+Train Loss	Test Loss
+210.839	0.648
+
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 0.5
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.6460113617682857]
+Test AUC:  [0.7853254282308166]
+Test AUPRC:  [0.7034010654033758]
+Sil scores:  [0.5429761]
+HTFD:  []
+Train Cluster Counts:  [28389  1417 21781]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	wid_mortality	3	0.646	0.785	0.703	0.465	0.500	0.543	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	HTFD
+	0.000	0.000	0.000	0.000	0.000	0.000	nan
+Train Loss	Test Loss
+357.354	0.232
+
+=======
+=======
+
+DeepCAC
+CIC
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+DeepCAC
+CIC
+k = 3
+DeepCAC
+Respiratory
+k = 3
+DeepCAC
+CIC_LOS
+k = 3
+DeepCAC
+Wid_Mortality
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.7008086253369273]
+Test AUC:  [0.6128549185331609]
+Test AUPRC:  [0.6827725109301273]
+Sil scores:  [0.3282097]
+HTFD:  []
+Train Cluster Counts:  [4013 2736    1]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	3	0.701	0.613	0.683	0.496	0.500	0.328	0.098	0.112
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.000	0.000	0.000	0.000	0.000	0.000
+Train Loss	Test Loss
+415.175	0.617
+
+DeepCAC
+Sepsis
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.4702202723393965]
+Test AUC:  [0.6588671560966632]
+Test AUPRC:  [0.482101677790952]
+Sil scores:  [0.17803292]
+HTFD:  []
+Train Cluster Counts:  [1902 3013 1835]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	3	0.470	0.659	0.482	0.482	0.373	0.178	0.111	0.102
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.000	0.000	0.000	0.000	0.000	0.000
+Train Loss	Test Loss
+1296.632	1.027
+
+DeepCAC
+Heart
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.8137254901960784]
+Test AUC:  [0.8995771670190276]
+Test AUPRC:  [0.9024339718713139]
+Sil scores:  [0.31711945]
+HTFD:  []
+Train Cluster Counts:  [50 59 61]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	3	0.814	0.900	0.902	0.795	0.500	0.317	0.314	0.302
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.000	0.000	0.000	0.000	0.000	0.000
+Train Loss	Test Loss
+47.673	0.403
+
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.5713968845002536]
+Test AUC:  [0.6904412546315981]
+Test AUPRC:  [0.5883811806607019]
+Sil scores:  [0.1989328]
+HTFD:  []
+Train Cluster Counts:  [7534 3407 1701]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	3	0.571	0.690	0.588	0.280	0.500	0.199	0.051	0.058
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.000	0.000	0.000	0.000	0.000	0.000
+Train Loss	Test Loss
+697.931	0.233
+
+DeepCAC
+Diabetes
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.818747824375176]
+Test AUC:  [0.848546855902337]
+Test AUPRC:  [0.8163146464374417]
+Sil scores:  [0.19492112]
+HTFD:  []
+Train Cluster Counts:  [ 6463 11277  4944]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	3	0.819	0.849	0.816	0.687	0.500	0.195	0.036	0.045
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.000	0.000	0.000	0.000	0.000	0.000
+Train Loss	Test Loss
+853.966	0.157
+
+DeepCAC
+Kidney
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.5282440807080994]
+Test AUC:  [0.610258493924619]
+Test AUPRC:  [0.5946483308083725]
+Sil scores:  [0.35409352]
+HTFD:  []
+Train Cluster Counts:  [1480 3157 3286]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	3	0.528	0.610	0.595	0.487	0.500	0.354	0.107	0.122
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.000	0.000	0.000	0.000	0.000	0.000
+Train Loss	Test Loss
+1006.905	0.662
+
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 50.0
+attention False
+
+
+Experiment  Run
+range(0, 1)
+Test F1:  [0.49437864772741924]
+Test AUC:  [0.5554290518390861]
+Test AUPRC:  [0.5505681767106225]
+Sil scores:  [0.294126]
+HTFD:  []
+Train Cluster Counts:  [18276  5980 15103]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	3	0.494	0.555	0.551	0.340	0.500	0.294	0.002	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.000	0.000	0.000	0.000	0.000	0.000
+Train Loss	Test Loss
+57468.246	0.668
+
+====================
+====================
+
+DeepCAC
+Heart
+k = 2
+DeepCAC
+CIC_LOS
+k = 2
+DeepCAC
+Sepsis
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8493965051342101, 0.7984084880636605, 0.9074943488089028]
+Test AUC:  [0.9203664552501762, 0.8742160278745644, 0.9409722222222223]
+Test AUPRC:  [0.923288323693916, 0.8859350793088046, 0.9419998177928015]
+Sil scores:  [0.45037663, 0.45842886, 0.44565105]
+HTFD:  []
+Train Cluster Counts:  [91 79]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	2	0.852	0.912	0.917	0.834	0.500	0.451	0.477	0.570
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.045	0.028	0.023	0.052	0.000	0.005	0.100
+Train Loss	Test Loss
+25.063	0.407
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8637992831541219, 0.7695737471018369, 0.8928823114869627]
+Test AUC:  [0.9316420014094433, 0.8637630662020905, 0.9513888888888888]
+Test AUPRC:  [0.9370112464675016, 0.8791787188777149, 0.9535826287887763]
+Sil scores:  [0.23431209, 0.28931567, 0.23627108]
+HTFD:  []
+Train Cluster Counts:  [14 92 64]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	3	0.842	0.916	0.923	0.823	0.500	0.253	0.308	0.341
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.053	0.038	0.032	0.062	0.000	0.025	0.039
+Train Loss	Test Loss
+56.552	0.351
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8265144863915717, 0.7731343283582088, 0.8684210526315789]
+Test AUC:  [0.8858350951374208, 0.8571428571428572, 0.9482638888888889]
+Test AUPRC:  [0.8438927918717759, 0.8716250357187899, 0.9492171149118097]
+Sil scores:  [0.26560616, 0.35414314, 0.3462244]
+HTFD:  []
+Train Cluster Counts:  [69 50 13 38]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	4	0.823	0.897	0.888	0.808	0.500	0.322	0.411	0.409
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.039	0.038	0.045	0.050	0.000	0.040	0.084
+Train Loss	Test Loss
+53.930	0.421
+
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.4518148462395004, 0.4738006316006154, 0.46939432610476767]
+Test AUC:  [0.6690851753593954, 0.6567546193623808, 0.6739381035193414]
+Test AUPRC:  [0.49265449705455594, 0.4780287544258943, 0.4993518282126974]
+Sil scores:  [0.274798, 0.9196436, 0.24283172]
+HTFD:  []
+Train Cluster Counts:  [3744 3006]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	2	0.465	0.667	0.490	0.478	0.360	0.479	0.056	0.070
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.009	0.007	0.009	0.003	0.006	0.312	0.040
+Train Loss	Test Loss
+852.704	1.007
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.4700790194770481, 0.4699711890350957, 0.4432434560522405]
+Test AUC:  [0.6627022287879849, 0.6614329628160064, 0.6678169514863909]
+Test AUPRC:  [0.49470399021009154, 0.48585972728160476, 0.4879517180560402]
+Sil scores:  [0.22581019, 0.21378216, 0.20929517]
+HTFD:  []
+Train Cluster Counts:  [2081 1897 2772]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	3	0.461	0.664	0.490	0.481	0.374	0.216	0.101	0.094
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.013	0.003	0.004	0.008	0.002	0.007	0.004
+Train Loss	Test Loss
+1246.980	1.009
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.46558860232410604, 0.4550027292108829, 0.4658890641333871]
+Test AUC:  [0.6686695864166144, 0.6600664493300311, 0.6635038587638383]
+Test AUPRC:  [0.498522507676026, 0.4844186443208982, 0.4771822383962651]
+Sil scores:  [0.19667111, 0.16432114, 0.1667711]
+HTFD:  []
+Train Cluster Counts:  [1169 1132 2204 2245]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	4	0.462	0.664	0.487	0.474	0.369	0.176	0.113	0.094
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.005	0.004	0.009	0.007	0.015	0.015	0.004
+Train Loss	Test Loss
+1617.946	1.013
+
+DeepCAC
+Kidney
+k = 2
+DeepCAC
+CIC
+k = 2
+DeepCAC
+Heart
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8237916889602284, 0.7966827180310326, 0.9065847234416154]
+Test AUC:  [0.9038054968287526, 0.8707317073170733, 0.9524305555555554]
+Test AUPRC:  [0.9063134239958226, 0.8763856989251824, 0.95753897164532]
+Sil scores:  [0.4198541, 0.50802916, 0.41033334]
+HTFD:  []
+Train Cluster Counts:  [ 67 103]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	2	0.842	0.909	0.913	0.822	0.500	0.446	0.525	0.614
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.047	0.034	0.034	0.056	0.000	0.044	0.129
+Train Loss	Test Loss
+34.632	0.378
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8282037906451052, 0.7984084880636605, 0.8684210526315789]
+Test AUC:  [0.9263565891472869, 0.8547038327526133, 0.9434027777777778]
+Test AUPRC:  [0.9283893719441332, 0.8711437420138227, 0.9452509716691532]
+Sil scores:  [0.2837707, 0.3204212, 0.3609201]
+HTFD:  []
+Train Cluster Counts:  [52 68 50]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	3	0.832	0.908	0.915	0.822	0.500	0.322	0.370	0.347
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.029	0.038	0.032	0.040	0.000	0.032	0.034
+Train Loss	Test Loss
+40.689	0.403
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8265144863915717, 0.8125440451021847, 0.9065847234416154]
+Test AUC:  [0.908738548273432, 0.8609756097560975, 0.9579861111111112]
+Test AUPRC:  [0.9109627926188391, 0.8786062691169514, 0.9606479513553221]
+Sil scores:  [0.29343176, 0.28372395, 0.23836614]
+HTFD:  []
+Train Cluster Counts:  [61 48 46 15]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	4	0.849	0.909	0.917	0.832	0.500	0.272	0.378	0.376
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.041	0.040	0.034	0.049	0.000	0.024	0.102
+Train Loss	Test Loss
+78.945	0.403
+
+DeepCAC
+Wid_Mortality
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.814307061930799, 0.8029244756851659, 0.8426533844933837]
+Test AUC:  [0.8982332767565162, 0.851336895004768, 0.9167378054194191]
+Test AUPRC:  [0.8177692170871225, 0.8064122444349631, 0.8649663291787325]
+Sil scores:  [0.34451222]
+HTFD:  []
+Train Cluster Counts:  [22683     1]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	2	0.820	0.889	0.830	0.676	0.500	0.345	0.022	0.010
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.017	0.028	0.025	0.027	0.000	0.000	0.028
+Train Loss	Test Loss
+407.615	0.156
+
+k = 3
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6702676094050902, 0.7337506520605113, 0.6958417218255291]
+Test AUC:  [0.8314822822342699, 0.833326409203433, 0.8271682097643929]
+Test AUPRC:  [0.7374244106905825, 0.7813750166064124, 0.7526647189529254]
+Sil scores:  [0.20431513, 0.3630291, 0.35697436]
+HTFD:  []
+Train Cluster Counts:  [3979 2771]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	2	0.700	0.831	0.757	0.509	0.500	0.308	0.073	0.076
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.026	0.003	0.018	0.045	0.000	0.073	0.049
+Train Loss	Test Loss
+343.193	0.317
+
+k = 3
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6304907066629177, 0.6194265281278661, 0.6279213493544916]
+Test AUC:  [0.6789383561643836, 0.6693469401876767, 0.6845534919426632]
+Test AUPRC:  [0.663460686120889, 0.6475107065175899, 0.6704526301346957]
+Sil scores:  [0.43331403, 0.420653, 0.42742828]
+HTFD:  []
+Train Cluster Counts:  [5217 2706]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	2	0.626	0.678	0.660	0.614	0.500	0.427	0.072	0.082
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.005	0.006	0.010	0.003	0.000	0.005	0.006
+Train Loss	Test Loss
+713.987	0.648
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6886208783437621, 0.7101304588083122, 0.7005471819674958]
+Test AUC:  [0.8015572084708071, 0.8041682960950617, 0.7817587135361405]
+Test AUPRC:  [0.7304062113048118, 0.7542960183846119, 0.733785977601827]
+Sil scores:  [0.30660987, 0.30150485, 0.34868872]
+HTFD:  []
+Train Cluster Counts:  [1975 3237 1538]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	3	0.700	0.796	0.739	0.519	0.500	0.319	0.110	0.096
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.009	0.010	0.011	0.029	0.000	0.021	0.004
+Train Loss	Test Loss
+357.818	0.328
+
+k = 4
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6329234479136855, 0.6257924777130077, 0.6379697244203606]
+Test AUC:  [0.668191638934035, 0.6697860448151864, 0.6857682209348833]
+Test AUPRC:  [0.6406489943416469, 0.6605860430882777, 0.667242371450476]
+Sil scores:  [0.35514963, 0.3495877, 0.30489212]
+HTFD:  []
+Train Cluster Counts:  [3398 1377 3148]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	3	0.632	0.675	0.656	0.618	0.500	0.337	0.073	0.082
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.005	0.008	0.011	0.002	0.000	0.022	0.008
+Train Loss	Test Loss
+1187.192	0.648
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6935160047704662, 0.7392972397692941, 0.6998994618671953]
+Test AUC:  [0.7983850162061598, 0.8268643897117063, 0.7822860496213717]
+Test AUPRC:  [0.7325350208202646, 0.7712388824696679, 0.7328892559742818]
+Sil scores:  [0.3354885, 0.25109547, 0.29095608]
+HTFD:  []
+Train Cluster Counts:  [ 557 1369 1998 2826]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	4	0.711	0.803	0.746	0.530	0.500	0.293	0.151	0.105
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.020	0.018	0.018	0.033	0.000	0.034	0.006
+Train Loss	Test Loss
+704.424	0.326
+
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6396884471250528, 0.6226840550434736, 0.635273506974334]
+Test AUC:  [0.6809910546139359, 0.6755603676709057, 0.6791244661772485]
+Test AUPRC:  [0.6680228449658862, 0.6490326889033304, 0.6693188647795911]
+Sil scores:  [0.3320178, 0.29161838, 0.3620963]
+HTFD:  []
+Train Cluster Counts:  [1936 1030 2396 2561]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	4	0.633	0.679	0.662	0.626	0.500	0.329	0.068	0.063
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.007	0.002	0.009	0.009	0.000	0.029	0.006
+Train Loss	Test Loss
+1616.382	0.648
+
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8248658726484683, 0.8187673823983135, 0.7629043520417946]
+Test AUC:  [0.8845508139139286, 0.8630948855268655, 0.8169451547221631]
+Test AUPRC:  [0.833231533530993, 0.8232463975228841, 0.7544600403966237]
+Sil scores:  [0.29351923, 0.24329992]
+HTFD:  []
+Train Cluster Counts:  [10448  8662  3574]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	3	0.802	0.855	0.804	0.665	0.500	0.268	0.044	0.044
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.028	0.028	0.035	0.039	0.000	0.025	0.035
+Train Loss	Test Loss
+874.353	0.159
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.8157663213701953, 0.813300336678463, 0.8237504727546245]
+Test AUC:  [0.8621028790450023, 0.8790672467605349, 0.8882241873239103]
+Test AUPRC:  [0.8180694994628273, 0.8210903585753537, 0.8341182032007378]
+Sil scores:  [0.33757588, 0.3171008, 0.26121032]
+HTFD:  []
+Train Cluster Counts:  [5493 1004 6283 9904]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	4	0.818	0.876	0.824	0.682	0.500	0.305	0.125	0.066
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.004	0.011	0.007	0.004	0.000	0.032	0.068
+Train Loss	Test Loss
+1278.314	0.153
+
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6659210671222642, 0.687906312441818, 0.6853133225420212]
+Test AUC:  [0.858719900148089, 0.8645844375912991, 0.8503406188811768]
+Test AUPRC:  [0.7381262134231037, 0.7375458898199452, 0.7246179207551662]
+Sil scores:  [0.36297238, 0.44129077]
+HTFD:  []
+Train Cluster Counts:  [28777 22810]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	2	0.680	0.858	0.733	0.464	0.500	0.402	0.038	0.023
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.010	0.006	0.006	0.012	0.000	0.039	0.025
+Train Loss	Test Loss
+1046.157	0.218
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6686082203108108, 0.6912010163775936, 0.6978225113390042]
+Test AUC:  [0.8659147312396626, 0.8345774142402672, 0.8658802195549007]
+Test AUPRC:  [0.7322214666451259, 0.7055651113590774, 0.735744215101461]
+Sil scores:  [0.34876153, 0.45408005, 0.34084436]
+HTFD:  []
+Train Cluster Counts:  [ 9668 17262 24657]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	3	0.686	0.855	0.725	0.462	0.500	0.381	0.060	0.037
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.013	0.015	0.013	0.012	0.000	0.052	0.037
+Train Loss	Test Loss
+2000.503	0.231
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 5.0
+attention False
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.6791249551227928, 0.6920693418385844, 0.6905470981578284]
+Test AUC:  [0.8406576254458085, 0.8359059484759912, 0.7891166355285395]
+Test AUPRC:  [0.7224922831272669, 0.7265137123469958, 0.7095569590810125]
+Sil scores:  [0.3660322, 0.32349446, 0.39516312]
+HTFD:  []
+Train Cluster Counts:  [25121  1413 10173 14880]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	4	0.687	0.822	0.720	0.470	0.500	0.362	0.088	0.068
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.006	0.023	0.007	0.007	0.000	0.029	0.008
+Train Loss	Test Loss
+2673.055	0.222
+
+====
+====
+
+DeepCAC
+CIC
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	2	0.705	0.797	0.740	0.516	0.500	0.340	0.104	0.126
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.014	0.010	0.015	0.027	0.000	0.027	0.017
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	3	0.703	0.815	0.753	0.516	0.500	0.303	0.118	0.113
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.010	0.019	0.021	0.025	0.000	0.017	0.001
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	4	0.612	0.759	0.687	0.314	0.500	0.311	0.118	0.074
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.107	0.024	0.026	0.222	0.000	0.042	0.076
+DeepCAC
+Sepsis
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	2	0.755	0.839	0.760	0.589	0.500	0.297	0.042	0.032
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.051	0.049	0.068	0.081	0.000	0.000	0.039
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	3	0.584	0.715	0.661	0.207	0.500	0.252	0.008	-0.005
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.145	0.128	0.115	0.293	0.000	0.045	0.009
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	4	0.482	0.620	0.535	0.087	0.500	0.369	0.011	-0.002
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.001	0.017	0.014	0.068	0.000	0.070	0.006
+DeepCAC
+Kidney
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	2	0.623	0.673	0.657	0.609	0.500	0.597	0.058	0.071
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.002	0.001	0.003	0.007	0.000	0.277	0.043
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	3	0.630	0.678	0.661	0.613	0.500	0.359	0.066	0.076
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.006	0.005	0.004	0.006	0.000	0.014	0.018
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	4	0.634	0.679	0.665	0.622	0.500	0.328	0.065	0.065
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.005	0.007	0.007	0.013	0.000	0.030	0.004
+DeepCAC
+Respiratory
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	2	0.509	0.693	0.584	0.221	0.500	0.000	0.004	0.017
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.004	0.023	0.013	0.035	0.000	nan	0.003
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	3	0.488	0.644	0.559	0.080	0.500	0.338	0.003	0.002
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.010	0.046	0.028	0.113	0.000	0.000	0.004
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	4	0.486	0.570	0.538	0.109	0.500	0.386	0.002	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.008	0.038	0.022	0.154	0.000	0.068	0.002
+DeepCAC
+Diabetes
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 10.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	2	0.475	0.576	0.563	0.327	0.500	0.425	0.002	-0.004
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.031	0.003	0.003	0.030	0.000	0.186	0.001
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 10.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	3	0.451	0.570	0.558	0.304	0.500	0.294	0.003	-0.003
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.031	0.005	0.003	0.022	0.000	0.032	0.002
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 10.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	4	0.467	0.571	0.560	0.322	0.500	0.240	0.002	-0.003
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.019	0.009	0.006	0.012	0.000	0.006	0.002
+DeepCAC
+CIC_LOS
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	2	0.453	0.664	0.483	0.464	0.351	0.275	0.098	0.118
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.007	0.008	0.009	0.005	0.005	0.011	0.013
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	3	0.454	0.669	0.490	0.470	0.373	0.332	0.097	0.091
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.010	0.004	0.006	0.004	0.019	0.030	0.006
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	4	0.454	0.661	0.486	0.466	0.362	0.330	0.099	0.085
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.006	0.003	0.004	0.007	0.003	0.003	0.007
+DeepCAC
+Heart
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	2	0.800	0.876	0.880	0.783	0.500	0.421	0.673	0.771
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.020	0.029	0.024	0.025	0.000	0.024	0.040
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	3	0.782	0.856	0.860	0.766	0.500	0.402	0.544	0.585
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.023	0.046	0.046	0.022	0.000	0.061	0.126
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	4	0.811	0.896	0.903	0.807	0.500	0.388	0.383	0.386
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.059	0.046	0.040	0.061	0.000	0.058	0.072
+DeepCAC
+Wid_Mortality
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	2	0.691	0.854	0.731	0.470	0.500	0.522	0.037	0.001
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.005	0.008	0.008	0.007	0.000	0.276	0.026
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	3	0.689	0.850	0.732	0.477	0.500	0.317	0.071	0.059
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.005	0.006	0.001	0.002	0.000	0.000	0.026
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	4	0.630	0.830	0.691	0.419	0.500	0.402	0.005	0.010
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.035	0.011	0.018	0.031	0.000	0.000	0.002
+
+====================================
+====================================
+
+DeepCAC
+CIC
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	2	0.713	0.801	0.741	0.527	0.500	0.356	0.096	0.123
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.011	0.007	0.010	0.020	0.000	0.030	0.005
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	3	0.705	0.806	0.750	0.524	0.500	0.345	0.108	0.091
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.005	0.029	0.014	0.017	0.000	0.033	0.014
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic	4	0.604	0.799	0.726	0.326	0.500	0.287	0.084	0.058
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.101	0.016	0.013	0.231	0.000	0.048	0.020
+DeepCAC
+Sepsis
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	2	0.824	0.894	0.835	0.681	0.500	0.291	0.077	0.067
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.007	0.019	0.015	0.005	0.000	0.026	0.016
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	3	0.588	0.771	0.670	0.278	0.500	0.238	0.009	0.010
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.094	0.041	0.042	0.216	0.000	0.073	0.011
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	sepsis	4	0.519	0.646	0.596	0.125	0.500	0.284	0.015	-0.001
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.054	0.096	0.063	0.177	0.000	0.156	0.009
+DeepCAC
+Kidney
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	2	0.622	0.674	0.657	0.610	0.500	0.358	0.046	0.060
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.007	0.007	0.008	0.006	0.000	0.013	0.006
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	3	0.621	0.672	0.658	0.598	0.500	0.297	0.035	0.032
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.009	0.003	0.004	0.025	0.000	0.022	0.017
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	aki	4	0.623	0.668	0.652	0.616	0.500	0.340	0.041	0.035
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.014	0.012	0.009	0.018	0.000	0.034	0.004
+DeepCAC
+Respiratory
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	2	0.492	0.708	0.590	0.166	0.500	0.706	0.000	-0.006
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.013	0.028	0.017	0.124	0.000	0.070	0.000
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	3	0.482	0.636	0.562	0.024	0.500	0.508	0.001	-0.004
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.001	0.015	0.018	0.034	0.000	0.184	0.000
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	ards	4	0.481	0.560	0.512	0.000	0.500	0.327	0.005	-0.002
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.000	0.039	0.009	0.000	0.000	0.014	0.001
+DeepCAC
+Diabetes
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 10.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	2	0.473	0.575	0.563	0.324	0.500	0.497	0.002	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.007	0.008	0.006	0.006	0.000	0.204	0.002
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 10.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	3	0.467	0.574	0.563	0.323	0.500	0.345	0.001	-0.002
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.007	0.006	0.005	0.002	0.000	0.084	0.001
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 10.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	diabetes	4	0.487	0.576	0.563	0.337	0.500	0.295	0.004	0.001
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.010	0.002	0.001	0.009	0.000	0.071	0.001
+DeepCAC
+CIC_LOS
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+DeepCAC
+Heart
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	2	0.783	0.875	0.882	0.761	0.500	0.365	0.278	0.351
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.052	0.040	0.032	0.053	0.000	0.039	0.106
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	3	0.795	0.854	0.856	0.774	0.500	0.333	0.262	0.271
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.054	0.055	0.055	0.063	0.000	0.016	0.106
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	heart	4	0.800	0.871	0.878	0.784	0.500	0.346	0.261	0.264
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.037	0.019	0.022	0.040	0.000	0.019	0.065
+DeepCAC
+Wid_Mortality
+k = 2
+DeepCAC
+CIC_LOS
+k = 2
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	2	0.470	0.661	0.482	0.476	0.356	0.266	0.064	0.072
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.002	0.006	0.007	0.003	0.009	0.033	0.002
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	3	0.438	0.663	0.487	0.458	0.387	0.260	0.066	0.065
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.039	0.003	0.001	0.027	0.027	0.006	0.007
+k = 4
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	cic_los	4	0.468	0.668	0.493	0.482	0.347	0.218	0.068	0.057
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.008	0.009	0.010	0.006	0.012	0.041	0.006
+n_clusters 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	2	0.692	0.857	0.735	0.475	0.500	0.511	0.030	-0.001
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.007	0.009	0.016	0.024	0.000	0.317	0.021
+k = 3
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+n_clusters 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	4	0.659	0.839	0.710	0.437	0.500	0.301	0.054	0.049
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.020	0.017	0.010	0.005	0.000	0.085	0.009
+n_clusters 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+eta 1.0
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	wid_mortality	3	0.675	0.846	0.718	0.456	0.500	0.305	0.049	0.045
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	SIL	NMI	ARI
+	0.023	0.004	0.008	0.016	0.000	0.092	0.016
