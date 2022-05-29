@@ -73,7 +73,6 @@ def pretrain_ae(model, train_loader, args):
         total_loss = 0.
         for batch_idx, (x, _, _) in enumerate(train_loader):
             x = x.to(args.device)
-
             optimizer.zero_grad()
             x_bar, _ = model(x)
             loss = F.mse_loss(x_bar, x)
@@ -560,16 +559,16 @@ class ExpertNet_GRU(nn.Module):
             
 
     def pretrain(self, train_loader, path=''):
-        print(path)
-        return
-        # if not is_non_zero_file(path):
-        #     path = ''
-        # if path == '':
-        #     pretrain_ae(self.ae, train_loader, self.args)
-        # else:
-        #     # load pretrain weights
-        #     self.ae.load_state_dict(torch.load(self.pretrain_path))
-        #     print('load pretrained ae from', path)
+        # print(path)
+        # return
+        if not is_non_zero_file(path):
+            path = ''
+        if path == '':
+            pretrain_ae(self.ae, train_loader, self.args)
+        else:
+            # load pretrain weights
+            self.ae.load_state_dict(torch.load(self.pretrain_path))
+            print('load pretrained ae from', path)
 
 
     def predict(self, X_test):

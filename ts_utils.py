@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
 from utils import DATA_DIR, BASE_DIR
 from sklearn.model_selection import train_test_split 
 import math
@@ -32,9 +33,19 @@ def get_ts_datasets(args, r_state=0):
     lens = np.hstack([train_x_len, test_x_len])
 
     train_x, test_x, train_y, test_y, train_x_len, test_x_len = train_test_split(X, y, lens, random_state=r_state)
+
+    scale = StandardScaler()
+    _ = scale.fit(np.nan_to_num(np.concatenate(train_x)))
+
+    for idx in range(len(train_x)):
+        train_x[idx] = torch.Tensor(scale.transform(np.nan_to_num(train_x[idx])))
+
+    for idx in range(len(test_x)):
+        test_x[idx] = torch.Tensor(scale.transform(np.nan_to_num(test_x[idx])))
+
     train_x, dev_x, train_y, dev_y, train_x_len, dev_x_len = train_test_split(train_x, train_y, train_x_len, random_state=r_state)
 
-    return (train_x, train_x_len, train_y), (dev_x, dev_x_len, dev_y), (test_x, test_x_len, test_y)
+    return (train_x, train_x_len, train_y), (dev_x, dev_x_len, dev_y), (test_x, test_x_len, test_y), scale
 
 
 def batch_iter(x, y, lens, batch_size, shuffle=False):
@@ -60,7 +71,7 @@ def batch_iter(x, y, lens, batch_size, shuffle=False):
     
         batch_x = [e[0] for e in examples]
         batch_y = [e[1] for e in examples]
-#         batch_name = [e[2] for e in examples]
+        # batch_name = [e[2] for e in examples]
         batch_lens = [e[2] for e in examples]
        
 

@@ -73,10 +73,10 @@ parser.add_argument('--n_classes', default= 2, type=int)
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--plot', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
-# parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
 args = parameters(parser)
@@ -155,7 +155,7 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
 
-    train, val, test = get_ts_datasets(args, 0)
+    train, val, test, scale = get_ts_datasets(args, 0)
     X_train, X_train_len, y_train = train
     X_val, X_val_len, y_val = val
     X_test, X_test_len, y_test = test
@@ -182,7 +182,7 @@ for r in range(len(iter_array)):
         # model.pretrain(train_loader, args.pretrain_path)
         counter_batch += len(x_batch)
         optimizer.zero_grad()
-        x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)
+        x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)        
         x_batch = torch.nan_to_num(x_batch)
 
         _, _, hidden = model.ae(torch.Tensor(x_batch).to(args.device))
@@ -191,7 +191,7 @@ for r in range(len(iter_array)):
         criterion = nn.CrossEntropyLoss(reduction='none')
 
     model.cluster_layer.data /= batch_idx
-
+    # model.pretrain(X_train, args.pretrain_path)
 
     print("Starting Training")
     
@@ -212,10 +212,8 @@ for r in range(len(iter_array)):
         epoch_class_loss = 0
         epoch_km_loss = 0
 
-
         for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
             # To implement
-            # model.pretrain(train_loader, args.pretrain_path)
             counter_batch += len(x_batch)
             optimizer.zero_grad()
             x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)
@@ -292,7 +290,7 @@ for r in range(len(iter_array)):
             cluster_id = torch.argmax(q_batch, 1)
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
 
-            km_loss             = 0
+            km_loss = 0
             q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
             p_batch = target_distribution(q_batch)
 
@@ -377,7 +375,7 @@ for r in range(len(iter_array)):
                         preds[cluster_id,:] = cluster_preds_val
 
                 else:
-                    for j in range(model.n_clusters):
+                    # for j in range(model.n_clusters):
                         X_cluster = z_batch
                         cluster_preds = model.classifiers[j][0](X_cluster)
                         for c in range(args.n_classes):
@@ -425,7 +423,7 @@ for r in range(len(iter_array)):
 
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_auprc], model)
+        es([val_f1, -val_loss], model)
         if es.early_stop == True:
             break
 
@@ -525,13 +523,15 @@ for r in range(len(iter_array)):
 
             train_loss /= len(z_batch)
         
-        print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
-                         f'train_loss: {train_loss:.3f} ')
-        print(print_msg)
-        print("\n")
+        # print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
+        #                  f'train_loss: {train_loss:.3f} ')
+        # print(print_msg)
+        # print("\n")
 
+        ###########################################
+        ## Local training validation performance ##
+        ###########################################
 
-        ## Local training validation performance
         y_true = []
         y_pred = []
         z_val = []
@@ -604,10 +604,11 @@ for r in range(len(iter_array)):
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_auprc], model)
+        # es([val_f1, val_auprc], model)
+        es([val_f1, -val_loss], model)
         if es.early_stop == True:
             # train_losses.append(train_loss.item())
-            sil_scores.append(silhouette_new(z_val.data.cpu().numpy(), cluster_ids_val.data.cpu().numpy(), metric='euclidean'))
+            sil_scores.append(silhouette_new(z_val, cluster_ids_val, metric='euclidean'))
             # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
             # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
