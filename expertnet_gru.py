@@ -176,10 +176,10 @@ for r in range(len(iter_array)):
 
     print("Initializing Network Cluster Parameters")
     counter_batch = 0
+    model.pretrain(train, args.pretrain_path)
 
     for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
         # To implement
-        # model.pretrain(train_loader, args.pretrain_path)
         counter_batch += len(x_batch)
         optimizer.zero_grad()
         x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)        
@@ -194,6 +194,7 @@ for r in range(len(iter_array)):
     # model.pretrain(X_train, args.pretrain_path)
 
     print("Starting Training")
+    es = EarlyStoppingEN_TS(dataset=suffix)
     
     for epoch in range(args.n_epochs):
         counter_batch = 0
@@ -204,7 +205,6 @@ for r in range(len(iter_array)):
         counter_batch = 0
         model.train()
         N_EPOCHS = args.n_epochs
-        es = EarlyStoppingEN_TS(dataset=suffix)
         train_losses, e_train_losses = [], []
 
         epoch_loss = 0
@@ -441,29 +441,29 @@ for r in range(len(iter_array)):
     model = es.load_checkpoint(model)
     es = EarlyStoppingEN_TS(dataset=suffix)
 
-    for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
-        # To implement
-        # model.pretrain(train_loader, args.pretrain_path)
-        counter_batch += len(x_batch)
-        optimizer.zero_grad()
-        x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)
-        
-        if x_batch.shape[0] < args.n_clusters:
-            continue
+    for epoch in range(args.n_epochs):
+        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
+            # To implement
+            counter_batch += len(x_batch)
+            optimizer.zero_grad()
+            x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)
+            
+            if x_batch.shape[0] < args.n_clusters:
+                continue
 
-        y_batch = torch.tensor(y_batch, dtype=torch.float32).to(device)
-        batch_lens = torch.tensor(batch_lens, dtype=torch.float32).to(device).int()
-        
-        for i in range(len(batch_lens)):
-            batch_lens[i] = min(batch_lens[i], args.end_t)
+            y_batch = torch.tensor(y_batch, dtype=torch.float32).to(device)
+            batch_lens = torch.tensor(batch_lens, dtype=torch.float32).to(device).int()
+            
+            for i in range(len(batch_lens)):
+                batch_lens[i] = min(batch_lens[i], args.end_t)
 
-        masks = length_to_mask(batch_lens).unsqueeze(-1).float()
-        x_batch = torch.nan_to_num(x_batch)
-        z_batch, _, q_batch = model(x_batch)
-        cluster_id_batch = torch.argmax(q_batch, axis=1)
+            masks = length_to_mask(batch_lens).unsqueeze(-1).float()
+            x_batch = torch.nan_to_num(x_batch)
+            z_batch, _, q_batch = model(x_batch)
+            cluster_id_batch = torch.argmax(q_batch, axis=1)
 
-        # Post clustering training
-        for e in range(args.n_epochs):
+            # Post clustering training
+            # for e in range(args.n_epochs):
             epoch_loss = 0
             epoch_acc = 0
             epoch_f1 = 0
@@ -522,11 +522,11 @@ for r in range(len(iter_array)):
                 train_loss += torch.sum(q_batch[cluster_id,j]*criterion(cluster_preds, y_cluster))
 
             train_loss /= len(z_batch)
-        
-        # print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
-        #                  f'train_loss: {train_loss:.3f} ')
-        # print(print_msg)
-        # print("\n")
+            
+            # print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
+            #                  f'train_loss: {train_loss:.3f} ')
+            # print(print_msg)
+            # print("\n")
 
         ###########################################
         ## Local training validation performance ##

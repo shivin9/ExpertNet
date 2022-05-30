@@ -1,3 +1,4 @@
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.parameter import Parameter
@@ -7,6 +8,7 @@ from torch.nn import Linear
 import torch
 from utils import is_non_zero_file
 from collections import OrderedDict
+from ts_utils import batch_iter, pad_sents
 
 class AE(nn.Module):
     def __init__(self, layers):
@@ -63,19 +65,21 @@ def source_distribution(z, cluster_layer, alpha=1):
     return q
 
 
-def pretrain_ae(model, train_loader, args):
-    '''
-    pretrain autoencoder
-    '''
+def pretrain_ae(model, train, args):
     print(model)
     optimizer = Adam(model.parameters(), lr=args.lr)
-    for epoch in range(200):
+    X_train, y_train, X_train_len = train
+    pad_token = np.zeros(args.input_dim)
+
+    for epoch in range(100):
         total_loss = 0.
-        for batch_idx, (x, _, _) in enumerate(train_loader):
-            x = x.to(args.device)
+        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
+            x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(args.device)
+            x_batch = torch.nan_to_num(x_batch)
+            x_batch = x_batch.to(args.device)
             optimizer.zero_grad()
-            x_bar, _ = model(x)
-            loss = F.mse_loss(x_bar, x)
+            x_bar, _, _ = model.ae(x_batch)
+            loss = F.mse_loss(x_bar, x_batch)
             total_loss += loss.item()
 
             loss.backward()
@@ -83,7 +87,7 @@ def pretrain_ae(model, train_loader, args):
 
         print("Pretraining epoch {} loss={:.4f}".format(epoch,
                                             total_loss / (batch_idx + 1)))
-        torch.save(model.state_dict(), args.pretrain_path)
+        torch.save(model.ae.state_dict(), args.pretrain_path)
     print("model saved to {}.".format(args.pretrain_path))
 
 
@@ -456,8 +460,12 @@ class GRUModel(nn.Module):
         self.hidden_dim = hidden_dim
 
         # GRU layers
-        self.gru = nn.GRU(
+        self.gru_enc = nn.GRU(
             input_dim, hidden_dim, layer_dim, batch_first=True, dropout=dropout_prob
+        )
+
+        self.gru_dec = nn.GRU(
+            hidden_dim, input_dim, layer_dim, batch_first=True, dropout=dropout_prob
         )
 
         # Fully connected layer
@@ -468,54 +476,16 @@ class GRUModel(nn.Module):
         h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
 
         # Forward propagation by passing in the input and hidden state into the model
-        gru_out, _ = self.gru(x, h0.detach())
+        gru_out, h1 = self.gru_enc(x, h0.detach())
+        x_bar, h2 = self.gru_dec(gru_out)
         # Reshaping the outputs in the shape of (batch_size, seq_length, hidden_size)
         # so that it can fit into the fully connected layer
-        out = gru_out[:, -1, :]
+        hidden = gru_out[:, -1, :]
 
         # Convert the final state to our desired output shape (batch_size, output_dim)
-        out = self.fc(out)
+        out = self.fc(hidden)
 
-        return _, out, gru_out[:, -1, :].squeeze()
-
-
-class EncoderRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super(EncoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-
-        self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size)
-
-    def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output = embedded
-        output, hidden = self.gru(output, hidden)
-        return output, hidden
-
-    def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size, device=device)
-
-
-class DecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size):
-        super(DecoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-
-        self.embedding = nn.Embedding(output_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size)
-        self.out = nn.Linear(hidden_size, output_size)
-        self.softmax = nn.LogSoftmax(dim=1)
-
-    def forward(self, input, hidden):
-        output = self.embedding(input).view(1, 1, -1)
-        output = F.relu(output)
-        output, hidden = self.gru(output, hidden)
-        output = self.softmax(self.out(output[0]))
-        return output, hidden
-
-    def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size, device=device)
+        return x_bar, out, gru_out[:, -1, :].squeeze()
 
 
 class ExpertNet_GRU(nn.Module):
@@ -533,6 +503,7 @@ class ExpertNet_GRU(nn.Module):
 
         # append input_dim at the end
         self.ae = GRUModel(self.input_dim, self.n_z)
+        # self.ae = RecurrentAutoencoder(args.end_t, self.input_dim, self.device, self.n_z)
 
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
@@ -558,13 +529,13 @@ class ExpertNet_GRU(nn.Module):
             self.classifiers.append([classifier, optimizer])
             
 
-    def pretrain(self, train_loader, path=''):
+    def pretrain(self, train, path=''):
         # print(path)
         # return
         if not is_non_zero_file(path):
             path = ''
         if path == '':
-            pretrain_ae(self.ae, train_loader, self.args)
+            pretrain_ae(self, train, self.args)
         else:
             # load pretrain weights
             self.ae.load_state_dict(torch.load(self.pretrain_path))
@@ -581,7 +552,7 @@ class ExpertNet_GRU(nn.Module):
 
 
     def forward(self, x, output="default"):
-        _, _ , z = self.ae(x)
+        x_bar, _ , z = self.ae(x)
         # Cluster
         q   = source_distribution(z, self.cluster_layer, alpha=self.alpha)
 
@@ -595,4 +566,4 @@ class ExpertNet_GRU(nn.Module):
             return preds
         
         else:
-            return z, _, q
+            return z, x_bar, q
