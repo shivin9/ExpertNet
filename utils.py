@@ -542,44 +542,6 @@ def multi_class_auprc(y_true, y_scores, n_classes):
     return np.avg(scores)
 
 
-def plot_data(X, y, cluster_ids, args, e):
-    reducer = umap.UMAP(random_state=42)
-    X2 = reducer.fit_transform(X.cpu().detach().numpy())
-    c_clusters = [color[3+int(cluster_ids[i])] for i in range(len(cluster_ids))]
-    c_labels = [color[int(y[i])] for i in range(len(cluster_ids))]
-
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.suptitle('Clusters vs Labels')
-    ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
-    ax2.scatter(X2[:,0], X2[:,1], color=c_labels)
-    fig.savefig(BASE_DIR + "/figures/" + args.dataset + "_e" + str(e) + ".png")
-    # plt.show()
-
-
-def plot(model, X_train, y_train, args, X_test=None, y_test=None, labels=None, epoch=0):
-    # idx = torch.Tensor(np.random.randint(0,len(X_train), int(0.1*len(X_train)))).type(torch.LongTensor).to(device)
-    idx = range(int(0.2*len(X_train)))
-    qs, latents_X = model(X_train[idx], output="latent")
-    q_train = qs[0]
-    y_train = y_train[idx]
-
-    if labels is not None:
-        cluster_id_train = labels[idx]
-    else:
-        cluster_id_train = torch.argmax(q_train, axis=1)
-
-    print("Training data")
-    plot_data(latents_X, y_train, cluster_id_train, args, epoch)
-
-    if X_test is not None:
-        qs, latents_test = model(X_test, output="latent")
-        q_test = qs[0]
-        cluster_id_test = torch.argmax(q_test, axis=1)
-
-        print("Test data")
-        plot_data(latents_test, y_test, cluster_id_test, args, epoch)
-
-
 def drop_constant_column(df):
     """
     Drops constant value columns of pandas dataframe.

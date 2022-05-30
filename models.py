@@ -452,7 +452,7 @@ class DMNN(nn.Module):
 
 
 class GRUModel(nn.Module):
-    def __init__(self, input_dim, hidden_dim, layer_dim=1, output_dim=1, dropout_prob=0):
+    def __init__(self, input_dim, hidden_dim, layer_dim=2, output_dim=1, dropout_prob=0):
         super(GRUModel, self).__init__()
 
         # Defining the number of layers and the nodes in each layer

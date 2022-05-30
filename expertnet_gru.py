@@ -178,7 +178,7 @@ for r in range(len(iter_array)):
     counter_batch = 0
     model.pretrain(train, args.pretrain_path)
 
-    for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
+    for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size)):
         # To implement
         counter_batch += len(x_batch)
         optimizer.zero_grad()
@@ -195,13 +195,15 @@ for r in range(len(iter_array)):
 
     print("Starting Training")
     es = EarlyStoppingEN_TS(dataset=suffix)
-    
+    p_train = torch.zeros(len(X_train), args.n_clusters)
+
     for epoch in range(args.n_epochs):
         counter_batch = 0
         batch_loss = []
         model_batch_loss = []
-
         epoch_loss = []
+        q_train = []
+
         counter_batch = 0
         model.train()
         N_EPOCHS = args.n_epochs
@@ -212,7 +214,7 @@ for r in range(len(iter_array)):
         epoch_class_loss = 0
         epoch_km_loss = 0
 
-        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
+        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size)):
             # To implement
             counter_batch += len(x_batch)
             optimizer.zero_grad()
@@ -238,18 +240,18 @@ for r in range(len(iter_array)):
             ####################################################################################
             ####################################################################################
 
-            
             model.ae.train() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].train()
 
             total_loss = 0
             x_batch = x_batch.to(device)
+            X_latents, x_bar, q_batch = model(x_batch)
 
-            X_latents, _, q_batch = model(x_batch)
-            # reconstr_loss = F.mse_loss(x_bar, x_batch)
-            reconstr_loss = 0 # to implement
+            q_train.append(q_batch.detach().numpy())
 
+            reconstr_loss = F.mse_loss(x_bar, x_batch)
+            # reconstr_loss = 0 # to implement
             classifier_labels = np.zeros(len(x_batch))
             sub_epochs = min(10, 1 + int(epoch/5))
 
@@ -292,7 +294,6 @@ for r in range(len(iter_array)):
 
             km_loss = 0
             q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
-            p_batch = target_distribution(q_batch)
 
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
             P = P/P.sum()
@@ -304,7 +305,7 @@ for r in range(len(iter_array)):
                 cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
 
             # km_loss = F.kl_div(q_batch.log(), p_train[idx_batch], reduction='batchmean')
-            km_loss = F.kl_div(q_batch.log(), p_batch, reduction='batchmean')
+            km_loss = F.kl_div(q_batch.log(), p_train[idx_batch], reduction='batchmean')
 
             loss = reconstr_loss
             if args.beta != 0:
@@ -326,6 +327,10 @@ for r in range(len(iter_array)):
         Cluster Balance Loss: {:.3f}'.format(epoch, batch_idx, epoch_km_loss, epoch_loss, epoch_class_loss, epoch_balance_loss))
         train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
 
+        if epoch % args.log_interval == 0:
+            q_train = torch.Tensor(np.concatenate(q_train, axis=0))
+            p_train = target_distribution(q_train)
+
         ######################################################
         ######################################################
         ################### Validation #######################
@@ -335,6 +340,7 @@ for r in range(len(iter_array)):
         y_true = []
         y_pred = []
         z_val = []
+        q_val = []
         cluster_ids_val = np.array([])
         with torch.no_grad():
             model.eval()
@@ -342,7 +348,7 @@ for r in range(len(iter_array)):
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
 
-            for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_val, y_val, X_val_len, args.batch_size, shuffle=True)):
+            for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_val, y_val, X_val_len, args.batch_size)):
                 optimizer.zero_grad()
                 x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)
                 
@@ -364,6 +370,7 @@ for r in range(len(iter_array)):
                 preds = torch.zeros((len(z_batch), args.n_classes))
 
                 z_val.append(z_batch.detach().numpy())
+                q_val.append(q_batch.detach().numpy())
                 cluster_ids_val = np.hstack([cluster_ids_val, cluster_ids.detach().numpy()])
 
                 # Weighted predictions
@@ -387,7 +394,10 @@ for r in range(len(iter_array)):
         y_true = np.array(y_true)
         y_pred = np.array(y_pred)
         z_val = np.concatenate(z_val, axis=0)
+        q_val = np.concatenate(q_val, axis=0)
 
+        if args.plot == 'True':
+            plot(z_val, q_batch, y_train, args, labels=cluster_ids_val, epoch=epoch)
 
         # Classification Matrics
         val_metrics = performance_metrics(y_true, y_pred, args.n_classes)
@@ -423,7 +433,7 @@ for r in range(len(iter_array)):
 
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, -val_loss], model)
+        es([val_f1, val_auprc], model)
         if es.early_stop == True:
             break
 
@@ -442,7 +452,7 @@ for r in range(len(iter_array)):
     es = EarlyStoppingEN_TS(dataset=suffix)
 
     for epoch in range(args.n_epochs):
-        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
+        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size)):
             # To implement
             counter_batch += len(x_batch)
             optimizer.zero_grad()
@@ -537,7 +547,7 @@ for r in range(len(iter_array)):
         z_val = []
         cluster_ids_val = np.array([])
 
-        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_val, y_val, X_val_len, args.batch_size, shuffle=True)):
+        for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_val, y_val, X_val_len, args.batch_size)):
             optimizer.zero_grad()
             x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)
             
@@ -633,7 +643,7 @@ for r in range(len(iter_array)):
     cluster_ids_test = np.array([])
 
 
-    for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_test, y_test, X_test_len, args.batch_size, shuffle=True)):
+    for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_test, y_test, X_test_len, args.batch_size)):
         optimizer.zero_grad()
         x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(device)
         
