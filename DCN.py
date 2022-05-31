@@ -71,6 +71,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--plot', default= 'False')
+parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
@@ -155,12 +156,15 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    ae_layers = [64, 32, args.n_z, 32, 64]
-    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
 
-    # DeepCAC expts
-    ae_layers = [64, args.n_z, 64]
-    expert_layers = [args.n_z, 30, args.n_classes]
+    if args.expt == 'ExpertNet':
+        ae_layers = [64, 32, args.n_z, 32, 64]
+        expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+
+    else:
+        # DeepCAC expts
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, 30, args.n_classes]
 
     model = ExpertNet(
             ae_layers,

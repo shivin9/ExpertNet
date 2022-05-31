@@ -458,10 +458,10 @@ class parameters(object):
         self.device = parser.device
         self.verbose = parser.verbose
         self.plot = parser.plot
+        self.expt = parser.expt
         self.cluster_analysis = parser.cluster_analysis
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
-
 
 
 class AdMSoftmaxLoss(nn.Module):
@@ -856,6 +856,29 @@ for d in datasets:
     if k == 4:
         out += "\\midrule \n"
     print(out)
+
+In [22]: for d in datasets:
+    out = ""
+    for k in K:
+     if k == 2:
+         out = d
+     out += " & " + str(k) + " & "
+     itr = 0
+     for df_idx in range(len(df_list)):
+         itr += 1
+         df = df_list[df_idx]
+         if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
+             out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
+             out += " \\pm "
+             out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_STD.values[0])  + "$}"
+             if df_idx < len(df_list) - 1:
+                 out += " & "
+     out += "\\\\ \n"
+    #out += "\\\\ \n"
+    if k == 4:
+     out += "\\midrule \n"
+    print(out)
+    
 '''
 
 ## Ablation Parameter Ranges ##

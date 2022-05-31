@@ -71,6 +71,7 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--plot', default= 'False')
+parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
@@ -80,8 +81,8 @@ parser = parser.parse_args()
 args = parameters(parser)
 base_suffix = ""
 
-for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'eta', 'attention']:
-    print(key, args.__dict__[key])
+# for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'eta', 'attention']:
+#     print(key, args.__dict__[key])
 
 base_suffix += args.dataset + "_"
 base_suffix += str(args.n_clusters) + "_"
@@ -137,8 +138,6 @@ for r in range(len(iter_array)):
     val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
     test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
-    print(sum(y_train), len(y_train))
-
     if args.verbose == 'False':
         blockPrint()
 
@@ -157,9 +156,15 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    ae_layers = [64, 32, args.n_z, 32, 64]
-    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
-    # ae_layers = [64, 32, 64]
+
+    if args.expt == 'ExpertNet':
+        ae_layers = [64, 32, args.n_z, 32, 64]
+        expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+
+    else:
+        # DeepCAC expts
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, 30, args.n_classes]
 
     model = ExpertNet(
             ae_layers,
@@ -177,8 +182,6 @@ for r in range(len(iter_array)):
     original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
     criterion = nn.CrossEntropyLoss(reduction='none')
-
-    # plot_data(torch.Tensor(X_train).to(args.device), y_train, cluster_indices)
 
     for i in range(args.n_clusters):
         cluster_idx = np.where(cluster_indices == i)[0]
@@ -201,7 +204,7 @@ for r in range(len(iter_array)):
     print("Starting Training")
     model.train()
     N_EPOCHS = args.n_epochs
-    es = EarlyStoppingEN(dataset=suffix)
+    es = EarlyStoppingEN(dataset=suffix, patience=15)
     train_losses, e_train_losses = [], []
 
     for epoch in range(N_EPOCHS):
@@ -210,7 +213,10 @@ for r in range(len(iter_array)):
         delta = args.delta
         eta = args.eta
         if epoch % args.log_interval == 0:
-            # plot(model, torch.FloatTensor(X_val).to(args.device), y_val, labels=None)
+
+            if args.plot == 'True':
+                plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, labels=cluster_indices, epoch=epoch)
+
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
                 model.classifiers[j][0].eval()
@@ -291,7 +297,7 @@ for r in range(len(iter_array)):
 
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
-            es([val_f1, val_minpse], model)
+            es([val_f1, val_auprc], model)
             if es.early_stop == True:
                 break
 
@@ -560,7 +566,7 @@ for r in range(len(iter_array)):
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_minpse], model)
+        es([val_f1, val_auprc], model)
         if es.early_stop == True:
             # train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
@@ -622,8 +628,6 @@ for r in range(len(iter_array)):
         cluster_test_preds = model.classifiers[j][0](X_cluster)
         test_preds[cluster_id,:] = cluster_test_preds
         local_sum_loss += torch.sum(q_test[cluster_id,j]*criterion(cluster_test_preds, y_cluster))
-
-    test_res = print_metrics_binary(y_test, test_preds.detach().numpy())
 
     test_metrics = performance_metrics(y_test, test_preds.detach().numpy(), args.n_classes)
     test_f1  = test_metrics['f1_score']
@@ -733,26 +737,26 @@ for r in range(len(iter_array)):
     #     w_HTFD_scores.append(feature_diff/cntr)
 
 
-print("\n")
-print("Experiment ", iteration_name)
-print(iter_array)
-print("Test F1: ", e_f1_scores)
-print("Test AUC: ", e_auc_scores)
-print("Test AUPRC: ", e_auprc_scores)
-print("Test MINPSE: ", e_minpse_scores)
+# print("\n")
+# print("Experiment ", iteration_name)
+# print(iter_array)
+# print("Test F1: ", e_f1_scores)
+# print("Test AUC: ", e_auc_scores)
+# print("Test AUPRC: ", e_auprc_scores)
+# print("Test MINPSE: ", e_minpse_scores)
 
-print("Sil scores: ", sil_scores)
-print("HTFD: ", HTFD_scores)
-print("WDFD: ", wdfd_scores)
+# print("Sil scores: ", sil_scores)
+# print("HTFD: ", HTFD_scores)
+# print("WDFD: ", wdfd_scores)
 
-# print("Train Loss: ", train_losses)
-# print("E-Train Loss: ", e_train_losses)
+# # print("Train Loss: ", train_losses)
+# # print("E-Train Loss: ", e_train_losses)
 
-print("Test Loss: ", test_losses)
-print("E-Test Loss: ", e_test_losses)
-print("Local Test Loss: ", local_sum_test_losses)
+# print("Test Loss: ", test_losses)
+# print("E-Test Loss: ", e_test_losses)
+# print("Local Test Loss: ", local_sum_test_losses)
 
-print("Model Complexity: ", model_complexity)
+# print("Model Complexity: ", model_complexity)
 
 enablePrint()
 
@@ -765,7 +769,7 @@ print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
     (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_minpse_scores), np.std(e_acc_scores)))
 
 print('[Avg]\tSIL\tHTFD\tWDFD\tW-HTFD')
-print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
     np.avg(HTFD_scores), np.avg(wdfd_scores), np.avg(w_HTFD_scores)))
 
 print('[Std]\tSIL\tHTFD\tWDFD\tW-HTFD')

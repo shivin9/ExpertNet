@@ -73,6 +73,7 @@ parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--plot', default= 'False')
+parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--other', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
@@ -108,13 +109,14 @@ for r in range(args.n_runs):
     val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
     test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
-    # Architecture used in ExpertNet paper
-    # ae_layers = [64, 32, args.n_z, 32, 64]
-    # expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    if args.expt == 'ExpertNet':
+        ae_layers = [64, 32, args.n_z, 32, 64]
+        expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
 
-    # Architecture for CAC paper
-    ae_layers = [64, args.n_z, 64]
-    expert_layers = [args.n_z, 30, args.n_classes]
+    else:
+        # DeepCAC expts
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, 30, args.n_classes]
 
     model = DMNN(ae_layers, expert_layers, args=args).to(args.device)
     device = args.device

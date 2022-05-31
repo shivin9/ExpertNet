@@ -76,7 +76,6 @@ parser.add_argument('--plot', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
-# parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
 args = parameters(parser)
@@ -223,6 +222,7 @@ for r in range(len(iter_array)):
 
             # evaluate clustering performance
             cluster_indices, _ = vq(z_train.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+
             if args.plot == 'True':
                 plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, labels=cluster_indices, epoch=epoch)
 
@@ -483,9 +483,6 @@ for r in range(len(iter_array)):
         batch_size=1024, shuffle=False)
 
     B = []
-
-    # print(np.bincount(cluster_ids_train))
-    # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train, labels=cluster_ids_train)
 
     # Post clustering training
     for e in range(args.n_epochs):
