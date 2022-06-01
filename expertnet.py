@@ -204,7 +204,7 @@ for r in range(len(iter_array)):
     print("Starting Training")
     model.train()
     N_EPOCHS = args.n_epochs
-    es = EarlyStoppingEN(dataset=suffix, patience=15)
+    es = EarlyStoppingEN(dataset=suffix, patience=7)
     train_losses, e_train_losses = [], []
 
     for epoch in range(N_EPOCHS):
@@ -337,13 +337,16 @@ for r in range(len(iter_array)):
 
                 for k in range(args.n_clusters):
                     idx_cluster = np.where(classifier_labels == k)[0]
-                    X_cluster = X_latents[idx_cluster]
-                    y_cluster = y_batch[idx_cluster]
+                    # X_cluster = X_latents[idx_cluster]
+                    X_cluster = X_latents
+                    # y_cluster = y_batch[idx_cluster]
+                    y_cluster = y_batch
 
                     classifier_k, optimizer_k = model.classifiers[k]
+
                     # Do not backprop the error to encoder
                     y_pred_cluster = classifier_k(X_cluster.detach())
-                    cluster_loss = torch.mean(criterion(y_pred_cluster, y_cluster))
+                    cluster_loss = torch.mean(q_batch[:,k]*criterion(y_pred_cluster, y_cluster))
                     optimizer_k.zero_grad()
                     cluster_loss.backward(retain_graph=True)
                     optimizer_k.step()
@@ -352,12 +355,14 @@ for r in range(len(iter_array)):
             class_loss = torch.tensor(0.).to(args.device)
             for k in range(args.n_clusters):
                 idx_cluster = np.where(classifier_labels == k)[0]
-                X_cluster = X_latents[idx_cluster]
-                y_cluster = y_batch[idx_cluster]
+                # X_cluster = X_latents[idx_cluster]
+                # y_cluster = y_batch[idx_cluster]
+                X_cluster = X_latents
+                y_cluster = y_batch
 
                 classifier_k, optimizer_k = model.classifiers[k]
                 y_pred_cluster = classifier_k(X_cluster)
-                class_loss += torch.sum(q_batch[idx_cluster,k]*criterion(y_pred_cluster, y_cluster))
+                class_loss += torch.sum(q_batch[:,k]*criterion(y_pred_cluster, y_cluster))
 
             class_loss /= len(X_latents)
             cluster_id = torch.argmax(q_batch, 1)
@@ -487,14 +492,16 @@ for r in range(len(iter_array)):
 
             for k in range(args.n_clusters):
                 idx_cluster = np.where(classifier_labels == k)[0]
-                X_cluster = X_latents[idx_cluster]
-                y_cluster = y_batch[idx_cluster]
+                # X_cluster = X_latents[idx_cluster]
+                # y_cluster = y_batch[idx_cluster]
+                X_cluster = X_latents
+                y_cluster = y_batch
 
                 classifier_k, optimizer_k = model.classifiers[k]
 
                 # Do not backprop the error to encoder
                 y_pred_cluster = classifier_k(X_cluster.detach())
-                cluster_loss = torch.mean(criterion(y_pred_cluster, y_cluster))
+                cluster_loss = torch.mean(q_batch[:,k]*criterion(y_pred_cluster, y_cluster))
                 optimizer_k.zero_grad()
                 cluster_loss.backward(retain_graph=True)
                 optimizer_k.step()
