@@ -7,6 +7,7 @@ from torch.nn import Linear
 import torch
 from utils import is_non_zero_file
 from collections import OrderedDict
+import numpy as np
 
 class AE(nn.Module):
     def __init__(self, layers):
@@ -284,20 +285,19 @@ class ExpertNet(nn.Module):
         self.pretrain_path = args.pretrain_path
         self.device = args.device
         self.n_clusters = args.n_clusters
+        self.n_classes = args.n_classes
         self.input_dim = args.input_dim
         self.n_z = args.n_z
         self.args = args
+        self.criterion = nn.CrossEntropyLoss(reduction='none')
+
         # append input_dim at the end
         ae_layers.append(self.input_dim)
         ae_layers = [self.input_dim] + ae_layers
         self.ae = AE(ae_layers)
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
-        self.p_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
-        self.n_cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
-        torch.nn.init.xavier_normal_(self.p_cluster_layer.data)
-        torch.nn.init.xavier_normal_(self.n_cluster_layer.data)
 
         self.classifiers = []
         n_layers = int(len(expert_layers))
@@ -330,26 +330,73 @@ class ExpertNet(nn.Module):
             self.ae.load_state_dict(torch.load(self.pretrain_path))
             print('load pretrained ae from', path)
 
-
-    def predict(self, X_test):
-        qs, z_test = self.forward(X_test)
-        q_test = qs[0]
-        cluster_ids = torch.argmax(q_test, axis=1)
-        preds = torch.zeros((self.n_clusters, 2))
+     
+    def predict(self, X, attention=True):
+        z, _, q = self.encoder_forward(X)
+        cluster_ids = torch.argmax(q, axis=1)
+        preds = torch.zeros((len(X), self.n_classes))
+        X_cluster = z
+        total_loss = 0
         for j in range(self.n_clusters):
-            preds[j,:] = self.classifiers[cluster_ids[j]]
+            if attention == True:
+                # Weighted predictions
+                cluster_id = np.where(cluster_ids == j)[0]
+                X_cluster = z
+                cluster_preds = self.classifiers[j][0](X_cluster)
+                for c in range(self.n_classes):
+                    preds[:,c] += q[:,j]*cluster_preds[:,c]
+
+            else:
+                cluster_id = np.where(cluster_ids == j)[0]
+                X_cluster = z[cluster_id]
+                cluster_test_preds = self.classifiers[j][0](X_cluster)
+                preds[cluster_id,:] = cluster_test_preds
+    
         return preds
 
 
-    def forward(self, x, output="default"):
+    def expert_forward(self, X, y, z=None, q=None, backprop_enc=False, backprop_local=False, attention=True):
+        if z == None and q == None:
+            z, _, q = self.encoder_forward(X)
+
+        cluster_ids = torch.argmax(q, axis=1)
+        y_cluster = y
+        total_loss = 0
+
+        for k in range(self.n_clusters):
+            classifier_k, optimizer_k = self.classifiers[k]
+
+            if attention == False:
+                cluster_id = np.where(cluster_ids == k)[0]
+                X_cluster = z[cluster_id]
+                y_cluster = y[cluster_id]
+                y_pred_cluster = classifier_k(X_cluster.detach()) # Do not backprop the error to encoder
+                cluster_loss = torch.sum(self.criterion(y_pred_cluster, y_cluster))
+
+            else:
+                X_cluster = z
+                if backprop_enc == True:
+                    y_pred_cluster = classifier_k(X_cluster)
+                else:
+                    y_pred_cluster = classifier_k(X_cluster.detach())
+                cluster_loss = torch.sum(q[:,k]*self.criterion(y_pred_cluster, y_cluster))
+
+            if backprop_local == True:
+                optimizer_k.zero_grad()
+                cluster_loss.backward(retain_graph=True)
+                optimizer_k.step()
+            total_loss += cluster_loss
+
+        return q, total_loss
+
+
+    def encoder_forward(self, x, output="default"):
         x_bar, z = self.ae(x)
         # Cluster
         q   = source_distribution(z, self.cluster_layer, alpha=self.alpha)
-        q_p = source_distribution(z, self.p_cluster_layer, alpha=self.alpha)
-        q_n = source_distribution(z, self.n_cluster_layer, alpha=self.alpha)
 
         if output == "latent":
-            return (q, q_p, q_n), z
+            return q, z
 
         elif output == "classifier":
             preds = torch.zeros((len(z), 2))
@@ -358,7 +405,7 @@ class ExpertNet(nn.Module):
             return preds
         
         else:
-            return z, x_bar, (q, q_p, q_n)
+            return z, x_bar, q
 
 
 class DMNN(nn.Module):

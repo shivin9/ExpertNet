@@ -124,8 +124,8 @@ class EarlyStoppingEN:
             torch.save(model.classifiers[j][0].state_dict(), self.path+"_"+str(j)+".pt")
         self.val_loss_min = val_loss
         torch.save(model.cluster_layer, self.path+"_cc"+".pt")
-        torch.save(model.p_cluster_layer, self.path+"_pc"+".pt")
-        torch.save(model.n_cluster_layer, self.path+"_nc"+".pt")
+        # torch.save(model.p_cluster_layer, self.path+"_pc"+".pt")
+        # torch.save(model.n_cluster_layer, self.path+"_nc"+".pt")
 
     def load_checkpoint(self, model):
         print("Loading Best model with score: ", self.best_score)
@@ -133,8 +133,8 @@ class EarlyStoppingEN:
         for j in range(model.n_clusters):
             model.classifiers[j][0].load_state_dict(torch.load(self.path+"_"+str(j)+".pt"))
         model.cluster_layer = torch.load(self.path+"_cc"+".pt")
-        model.p_cluster_layer = torch.load(self.path+"_pc"+".pt")
-        model.n_cluster_layer = torch.load(self.path+"_nc"+".pt")
+        # model.p_cluster_layer = torch.load(self.path+"_pc"+".pt")
+        # model.n_cluster_layer = torch.load(self.path+"_nc"+".pt")
         return model
 
 
