@@ -44,3 +44,6 @@ python3 ../../classical_baselines.py --dataset cic_new >> Results/results_Classi
 
 echo "CIC LOS New" >> Results/results_Classical_Baseline.txt
 python3 ../../classical_baselines.py --dataset cic_los_new --n_classes 3 --verbose True >> Results/results_Classical_Baseline.txt
+
+echo "IHM" >> Results/results_Classical_Baseline.txt
+python3 ../../classical_baselines.py --dataset ihm >> Results/results_Classical_Baseline.txt

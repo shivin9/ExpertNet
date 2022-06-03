@@ -52,7 +52,7 @@ parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
-parser.add_argument("--attention", default="True")
+parser.add_argument("--attention", default="False")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
 
@@ -179,7 +179,7 @@ for r in range(len(iter_array)):
 
     # cluster parameter initiate
     device = args.device
-    qs, hidden = model(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
+    qs, hidden = model.encoder_forward(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
     q_train = qs[0]
 
     original_cluster_centers, cluster_ids_train = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
@@ -223,6 +223,7 @@ for r in range(len(iter_array)):
             model.classifiers[j][0].train()
 
         train_loss = 0
+
         # Full training of local networks
         for batch_idx, (X_latents, cluster_train_indices, y_batch) in enumerate(train_loader_latents):
             for k in range(args.n_clusters):
@@ -243,7 +244,7 @@ for r in range(len(iter_array)):
             model.classifiers[j][0].eval()
 
         # Evaluate model on Validation set
-        qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
+        qs, z_val = model.encoder_forward(torch.FloatTensor(X_val).to(args.device), output="latent")
         q_val = qs[0]
         # cluster_ids_val = kmeans.predict(z_val.detach().data.cpu().numpy())
         cluster_ids_val, _ = vq(z_val.detach().data.cpu().numpy(), original_cluster_centers)
@@ -288,7 +289,7 @@ for r in range(len(iter_array)):
         es([val_f1, val_auprc], model)
         if es.early_stop == True or epoch == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
-            # sil_scores.append(silhouette_new(hidden.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
+            sil_scores.append(silhouette_new(hidden.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
             HTFD_scores.append(calculate_HTFD(X_train, torch.Tensor(cluster_ids_train)))
             wdfd_scores.append(calculate_WDFD(X_train, torch.Tensor(cluster_ids_train)))
             # model_complexity.append(calculate_bound(model, B, len(hidden)))
@@ -307,8 +308,7 @@ for r in range(len(iter_array)):
     print("Evaluating Test Data with k = ", args.n_clusters, " Attention = ", args.attention)
 
     # # Evaluate model on Test dataset
-    qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
-    q_test = qs[0]
+    q_test, z_test = model.encoder_forward(torch.FloatTensor(X_test).to(args.device), output="latent")
 
     test_cluster_indices = np.argmax(distance_matrix(z_test.data.cpu().numpy(), model.cluster_layer.data.cpu().numpy()), axis=1)
 
@@ -326,7 +326,6 @@ for r in range(len(iter_array)):
         test_preds[cluster_id,:] = cluster_test_preds
         local_sum_loss += torch.sum(q_test[cluster_id,j]*criterion(cluster_test_preds, y_cluster))
     
-
     test_metrics = performance_metrics(y_test, test_preds.detach().numpy(), args.n_classes)
     test_f1  = test_metrics['f1_score']
     test_auc = test_metrics['auroc']
@@ -359,7 +358,7 @@ for r in range(len(iter_array)):
     minpse_scores.append(test_minpse)
     nmi_scores.append(nmi_score(test_cluster_indices, y_test))
     ari_scores.append(ari_score(test_cluster_indices, y_test))
-    sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), test_cluster_indices, metric='euclidean'))
+    # sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), test_cluster_indices, metric='euclidean'))
 
     ####################################################################################
     ####################################################################################
@@ -431,14 +430,14 @@ enablePrint()
 # print("Local Test Loss: ", local_sum_test_losses)
 # print("Model Complexity: ", model_complexity)
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTe-SIL\tTe-NMI\tTe-ARI")
 
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
     np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores),\
     np.avg(np.array(sil_scores)), np.avg(nmi_scores), np.avg(ari_scores)))
 
-print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTe-SIL\tTe-NMI\tTe-ARI")
 
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\

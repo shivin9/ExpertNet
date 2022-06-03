@@ -76,7 +76,7 @@ parser.add_argument('--plot', default= 'False')
 parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--other', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/dmnn')
 
 
 parser = parser.parse_args()
@@ -132,7 +132,7 @@ for r in range(args.n_runs):
     one_hot_cluster_indices = torch.FloatTensor(one_hot_cluster_indices)
 
     # train gating network
-    for e in range(1, N_EPOCHS):
+    for e in range(N_EPOCHS):
         z_batch, _, gate_vals = model(torch.FloatTensor(X_train))
         model.train()
         optimizer.zero_grad()
@@ -143,9 +143,10 @@ for r in range(args.n_runs):
     cluster_ids_train = torch.argmax(gate_vals, axis=1)
     HTFD_score = calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train)
     wdfd_score = calculate_WDFD(torch.FloatTensor(X_train), cluster_ids_train)
+    sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
 
     # train Local Experts
-    for e in range(1, N_EPOCHS):
+    for e in range(N_EPOCHS):
         epoch_loss = 0
         epoch_auc = 0
         epoch_f1 = 0
@@ -248,7 +249,7 @@ for r in range(args.n_runs):
     acc_scores.append(test_acc)
     nmi_scores.append(nmi_score(cluster_ids_test.data.cpu().numpy(), y_test))
     ari_scores.append(ari_score(cluster_ids_test.data.cpu().numpy(), y_test))
-    sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids_test.data.cpu().numpy(), metric='euclidean'))
+    # sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids_test.data.cpu().numpy(), metric='euclidean'))
 
 
 enablePrint()

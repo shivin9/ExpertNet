@@ -450,6 +450,7 @@ for r in range(len(iter_array)):
     e_test_HTFD = calculate_HTFD(X_test, cluster_ids)
 
     test_preds = model.predict(torch.FloatTensor(X_test).to(args.device), attention=False)
+    test_loss = torch.mean(criterion(test_preds, torch.Tensor(y_test).type(torch.LongTensor)))
 
     test_metrics = performance_metrics(y_test, test_preds.detach().numpy(), args.n_classes)
     test_f1  = test_metrics['f1_score']
@@ -458,7 +459,6 @@ for r in range(len(iter_array)):
     test_minpse = test_metrics['minpse']
     test_acc = test_metrics['acc']
     
-    test_loss = torch.mean(criterion(test_preds, torch.Tensor(y_test).type(torch.LongTensor)))
 
     test_losses.append(test_loss.item())
     e_test_losses.append(e_test_loss.item())
@@ -588,12 +588,12 @@ print("[Std]\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
     (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_minpse_scores), np.std(e_acc_scores)))
 
-print('[Avg]\tSIL\tHTFD\tWDFD')
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
+print('[Avg]\tTr-SIL\tHTFD\tWDFD')
+print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
     np.avg(HTFD_scores), np.avg(wdfd_scores)))
 
-print('[Std]\tSIL\tHTFD\tWDFD\tW-HTFD')
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
+print('[Std]\tTr-SIL\tHTFD\tWDFD')
+print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
     np.std(HTFD_scores), np.std(wdfd_scores)))
 
 # print("F1\tAUC\tAUPRC\tACC")

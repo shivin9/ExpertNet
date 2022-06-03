@@ -769,14 +769,14 @@ enablePrint()
 # print('Dataset\tk')
 # print("{}\t{}\n".format(args.dataset, args.n_clusters))
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTe-SIL\tTe-NMI\tTe-ARI")
 
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
     np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores),\
     np.avg(np.array(sil_scores)), np.avg(nmi_scores), np.avg(ari_scores)))
 
-print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tNMI\tARI")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTe-SIL\tTe-NMI\tTe-ARI")
 
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
