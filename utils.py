@@ -22,7 +22,8 @@ import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'olive', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan']
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
-            'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic']
+            'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic',\
+            'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
@@ -89,7 +90,7 @@ def calculate_mutual_HTFD(X, cluster_ids):
 
 
 def calculate_HTFD(X_train, cluster_ids):
-    print("\nCluster Wise discriminative features (HTFD)")
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_features = X_train.shape[1]
@@ -263,7 +264,7 @@ def calculate_WDFD(X, cluster_ids):
 
 
 def MIFD_Cluster_Analysis(X_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (MIFD)")
+    # print("\nCluster Wise discriminative features (MIFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
@@ -297,7 +298,7 @@ def MIFD_Cluster_Analysis(X_train, cluster_ids, column_names):
 
 
 def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (HTFD)")
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
@@ -334,7 +335,7 @@ def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
 
 def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (HTFD)")
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
@@ -373,7 +374,7 @@ def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
 
 def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (HTFD)")
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
@@ -427,7 +428,8 @@ class parameters(object):
         self.dataset = parser.dataset
         
         # Training parameters
-        self.lr = parser.lr
+        self.lr_enc = parser.lr_enc
+        self.lr_exp = parser.lr_exp
         self.alpha = float(parser.alpha)
         self.wd = parser.wd
         self.batch_size = parser.batch_size
@@ -453,6 +455,7 @@ class parameters(object):
         self.n_clusters = parser.n_clusters
         self.clustering = parser.clustering
         self.n_classes = parser.n_classes
+        self.optimize = parser.optimize
 
         # Utility parameters
         self.device = parser.device
@@ -588,7 +591,7 @@ def drop_constant_column(df):
 
 def get_dataset(DATASET, DATA_DIR):
     scale = None
-    if DATASET == "cic" or DATASET == "cic_new":
+    if DATASET == "cic" or DATASET == "cic_new" or DATASET == "cic_24":
         Xa = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_a.csv")
         Xb = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_b.csv")
         Xc = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_c.csv")
@@ -624,6 +627,7 @@ def get_dataset(DATASET, DATA_DIR):
 
         X = pd.concat([X_train, X_test])
         y = pd.concat([y_train, y_test]).to_numpy()
+        y = np.array(y, dtype=int)
         columns = cols
         X = X.to_numpy()
 
@@ -732,8 +736,8 @@ def get_train_val_test_loaders(args, r_state=0):
                 X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
                 args.input_dim = X.shape[1]
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
             scale = StandardScaler()
             X_train = scale.fit_transform(X_train)
@@ -763,8 +767,8 @@ def get_train_val_test_loaders(args, r_state=0):
             y = np.array(y_los)
             args.input_dim = X_los.shape[1]
 
-            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
+            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
             scale = StandardScaler()
             X_train = scale.fit_transform(X_train)
@@ -774,15 +778,15 @@ def get_train_val_test_loaders(args, r_state=0):
         elif args.dataset == "aki":
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
             args.input_dim = X_train.shape[1]
 
         else:
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
             args.input_dim = X_train.shape[1]
 

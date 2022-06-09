@@ -4,7 +4,7 @@
 # for j in 2 3 4
 # do
 #     echo "k = $(($j))" >> Results/results_KM.txt
-#     python3 ../../KMeans.py --dataset cic --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset cic --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 --n_z 32 >> Results/results_KM.txt
 # done
 
 # echo "KMeans" >> Results/results_KM.txt
@@ -13,7 +13,7 @@
 # for j in 2 3 4
 # do
 #     echo "k = $(($j))" >> Results/results_KM.txt
-#     python3 ../../KMeans.py --dataset sepsis --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset sepsis --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 --n_z 32 >> Results/results_KM.txt
 # done
 
 # echo "KMeans" >> Results/results_KM.txt
@@ -22,7 +22,7 @@
 # for j in 2 3 4
 # do
 #     echo "k = $(($j))" >> Results/results_KM.txt
-#     python3 ../../KMeans.py --dataset aki --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset aki --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 --n_z 32 >> Results/results_KM.txt
 # done
 
 # echo "KMeans" >> Results/results_KM.txt
@@ -31,7 +31,7 @@
 # for j in 2 3 4
 # do
 #     echo "k = $(($j))" >> Results/results_KM.txt
-#     python3 ../../KMeans.py --dataset ards --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset ards --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 --n_z 32 >> Results/results_KM.txt
 # done
 
 # echo "KMeans" >> Results/results_KM.txt
@@ -40,7 +40,7 @@
 # for j in 2 3 4
 # do
 #     echo "k = $(($j))" >> Results/results_KM.txt
-#     python3 ../../KMeans.py --dataset wid_mortality --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset wid_mortality --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 --n_z 32 >> Results/results_KM.txt
 # done
 
 # echo "KMeans" >> Results/results_KM.txt
@@ -49,41 +49,46 @@
 # for j in 2 3 4
 # do
 #     echo "k = $(($j))" >> Results/results_KM.txt
-#     python3 ../../KMeans.py --dataset diabetes --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset diabetes --n_clusters $j --log_interval 2 --n_runs 3 --n_epochs 50 --n_z 32 >> Results/results_KM.txt
+# done
+
+
+echo "KMeans Experiments" >> Results/results_KM.txt
+
+# echo "KMeans" >> Results/results_KM.txt
+# echo "Kidney 48" >> Results/results_KM.txt
+
+# for j in 1 2 3 4 5 6 7 8 10
+# do
+#     echo "k = $(($j))" >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset aki48 --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 >> Results/results_KM.txt
 # done
 
 echo "KMeans" >> Results/results_KM.txt
-echo "Kidney New" >> Results/results_KM.txt
+echo "Respiratory 24" >> Results/results_KM.txt
 
-for j in 2 3 4 5 6 7 8 10
+for j in 2 3 4 5
 do
     echo "k = $(($j))" >> Results/results_KM.txt
-    python3 ../../KMeans.py --dataset aki_new --n_clusters $j --log_interval 2 --n_runs 5 --n_epochs 100 >> Results/results_KM.txt
+    python3 ../../KMeans.py --dataset ards24 --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 >> Results/results_KM.txt
 done
+
 
 echo "KMeans" >> Results/results_KM.txt
-echo "Respiratory New" >> Results/results_KM.txt
+echo "Sepsis 24" >> Results/results_KM.txt
 
-for j in 2 3 4 5 6 7 8 10
+for j in 2 3 4 5
 do
     echo "k = $(($j))" >> Results/results_KM.txt
-    python3 ../../KMeans.py --dataset ards_new --n_clusters $j --log_interval 2 --n_runs 5 --n_epochs 100 >> Results/results_KM.txt
+    python3 ../../KMeans.py --dataset sepsis24 --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 >> Results/results_KM.txt
 done
 
-echo "KMeans" >> Results/results_KM.txt
-echo "CIC New" >> Results/results_KM.txt
 
-for j in 2 3 4 5 6 7 8 10
-do
-    echo "k = $(($j))" >> Results/results_KM.txt
-    python3 ../../KMeans.py --dataset cic_new --n_clusters $j --log_interval 2 --n_runs 5 --n_epochs 100 >> Results/results_KM.txt
-done
+# echo "KMeans" >> Results/results_KM.txt
+# echo "CIC 48" >> Results/results_KM.txt
 
-echo "KMeans" >> Results/results_KM.txt
-echo "CIC-LoS New" >> Results/results_KM.txt
-
-for j in 2 3 4 5 6 7 8 10
-do
-    echo "k = $(($j))" >> Results/results_KM.txt
-    python3 ../../KMeans.py --dataset cic_los_new --n_clusters $j --log_interval 2 --n_runs 5 --n_epochs 100 --n_classes 3 >> Results/results_KM.txt
-done
+# for j in 1 2 3 4 5 6 7 8 10
+# do
+#     echo "k = $(($j))" >> Results/results_KM.txt
+#     python3 ../../KMeans.py --dataset cic --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 >> Results/results_KM.txt
+# done

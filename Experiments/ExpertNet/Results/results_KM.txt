@@ -837,4 +837,561 @@ delta 0.0
 [Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Te-NMI	Te-ARI
 	0.042	0.028	0.017	0.061	0.273	0.009	0.001	0.001
 
+KMeans Experiments
+KMeans
+Kidney 48
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	1	0.636	0.689	0.677	0.564	0.500	0.000	1.802	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.009	0.013	0.017	0.028	0.000	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	2	0.489	0.608	0.594	0.337	0.500	0.513	1.500	2.013
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.022	0.027	0.025	0.034	0.000	0.107	0.040	0.909
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	3	0.452	0.546	0.545	0.272	0.500	0.590	1.315	2.436
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.075	0.032	0.026	0.204	0.000	0.004	0.190	0.510
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	4	0.389	0.556	0.552	0.162	0.500	0.482	0.873	1.295
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.083	0.059	0.041	0.142	0.000	0.095	0.619	0.923
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	5	0.419	0.589	0.585	0.277	0.500	0.373	1.172	2.029
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.037	0.044	0.032	0.053	0.000	0.080	0.115	0.333
+
+
+k = 6
+n_clusters 6
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	6	0.441	0.596	0.579	0.277	0.500	0.364	0.712	1.339
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.080	0.014	0.010	0.112	0.000	0.028	0.503	0.956
+
+
+k = 7
+n_clusters 7
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	7	0.434	0.524	0.523	0.240	0.500	0.333	0.657	1.439
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.098	0.052	0.044	0.170	0.000	0.060	0.475	1.018
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	8	0.476	0.594	0.579	0.345	0.500	0.266	1.096	2.017
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.083	0.022	0.015	0.176	0.000	0.048	0.068	0.116
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	aki48	10	0.447	0.579	0.572	0.310	0.500	0.227	0.865	1.916
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.048	0.030	0.021	0.038	0.000	0.018	0.033	0.308
+
+
+KMeans
+Respiratory 48
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	1	0.877	0.925	0.895	0.796	0.500	0.000	1.802	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.008	0.003	0.014	0.015	0.000	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	2	0.785	0.883	0.855	0.686	0.500	0.664	1.142	1.638
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.064	0.012	0.023	0.067	0.000	0.146	0.272	0.972
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	3	0.555	0.859	0.768	0.599	0.500	0.396	1.142	1.836
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.200	0.017	0.096	0.031	0.000	0.034	0.037	0.452
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	4	0.330	0.561	0.587	0.017	0.500	0.437	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.138	0.190	0.096	0.024	0.000	0.008	0.000	0.000
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	5	0.337	0.569	0.598	0.261	0.500	0.236	0.322	0.630
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.215	0.265	0.164	0.256	0.000	0.032	0.455	0.891
+
+
+k = 6
+n_clusters 6
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	6	0.328	0.691	0.667	0.460	0.500	0.234	0.563	1.381
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.094	0.178	0.113	0.099	0.000	0.105	0.399	0.977
+
+
+k = 7
+n_clusters 7
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	7	0.264	0.782	0.707	0.350	0.500	0.170	0.494	1.776
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.124	0.073	0.077	0.248	0.000	0.003	0.350	1.279
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	8	0.593	0.507	0.553	0.465	0.500	0.161	0.437	2.228
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.124	0.235	0.149	0.121	0.000	0.023	0.309	1.579
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards48	10	0.445	0.643	0.641	0.207	0.500	0.165	0.240	0.723
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.247	0.244	0.152	0.292	0.000	0.030	0.340	1.022
+
+
+KMeans
+Sepsis 48
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	1	0.483	0.685	0.600	0.116	0.500	0.000	1.802	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.017	0.130	0.041	0.092	0.000	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	2	0.498	0.634	0.573	0.125	0.500	0.249	1.363	0.920
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.028	0.064	0.021	0.094	0.000	0.042	0.028	0.335
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	3	0.507	0.613	0.554	0.162	0.500	0.192	1.414	1.137
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.023	0.023	0.011	0.047	0.000	0.003	0.007	0.032
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	4	0.474	0.497	0.513	0.164	0.500	0.185	1.335	1.383
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.003	0.047	0.013	0.066	0.000	0.004	0.046	0.174
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	5	0.475	0.548	0.525	0.199	0.500	0.169	0.851	1.032
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.011	0.086	0.028	0.030	0.000	0.006	0.602	0.730
+
+
+k = 6
+n_clusters 6
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	6	0.500	0.548	0.521	0.126	0.500	0.159	1.195	1.727
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.025	0.057	0.021	0.031	0.000	0.016	0.053	0.181
+
+
+k = 7
+n_clusters 7
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	7	0.467	0.478	0.499	0.084	0.500	0.144	0.411	0.505
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.003	0.024	0.012	0.119	0.000	0.004	0.582	0.714
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	8	0.499	0.534	0.517	0.198	0.500	0.142	1.082	1.962
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.040	0.115	0.040	0.144	0.000	0.005	0.057	0.139
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis48	10	0.479	0.468	0.494	0.042	0.500	0.137	0.726	1.367
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.022	0.078	0.027	0.059	0.000	0.008	0.514	0.967
+
+
+KMeans
+CIC 48
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	1	0.627	0.825	0.703	0.388	0.500	0.000	1.802	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.014	0.016	0.018	0.013	0.000	0.000	0.000	0.000
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	2	0.648	0.743	0.655	0.392	0.500	0.399	1.135	0.614
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.017	0.033	0.014	0.028	0.000	0.020	0.023	0.029
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	3	0.581	0.672	0.610	0.383	0.500	0.273	1.033	1.301
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.031	0.042	0.018	0.060	0.000	0.033	0.070	0.298
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	4	0.598	0.617	0.585	0.323	0.500	0.128	0.996	1.347
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.030	0.057	0.033	0.040	0.000	0.015	0.015	0.172
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	5	0.554	0.582	0.563	0.311	0.500	0.149	0.838	1.905
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.034	0.078	0.034	0.066	0.000	0.014	0.057	0.323
+
+
+k = 6
+n_clusters 6
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	6	0.610	0.669	0.609	0.345	0.500	0.073	0.938	1.213
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.038	0.068	0.043	0.081	0.000	0.021	0.025	0.132
+
+
+k = 7
+n_clusters 7
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	7	0.551	0.606	0.576	0.355	0.500	0.097	0.784	1.599
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.036	0.068	0.038	0.039	0.000	0.018	0.030	0.132
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	8	0.541	0.568	0.545	0.261	0.500	0.085	0.763	1.813
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.051	0.052	0.025	0.007	0.000	0.010	0.044	0.311
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	10	0.452	0.466	0.499	0.212	0.500	0.071	0.476	1.175
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.015	0.107	0.048	0.160	0.000	0.002	0.337	0.832
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+KMeans Experiments
+KMeans
+Respiratory 24
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+k = 3
+KMeans Experiments
+KMeans
+Respiratory 24
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	2	0.554	0.628	0.541	0.178	0.500	0.306	1.292	0.756
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.014	0.019	0.012	0.023	0.000	0.086	0.148	0.221
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	3	0.518	0.544	0.522	0.159	0.500	0.269	0.769	0.807
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.027	0.119	0.034	0.117	0.000	0.024	0.551	0.592
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	4	0.376	0.515	0.518	0.244	0.500	0.244	0.374	0.453
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.220	0.126	0.034	0.204	0.000	0.044	0.529	0.641
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	5	0.513	0.445	0.496	0.076	0.500	0.104	0.925	2.282
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.047	0.116	0.033	0.108	0.000	0.062	0.100	0.735
+
+
+KMeans
+Sepsis 24
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	2	0.516	0.625	0.529	0.091	0.500	0.428	1.459	2.057
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.018	0.058	0.014	0.035	0.000	0.000	0.003	0.003
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	3	0.514	0.642	0.534	0.105	0.500	0.233	1.347	1.891
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.020	0.015	0.008	0.032	0.000	0.111	0.043	0.222
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	4	0.524	0.631	0.534	0.193	0.500	0.110	1.366	1.844
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.019	0.019	0.006	0.071	0.000	0.007	0.016	0.053
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	5	0.518	0.583	0.521	0.098	0.500	0.114	1.326	2.691
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.025	0.045	0.011	0.069	0.000	0.005	0.053	0.378
+
 

@@ -60,7 +60,8 @@ parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 
 # Training parameters
-parser.add_argument('--lr', default= 0.002, type=float)
+parser.add_argument('--lr_enc', default= 0.002, type=float)
+parser.add_argument('--lr_exp', default= 0.002, type=float)
 parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
@@ -74,6 +75,7 @@ parser.add_argument("--tol", default=0.01, type=float)
 parser.add_argument("--attention", default="True")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
+parser.add_argument('--optimize', default='auc')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -110,9 +112,9 @@ test_results = pd.DataFrame(columns=['Dataset', 'Classifier', 'alpha',\
 
 def get_classifier(classifier, n_classes=2):
     if classifier == "LR":
-        model = LogisticRegression(random_state=0, max_iter=1000, penalty='l2', C=0.001)
+        model = LogisticRegression(random_state=0, max_iter=1000, penalty='l2', C=0.001) # C=0.001
     elif classifier == "RF":
-        model = RandomForestClassifier(n_estimators=10)
+        model = RandomForestClassifier(n_estimators=50)
     elif classifier == "SVM":
         # model = SVC(kernel="linear", probability=True)
         model = LinearSVC(max_iter=5000)
@@ -131,7 +133,7 @@ def get_classifier(classifier, n_classes=2):
     elif classifier == "DT":
         model = DecisionTreeClassifier()
     elif classifier == "XGB":
-        model = xgb.XGBClassifier(use_label_encoder=False, n_estimators=10)
+        model = xgb.XGBClassifier(use_label_encoder=False, n_estimators=50)
     elif classifier == "LDA":
         model = LDA()
     elif classifier == "NB":
@@ -168,6 +170,7 @@ for classifier in classifiers:
     f1_scores, auc_scores, acc_scores, auprc_scores, minpse_scores = [], [], [], [], []
     for r in range(args.n_runs):
         scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+        # print(column_names)
         X_train, y_train = train_data
         X_val, y_val = val_data
         X_test, y_test = test_data
@@ -176,6 +179,7 @@ for classifier in classifiers:
         X_train = scale.fit_transform(X_train)
         X_test = scale.fit_transform(X_test)
         clf.fit(X_train, y_train.ravel())
+        
         preds = clf.predict(X_test)
         preds_proba = clf.predict_proba(X_test)
 
@@ -191,14 +195,14 @@ for classifier in classifiers:
         auprc_scores.append(test_auprc)
         minpse_scores.append(test_minpse)
         acc_scores.append(test_acc)
+        # best_features = np.argsort(np.abs(clf.coef_))[:10]
 
-    print("[Avg]\tDataset\tCLF\tF1\tAUC\tAUPRC\tMINPSE\tACC")
-    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    print("Dataset\tCLF\tF1\tAUC\tAUPRC\tMINPSE\tACC")
+    print("[Avg]\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
         (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores),\
             np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores)))
 
-    print("[Std]\tDataset\tCLF\tF1\tAUC\tAUPRC\tMINPSE\tACC")
-    print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    print("[Std]\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
         (args.dataset, classifier, np.std(f1_scores), np.std(auc_scores), np.std(auprc_scores),\
         np.std(minpse_scores), np.std(acc_scores)))
 

@@ -13,7 +13,7 @@ from scipy.spatial import distance_matrix
 
 import argparse
 import numpy as np
-from scipy.cluster.vq import vq, kmeans2
+from scipy.cluster.vq import kmeans2
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
 from sklearn.linear_model import LogisticRegression
@@ -34,14 +34,19 @@ color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', '
 from models import ExpertNet,  target_distribution, source_distribution
 from utils import *
 
+from functools import partial
+from ray import tune
+from ray.tune import CLIReporter
+from ray.tune.schedulers import ASHAScheduler
+
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--dataset', default= 'creditcard')
+parser.add_argument('--dataset', default= 'aki_new')
 parser.add_argument('--input_dim', default= '-1')
 
 # Training parameters
-parser.add_argument('--lr_enc', default= 0.002, type=float)
 parser.add_argument('--lr_exp', default= 0.002, type=float)
+parser.add_argument('--lr_enc', default= 0.002, type=float)
 parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
@@ -55,6 +60,7 @@ parser.add_argument("--tol", default=0.01, type=float)
 parser.add_argument("--attention", default="True")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
+parser.add_argument('--optimize', default='auc')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -67,7 +73,6 @@ parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
 parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
-parser.add_argument('--optimize', default= 'auprc')
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
@@ -130,8 +135,9 @@ else:
     iter_array = range(args.n_runs)
     iteration_name = "Run"
 
-for r in range(len(iter_array)):
-    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+
+def train_expertnet(config, args=args):
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=0)
     X_train, y_train = train_data
     X_val, y_val = val_data
     X_test, y_test = test_data
@@ -143,45 +149,35 @@ for r in range(len(iter_array)):
     if args.verbose == 'False':
         blockPrint()
 
-    print(iteration_name, ":", iter_array[r])
-
-    if args.ablation == "beta":
-        args.beta = iter_array[r]
-
-    elif args.ablation == "gamma":
-        args.gamma = iter_array[r]
-
-    elif args.ablation == "delta":
-        args.delta = iter_array[r]
-
-    elif args.ablation == "k":
-        args.n_clusters = iter_array[r]
-
-    suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
+    suffix = base_suffix + "_" + iteration_name + "_" + str(0)
+    n_clusters = config['n_clusters']
 
     if args.expt == 'ExpertNet':
-        ae_layers = [128, 64, args.n_z, 64, 128]
-        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+        ae_layers = [64, 32, args.n_z, 32, 64]
+        expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
 
     else:
         # DeepCAC expts
         ae_layers = [64, args.n_z, 64]
         expert_layers = [args.n_z, 30, args.n_classes]
 
+    args.n_clusters = n_clusters
+
     model = ExpertNet(
             ae_layers,
             expert_layers,
-            args.lr_enc,
-            args.lr_exp,
+            config['lr_exp'],
+            config['lr_enc'],
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
+
 
     # Initiate cluster parameters
     device = args.device
     y = y_train
     x_bar, hidden = model.ae(torch.Tensor(X_train).to(args.device))
-    original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
+    original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=n_clusters, minit='++')
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
     criterion = nn.CrossEntropyLoss(reduction='none')
 
@@ -198,12 +194,16 @@ for r in range(len(iter_array)):
     N_EPOCHS = args.n_epochs
     es = EarlyStoppingEN(dataset=suffix, patience=7)
     train_losses, e_train_losses = [], []
+    best_val_auprc = 0
+    best_val_auc = 0
+    best_val_loss = 10000
+    best_model = model
 
     for epoch in range(N_EPOCHS):
-        beta = args.beta
-        gamma = args.gamma
-        delta = args.delta
-        eta = args.eta
+        beta = config['beta']
+        gamma = config['gamma']
+        delta = config['delta']
+
         if epoch % args.log_interval == 0:
 
             if args.plot == 'True':
@@ -254,23 +254,6 @@ for r in range(len(iter_array)):
             val_feature_diff, val_WDFD = 0, 0
             val_feature_diff = calculate_HTFD(X_val, cluster_ids)
             val_WDFD = calculate_WDFD(X_val, cluster_ids)
-
-            q_batch = source_distribution(z_val, model.cluster_layer, alpha=model.alpha)
-            P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
-            P = P/P.sum()
-            Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
-
-            if args.cluster_balance == "kl":
-                cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
-            else:
-                cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
-
-            # if args.gamma != 0:
-            #     val_loss += args.gamma*val_class_loss
-            # if args.delta != 0:
-            #     val_loss += delta*cluster_balance_loss
-
-
             val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
 
             epoch_len = len(str(N_EPOCHS))
@@ -286,20 +269,16 @@ for r in range(len(iter_array)):
                          f'valid_WDFD: {val_WDFD:.3f} ' + 
                          f'valid_Silhouette: {val_sil:.3f}')
 
-            print(print_msg)
+            # print(print_msg)
 
             # early_stopping needs the validation loss to check if it has decresed, 
             # and if it has, it will make a checkpoint of the current model
-            if args.optimize == 'auc':
-                opt = val_auc
-            elif args.optimize == 'auprc':
-                opt = val_auprc
-            else:
-                opt = -val_loss
-
-            es([val_f1, opt], model)
-            if es.early_stop == True:
-                break
+            if val_auprc > best_val_auprc:
+                best_val_auprc = val_auprc
+                best_model = model
+            # es([val_f1, val_auprc], model)
+            # if es.early_stop == True:
+            #     break
 
         # Normal Training
         epoch_loss = 0
@@ -320,7 +299,6 @@ for r in range(len(iter_array)):
             reconstr_loss = F.mse_loss(x_bar, x_batch)
 
             sub_epochs = min(10, 1 + int(epoch/5))
-            # sub_epochs = 20
 
             for _ in range(sub_epochs):
                 model.expert_forward(x_batch, y_batch, X_latents, q_batch, backprop_enc=False, backprop_local=True, attention=args.attention)
@@ -332,7 +310,7 @@ for r in range(len(iter_array)):
             q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
             P = P/P.sum()
-            Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
+            Q = torch.ones(n_clusters)/n_clusters # Uniform distribution
 
             if args.cluster_balance == "kl":
                 cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
@@ -341,7 +319,7 @@ for r in range(len(iter_array)):
 
             km_loss = F.kl_div(q_batch.log(), p_train[idx], reduction='batchmean')
 
-            loss = args.alpha*reconstr_loss
+            loss = reconstr_loss
             if args.beta != 0:
                 loss += beta*km_loss
             if args.gamma != 0:
@@ -357,22 +335,10 @@ for r in range(len(iter_array)):
             loss.backward(retain_graph=True)
             model.optimizer.step()
 
-        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} |\
-        Cluster Balance Loss: {:.3f}'.format(epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))
-        train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
-
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
-    ################################### Local Training #################################
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
-    print("\n####################################################################################\n")
-    print("Training Local Networks")
-
-    model = es.load_checkpoint(model)
-    es = EarlyStoppingEN(dataset=suffix)
+        # print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} |\
+        # Cluster Balance Loss: {:.3f}'.format(epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))
+        # train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
+    model = best_model
 
     q_train, z_train = model.encoder_forward(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
     cluster_id_train = torch.argmax(q_train, axis=1)
@@ -381,12 +347,6 @@ for r in range(len(iter_array)):
 
     train_loader_latents = torch.utils.data.DataLoader(X_latents_data_loader,
         batch_size=1024, shuffle=False)
-
-    B = []
-
-    print(np.bincount(cluster_id_train))
-    # plot(model, torch.FloatTensor(np.array(X_train)).to(args.device), y_train,\
-         # torch.FloatTensor(np.array(X_test)).to(args.device), y_test)
 
     # Post clustering training
     for e in range(N_EPOCHS):
@@ -434,46 +394,20 @@ for r in range(len(iter_array)):
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
         cluster_ids_train = torch.argmax(q_train, axis=1)
+    
+        tune.report(loss=val_loss.detach().item(), accuracy=val_auc)
 
-        if args.optimize == 'auc':
-            opt = val_auc
-        elif args.optimize == 'auprc':
-            opt = val_auprc
-        else:
-            opt = -val_loss
-        es([val_f1, opt], model)
+        if val_auc > best_val_auc:
+            best_val_auc = val_auc
+            best_val_auprc = val_auprc
+            best_model = model
+            best_val_loss = val_loss
 
-        if es.early_stop == True or epoch == N_EPOCHS - 1:
-            # train_losses.append(train_loss.item())
-            sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
-            wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
-            break
-
-
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
-    ################################### Testing Perf. ##################################
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
-
-    print("\n####################################################################################\n")
-    print("Evaluating Test Data with k = ", args.n_clusters, " Attention = ", args.attention)
-
-    # Load best model trained from local training phase
-    model = es.load_checkpoint(model)
 
     # Evaluate model on Test dataset
+    model = best_model
     q_test, z_test = model.encoder_forward(torch.FloatTensor(X_test).to(args.device), output="latent")
     cluster_ids = torch.argmax(q_test, axis=1)
-
-    X_latents_data_loader = list(zip(z_test.to(args.device), q_test, y_test))
-
-    test_loader_latents = torch.utils.data.DataLoader(X_latents_data_loader,
-        batch_size=1024, shuffle=False)
-
 
     test_loss = 0
     e_test_loss = 0
@@ -504,7 +438,6 @@ for r in range(len(iter_array)):
     test_losses.append(test_loss.item())
     e_test_losses.append(e_test_loss.item())
 
-    print("Run #{}".format(r))
     print('Loss Metrics - Test Loss {:.3f}, E-Test Loss {:.3f}, Local Sum Test Loss {:.3f}'.format(test_loss, e_test_loss, local_sum_loss))
 
     print('Clustering Metrics - Acc {:.4f}'.format(acc), ', nmi {:.4f}'.format(nmi),\
@@ -516,172 +449,96 @@ for r in range(len(iter_array)):
 
     print("\n")
 
-    f1_scores.append(test_f1)
-    auc_scores.append(test_auc)
-    auprc_scores.append(test_auprc)
-    minpse_scores.append(test_minpse)
-    acc_scores.append(test_acc)
 
-    e_f1_scores.append(e_test_f1)
-    e_auc_scores.append(e_test_auc)
-    e_auprc_scores.append(e_test_auprc)
-    e_minpse_scores.append(e_test_minpse)
-    e_acc_scores.append(e_test_acc)
 
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
-    ################################### Feature Imp. ###################################
-    ####################################################################################
-    ####################################################################################
-    ####################################################################################
+def main(num_samples=15, max_num_epochs=50, cpus_per_trial=12):
+    config = {
+        "lr_exp": tune.loguniform(1e-4, 1e-1),
+        "lr_enc": tune.loguniform(1e-4, 1e-1),
+        "beta": tune.uniform(1e-1, 1e+1),
+        "gamma": tune.uniform(1e-1, 1e+1),
+        "delta": tune.uniform(1e-1, 1e+1),
+        "n_clusters": tune.choice([2,3,4,5,6,7,8,9,10])
+        # "batch_size": tune.choice([2, 4, 8, 16])
+        }
 
-    encoder_reg = GradientBoostingClassifier(random_state=0)
-    regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
-    # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
+    scheduler = ASHAScheduler(
+        metric="accuracy",
+        mode="max",
+        max_t=max_num_epochs,
+        grace_period=1,
+        reduction_factor=2)
 
-    for r in regs:
-        if args.n_classes > 2:
-            r.predict_proba = lambda X: r.decision_function(X)
-        else:
-            r.predict_proba = lambda X: np.array([r.decision_function(X), r.decision_function(X)]).transpose()
-
-    _ , z_train = model.encoder_forward(torch.FloatTensor(X_train).to(args.device), output='latent')
-    cluster_ids, _ = vq(z_train.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
-    cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
-
-    train_preds = torch.zeros((len(z_train), args.n_classes))
-    feature_importances = np.zeros((args.n_clusters, args.input_dim))
-
-    encoder_reg.fit(X_train, cluster_ids.numpy())
-
-    # Weighted predictions... should be without attention only
-    for j in range(model.n_clusters):
-        cluster_id = torch.where(cluster_ids == j)[0]
-        X_cluster = z_train[cluster_id]
-        cluster_preds = model.classifiers[j][0](X_cluster)
-        train_preds[cluster_id,:] = cluster_preds
-
-        # train student on teacher's predictions
-        y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
-        # y_cluster = train_preds[cluster_id].detach().numpy()
-        
-        # train student on real labels
-        # y_cluster = y_train[cluster_id]
-
-        # Train the local regressors on the data embeddings
-        # Some test data might not belong to any cluster
-        if len(cluster_id) > 0:
-            regs[j].fit(X_train[cluster_id], y_cluster)
-            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-            feature_importances[j,:] = regs[j].feature_importances_
-            print("Cluster # ", j, "sized: ", len(cluster_id), "label distr: ", np.bincount(y_cluster)/len(y_cluster))
-            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-            print("=========================\n")
-
-    # Testing performance of downstream classifier on cluster embeddings
-    _, z_test = model.encoder_forward(torch.FloatTensor(X_test).to(args.device), output='latent')
-    cluster_ids_test_model, _ = vq(z_test.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
-
-    cluster_ids_test = encoder_reg.predict(X_test)
-    cluster_ids_test = torch.Tensor(cluster_ids_test).type(torch.LongTensor)
+    reporter = CLIReporter(
+        # parameter_columns=["l1", "l2", "lr", "batch_size"],
+        metric_columns=["loss", "accuracy"])
     
-    print(len(np.where(cluster_ids_test == cluster_ids_test_model)[0]))
-    
-    test_preds = torch.zeros((len(X_test), args.n_classes))
-    y_pred = np.zeros((len(X_test), args.n_classes))
+    result = tune.run(
+        partial(train_expertnet, args=args),
+        resources_per_trial={"cpu": 6},
+        config=config,
+        num_samples=num_samples,
+        scheduler=scheduler,
+        progress_reporter=reporter)
 
-    for j in range(model.n_clusters):
-        cluster_id = torch.where(cluster_ids_test == j)[0]
-        X_cluster = X_test[cluster_id]
+    best_trial = result.get_best_trial("loss", "min", "last")
+    print("Best trial config: {}".format(best_trial.config))
+    print("Best trial final validation loss: {}".format(
+        best_trial.last_result["loss"]))
+    print("Best trial final validation accuracy: {}".format(
+        best_trial.last_result["accuracy"]))
 
-        # Some test data might not belong to any cluster
-        if len(cluster_id) > 0:
-            y_pred[cluster_id] = regs[j].predict_proba(X_cluster)
+    # best_trained_model = Net(best_trial.config["l1"], best_trial.config["l2"])
+    # device = "cpu"
+    # if torch.cuda.is_available():
+    #     device = "cuda:0"
+    #     if gpus_per_trial > 1:
+    #         best_trained_model = nn.DataParallel(best_trained_model)
+    # best_trained_model.to(device)
 
-    test_metrics = performance_metrics(y_test, y_pred, args.n_classes)
-    test_f1  = test_metrics['f1_score']
-    test_auc = test_metrics['auroc']
-    test_auprc = test_metrics['auprc']
-    test_minpse = test_metrics['minpse']
-    test_acc = test_metrics['acc']
+    # # best_checkpoint_dir = best_trial.checkpoint.value
+    # # model_state, optimizer_state = torch.load(os.path.join(
+    # #     best_checkpoint_dir, "checkpoint"))
+    # # best_trained_model.load_state_dict(model_state)
 
-    print('Student Network Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test AUPRC {:.3f},\
-        Test ACC {:.3f}'.format(test_f1, test_auc, test_auprc, test_acc))
-
-    print("\n")
-
-    feature_diff = 0
-    cntr = 0
-    for i in range(args.n_clusters):
-        for j in range(args.n_clusters):
-            if i > j:
-                ci = torch.where(cluster_ids == i)[0]
-                cj = torch.where(cluster_ids == j)[0]
-                Xi = X_train[ci]
-                Xj = X_train[cj]
-                feature_diff += 100*sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
-                # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
-                cntr += 1
-
-    if cntr == 0:
-        w_HTFD_scores.append(0)
-    else:
-        print("Average Feature Difference: ", feature_diff/cntr)
-        w_HTFD_scores.append(feature_diff/cntr)
+    # test_acc = test_accuracy(best_trained_model, device)
+    # print("Best trial test set accuracy: {}".format(test_acc))
 
 
-# print("\n")
-# print("Experiment ", iteration_name)
-# print(iter_array)
-# print("Test F1: ", e_f1_scores)
-# print("Test AUC: ", e_auc_scores)
-# print("Test AUPRC: ", e_auprc_scores)
-# print("Test MINPSE: ", e_minpse_scores)
+if __name__ == "__main__":
+    # You can change the number of GPUs per trial here:
+    main(num_samples=25, max_num_epochs=25, cpus_per_trial=12)
 
-# print("Sil scores: ", sil_scores)
-# print("HTFD: ", HTFD_scores)
-# print("WDFD: ", wdfd_scores)
+# enablePrint()
 
-# # print("Train Loss: ", train_losses)
-# # print("E-Train Loss: ", e_train_losses)
+# print("[Avg]\tDataset\tk\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
+# print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, n_clusters,\
+#     np.avg(e_f1_scores), np.avg(e_auc_scores), np.avg(e_auprc_scores), np.avg(e_minpse_scores), np.avg(e_acc_scores)))
 
-# print("Test Loss: ", test_losses)
-# print("E-Test Loss: ", e_test_losses)
-# print("Local Test Loss: ", local_sum_test_losses)
+# print("[Std]\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
+# print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+#     (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_minpse_scores), np.std(e_acc_scores)))
 
-# print("Model Complexity: ", model_complexity)
+# print('[Avg]\tTr-SIL\tHTFD\tWDFD')
+# print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
+#     np.avg(HTFD_scores), np.avg(wdfd_scores)))
 
-enablePrint()
+# print('[Std]\tTr-SIL\tHTFD\tWDFD')
+# print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
+#     np.std(HTFD_scores), np.std(wdfd_scores)))
 
-print("[Avg]\tDataset\tk\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
-print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
-    np.avg(e_f1_scores), np.avg(e_auc_scores), np.avg(e_auprc_scores), np.avg(e_minpse_scores), np.avg(e_acc_scores)))
+# # print("F1\tAUC\tAUPRC\tACC")
 
-print("[Std]\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-    (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_minpse_scores), np.std(e_acc_scores)))
+# # print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+# #     (np.avg(f1_scores), np.avg(auc_scores), np.avg(auprc_scores), np.avg(acc_scores)))
 
-print('[Avg]\tTr-SIL\tHTFD\tWDFD')
-print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
-    np.avg(HTFD_scores), np.avg(wdfd_scores)))
+# # print("Train Loss\tE-Train Loss\tTest Loss\tE-Test Loss")
 
-print('[Std]\tTr-SIL\tHTFD\tWDFD')
-print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
-    np.std(HTFD_scores), np.std(wdfd_scores)))
+# # print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+# #     (np.avg(train_losses), np.avg(e_train_losses),\
+# #     np.avg(test_losses), np.avg(e_test_losses)))
 
-# print("F1\tAUC\tAUPRC\tACC")
-
-# print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-#     (np.avg(f1_scores), np.avg(auc_scores), np.avg(auprc_scores), np.avg(acc_scores)))
-
-# print("Train Loss\tE-Train Loss\tTest Loss\tE-Test Loss")
-
-# print("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
-#     (np.avg(train_losses), np.avg(e_train_losses),\
-#     np.avg(test_losses), np.avg(e_test_losses)))
-
-if args.cluster_analysis == "True":
-    WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-    HTFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-    HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+# if args.cluster_analysis == "True":
+#     WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+#     HTFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
+#     HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

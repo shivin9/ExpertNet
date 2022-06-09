@@ -40,7 +40,8 @@ parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 
 # Training parameters
-parser.add_argument('--lr', default= 0.002, type=float)
+parser.add_argument('--lr_enc', default= 0.002, type=float)
+parser.add_argument('--lr_exp', default= 0.002, type=float)
 parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
@@ -54,6 +55,7 @@ parser.add_argument("--tol", default=0.01, type=float)
 parser.add_argument("--attention", default="True")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
+parser.add_argument('--optimize', default= 'auprc')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -103,8 +105,8 @@ for r in range(args.n_runs):
     test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
     if args.expt == 'ExpertNet':
-        ae_layers = [64, 32, args.n_z, 32, 64]
-        expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+        ae_layers = [128, 64, args.n_z, 64, 128]
+        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
 
     else:
         ae_layers = [64, args.n_z, 64]
@@ -114,7 +116,7 @@ for r in range(args.n_runs):
     model.pretrain(train_loader, args.pretrain_path)
     
     # Single Big NN    
-    # layers = [args.input_dim, 64, 32, 16, 8, args.n_classes]
+    # layers = [args.input_dim, 512, 256, 64, args.n_classes]
     # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
     # For DeepCAC baselines. Single Big NN
@@ -153,7 +155,14 @@ for r in range(args.n_runs):
         val_minpse = val_metrics['minpse']
         val_acc = val_metrics['acc']
 
-        es([val_f1, val_auprc], model)
+        if args.optimize == 'auc':
+            opt = val_auc
+        elif args.optimize == 'auprc':
+            opt = val_auprc
+        else:
+            opt = -val_loss
+
+        es([val_f1, opt], model)
 
         # original_cluster_centers, cluster_indices = kmeans2(last_vals.data.cpu().numpy(), k=args.n_clusters, minit='++')
         # plot(model, torch.FloatTensor(last_vals).to(args.device), y_val, args, labels=cluster_indices, epoch=e)
@@ -199,7 +208,6 @@ for r in range(args.n_runs):
     test_acc = test_metrics['acc']
 
     y_preds = np.argmax(test_preds.detach().numpy(), axis=1)
-    # print(confusion_matrix(y_test, y_preds))
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
