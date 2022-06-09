@@ -10,6 +10,7 @@ f1_score, roc_auc_score, average_precision_score, roc_curve, accuracy_score, mat
 from torch.utils.data import Subset
 import pandas as pd
 from scipy.spatial import distance_matrix
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
 
 import argparse
 import numpy as np
@@ -101,6 +102,9 @@ base_suffix += str(args.attention)
 f1_scores, auc_scores, auprc_scores, acc_scores, minpse_scores = [], [], [], [], [] #Inattentive test results
 e_f1_scores, e_auc_scores, e_auprc_scores, e_acc_scores, e_minpse_scores = [], [], [], [], [] #Attentive test results
 sil_scores, wdfd_scores, HTFD_scores, w_HTFD_scores = [], [], [], []
+
+stu_f1_scores, stu_auc_scores, stu_auprc_scores, stu_acc_scores, stu_minpse_scores = [], [], [], [], [] #Attentive test results
+stu_sil_scores, stu_wdfd_scores, stu_HTFD_scores, stu_w_HTFD_scores = [], [], [], []
 
 # to track the training loss as the model trains
 test_losses, e_test_losses, local_sum_test_losses = [], [], []
@@ -265,13 +269,14 @@ for r in range(len(iter_array)):
             else:
                 cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
 
+            val_class_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
+
+
             # if args.gamma != 0:
             #     val_loss += args.gamma*val_class_loss
             # if args.delta != 0:
             #     val_loss += delta*cluster_balance_loss
 
-
-            val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
 
             epoch_len = len(str(N_EPOCHS))
 
@@ -536,15 +541,15 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
 
-    encoder_reg = GradientBoostingClassifier(random_state=0)
-    regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
+    encoder_reg = RandomForestClassifier(random_state=0)
+    regs = [RandomForestClassifier(random_state=0) for _ in range(args.n_clusters)]
     # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
 
-    for r in regs:
-        if args.n_classes > 2:
-            r.predict_proba = lambda X: r.decision_function(X)
-        else:
-            r.predict_proba = lambda X: np.array([r.decision_function(X), r.decision_function(X)]).transpose()
+    # for r in regs:
+    #     if args.n_classes > 2:
+    #         r.predict_proba = lambda X: r.decision_function(X)
+    #     else:
+    #         r.predict_proba = lambda X: np.array([r.decision_function(X), 1-r.decision_function(X)]).transpose()
 
     _ , z_train = model.encoder_forward(torch.FloatTensor(X_train).to(args.device), output='latent')
     cluster_ids, _ = vq(z_train.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
@@ -564,7 +569,6 @@ for r in range(len(iter_array)):
 
         # train student on teacher's predictions
         y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
-        # y_cluster = train_preds[cluster_id].detach().numpy()
         
         # train student on real labels
         # y_cluster = y_train[cluster_id]
@@ -585,9 +589,7 @@ for r in range(len(iter_array)):
 
     cluster_ids_test = encoder_reg.predict(X_test)
     cluster_ids_test = torch.Tensor(cluster_ids_test).type(torch.LongTensor)
-    
-    print(len(np.where(cluster_ids_test == cluster_ids_test_model)[0]))
-    
+        
     test_preds = torch.zeros((len(X_test), args.n_classes))
     y_pred = np.zeros((len(X_test), args.n_classes))
 
@@ -606,8 +608,13 @@ for r in range(len(iter_array)):
     test_minpse = test_metrics['minpse']
     test_acc = test_metrics['acc']
 
-    print('Student Network Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f}, Test AUPRC {:.3f},\
-        Test ACC {:.3f}'.format(test_f1, test_auc, test_auprc, test_acc))
+    stu_f1_scores.append(test_f1)
+    stu_auc_scores.append(test_auc)
+    stu_auprc_scores.append(test_auprc)
+    stu_minpse_scores.append(test_minpse)
+
+    print('Student Network Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f},\
+        Test AUPRC {:.3f}'.format(test_f1, test_auc, test_auprc))
 
     print("\n")
 
@@ -654,11 +661,11 @@ for r in range(len(iter_array)):
 
 enablePrint()
 
-print("[Avg]\tDataset\tk\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
     np.avg(e_f1_scores), np.avg(e_auc_scores), np.avg(e_auprc_scores), np.avg(e_minpse_scores), np.avg(e_acc_scores)))
 
-print("[Std]\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tE-ACC")
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
     (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_minpse_scores), np.std(e_acc_scores)))
 
@@ -669,6 +676,16 @@ print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.avg(sil_scores),\
 print('[Std]\tTr-SIL\tHTFD\tWDFD')
 print("\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
     np.std(HTFD_scores), np.std(wdfd_scores)))
+
+print("Distilled Model Metrics")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE")
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
+    np.avg(stu_f1_scores), np.avg(stu_auc_scores), np.avg(stu_auprc_scores), np.avg(stu_minpse_scores)))
+
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE")
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.std(e_f1_scores), np.std(e_auc_scores), np.std(e_auprc_scores), np.std(e_minpse_scores)))
+
 
 # print("F1\tAUC\tAUPRC\tACC")
 

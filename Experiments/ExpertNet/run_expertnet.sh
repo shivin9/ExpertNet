@@ -58,7 +58,7 @@
 ########################################################
 
 
-echo "ExpertNet Experiments" >> Results/results_EN.txt
+echo "ExpertNet Student Experiments" >> Results/results_EN.txt
 
 # echo "ExpertNet" >> Results/results_EN.txt
 # echo "Kidney 48" >> Results/results_EN.txt
