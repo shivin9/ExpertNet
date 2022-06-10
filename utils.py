@@ -440,7 +440,7 @@ class parameters(object):
         self.load_ae = parser.load_ae
         self.classifier = parser.classifier
         self.tol = parser.tol
-        self.attention = parser.attention == "True"
+        self.attention = parser.attention
         self.ablation = parser.ablation
         self.cluster_balance = parser.cluster_balance
 

@@ -388,6 +388,18 @@ class ExpertNet(nn.Module):
                 cluster_loss = torch.sum(self.criterion(y_pred_cluster, y_cluster))
 
             else:
+                # classifier_labels = np.argmax(q.detach().cpu().numpy(), axis=1)
+                # for j in range(len(q)):
+                #     classifier_labels[j] = np.random.choice(range(self.n_clusters), p = q[j].detach().numpy())
+
+                # for k in range(self.n_clusters):
+                #     idx_cluster = np.where(classifier_labels == k)[0]
+                #     X_cluster = z[idx_cluster]
+                #     y_cluster = y[idx_cluster]
+
+                #     y_pred_cluster = classifier_k(X_cluster.detach())
+                #     cluster_loss = torch.mean(self.criterion(y_pred_cluster, y_cluster))
+
                 X_cluster = z
                 if backprop_enc == True:
                     y_pred_cluster = classifier_k(X_cluster)
@@ -467,7 +479,8 @@ class DMNN(nn.Module):
 
             classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr_enc)
-            self.classifiers.append([classifier, optimizer])            
+            self.classifiers.append([classifier, optimizer])
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=args.lr_enc)
 
 
     def pretrain(self, train_loader, path=''):
