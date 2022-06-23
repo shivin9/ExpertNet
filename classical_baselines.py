@@ -112,7 +112,7 @@ test_results = pd.DataFrame(columns=['Dataset', 'Classifier', 'alpha',\
 
 def get_classifier(classifier, n_classes=2):
     if classifier == "LR":
-        model = LogisticRegression(random_state=0, max_iter=1000, penalty='l2', C=0.001) # C=0.001
+        model = LogisticRegression(random_state=0, max_iter=1000, penalty='l2') # C=0.001
     elif classifier == "RF":
         model = RandomForestClassifier(n_estimators=50)
     elif classifier == "SVM":

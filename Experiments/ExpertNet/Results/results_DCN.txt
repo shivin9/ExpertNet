@@ -1489,3 +1489,269 @@ delta 0.0
 	0.042	0.076	0.044	0.144	0.000	0.062	0.157	0.650
 
 
+DCN Experiments
+DCN
+Respiratory 24
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	2	0.522	0.726	0.607	0.303	0.500	0.465	1.177	0.745
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.025	0.020	0.004	0.045	0.000	0.053	0.062	0.203
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	2	0.544	0.742	0.622	0.341
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.012	0.015	0.009	0.019
+
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+k = 5
+n_clusters 5
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+DCN
+Sepsis 24
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	2	0.507	0.710	0.572	0.148	0.500	0.623	1.451	1.998
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.030	0.052	0.041	0.132	0.000	0.167	0.014	0.038
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	2	0.499	0.849	0.656	0.337
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.002	0.007	0.011	0.061
+
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	3	0.454	0.692	0.581	0.259	0.500	0.291	1.435	1.458
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.206	0.142	0.059	0.153	0.000	0.124	0.057	0.417
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.504	0.851	0.657	0.339
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.005	0.010	0.014	0.069
+
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	4	0.396	0.561	0.531	0.265	0.500	0.167	1.178	0.707
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.111	0.178	0.052	0.138	0.000	0.118	0.172	0.307
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	4	0.499	0.846	0.654	0.395
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.003	0.015	0.015	0.105
+
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	5	0.543	0.764	0.599	0.291	0.500	0.167	1.254	1.578
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.047	0.038	0.030	0.165	0.000	0.143	0.132	0.645
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	5	0.501	0.845	0.648	0.363
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.006	0.009	0.013	0.089
+
+
+
+========================================================================
+========================================================================
+========================================================================
+
+DCN Experiments
+DCN
+Respiratory 24
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	2	0.514	0.628	0.549	0.123	0.500	0.404	1.121	0.764
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.030	0.063	0.030	0.110	0.000	0.146	0.060	0.187
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	2	0.496	0.602	0.543	0.177
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.016	0.088	0.035	0.150
+
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	3	0.536	0.693	0.581	0.260	0.500	0.328	1.148	0.885
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.042	0.070	0.030	0.023	0.000	0.112	0.124	0.319
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.508	0.551	0.521	0.227
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.031	0.060	0.037	0.114
+
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	4	0.526	0.704	0.589	0.261	0.500	0.291	0.892	0.718
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.037	0.043	0.013	0.011	0.000	0.105	0.452	0.434
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	4	0.496	0.540	0.505	0.271
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.015	0.026	0.003	0.161
+
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+DCN
+Sepsis 24
+k = 2
+n_clusters 2
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	2	0.549	0.668	0.565	0.242	0.500	0.546	1.479	1.644
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.045	0.085	0.037	0.053	0.000	0.252	0.051	0.475
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	2	0.487	0.726	0.586	0.101
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.006	0.090	0.042	0.203
+
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	3	0.581	0.801	0.622	0.312	0.500	0.517	1.452	1.309
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.014	0.009	0.014	0.035	0.000	0.132	0.051	0.209
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.487	0.745	0.594	0.126
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.005	0.042	0.016	0.160
+
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	4	0.581	0.777	0.605	0.271	0.500	0.422	1.430	1.697
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.032	0.021	0.013	0.049	0.000	0.235	0.062	0.607
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	4	0.491	0.642	0.532	0.216
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.006	0.080	0.033	0.140
+
+
+
+k = 5
+n_clusters 5
+alpha 1.0
+beta 2.0
+gamma 0.0
+delta 0.0
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	5	0.566	0.754	0.603	0.297	0.500	0.374	1.035	1.181
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	TR-SIL	Tr-HTFD	Tr-WDFD
+	0.041	0.086	0.029	0.013	0.000	0.249	0.531	0.790
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	5	0.488	0.597	0.524	0.185
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.003	0.059	0.032	0.154
+
+
+

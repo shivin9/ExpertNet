@@ -297,7 +297,7 @@ def MIFD_Cluster_Analysis(X_train, cluster_ids, column_names):
                     print(np.mean(Xi[:,k]), "C2:", np.mean(Xj[:,k]))
 
 
-def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
+def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, n_results=25):
     # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
@@ -325,7 +325,7 @@ def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
                 cntr += 1
                 print("\n========\n")
                 print(joint_col_name)
-                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:50]
+                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:n_results]
                 for k, v in sorted_dict:
                     c = column_names[k]
                     print("Feature:", c, "Val:", v)
@@ -334,7 +334,7 @@ def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
     print(mi_scores)
 
 
-def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
+def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, n_results=25):
     # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
@@ -349,16 +349,20 @@ def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
         for c in range(n_columns):
             Xi_c = X_train[ci][:,c]
             Zc = []
+            p_vals = 0
             # Collect values from other clusters
             for j in range(n_clusters):
                 if i != j:
                     cj = torch.where(cluster_ids == j)[0]
                     Xj_c = X_train[cj][:,c]
                     Zc = np.concatenate([Zc, Xj_c])
+                    local_p_val = np.nan_to_num(ttest_ind(Xi_c, Xj_c, axis=0, equal_var=True))[1]
+                    p_vals += np.round(-np.log(local_p_val + np.finfo(float).eps)*0.05, 3)
 
             col_entrpy = 0
-            p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            HTFD_scores[i][c] = np.round(-np.log(p_vals + np.finfo(float).eps)*0.05, 3)
+            # p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
+            # HTFD_scores[i][c] = np.round(-np.log(p_vals + np.finfo(float).eps)*0.05, 3)
+            HTFD_scores[i][c] = p_vals
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
@@ -378,43 +382,44 @@ def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
-    n_clusters = len(torch.unique(cluster_ids))
+    n_clusters = len(np.unique(cluster_ids))
     input_dim = X_train.shape[1]
     mi_scores = {}
     for i in range(n_clusters):
         mi_scores[i] = {}
-        ci = torch.where(cluster_ids == i)[0]
+        ci = np.where(cluster_ids == i)[0]
         for c in range(n_columns):
             Xi_c = X_train[ci][:,c]
             Zc = []
+            p_vals = 0
             # Collect values from other clusters
             for j in range(n_clusters):
                 if i != j:
-                    cj = torch.where(cluster_ids == j)[0]
+                    cj = np.where(cluster_ids == j)[0]
                     if len(X_train[cj].shape) == 1:
                         Xj_c = X_train[cj].reshape(1,n_features)[:,c]
                     else:
                         Xj_c = X_train[cj][:,c]
-                    Zc = np.concatenate([Zc, Xj_c])
+                    # Zc = np.concatenate([Zc, Xj_c])
+                    p_vals += -np.nan_to_num(wd(Xi_c, Xj_c))
 
-            col_entrpy = 0
             # p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            p_vals = -np.nan_to_num(wd(Xi_c, Zc))
+            # p_vals = -np.nan_to_num(wd(Xi_c, Zc))
             # p_vals = np.nan_to_num(calc_MI(Xi_c, Zc,0))
             mi_scores[i][c] = p_vals
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
-        print("|C{}| = {:.3f}".format(i, np.bincount(y_train[ci])/len(ci)))
+        print("|C{}| = {}".format(i, np.bincount(y_train[ci])/len(ci)))
 
         sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])
         for feature, pval in sorted_dict:
             f = column_names[feature]
-            print(f, "\t", -pval, end='\t')
+            print(f, "\t", -np.round(pval,3), end='\t')
             for cluster_id in range(n_clusters):
-                    c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
+                    c_cluster_id = np.where(cluster_ids == cluster_id)[0]
                     X_cluster_f = X_train[c_cluster_id][:,feature]
-                    # print(np.round(np.mean(X_cluster_f),3), end='\t')
+                    print("C{}".format(cluster_id), ": ", np.round(np.mean(X_cluster_f),3), end='\t')
             print('')
 
 

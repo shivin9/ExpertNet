@@ -125,7 +125,7 @@ for r in range(args.n_runs):
     N_EPOCHS = args.n_epochs
     es = EarlyStoppingDMNN(dataset=args.dataset)
     model.pretrain(train_loader, args.pretrain_path)
-    optimizer = Adam(model.parameters(), lr=args.lr_enc)
+    optimizer = Adam(model.ae.parameters(), lr=args.lr_enc)
 
     z_train, _, gate_vals = model(torch.FloatTensor(X_train))
     original_cluster_centers, cluster_indices = kmeans2(z_train.data.cpu().numpy(), k=args.n_clusters, minit='++')
@@ -167,19 +167,21 @@ for r in range(args.n_runs):
                 optimizer_j = model.classifiers[j][1]
                 optimizer_j.zero_grad()
                 loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
-                # local_loss = torch.sum(gate_vals.detach()[cluster_ids,j]*loss_j)
-                local_loss = torch.sum(gate_vals[cluster_ids,j]*loss_j)
-                # local_loss.backward(retain_graph=True)
-                # optimizer_j.step()
+                local_loss = torch.sum(gate_vals.detach()[cluster_ids,j]*loss_j)
+                local_loss.backward(retain_graph=True)
+                optimizer_j.step()
+
+                preds_j = model.classifiers[j][0](z_cluster.detach())
+                loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
                 y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids,j], shape=(len(preds_j), 1)) * preds_j
-                train_loss += local_loss
+                train_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
 
             # print(train_loss)
-            model.optimizer.zero_grad()
             epoch_loss += train_loss
+            optimizer.zero_grad()
             train_loss.backward(retain_graph=True)
-            model.optimizer.step()
-            
+            optimizer.step()
+
             f1 = f1_score(np.argmax(y_pred.detach().numpy(), axis=1), y_batch.detach().numpy(), average="macro")
             auc = multi_class_auc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
             auprc = multi_class_auprc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)

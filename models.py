@@ -384,7 +384,11 @@ class ExpertNet(nn.Module):
                 cluster_id = np.where(cluster_ids == k)[0]
                 X_cluster = z[cluster_id]
                 y_cluster = y[cluster_id]
-                y_pred_cluster = classifier_k(X_cluster.detach()) # Do not backprop the error to encoder
+                if backprop_enc == True:
+                    y_pred_cluster = classifier_k(X_cluster.detach()) # Do not backprop the error to encoder
+                else:
+                    y_pred_cluster = classifier_k(X_cluster) # Do not backprop the error to encoder
+
                 cluster_loss = torch.sum(self.criterion(y_pred_cluster, y_cluster))
 
             else:
