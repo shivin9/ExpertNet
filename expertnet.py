@@ -39,6 +39,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
+parser.add_argument('--n_features', default= '-1')
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -151,7 +152,7 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
-    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r, n_features=args.n_features)
     X_train, y_train = train_data
     X_val, y_val = val_data
     X_test, y_test = test_data
@@ -190,6 +191,7 @@ for r in range(len(iter_array)):
         ae_layers = [64, args.n_z, 64]
         expert_layers = [args.n_z, 30, args.n_classes]
 
+    print(args.input_dim, args.n_features)
     model = ExpertNet(
             ae_layers,
             expert_layers,
@@ -344,7 +346,7 @@ for r in range(len(iter_array)):
             reconstr_loss = F.mse_loss(x_bar, x_batch)
 
             sub_epochs = min(10, 1 + int(epoch/5))
-            # sub_epochs = 20
+            # sub_epochs = 10
 
             for _ in range(sub_epochs):
                 model.expert_forward(x_batch, y_batch, X_latents, q_batch, backprop_enc=False, backprop_local=True, attention=attention_train)
@@ -381,8 +383,8 @@ for r in range(len(iter_array)):
             loss.backward(retain_graph=True)
             model.optimizer.step()
 
-        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} |\
-        Cluster Balance Loss: {:.3f}'.format(epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))
+        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'\
+        .format(epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))
         train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
 
     ####################################################################################
@@ -392,6 +394,7 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
     ####################################################################################
+
     print("\n####################################################################################\n")
     print("Training Local Networks")
 
@@ -562,13 +565,6 @@ for r in range(len(iter_array)):
 
     encoder_reg = RandomForestClassifier(random_state=0)
     regs = [RandomForestClassifier(random_state=0) for _ in range(args.n_clusters)]
-    # regs = [GradientBoostingRegressor(random_state=0) for _ in range(args.n_clusters)]
-
-    # for r in regs:
-    #     if args.n_classes > 2:
-    #         r.predict_proba = lambda X: r.decision_function(X)
-    #     else:
-    #         r.predict_proba = lambda X: np.array([r.decision_function(X), 1-r.decision_function(X)]).transpose()
 
     _ , z_train = model.encoder_forward(torch.FloatTensor(X_train).to(args.device), output='latent')
     cluster_ids, _ = vq(z_train.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
@@ -590,15 +586,15 @@ for r in range(len(iter_array)):
         y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
         
         # train student on real labels
-        # y_cluster = y_train[cluster_id]
+        y_cluster_true = y_train[cluster_id]
 
         # Train the local regressors on the data embeddings
         # Some test data might not belong to any cluster
         if len(cluster_id) > 0:
-            regs[j].fit(X_train[cluster_id], y_cluster)
+            regs[j].fit(X_train[cluster_id], y_cluster_true)
             best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
             feature_importances[j,:] = regs[j].feature_importances_
-            print("Cluster # ", j, "sized: ", len(cluster_id), "label distr: ", np.bincount(y_cluster)/len(y_cluster))
+            print("Cluster # ", j, "sized: ", len(cluster_id), "label distr: ", np.bincount(y_cluster_true)/len(y_cluster_true))
             print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
             print("=========================\n")
 
@@ -721,6 +717,8 @@ print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
 #     np.avg(test_losses), np.avg(e_test_losses)))
 
 if args.cluster_analysis == "True":
-    WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
-    # HTFD_Cluster_Analysis(torch.Tensor(X_train), y_train, cluster_ids_train, column_names)
-    HTFD_Single_Cluster_Analysis(scale.inverse_transform(X_train), y_train, cluster_ids_train, column_names, n_results=25)
+    WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names,\
+        scale=scale, X_latents=z_train, dataset=args.dataset, n_results=15)
+
+    HTFD_Single_Cluster_Analysis(scale.inverse_transform(X_train), y_train, cluster_ids_train, column_names,\
+        scale=None, n_results=25)

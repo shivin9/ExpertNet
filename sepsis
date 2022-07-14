@@ -1,0 +1,1689 @@
+Stats:  1844 30661
+Run : 0
+44 44
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/sepsis24.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/sepsis24.pth
+Starting Training
+Training data
+
+[  0/100] train_loss: 0.653 valid_loss: 3.562 valid_F1: 0.485 valid_AUC: 0.519 valid_AUPRC: 0.502 valid_MINPSE: 0.000 valid_Feature_p: 1.139 valid_WDFD: 21.500 valid_Silhouette: 0.128
+Epoch: 00 | Epoch KM Loss: 0.462 | Total Loss: 68.103 | Classification Loss: 11.604 | Cluster Balance Loss: 1.319
+Epoch: 01 | Epoch KM Loss: 0.142 | Total Loss: 48.152 | Classification Loss: 9.012 | Cluster Balance Loss: 0.869
+Training data
+
+[  2/100] train_loss: 0.201 valid_loss: 1.606 valid_F1: 0.485 valid_AUC: 0.718 valid_AUPRC: 0.562 valid_MINPSE: 0.000 valid_Feature_p: 1.164 valid_WDFD: 21.500 valid_Silhouette: 0.279
+Epoch: 02 | Epoch KM Loss: 0.897 | Total Loss: 57.978 | Classification Loss: 8.913 | Cluster Balance Loss: 0.891
+Epoch: 03 | Epoch KM Loss: 0.335 | Total Loss: 51.892 | Classification Loss: 8.869 | Cluster Balance Loss: 1.096
+Training data
+
+[  4/100] train_loss: 0.200 valid_loss: 1.763 valid_F1: 0.485 valid_AUC: 0.718 valid_AUPRC: 0.562 valid_MINPSE: 0.000 valid_Feature_p: 1.161 valid_WDFD: 21.500 valid_Silhouette: 0.416
+Epoch: 04 | Epoch KM Loss: 1.472 | Total Loss: 66.767 | Classification Loss: 8.848 | Cluster Balance Loss: 1.440
+Epoch: 05 | Epoch KM Loss: 0.978 | Total Loss: 61.192 | Classification Loss: 8.825 | Cluster Balance Loss: 1.645
+Training data
+
+[  6/100] train_loss: 0.197 valid_loss: 1.828 valid_F1: 0.485 valid_AUC: 0.724 valid_AUPRC: 0.561 valid_MINPSE: 0.000 valid_Feature_p: 1.134 valid_WDFD: 21.500 valid_Silhouette: 0.571
+EarlyStopping counter: 1 out of 7
+Epoch: 06 | Epoch KM Loss: 1.951 | Total Loss: 71.816 | Classification Loss: 8.668 | Cluster Balance Loss: 1.249
+Epoch: 07 | Epoch KM Loss: 1.579 | Total Loss: 66.511 | Classification Loss: 8.554 | Cluster Balance Loss: 1.083
+Training data
+
+[  8/100] train_loss: 0.197 valid_loss: 1.779 valid_F1: 0.485 valid_AUC: 0.731 valid_AUPRC: 0.560 valid_MINPSE: 0.000 valid_Feature_p: 1.127 valid_WDFD: 21.500 valid_Silhouette: 0.670
+EarlyStopping counter: 2 out of 7
+Epoch: 08 | Epoch KM Loss: 2.341 | Total Loss: 74.893 | Classification Loss: 8.597 | Cluster Balance Loss: 1.485
+Epoch: 09 | Epoch KM Loss: 2.449 | Total Loss: 78.198 | Classification Loss: 8.715 | Cluster Balance Loss: 1.675
+Training data
+
+[ 10/100] train_loss: 0.191 valid_loss: 1.797 valid_F1: 0.485 valid_AUC: 0.727 valid_AUPRC: 0.561 valid_MINPSE: 0.000 valid_Feature_p: 1.125 valid_WDFD: 21.500 valid_Silhouette: 0.717
+EarlyStopping counter: 3 out of 7
+Epoch: 10 | Epoch KM Loss: 2.252 | Total Loss: 75.222 | Classification Loss: 8.652 | Cluster Balance Loss: 2.795
+Epoch: 11 | Epoch KM Loss: 4.151 | Total Loss: 100.886 | Classification Loss: 9.014 | Cluster Balance Loss: 2.151
+Training data
+
+[ 12/100] train_loss: 0.213 valid_loss: 2.029 valid_F1: 0.485 valid_AUC: 0.714 valid_AUPRC: 0.557 valid_MINPSE: 0.000 valid_Feature_p: 1.119 valid_WDFD: 21.500 valid_Silhouette: 0.747
+EarlyStopping counter: 4 out of 7
+Epoch: 12 | Epoch KM Loss: 2.792 | Total Loss: 83.392 | Classification Loss: 8.702 | Cluster Balance Loss: 1.157
+Epoch: 13 | Epoch KM Loss: 2.527 | Total Loss: 77.933 | Classification Loss: 8.634 | Cluster Balance Loss: 1.633
+Training data
+
+[ 14/100] train_loss: 0.189 valid_loss: 1.748 valid_F1: 0.485 valid_AUC: 0.725 valid_AUPRC: 0.559 valid_MINPSE: 0.000 valid_Feature_p: 1.121 valid_WDFD: 21.500 valid_Silhouette: 0.766
+EarlyStopping counter: 5 out of 7
+Epoch: 14 | Epoch KM Loss: 2.515 | Total Loss: 75.642 | Classification Loss: 8.471 | Cluster Balance Loss: 1.455
+Epoch: 15 | Epoch KM Loss: 2.523 | Total Loss: 75.220 | Classification Loss: 8.434 | Cluster Balance Loss: 1.681
+Training data
+
+[ 16/100] train_loss: 0.193 valid_loss: 1.765 valid_F1: 0.485 valid_AUC: 0.719 valid_AUPRC: 0.562 valid_MINPSE: 0.000 valid_Feature_p: 1.118 valid_WDFD: 21.500 valid_Silhouette: 0.782
+EarlyStopping counter: 6 out of 7
+Epoch: 16 | Epoch KM Loss: 2.402 | Total Loss: 73.692 | Classification Loss: 8.429 | Cluster Balance Loss: 2.017
+Epoch: 17 | Epoch KM Loss: 2.023 | Total Loss: 68.141 | Classification Loss: 8.210 | Cluster Balance Loss: 1.384
+Training data
+
+[ 18/100] train_loss: 0.203 valid_loss: 1.788 valid_F1: 0.485 valid_AUC: 0.678 valid_AUPRC: 0.550 valid_MINPSE: 0.000 valid_Feature_p: 1.116 valid_WDFD: 21.500 valid_Silhouette: 0.800
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.4847806035050731, 0.5624750063912715]
+[11055 11096]
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.485 valid_AUC: 0.722 valid_AUPRC: 0.563 valid_MINPSE: 0.000 valid_Sil: 0.416
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.485 valid_AUC: 0.725 valid_AUPRC: 0.564 valid_MINPSE: 0.000 valid_Sil: 0.416
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.485 valid_AUC: 0.726 valid_AUPRC: 0.565 valid_MINPSE: 0.000 valid_Sil: 0.416
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.485 valid_AUC: 0.727 valid_AUPRC: 0.565 valid_MINPSE: 0.000 valid_Sil: 0.416
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.485 valid_AUC: 0.728 valid_AUPRC: 0.565 valid_MINPSE: 0.000 valid_Sil: 0.416
+EarlyStopping counter: 1 out of 7
+
+[ 18/100] valid_loss: 0.210 valid_F1: 0.485 valid_AUC: 0.727 valid_AUPRC: 0.565 valid_MINPSE: 0.000 valid_Sil: 0.416
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.485 valid_AUC: 0.727 valid_AUPRC: 0.566 valid_MINPSE: 0.000 valid_Sil: 0.416
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.485 valid_AUC: 0.728 valid_AUPRC: 0.566 valid_MINPSE: 0.000 valid_Sil: 0.416
+EarlyStopping counter: 1 out of 7
+
+[ 18/100] valid_loss: 0.210 valid_F1: 0.493 valid_AUC: 0.727 valid_AUPRC: 0.565 valid_MINPSE: 0.147 valid_Sil: 0.416
+EarlyStopping counter: 2 out of 7
+
+[ 18/100] valid_loss: 0.212 valid_F1: 0.493 valid_AUC: 0.726 valid_AUPRC: 0.563 valid_MINPSE: 0.104 valid_Sil: 0.416
+EarlyStopping counter: 3 out of 7
+
+[ 18/100] valid_loss: 0.211 valid_F1: 0.493 valid_AUC: 0.727 valid_AUPRC: 0.564 valid_MINPSE: 0.129 valid_Sil: 0.416
+EarlyStopping counter: 4 out of 7
+
+[ 18/100] valid_loss: 0.213 valid_F1: 0.496 valid_AUC: 0.723 valid_AUPRC: 0.560 valid_MINPSE: 0.106 valid_Sil: 0.416
+EarlyStopping counter: 5 out of 7
+
+[ 18/100] valid_loss: 0.211 valid_F1: 0.497 valid_AUC: 0.727 valid_AUPRC: 0.563 valid_MINPSE: 0.122 valid_Sil: 0.416
+EarlyStopping counter: 6 out of 7
+
+[ 18/100] valid_loss: 0.213 valid_F1: 0.496 valid_AUC: 0.728 valid_AUPRC: 0.562 valid_MINPSE: 0.081 valid_Sil: 0.416
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  11
+Loading Best model with score:  [0.4847806035050731, 0.566044017997054]
+Run #0
+Loss Metrics - Test Loss 0.207, E-Test Loss 0.207, Local Sum Test Loss 0.000
+Clustering Metrics - Acc 0.0000 , nmi 0.0000 , ari 0.0000, HTFD 1.124
+Classification Metrics - Test F1 0.491, Test AUC 0.750, Test AUPRC 0.574, Test MIN_PSE 0.337 , E-Test F1 0.484, E-Test AUC 0.751, E-Test AUPRC 0.574, E-Test MIN_PSE 0.000
+
+
+Cluster #  0 sized:  11055 label distr:  [0.90737223 0.09262777]
+[('SBP', 0.043), ('Temp', 0.042), ('Age', 0.038), ('HospAdmTime', 0.037), ('HR', 0.035), ('WBC', 0.035), ('Platelets', 0.034), ('Glucose', 0.033), ('Resp', 0.033), ('BUN', 0.032)]
+=========================
+
+Cluster #  1 sized:  11096 label distr:  [0.97215213 0.02784787]
+[('HospAdmTime', 0.052), ('Temp', 0.051), ('SBP', 0.048), ('Age', 0.046), ('HR', 0.046), ('Glucose', 0.044), ('WBC', 0.044), ('MAP', 0.041), ('Creatinine', 0.038), ('Resp', 0.037)]
+=========================
+
+Student Network Classification Metrics - Test F1 0.484, Test AUC 0.749,        Test AUPRC 0.558
+
+
+Average Feature Difference:  0.060653520669335784
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	2	0.484	0.751	0.574	0.000	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.000	0.000	0.000	0.000	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.414	1.521	21.500
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.000	0.000	0.000
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	2	0.484	0.749	0.558	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.000	0.000	0.000	0.000
+
+
+========
+
+|C0| = 11055
+|C0| = [0.90737223 0.09262777]
+pH 	 1.811	C0 :  6.842 ± 1.939	C1 :  0.159 ± 1.073	
+PaCO2 	 1.745	C0 :  36.971 ± 14.229	C1 :  0.359 ± 3.59	
+FiO2 	 1.388	C0 :  0.406 ± 0.262	C1 :  0.025 ± 0.106	
+SaO2 	 1.303	C0 :  58.014 ± 46.082	C1 :  1.011 ± 9.04	
+Sofa_O2 	 1.142	C0 :  2.674 ± 1.354	C1 :  4.0 ± 0.009	
+Chloride 	 0.95	C0 :  82.302 ± 44.325	C1 :  32.147 ± 48.434	
+Lactate 	 0.903	C0 :  1.151 ± 1.525	C1 :  0.04 ± 0.277	
+HCO3 	 0.777	C0 :  17.238 ± 11.435	C1 :  7.553 ± 11.558	
+BaseExcess 	 0.742	C0 :  -0.124 ± 3.213	C1 :  -0.013 ± 0.399	
+Unit2 	 0.554	C0 :  0.438 ± 0.496	C1 :  0.182 ± 0.386	
+PTT 	 0.532	C0 :  24.711 ± 24.949	C1 :  11.977 ± 21.018	
+WBC 	 0.497	C0 :  12.101 ± 8.359	C1 :  8.54 ± 5.419	
+Potassium 	 0.492	C0 :  4.156 ± 0.732	C1 :  3.637 ± 1.286	
+MAP 	 0.44	C0 :  78.6 ± 15.806	C1 :  85.62 ± 17.287	
+Unit1 	 0.425	C0 :  0.204 ± 0.403	C1 :  0.4 ± 0.49	
+
+========
+
+|C1| = 11096
+|C1| = [0.97215213 0.02784787]
+pH 	 1.811	C0 :  6.842 ± 1.939	C1 :  0.159 ± 1.073	
+PaCO2 	 1.745	C0 :  36.971 ± 14.229	C1 :  0.359 ± 3.59	
+FiO2 	 1.388	C0 :  0.406 ± 0.262	C1 :  0.025 ± 0.106	
+SaO2 	 1.303	C0 :  58.014 ± 46.082	C1 :  1.011 ± 9.04	
+Sofa_O2 	 1.142	C0 :  2.674 ± 1.354	C1 :  4.0 ± 0.009	
+Chloride 	 0.95	C0 :  82.302 ± 44.325	C1 :  32.147 ± 48.434	
+Lactate 	 0.903	C0 :  1.151 ± 1.525	C1 :  0.04 ± 0.277	
+HCO3 	 0.777	C0 :  17.238 ± 11.435	C1 :  7.553 ± 11.558	
+BaseExcess 	 0.742	C0 :  -0.124 ± 3.213	C1 :  -0.013 ± 0.399	
+Unit2 	 0.554	C0 :  0.438 ± 0.496	C1 :  0.182 ± 0.386	
+PTT 	 0.532	C0 :  24.711 ± 24.949	C1 :  11.977 ± 21.018	
+WBC 	 0.497	C0 :  12.101 ± 8.359	C1 :  8.54 ± 5.419	
+Potassium 	 0.492	C0 :  4.156 ± 0.732	C1 :  3.637 ± 1.286	
+MAP 	 0.44	C0 :  78.6 ± 15.806	C1 :  85.62 ± 17.287	
+Unit1 	 0.425	C0 :  0.204 ± 0.403	C1 :  0.4 ± 0.49	
+
+========
+
+|C0| = 11055
+|C0| = [0.90737223 0.09262777]
+Feature: Sofa_Platelets HTFD score: 1.8021826694558578
+Cluster: 0 0.553 ± 0.901
+Cluster: 1 0.765 ± 1.365
+Feature: Sofa_Creatinin HTFD score: 1.8021826694558578
+Cluster: 0 0.644 ± 1.115
+Cluster: 1 0.913 ± 1.457
+Feature: Sofa_MAP HTFD score: 1.8021826694558578
+Cluster: 0 0.304 ± 0.46
+Cluster: 1 0.135 ± 0.342
+Feature: Sofa_O2 HTFD score: 1.8021826694558578
+Cluster: 0 2.674 ± 1.354
+Cluster: 1 4.0 ± 0.009
+Feature: HospAdmTime HTFD score: 1.8021826694558578
+Cluster: 0 -68.58 ± 180.718
+Cluster: 1 -37.316 ± 91.232
+Feature: Unit2 HTFD score: 1.8021826694558578
+Cluster: 0 0.438 ± 0.496
+Cluster: 1 0.182 ± 0.386
+Feature: Unit1 HTFD score: 1.8021826694558578
+Cluster: 0 0.204 ± 0.403
+Cluster: 1 0.4 ± 0.49
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 50.076 ± 122.796
+Cluster: 1 13.353 ± 70.541
+Feature: WBC HTFD score: 1.8021826694558578
+Cluster: 0 12.101 ± 8.359
+Cluster: 1 8.54 ± 5.419
+Feature: PTT HTFD score: 1.8021826694558578
+Cluster: 0 24.711 ± 24.949
+Cluster: 1 11.977 ± 21.018
+Feature: Hgb HTFD score: 1.8021826694558578
+Cluster: 0 10.272 ± 2.256
+Cluster: 1 9.658 ± 4.122
+Feature: Potassium HTFD score: 1.8021826694558578
+Cluster: 0 4.156 ± 0.732
+Cluster: 1 3.637 ± 1.286
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 2.59 ± 2.021
+Cluster: 1 2.127 ± 1.919
+Feature: Magnesium HTFD score: 1.8021826694558578
+Cluster: 0 1.893 ± 0.681
+Cluster: 1 1.601 ± 0.877
+Feature: Lactate HTFD score: 1.8021826694558578
+Cluster: 0 1.151 ± 1.525
+Cluster: 1 0.04 ± 0.277
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 131.27 ± 45.77
+Cluster: 1 119.723 ± 55.829
+Feature: Chloride HTFD score: 1.8021826694558578
+Cluster: 0 82.302 ± 44.325
+Cluster: 1 32.147 ± 48.434
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 6.05 ± 3.652
+Cluster: 1 7.395 ± 3.054
+Feature: BUN HTFD score: 1.8021826694558578
+Cluster: 0 22.651 ± 18.568
+Cluster: 1 19.35 ± 18.466
+Feature: SaO2 HTFD score: 1.8021826694558578
+Cluster: 0 58.014 ± 46.082
+Cluster: 1 1.011 ± 9.04
+Feature: PaCO2 HTFD score: 1.8021826694558578
+Cluster: 0 36.971 ± 14.229
+Cluster: 1 0.359 ± 3.59
+Feature: pH HTFD score: 1.8021826694558578
+Cluster: 0 6.842 ± 1.939
+Cluster: 1 0.159 ± 1.073
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.406 ± 0.262
+Cluster: 1 0.025 ± 0.106
+Feature: HCO3 HTFD score: 1.8021826694558578
+Cluster: 0 17.238 ± 11.435
+Cluster: 1 7.553 ± 11.558
+Feature: EtCO2 HTFD score: 1.8021826694558578
+Cluster: 0 4.148 ± 11.658
+Cluster: 1 1.317 ± 6.78
+Feature: MAP HTFD score: 1.8021826694558578
+Cluster: 0 78.6 ± 15.806
+Cluster: 1 85.62 ± 17.287
+Feature: SBP HTFD score: 1.8021826694558578
+Cluster: 0 118.484 ± 27.251
+Cluster: 1 125.513 ± 25.748
+Feature: HR HTFD score: 1.8021826694558578
+Cluster: 0 86.52 ± 16.552
+Cluster: 1 82.024 ± 17.181
+Feature: Hct HTFD score: 1.802182669455164
+Cluster: 0 30.659 ± 6.156
+Cluster: 1 29.275 ± 11.961
+Feature: Age HTFD score: 1.8021826694158691
+Cluster: 0 63.165 ± 15.55
+Cluster: 1 60.866 ± 17.175
+Feature: Temp HTFD score: 1.8021826415668354
+Cluster: 0 36.241 ± 5.403
+Cluster: 1 36.756 ± 1.113
+Feature: AST HTFD score: 1.802182626529582
+Cluster: 0 72.916 ± 476.869
+Cluster: 1 26.155 ± 161.941
+Feature: Resp HTFD score: 1.7498502214708571
+Cluster: 0 19.163 ± 5.601
+Cluster: 1 18.609 ± 4.462
+Feature: Bilirubin_direct HTFD score: 1.660322062513692
+Cluster: 0 0.084 ± 0.863
+Cluster: 1 0.018 ± 0.159
+Feature: Bilirubin_total HTFD score: 1.6523974369408234
+Cluster: 0 0.592 ± 2.384
+Cluster: 1 0.391 ± 1.257
+Feature: Gender HTFD score: 1.1704813418359235
+Cluster: 0 0.581 ± 0.493
+Cluster: 1 0.537 ± 0.499
+Feature: TroponinI HTFD score: 1.0050630793225697
+Cluster: 0 0.691 ± 9.303
+Cluster: 1 1.513 ± 10.992
+Feature: Sofa_Bilirubin HTFD score: 0.8328952553507293
+Cluster: 0 2.935 ± 1.67
+Cluster: 1 2.81 ± 1.751
+Feature: BaseExcess HTFD score: 0.4048822593188981
+Cluster: 0 -0.124 ± 3.213
+Cluster: 1 -0.013 ± 0.399
+Feature: Alkalinephos HTFD score: 0.3619988587044821
+Cluster: 0 33.065 ± 94.021
+Cluster: 1 29.519 ± 57.618
+Feature: Platelets HTFD score: 0.24857262021589213
+Cluster: 0 194.601 ± 109.224
+Cluster: 1 190.549 ± 114.098
+Feature: Creatinine HTFD score: 0.11930205153579992
+Cluster: 0 1.382 ± 1.537
+Cluster: 1 1.342 ± 1.984
+Feature: O2Sat HTFD score: 0.044166566060174106
+Cluster: 0 96.921 ± 4.176
+Cluster: 1 96.959 ± 2.651
+Feature: DBP HTFD score: 0.019238561948128348
+Cluster: 0 51.692 ± 24.506
+Cluster: 1 51.847 ± 31.099
+
+========
+
+|C1| = 11096
+|C1| = [0.97215213 0.02784787]
+Feature: Sofa_Platelets HTFD score: 1.8021826694558578
+Cluster: 0 0.553 ± 0.901
+Cluster: 1 0.765 ± 1.365
+Feature: Sofa_Creatinin HTFD score: 1.8021826694558578
+Cluster: 0 0.644 ± 1.115
+Cluster: 1 0.913 ± 1.457
+Feature: Sofa_MAP HTFD score: 1.8021826694558578
+Cluster: 0 0.304 ± 0.46
+Cluster: 1 0.135 ± 0.342
+Feature: Sofa_O2 HTFD score: 1.8021826694558578
+Cluster: 0 2.674 ± 1.354
+Cluster: 1 4.0 ± 0.009
+Feature: HospAdmTime HTFD score: 1.8021826694558578
+Cluster: 0 -68.58 ± 180.718
+Cluster: 1 -37.316 ± 91.232
+Feature: Unit2 HTFD score: 1.8021826694558578
+Cluster: 0 0.438 ± 0.496
+Cluster: 1 0.182 ± 0.386
+Feature: Unit1 HTFD score: 1.8021826694558578
+Cluster: 0 0.204 ± 0.403
+Cluster: 1 0.4 ± 0.49
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 50.076 ± 122.796
+Cluster: 1 13.353 ± 70.541
+Feature: WBC HTFD score: 1.8021826694558578
+Cluster: 0 12.101 ± 8.359
+Cluster: 1 8.54 ± 5.419
+Feature: PTT HTFD score: 1.8021826694558578
+Cluster: 0 24.711 ± 24.949
+Cluster: 1 11.977 ± 21.018
+Feature: Hgb HTFD score: 1.8021826694558578
+Cluster: 0 10.272 ± 2.256
+Cluster: 1 9.658 ± 4.122
+Feature: Potassium HTFD score: 1.8021826694558578
+Cluster: 0 4.156 ± 0.732
+Cluster: 1 3.637 ± 1.286
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 2.59 ± 2.021
+Cluster: 1 2.127 ± 1.919
+Feature: Magnesium HTFD score: 1.8021826694558578
+Cluster: 0 1.893 ± 0.681
+Cluster: 1 1.601 ± 0.877
+Feature: Lactate HTFD score: 1.8021826694558578
+Cluster: 0 1.151 ± 1.525
+Cluster: 1 0.04 ± 0.277
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 131.27 ± 45.77
+Cluster: 1 119.723 ± 55.829
+Feature: Chloride HTFD score: 1.8021826694558578
+Cluster: 0 82.302 ± 44.325
+Cluster: 1 32.147 ± 48.434
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 6.05 ± 3.652
+Cluster: 1 7.395 ± 3.054
+Feature: BUN HTFD score: 1.8021826694558578
+Cluster: 0 22.651 ± 18.568
+Cluster: 1 19.35 ± 18.466
+Feature: SaO2 HTFD score: 1.8021826694558578
+Cluster: 0 58.014 ± 46.082
+Cluster: 1 1.011 ± 9.04
+Feature: PaCO2 HTFD score: 1.8021826694558578
+Cluster: 0 36.971 ± 14.229
+Cluster: 1 0.359 ± 3.59
+Feature: pH HTFD score: 1.8021826694558578
+Cluster: 0 6.842 ± 1.939
+Cluster: 1 0.159 ± 1.073
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.406 ± 0.262
+Cluster: 1 0.025 ± 0.106
+Feature: HCO3 HTFD score: 1.8021826694558578
+Cluster: 0 17.238 ± 11.435
+Cluster: 1 7.553 ± 11.558
+Feature: EtCO2 HTFD score: 1.8021826694558578
+Cluster: 0 4.148 ± 11.658
+Cluster: 1 1.317 ± 6.78
+Feature: MAP HTFD score: 1.8021826694558578
+Cluster: 0 78.6 ± 15.806
+Cluster: 1 85.62 ± 17.287
+Feature: SBP HTFD score: 1.8021826694558578
+Cluster: 0 118.484 ± 27.251
+Cluster: 1 125.513 ± 25.748
+Feature: HR HTFD score: 1.8021826694558578
+Cluster: 0 86.52 ± 16.552
+Cluster: 1 82.024 ± 17.181
+Feature: Hct HTFD score: 1.802182669455164
+Cluster: 0 30.659 ± 6.156
+Cluster: 1 29.275 ± 11.961
+Feature: Age HTFD score: 1.8021826694158691
+Cluster: 0 63.165 ± 15.55
+Cluster: 1 60.866 ± 17.175
+Feature: Temp HTFD score: 1.8021826415668354
+Cluster: 0 36.241 ± 5.403
+Cluster: 1 36.756 ± 1.113
+Feature: AST HTFD score: 1.802182626529582
+Cluster: 0 72.916 ± 476.869
+Cluster: 1 26.155 ± 161.941
+Feature: Resp HTFD score: 1.7498502214708571
+Cluster: 0 19.163 ± 5.601
+Cluster: 1 18.609 ± 4.462
+Feature: Bilirubin_direct HTFD score: 1.660322062513692
+Cluster: 0 0.084 ± 0.863
+Cluster: 1 0.018 ± 0.159
+Feature: Bilirubin_total HTFD score: 1.6523974369408234
+Cluster: 0 0.592 ± 2.384
+Cluster: 1 0.391 ± 1.257
+Feature: Gender HTFD score: 1.1704813418359235
+Cluster: 0 0.581 ± 0.493
+Cluster: 1 0.537 ± 0.499
+Feature: TroponinI HTFD score: 1.0050630793225697
+Cluster: 0 0.691 ± 9.303
+Cluster: 1 1.513 ± 10.992
+Feature: Sofa_Bilirubin HTFD score: 0.8328952553507293
+Cluster: 0 2.935 ± 1.67
+Cluster: 1 2.81 ± 1.751
+Feature: BaseExcess HTFD score: 0.4048822593188981
+Cluster: 0 -0.124 ± 3.213
+Cluster: 1 -0.013 ± 0.399
+Feature: Alkalinephos HTFD score: 0.3619988587044821
+Cluster: 0 33.065 ± 94.021
+Cluster: 1 29.519 ± 57.618
+Feature: Platelets HTFD score: 0.24857262021589213
+Cluster: 0 194.601 ± 109.224
+Cluster: 1 190.549 ± 114.098
+Feature: Creatinine HTFD score: 0.11930205153579992
+Cluster: 0 1.382 ± 1.537
+Cluster: 1 1.342 ± 1.984
+Feature: O2Sat HTFD score: 0.044166566060174106
+Cluster: 0 96.921 ± 4.176
+Cluster: 1 96.959 ± 2.651
+Feature: DBP HTFD score: 0.019238561948128348
+Cluster: 0 51.692 ± 24.506
+Cluster: 1 51.847 ± 31.099
+
+==========================================
+==========================================
+
+
+Epoch: 35 | Epoch KM Loss: 1.627 | Total Loss: 60.649 | Classification Loss: 7.483 | Cluster Balance Loss: 1.288
+Training data
+
+[ 36/100] train_loss: 0.165 valid_loss: 1.516 valid_F1: 0.510 valid_AUC: 0.717 valid_AUPRC: 0.554 valid_MINPSE: 0.125 valid_Feature_p: 1.059 valid_WDFD: 21.500 valid_Silhouette: 0.840
+EarlyStopping counter: 4 out of 7
+Epoch: 36 | Epoch KM Loss: 1.626 | Total Loss: 59.028 | Classification Loss: 7.341 | Cluster Balance Loss: 1.000
+Epoch: 37 | Epoch KM Loss: 1.979 | Total Loss: 64.563 | Classification Loss: 7.494 | Cluster Balance Loss: 1.891
+Training data
+
+[ 38/100] train_loss: 0.175 valid_loss: 1.709 valid_F1: 0.485 valid_AUC: 0.676 valid_AUPRC: 0.540 valid_MINPSE: 0.000 valid_Feature_p: 1.061 valid_WDFD: 21.500 valid_Silhouette: 0.853
+EarlyStopping counter: 5 out of 7
+Epoch: 38 | Epoch KM Loss: 1.127 | Total Loss: 54.536 | Classification Loss: 7.355 | Cluster Balance Loss: 1.437
+Epoch: 39 | Epoch KM Loss: 1.137 | Total Loss: 52.487 | Classification Loss: 7.221 | Cluster Balance Loss: 1.400
+Training data
+
+[ 40/100] train_loss: 0.165 valid_loss: 1.524 valid_F1: 0.529 valid_AUC: 0.712 valid_AUPRC: 0.552 valid_MINPSE: 0.133 valid_Feature_p: 1.057 valid_WDFD: 21.500 valid_Silhouette: 0.853
+EarlyStopping counter: 6 out of 7
+Epoch: 40 | Epoch KM Loss: 1.725 | Total Loss: 58.716 | Classification Loss: 7.184 | Cluster Balance Loss: 1.029
+Epoch: 41 | Epoch KM Loss: 1.255 | Total Loss: 52.556 | Classification Loss: 6.985 | Cluster Balance Loss: 1.252
+Training data
+
+[ 42/100] train_loss: 0.159 valid_loss: 1.510 valid_F1: 0.484 valid_AUC: 0.693 valid_AUPRC: 0.547 valid_MINPSE: 0.000 valid_Feature_p: 1.056 valid_WDFD: 21.500 valid_Silhouette: 0.860
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.4847806035050731, 0.5687974900085557]
+[ 8307 13844]
+
+[ 42/100] valid_loss: 0.214 valid_F1: 0.485 valid_AUC: 0.737 valid_AUPRC: 0.569 valid_MINPSE: 0.000 valid_Sil: 0.822
+
+[ 42/100] valid_loss: 0.215 valid_F1: 0.485 valid_AUC: 0.731 valid_AUPRC: 0.563 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 1 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.740 valid_AUPRC: 0.569 valid_MINPSE: 0.000 valid_Sil: 0.822
+
+[ 42/100] valid_loss: 0.212 valid_F1: 0.485 valid_AUC: 0.740 valid_AUPRC: 0.569 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 1 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.741 valid_AUPRC: 0.571 valid_MINPSE: 0.000 valid_Sil: 0.822
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.741 valid_AUPRC: 0.571 valid_MINPSE: 0.000 valid_Sil: 0.822
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.741 valid_AUPRC: 0.571 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 1 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.741 valid_AUPRC: 0.573 valid_MINPSE: 0.000 valid_Sil: 0.822
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.573 valid_MINPSE: 0.000 valid_Sil: 0.822
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 1 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 2 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 3 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 4 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.573 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 5 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.573 valid_MINPSE: 0.000 valid_Sil: 0.822
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 1 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 2 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.573 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 3 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 4 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.742 valid_AUPRC: 0.572 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 5 out of 7
+
+[ 42/100] valid_loss: 0.213 valid_F1: 0.485 valid_AUC: 0.741 valid_AUPRC: 0.571 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 6 out of 7
+
+[ 42/100] valid_loss: 0.214 valid_F1: 0.485 valid_AUC: 0.741 valid_AUPRC: 0.571 valid_MINPSE: 0.000 valid_Sil: 0.822
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  11
+Loading Best model with score:  [0.4847806035050731, 0.5731182932854129]
+Run #0
+Loss Metrics - Test Loss 0.225, E-Test Loss 0.225, Local Sum Test Loss 0.000
+Clustering Metrics - Acc 0.0000 , nmi 0.0000 , ari 0.0000, HTFD 1.123
+Classification Metrics - Test F1 0.484, Test AUC 0.721, Test AUPRC 0.556, Test MIN_PSE 0.000 , E-Test F1 0.484, E-Test AUC 0.722, E-Test AUPRC 0.554, E-Test MIN_PSE 0.000
+
+
+Cluster #  0 sized:  8307 label distr:  [0.9348742 0.0651258]
+[('HospAdmTime', 0.046), ('SBP', 0.042), ('Temp', 0.041), ('HR', 0.037), ('Age', 0.036), ('Resp', 0.035), ('Glucose', 0.032), ('Creatinine', 0.032), ('Platelets', 0.032), ('BUN', 0.032)]
+=========================
+
+Cluster #  1 sized:  13844 label distr:  [0.9427911 0.0572089]
+[('Temp', 0.045), ('SBP', 0.044), ('WBC', 0.043), ('HR', 0.039), ('Age', 0.038), ('Glucose', 0.038), ('HospAdmTime', 0.036), ('Platelets', 0.035), ('BUN', 0.033), ('Creatinine', 0.033)]
+=========================
+
+Student Network Classification Metrics - Test F1 0.484, Test AUC 0.720,        Test AUPRC 0.554
+
+
+Average Feature Difference:  0.06152749675107622
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	2	0.484	0.722	0.554	0.000	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.000	0.000	0.000	0.000	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.830	1.482	21.500
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.000	0.000	0.000
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	2	0.484	0.720	0.554	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.000	0.000	0.000	0.000
+
+
+========
+
+|C0| = 8307
+|C0| = [0.9348742 0.0651258]
+Sofa_Platelets 	 1.16	C0 :  1.498 ± 1.486	C1 :  0.156 ± 0.398	
+Sofa_Creatinin 	 1.002	C0 :  1.593 ± 1.68	C1 :  0.29 ± 0.628	
+Platelets 	 0.978	C0 :  124.328 ± 96.431	C1 :  233.521 ± 99.58	
+Hgb 	 0.972	C0 :  7.944 ± 4.135	C1 :  11.177 ± 1.911	
+Hct 	 0.93	C0 :  24.444 ± 12.086	C1 :  33.279 ± 5.365	
+HCO3 	 0.662	C0 :  7.232 ± 10.956	C1 :  15.48 ± 12.307	
+Creatinine 	 0.66	C0 :  1.973 ± 2.692	C1 :  0.995 ± 0.578	
+Chloride 	 0.582	C0 :  37.994 ± 50.805	C1 :  68.69 ± 50.529	
+Potassium 	 0.547	C0 :  3.585 ± 1.565	C1 :  4.083 ± 0.546	
+Magnesium 	 0.545	C0 :  1.476 ± 0.968	C1 :  1.909 ± 0.623	
+BUN 	 0.502	C0 :  25.299 ± 24.876	C1 :  18.416 ± 12.802	
+WBC 	 0.487	C0 :  8.172 ± 7.044	C1 :  11.604 ± 7.086	
+Fibrinogen 	 0.464	C0 :  61.655 ± 138.872	C1 :  13.695 ± 64.297	
+Calcium 	 0.458	C0 :  5.75 ± 3.839	C1 :  7.309 ± 3.016	
+Phosphate 	 0.424	C0 :  2.116 ± 2.35	C1 :  2.503 ± 1.711	
+
+========
+
+|C1| = 13844
+|C1| = [0.9427911 0.0572089]
+Sofa_Platelets 	 1.16	C0 :  1.498 ± 1.486	C1 :  0.156 ± 0.398	
+Sofa_Creatinin 	 1.002	C0 :  1.593 ± 1.68	C1 :  0.29 ± 0.628	
+Platelets 	 0.978	C0 :  124.328 ± 96.431	C1 :  233.521 ± 99.58	
+Hgb 	 0.972	C0 :  7.944 ± 4.135	C1 :  11.177 ± 1.911	
+Hct 	 0.93	C0 :  24.444 ± 12.086	C1 :  33.279 ± 5.365	
+HCO3 	 0.662	C0 :  7.232 ± 10.956	C1 :  15.48 ± 12.307	
+Creatinine 	 0.66	C0 :  1.973 ± 2.692	C1 :  0.995 ± 0.578	
+Chloride 	 0.582	C0 :  37.994 ± 50.805	C1 :  68.69 ± 50.529	
+Potassium 	 0.547	C0 :  3.585 ± 1.565	C1 :  4.083 ± 0.546	
+Magnesium 	 0.545	C0 :  1.476 ± 0.968	C1 :  1.909 ± 0.623	
+BUN 	 0.502	C0 :  25.299 ± 24.876	C1 :  18.416 ± 12.802	
+WBC 	 0.487	C0 :  8.172 ± 7.044	C1 :  11.604 ± 7.086	
+Fibrinogen 	 0.464	C0 :  61.655 ± 138.872	C1 :  13.695 ± 64.297	
+Calcium 	 0.458	C0 :  5.75 ± 3.839	C1 :  7.309 ± 3.016	
+Phosphate 	 0.424	C0 :  2.116 ± 2.35	C1 :  2.503 ± 1.711	
+
+========
+
+|C0| = 8307
+|C0| = [0.9348742 0.0651258]
+Feature: Sofa_Platelets HTFD score: 1.8021826694558578
+Cluster: 0 1.498 ± 1.486
+Cluster: 1 0.156 ± 0.398
+Feature: Sofa_Creatinin HTFD score: 1.8021826694558578
+Cluster: 0 1.593 ± 1.68
+Cluster: 1 0.29 ± 0.628
+Feature: HospAdmTime HTFD score: 1.8021826694558578
+Cluster: 0 -77.58 ± 204.163
+Cluster: 1 -38.121 ± 86.871
+Feature: Unit2 HTFD score: 1.8021826694558578
+Cluster: 0 0.364 ± 0.481
+Cluster: 1 0.277 ± 0.448
+Feature: Unit1 HTFD score: 1.8021826694558578
+Cluster: 0 0.369 ± 0.483
+Cluster: 1 0.262 ± 0.44
+Feature: Platelets HTFD score: 1.8021826694558578
+Cluster: 0 124.328 ± 96.431
+Cluster: 1 233.521 ± 99.58
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 61.655 ± 138.872
+Cluster: 1 13.695 ± 64.297
+Feature: WBC HTFD score: 1.8021826694558578
+Cluster: 0 8.172 ± 7.044
+Cluster: 1 11.604 ± 7.086
+Feature: Hgb HTFD score: 1.8021826694558578
+Cluster: 0 7.944 ± 4.135
+Cluster: 1 11.177 ± 1.911
+Feature: Hct HTFD score: 1.8021826694558578
+Cluster: 0 24.444 ± 12.086
+Cluster: 1 33.279 ± 5.365
+Feature: Bilirubin_total HTFD score: 1.8021826694558578
+Cluster: 0 0.896 ± 2.998
+Cluster: 1 0.248 ± 0.522
+Feature: Potassium HTFD score: 1.8021826694558578
+Cluster: 0 3.585 ± 1.565
+Cluster: 1 4.083 ± 0.546
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 2.116 ± 2.35
+Cluster: 1 2.503 ± 1.711
+Feature: Magnesium HTFD score: 1.8021826694558578
+Cluster: 0 1.476 ± 0.968
+Cluster: 1 1.909 ± 0.623
+Feature: Lactate HTFD score: 1.8021826694558578
+Cluster: 0 0.785 ± 1.615
+Cluster: 1 0.48 ± 0.901
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 115.769 ± 59.396
+Cluster: 1 131.316 ± 44.91
+Feature: Creatinine HTFD score: 1.8021826694558578
+Cluster: 0 1.973 ± 2.692
+Cluster: 1 0.995 ± 0.578
+Feature: Chloride HTFD score: 1.8021826694558578
+Cluster: 0 37.994 ± 50.805
+Cluster: 1 68.69 ± 50.529
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 5.75 ± 3.839
+Cluster: 1 7.309 ± 3.016
+Feature: Alkalinephos HTFD score: 1.8021826694558578
+Cluster: 0 42.447 ± 111.359
+Cluster: 1 24.593 ± 46.523
+Feature: BUN HTFD score: 1.8021826694558578
+Cluster: 0 25.299 ± 24.876
+Cluster: 1 18.416 ± 12.802
+Feature: AST HTFD score: 1.8021826694558578
+Cluster: 0 100.155 ± 571.541
+Cluster: 1 19.092 ± 70.795
+Feature: PaCO2 HTFD score: 1.8021826694558578
+Cluster: 0 16.256 ± 20.003
+Cluster: 1 20.057 ± 21.51
+Feature: HCO3 HTFD score: 1.8021826694558578
+Cluster: 0 7.232 ± 10.956
+Cluster: 1 15.48 ± 12.307
+Feature: EtCO2 HTFD score: 1.8021826694558578
+Cluster: 0 5.053 ± 12.875
+Cluster: 1 1.336 ± 6.627
+Feature: Temp HTFD score: 1.8021826694558578
+Cluster: 0 35.772 ± 6.252
+Cluster: 1 36.935 ± 0.672
+Feature: BaseExcess HTFD score: 1.8021826694558556
+Cluster: 0 -0.291 ± 2.245
+Cluster: 1 0.066 ± 2.304
+Feature: DBP HTFD score: 1.8021826694558554
+Cluster: 0 54.454 ± 26.362
+Cluster: 1 50.159 ± 28.824
+Feature: pH HTFD score: 1.802182669455637
+Cluster: 0 3.146 ± 3.653
+Cluster: 1 3.703 ± 3.697
+Feature: Bilirubin_direct HTFD score: 1.8021826694008354
+Cluster: 0 0.123 ± 1.007
+Cluster: 1 0.008 ± 0.059
+Feature: TroponinI HTFD score: 1.8021826628665225
+Cluster: 0 2.209 ± 15.971
+Cluster: 1 0.439 ± 3.462
+Feature: FiO2 HTFD score: 1.7970486134504828
+Cluster: 0 0.195 ± 0.262
+Cluster: 1 0.227 ± 0.284
+Feature: Sofa_O2 HTFD score: 1.4843640396302085
+Cluster: 0 3.261 ± 1.234
+Cluster: 1 3.384 ± 1.117
+Feature: Sofa_MAP HTFD score: 1.245364686340891
+Cluster: 0 0.244 ± 0.43
+Cluster: 1 0.205 ± 0.404
+Feature: HR HTFD score: 1.008429196340729
+Cluster: 0 85.163 ± 17.304
+Cluster: 1 83.731 ± 16.823
+Feature: O2Sat HTFD score: 0.8386405501041033
+Cluster: 0 96.75 ± 4.689
+Cluster: 1 97.054 ± 2.516
+Feature: PTT HTFD score: 0.817273387669136
+Cluster: 0 17.173 ± 26.263
+Cluster: 1 19.028 ± 22.379
+Feature: SBP HTFD score: 0.41215358691089304
+Cluster: 0 122.864 ± 27.712
+Cluster: 1 121.49 ± 26.126
+Feature: MAP HTFD score: 0.3716050171551357
+Cluster: 0 82.644 ± 18.786
+Cluster: 1 81.8 ± 15.707
+Feature: Gender HTFD score: 0.369183403014342
+Cluster: 0 0.544 ± 0.498
+Cluster: 1 0.568 ± 0.495
+Feature: Age HTFD score: 0.23084279398907062
+Cluster: 0 61.647 ± 16.297
+Cluster: 1 62.233 ± 16.496
+Feature: SaO2 HTFD score: 0.1827977306023014
+Cluster: 0 30.309 ± 44.199
+Cluster: 1 28.95 ± 43.452
+Feature: Sofa_Bilirubin HTFD score: 0.1329468878479597
+Cluster: 0 2.899 ± 1.632
+Cluster: 1 2.856 ± 1.758
+Feature: Resp HTFD score: 0.01799308702184694
+Cluster: 0 18.902 ± 5.229
+Cluster: 1 18.875 ± 4.972
+
+========
+
+|C1| = 13844
+|C1| = [0.9427911 0.0572089]
+Feature: Sofa_Platelets HTFD score: 1.8021826694558578
+Cluster: 0 1.498 ± 1.486
+Cluster: 1 0.156 ± 0.398
+Feature: Sofa_Creatinin HTFD score: 1.8021826694558578
+Cluster: 0 1.593 ± 1.68
+Cluster: 1 0.29 ± 0.628
+Feature: HospAdmTime HTFD score: 1.8021826694558578
+Cluster: 0 -77.58 ± 204.163
+Cluster: 1 -38.121 ± 86.871
+Feature: Unit2 HTFD score: 1.8021826694558578
+Cluster: 0 0.364 ± 0.481
+Cluster: 1 0.277 ± 0.448
+Feature: Unit1 HTFD score: 1.8021826694558578
+Cluster: 0 0.369 ± 0.483
+Cluster: 1 0.262 ± 0.44
+Feature: Platelets HTFD score: 1.8021826694558578
+Cluster: 0 124.328 ± 96.431
+Cluster: 1 233.521 ± 99.58
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 61.655 ± 138.872
+Cluster: 1 13.695 ± 64.297
+Feature: WBC HTFD score: 1.8021826694558578
+Cluster: 0 8.172 ± 7.044
+Cluster: 1 11.604 ± 7.086
+Feature: Hgb HTFD score: 1.8021826694558578
+Cluster: 0 7.944 ± 4.135
+Cluster: 1 11.177 ± 1.911
+Feature: Hct HTFD score: 1.8021826694558578
+Cluster: 0 24.444 ± 12.086
+Cluster: 1 33.279 ± 5.365
+Feature: Bilirubin_total HTFD score: 1.8021826694558578
+Cluster: 0 0.896 ± 2.998
+Cluster: 1 0.248 ± 0.522
+Feature: Potassium HTFD score: 1.8021826694558578
+Cluster: 0 3.585 ± 1.565
+Cluster: 1 4.083 ± 0.546
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 2.116 ± 2.35
+Cluster: 1 2.503 ± 1.711
+Feature: Magnesium HTFD score: 1.8021826694558578
+Cluster: 0 1.476 ± 0.968
+Cluster: 1 1.909 ± 0.623
+Feature: Lactate HTFD score: 1.8021826694558578
+Cluster: 0 0.785 ± 1.615
+Cluster: 1 0.48 ± 0.901
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 115.769 ± 59.396
+Cluster: 1 131.316 ± 44.91
+Feature: Creatinine HTFD score: 1.8021826694558578
+Cluster: 0 1.973 ± 2.692
+Cluster: 1 0.995 ± 0.578
+Feature: Chloride HTFD score: 1.8021826694558578
+Cluster: 0 37.994 ± 50.805
+Cluster: 1 68.69 ± 50.529
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 5.75 ± 3.839
+Cluster: 1 7.309 ± 3.016
+Feature: Alkalinephos HTFD score: 1.8021826694558578
+Cluster: 0 42.447 ± 111.359
+Cluster: 1 24.593 ± 46.523
+Feature: BUN HTFD score: 1.8021826694558578
+Cluster: 0 25.299 ± 24.876
+Cluster: 1 18.416 ± 12.802
+Feature: AST HTFD score: 1.8021826694558578
+Cluster: 0 100.155 ± 571.541
+Cluster: 1 19.092 ± 70.795
+Feature: PaCO2 HTFD score: 1.8021826694558578
+Cluster: 0 16.256 ± 20.003
+Cluster: 1 20.057 ± 21.51
+Feature: HCO3 HTFD score: 1.8021826694558578
+Cluster: 0 7.232 ± 10.956
+Cluster: 1 15.48 ± 12.307
+Feature: EtCO2 HTFD score: 1.8021826694558578
+Cluster: 0 5.053 ± 12.875
+Cluster: 1 1.336 ± 6.627
+Feature: Temp HTFD score: 1.8021826694558578
+Cluster: 0 35.772 ± 6.252
+Cluster: 1 36.935 ± 0.672
+Feature: BaseExcess HTFD score: 1.8021826694558556
+Cluster: 0 -0.291 ± 2.245
+Cluster: 1 0.066 ± 2.304
+Feature: DBP HTFD score: 1.8021826694558554
+Cluster: 0 54.454 ± 26.362
+Cluster: 1 50.159 ± 28.824
+Feature: pH HTFD score: 1.802182669455637
+Cluster: 0 3.146 ± 3.653
+Cluster: 1 3.703 ± 3.697
+Feature: Bilirubin_direct HTFD score: 1.8021826694008354
+Cluster: 0 0.123 ± 1.007
+Cluster: 1 0.008 ± 0.059
+Feature: TroponinI HTFD score: 1.8021826628665225
+Cluster: 0 2.209 ± 15.971
+Cluster: 1 0.439 ± 3.462
+Feature: FiO2 HTFD score: 1.7970486134504828
+Cluster: 0 0.195 ± 0.262
+Cluster: 1 0.227 ± 0.284
+Feature: Sofa_O2 HTFD score: 1.4843640396302085
+Cluster: 0 3.261 ± 1.234
+Cluster: 1 3.384 ± 1.117
+Feature: Sofa_MAP HTFD score: 1.245364686340891
+Cluster: 0 0.244 ± 0.43
+Cluster: 1 0.205 ± 0.404
+Feature: HR HTFD score: 1.008429196340729
+Cluster: 0 85.163 ± 17.304
+Cluster: 1 83.731 ± 16.823
+Feature: O2Sat HTFD score: 0.8386405501041033
+Cluster: 0 96.75 ± 4.689
+Cluster: 1 97.054 ± 2.516
+Feature: PTT HTFD score: 0.817273387669136
+Cluster: 0 17.173 ± 26.263
+Cluster: 1 19.028 ± 22.379
+Feature: SBP HTFD score: 0.41215358691089304
+Cluster: 0 122.864 ± 27.712
+Cluster: 1 121.49 ± 26.126
+Feature: MAP HTFD score: 0.3716050171551357
+Cluster: 0 82.644 ± 18.786
+Cluster: 1 81.8 ± 15.707
+Feature: Gender HTFD score: 0.369183403014342
+Cluster: 0 0.544 ± 0.498
+Cluster: 1 0.568 ± 0.495
+Feature: Age HTFD score: 0.23084279398907062
+Cluster: 0 61.647 ± 16.297
+Cluster: 1 62.233 ± 16.496
+Feature: SaO2 HTFD score: 0.1827977306023014
+Cluster: 0 30.309 ± 44.199
+Cluster: 1 28.95 ± 43.452
+Feature: Sofa_Bilirubin HTFD score: 0.1329468878479597
+Cluster: 0 2.899 ± 1.632
+Cluster: 1 2.856 ± 1.758
+Feature: Resp HTFD score: 0.01799308702184694
+Cluster: 0 18.902 ± 5.229
+Cluster: 1 18.875 ± 4.972
+Stats:  1844 30661
+Run : 0
+44 44
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/sepsis24.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/sepsis24.pth
+Starting Training
+Training data
+
+[  0/100] train_loss: 0.811 valid_loss: 4.517 valid_F1: 0.056 valid_AUC: 0.568 valid_AUPRC: 0.515 valid_MINPSE: 0.000 valid_Feature_p: 1.038 valid_WDFD: 21.500 valid_Silhouette: 0.124
+Epoch: 00 | Epoch KM Loss: 0.921 | Total Loss: 90.343 | Classification Loss: 14.849 | Cluster Balance Loss: 1.370
+Epoch: 01 | Epoch KM Loss: 0.356 | Total Loss: 52.430 | Classification Loss: 9.121 | Cluster Balance Loss: 0.853
+Training data
+
+[  2/100] train_loss: 0.202 valid_loss: 1.962 valid_F1: 0.485 valid_AUC: 0.698 valid_AUPRC: 0.554 valid_MINPSE: 0.000 valid_Feature_p: 1.144 valid_WDFD: 21.500 valid_Silhouette: 0.242
+Epoch: 02 | Epoch KM Loss: 1.648 | Total Loss: 68.259 | Classification Loss: 9.016 | Cluster Balance Loss: 1.488
+Epoch: 03 | Epoch KM Loss: 0.898 | Total Loss: 59.632 | Classification Loss: 8.917 | Cluster Balance Loss: 1.348
+Training data
+
+[  4/100] train_loss: 0.199 valid_loss: 2.165 valid_F1: 0.485 valid_AUC: 0.681 valid_AUPRC: 0.541 valid_MINPSE: 0.000 valid_Feature_p: 1.159 valid_WDFD: 21.500 valid_Silhouette: 0.361
+EarlyStopping counter: 1 out of 7
+Epoch: 04 | Epoch KM Loss: 2.750 | Total Loss: 81.232 | Classification Loss: 8.892 | Cluster Balance Loss: 1.790
+Epoch: 05 | Epoch KM Loss: 2.106 | Total Loss: 74.039 | Classification Loss: 8.864 | Cluster Balance Loss: 1.525
+Training data
+
+[  6/100] train_loss: 0.200 valid_loss: 2.159 valid_F1: 0.485 valid_AUC: 0.672 valid_AUPRC: 0.540 valid_MINPSE: 0.000 valid_Feature_p: 1.161 valid_WDFD: 21.500 valid_Silhouette: 0.466
+EarlyStopping counter: 2 out of 7
+Epoch: 06 | Epoch KM Loss: 3.432 | Total Loss: 88.013 | Classification Loss: 8.839 | Cluster Balance Loss: 2.123
+Epoch: 07 | Epoch KM Loss: 3.120 | Total Loss: 84.516 | Classification Loss: 8.836 | Cluster Balance Loss: 1.979
+Training data
+
+[  8/100] train_loss: 0.200 valid_loss: 2.143 valid_F1: 0.485 valid_AUC: 0.659 valid_AUPRC: 0.541 valid_MINPSE: 0.000 valid_Feature_p: 1.156 valid_WDFD: 21.500 valid_Silhouette: 0.519
+EarlyStopping counter: 3 out of 7
+Epoch: 08 | Epoch KM Loss: 3.670 | Total Loss: 89.635 | Classification Loss: 8.756 | Cluster Balance Loss: 1.854
+Epoch: 09 | Epoch KM Loss: 3.457 | Total Loss: 86.854 | Classification Loss: 8.686 | Cluster Balance Loss: 1.694
+Training data
+
+[ 10/100] train_loss: 0.198 valid_loss: 2.104 valid_F1: 0.485 valid_AUC: 0.660 valid_AUPRC: 0.545 valid_MINPSE: 0.000 valid_Feature_p: 1.149 valid_WDFD: 21.500 valid_Silhouette: 0.542
+EarlyStopping counter: 4 out of 7
+Epoch: 10 | Epoch KM Loss: 3.659 | Total Loss: 88.390 | Classification Loss: 8.672 | Cluster Balance Loss: 1.874
+Epoch: 11 | Epoch KM Loss: 3.570 | Total Loss: 87.317 | Classification Loss: 8.602 | Cluster Balance Loss: 1.783
+Training data
+
+[ 12/100] train_loss: 0.201 valid_loss: 2.070 valid_F1: 0.485 valid_AUC: 0.619 valid_AUPRC: 0.535 valid_MINPSE: 0.000 valid_Feature_p: 1.139 valid_WDFD: 21.500 valid_Silhouette: 0.559
+EarlyStopping counter: 5 out of 7
+Epoch: 12 | Epoch KM Loss: 3.620 | Total Loss: 87.146 | Classification Loss: 8.655 | Cluster Balance Loss: 2.533
+Epoch: 13 | Epoch KM Loss: 3.519 | Total Loss: 85.677 | Classification Loss: 8.576 | Cluster Balance Loss: 2.076
+Training data
+
+[ 14/100] train_loss: 0.194 valid_loss: 2.053 valid_F1: 0.485 valid_AUC: 0.621 valid_AUPRC: 0.535 valid_MINPSE: 0.000 valid_Feature_p: 1.134 valid_WDFD: 21.500 valid_Silhouette: 0.579
+EarlyStopping counter: 6 out of 7
+Epoch: 14 | Epoch KM Loss: 3.592 | Total Loss: 85.987 | Classification Loss: 8.564 | Cluster Balance Loss: 2.590
+Epoch: 15 | Epoch KM Loss: 3.548 | Total Loss: 85.171 | Classification Loss: 8.444 | Cluster Balance Loss: 1.987
+Training data
+
+[ 16/100] train_loss: 0.195 valid_loss: 2.039 valid_F1: 0.485 valid_AUC: 0.643 valid_AUPRC: 0.539 valid_MINPSE: 0.000 valid_Feature_p: 1.130 valid_WDFD: 21.500 valid_Silhouette: 0.592
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.4847806035050731, 0.5543662672554541]
+[ 9470  2206 10475]
+
+[ 16/100] valid_loss: 0.208 valid_F1: 0.485 valid_AUC: 0.700 valid_AUPRC: 0.556 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.700 valid_AUPRC: 0.555 valid_MINPSE: 0.000 valid_Sil: 0.242
+EarlyStopping counter: 1 out of 7
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.700 valid_AUPRC: 0.555 valid_MINPSE: 0.000 valid_Sil: 0.242
+EarlyStopping counter: 2 out of 7
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.702 valid_AUPRC: 0.557 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.704 valid_AUPRC: 0.558 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.706 valid_AUPRC: 0.559 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.708 valid_AUPRC: 0.561 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.709 valid_AUPRC: 0.560 valid_MINPSE: 0.000 valid_Sil: 0.242
+EarlyStopping counter: 1 out of 7
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.710 valid_AUPRC: 0.563 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.713 valid_AUPRC: 0.563 valid_MINPSE: 0.000 valid_Sil: 0.242
+EarlyStopping counter: 1 out of 7
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.714 valid_AUPRC: 0.564 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.207 valid_F1: 0.485 valid_AUC: 0.715 valid_AUPRC: 0.564 valid_MINPSE: 0.000 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.208 valid_F1: 0.489 valid_AUC: 0.716 valid_AUPRC: 0.564 valid_MINPSE: 0.085 valid_Sil: 0.242
+EarlyStopping counter: 1 out of 7
+
+[ 16/100] valid_loss: 0.208 valid_F1: 0.493 valid_AUC: 0.715 valid_AUPRC: 0.565 valid_MINPSE: 0.104 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.208 valid_F1: 0.492 valid_AUC: 0.716 valid_AUPRC: 0.565 valid_MINPSE: 0.088 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.208 valid_F1: 0.493 valid_AUC: 0.716 valid_AUPRC: 0.567 valid_MINPSE: 0.095 valid_Sil: 0.242
+
+[ 16/100] valid_loss: 0.209 valid_F1: 0.492 valid_AUC: 0.714 valid_AUPRC: 0.565 valid_MINPSE: 0.088 valid_Sil: 0.242
+EarlyStopping counter: 1 out of 7
+
+[ 16/100] valid_loss: 0.210 valid_F1: 0.501 valid_AUC: 0.713 valid_AUPRC: 0.563 valid_MINPSE: 0.152 valid_Sil: 0.242
+EarlyStopping counter: 2 out of 7
+
+[ 16/100] valid_loss: 0.211 valid_F1: 0.505 valid_AUC: 0.713 valid_AUPRC: 0.561 valid_MINPSE: 0.167 valid_Sil: 0.242
+EarlyStopping counter: 3 out of 7
+
+[ 16/100] valid_loss: 0.211 valid_F1: 0.501 valid_AUC: 0.710 valid_AUPRC: 0.560 valid_MINPSE: 0.163 valid_Sil: 0.242
+EarlyStopping counter: 4 out of 7
+
+[ 16/100] valid_loss: 0.211 valid_F1: 0.501 valid_AUC: 0.713 valid_AUPRC: 0.563 valid_MINPSE: 0.152 valid_Sil: 0.242
+EarlyStopping counter: 5 out of 7
+
+[ 16/100] valid_loss: 0.212 valid_F1: 0.493 valid_AUC: 0.706 valid_AUPRC: 0.558 valid_MINPSE: 0.115 valid_Sil: 0.242
+EarlyStopping counter: 6 out of 7
+
+[ 16/100] valid_loss: 0.213 valid_F1: 0.497 valid_AUC: 0.710 valid_AUPRC: 0.558 valid_MINPSE: 0.122 valid_Sil: 0.242
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  3  Attention =  11
+Loading Best model with score:  [0.4925611110020526, 0.5667735859907191]
+Run #0
+Loss Metrics - Test Loss 0.216, E-Test Loss 0.211, Local Sum Test Loss 0.000
+Clustering Metrics - Acc 0.0000 , nmi 0.0000 , ari 0.0000, HTFD 1.190
+Classification Metrics - Test F1 0.505, Test AUC 0.683, Test AUPRC 0.551, Test MIN_PSE 0.113 , E-Test F1 0.505, E-Test AUC 0.726, E-Test AUPRC 0.560, E-Test MIN_PSE 0.225
+
+
+Cluster #  0 sized:  9470 label distr:  [0.91816262 0.08183738]
+[('SBP', 0.046), ('Temp', 0.045), ('HR', 0.038), ('WBC', 0.037), ('Age', 0.036), ('HospAdmTime', 0.036), ('Resp', 0.034), ('Glucose', 0.034), ('Platelets', 0.034), ('Hct', 0.032)]
+=========================
+
+Cluster #  1 sized:  2206 label distr:  [0.87579329 0.12420671]
+[('SBP', 0.044), ('HospAdmTime', 0.038), ('Age', 0.035), ('Hct', 0.033), ('Platelets', 0.032), ('Temp', 0.032), ('HR', 0.032), ('BUN', 0.031), ('Creatinine', 0.031), ('pH', 0.031)]
+=========================
+
+Cluster #  2 sized:  10475 label distr:  [0.97288783 0.02711217]
+[('HospAdmTime', 0.052), ('Temp', 0.05), ('SBP', 0.047), ('Glucose', 0.047), ('HR', 0.046), ('Age', 0.045), ('WBC', 0.039), ('Creatinine', 0.039), ('Platelets', 0.038), ('MAP', 0.037)]
+=========================
+
+Student Network Classification Metrics - Test F1 0.484, Test AUC 0.746,        Test AUPRC 0.559
+
+
+Average Feature Difference:  0.05982878994174156
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.505	0.726	0.560	0.225	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.000	0.000	0.000	0.000	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.242	1.570	21.500
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.000	0.000	0.000
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.484	0.746	0.559	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.000	0.000	0.000	0.000
+
+
+========
+
+|C0| = 9470
+|C0| = [0.91816262 0.08183738]
+pH 	 1.629	C0 :  6.937 ± 1.779	C1 :  4.486 ± 3.604	C2 :  0.174 ± 1.12	
+PaCO2 	 1.587	C0 :  37.703 ± 13.473	C1 :  23.059 ± 20.883	C2 :  0.458 ± 4.1	
+FiO2 	 1.222	C0 :  0.406 ± 0.236	C1 :  0.3 ± 0.371	C2 :  0.024 ± 0.104	
+SaO2 	 1.196	C0 :  59.415 ± 45.888	C1 :  35.619 ± 45.078	C2 :  1.081 ± 9.453	
+Sofa_O2 	 1.066	C0 :  2.629 ± 1.362	C1 :  3.24 ± 1.181	C2 :  4.0 ± 0.01	
+Chloride 	 0.868	C0 :  83.4 ± 43.815	C1 :  70.321 ± 48.996	C2 :  30.704 ± 47.836	
+HCO3 	 0.728	C0 :  17.578 ± 11.364	C1 :  14.639 ± 11.909	C2 :  7.219 ± 11.416	
+Lactate 	 0.65	C0 :  1.006 ± 1.123	C1 :  1.472 ± 2.535	C2 :  0.037 ± 0.262	
+BaseExcess 	 0.562	C0 :  -0.031 ± 2.908	C1 :  -0.501 ± 3.895	C2 :  -0.011 ± 0.43	
+Unit2 	 0.553	C0 :  0.456 ± 0.498	C1 :  0.281 ± 0.449	C2 :  0.183 ± 0.387	
+Unit1 	 0.512	C0 :  0.167 ± 0.373	C1 :  0.443 ± 0.497	C2 :  0.394 ± 0.489	
+Sofa_Creatinin 	 0.404	C0 :  0.478 ± 0.943	C1 :  1.596 ± 1.545	C2 :  0.878 ± 1.436	
+Potassium 	 0.4	C0 :  4.131 ± 0.69	C1 :  4.275 ± 0.959	C2 :  3.605 ± 1.292	
+WBC 	 0.393	C0 :  11.676 ± 5.239	C1 :  13.308 ± 15.612	C2 :  8.459 ± 5.329	
+Calcium 	 0.387	C0 :  5.965 ± 3.689	C1 :  6.956 ± 3.199	C2 :  7.361 ± 3.085	
+
+========
+
+|C1| = 2206
+|C1| = [0.87579329 0.12420671]
+Bilirubin_total 	 1.174	C0 :  0.234 ± 0.579	C1 :  2.491 ± 5.345	C2 :  0.303 ± 0.661	
+Alkalinephos 	 1.147	C0 :  18.451 ± 39.614	C1 :  110.384 ± 191.391	C2 :  26.237 ± 47.197	
+BUN 	 1.109	C0 :  19.757 ± 14.008	C1 :  39.854 ± 31.293	C2 :  18.147 ± 16.211	
+Creatinine 	 1.009	C0 :  1.158 ± 1.06	C1 :  2.96 ± 3.524	C2 :  1.21 ± 1.56	
+Temp 	 0.976	C0 :  36.961 ± 2.199	C1 :  33.16 ± 10.871	C2 :  36.785 ± 0.622	
+Fibrinogen 	 0.92	C0 :  35.928 ± 98.12	C1 :  117.327 ± 193.412	C2 :  9.804 ± 57.238	
+HospAdmTime 	 0.918	C0 :  -45.932 ± 84.428	C1 :  -167.956 ± 361.598	C2 :  -35.008 ± 81.661	
+AST 	 0.841	C0 :  19.722 ± 75.981	C1 :  325.868 ± 1071.198	C2 :  18.202 ± 64.757	
+Lactate 	 0.792	C0 :  1.006 ± 1.123	C1 :  1.472 ± 2.535	C2 :  0.037 ± 0.262	
+Phosphate 	 0.763	C0 :  2.392 ± 1.839	C1 :  3.725 ± 2.506	C2 :  2.039 ± 1.858	
+PTT 	 0.754	C0 :  22.443 ± 21.598	C1 :  34.59 ± 35.952	C2 :  11.192 ± 19.868	
+Bilirubin_direct 	 0.713	C0 :  0.009 ± 0.081	C1 :  0.421 ± 1.913	C2 :  0.012 ± 0.083	
+Sofa_Creatinin 	 0.699	C0 :  0.478 ± 0.943	C1 :  1.596 ± 1.545	C2 :  0.878 ± 1.436	
+Sofa_Bilirubin 	 0.542	C0 :  3.109 ± 1.602	C1 :  2.034 ± 1.716	C2 :  2.834 ± 1.749	
+WBC 	 0.464	C0 :  11.676 ± 5.239	C1 :  13.308 ± 15.612	C2 :  8.459 ± 5.329	
+
+========
+
+|C2| = 10475
+|C2| = [0.97288783 0.02711217]
+pH 	 1.707	C0 :  6.937 ± 1.779	C1 :  4.486 ± 3.604	C2 :  0.174 ± 1.12	
+PaCO2 	 1.643	C0 :  37.703 ± 13.473	C1 :  23.059 ± 20.883	C2 :  0.458 ± 4.1	
+FiO2 	 1.318	C0 :  0.406 ± 0.236	C1 :  0.3 ± 0.371	C2 :  0.024 ± 0.104	
+SaO2 	 1.231	C0 :  59.415 ± 45.888	C1 :  35.619 ± 45.078	C2 :  1.081 ± 9.453	
+Sofa_O2 	 1.081	C0 :  2.629 ± 1.362	C1 :  3.24 ± 1.181	C2 :  4.0 ± 0.01	
+Chloride 	 0.952	C0 :  83.4 ± 43.815	C1 :  70.321 ± 48.996	C2 :  30.704 ± 47.836	
+Lactate 	 0.859	C0 :  1.006 ± 1.123	C1 :  1.472 ± 2.535	C2 :  0.037 ± 0.262	
+HCO3 	 0.787	C0 :  17.578 ± 11.364	C1 :  14.639 ± 11.909	C2 :  7.219 ± 11.416	
+BaseExcess 	 0.699	C0 :  -0.031 ± 2.908	C1 :  -0.501 ± 3.895	C2 :  -0.011 ± 0.43	
+PTT 	 0.566	C0 :  22.443 ± 21.598	C1 :  34.59 ± 35.952	C2 :  11.192 ± 19.868	
+Potassium 	 0.519	C0 :  4.131 ± 0.69	C1 :  4.275 ± 0.959	C2 :  3.605 ± 1.292	
+Unit2 	 0.518	C0 :  0.456 ± 0.498	C1 :  0.281 ± 0.449	C2 :  0.183 ± 0.387	
+WBC 	 0.493	C0 :  11.676 ± 5.239	C1 :  13.308 ± 15.612	C2 :  8.459 ± 5.329	
+MAP 	 0.464	C0 :  78.728 ± 14.785	C1 :  78.171 ± 21.36	C2 :  86.011 ± 16.844	
+Sofa_MAP 	 0.463	C0 :  0.294 ± 0.456	C1 :  0.378 ± 0.485	C2 :  0.119 ± 0.324	
+
+========
+
+|C0| = 9470
+|C0| = [0.91816262 0.08183738]
+Feature: Sofa_Platelets HTFD score: 1.8021826694558578
+Cluster: 0 0.484 ± 0.834
+Cluster: 1 0.914 ± 1.157
+Cluster: 2 0.764 ± 1.375
+Feature: Sofa_Creatinin HTFD score: 1.8021826694558578
+Cluster: 0 0.478 ± 0.943
+Cluster: 1 1.596 ± 1.545
+Cluster: 2 0.878 ± 1.436
+Feature: Sofa_Bilirubin HTFD score: 1.8021826694558578
+Cluster: 0 3.109 ± 1.602
+Cluster: 1 2.034 ± 1.716
+Cluster: 2 2.834 ± 1.749
+Feature: Sofa_MAP HTFD score: 1.8021826694558578
+Cluster: 0 0.294 ± 0.456
+Cluster: 1 0.378 ± 0.485
+Cluster: 2 0.119 ± 0.324
+Feature: Sofa_O2 HTFD score: 1.8021826694558578
+Cluster: 0 2.629 ± 1.362
+Cluster: 1 3.24 ± 1.181
+Cluster: 2 4.0 ± 0.01
+Feature: Unit2 HTFD score: 1.8021826694558578
+Cluster: 0 0.456 ± 0.498
+Cluster: 1 0.281 ± 0.449
+Cluster: 2 0.183 ± 0.387
+Feature: Unit1 HTFD score: 1.8021826694558578
+Cluster: 0 0.167 ± 0.373
+Cluster: 1 0.443 ± 0.497
+Cluster: 2 0.394 ± 0.489
+Feature: Age HTFD score: 1.8021826694558578
+Cluster: 0 63.507 ± 15.503
+Cluster: 1 60.234 ± 16.174
+Cluster: 2 61.039 ± 17.159
+Feature: WBC HTFD score: 1.8021826694558578
+Cluster: 0 11.676 ± 5.239
+Cluster: 1 13.308 ± 15.612
+Cluster: 2 8.459 ± 5.329
+Feature: PTT HTFD score: 1.8021826694558578
+Cluster: 0 22.443 ± 21.598
+Cluster: 1 34.59 ± 35.952
+Cluster: 2 11.192 ± 19.868
+Feature: Hgb HTFD score: 1.8021826694558578
+Cluster: 0 10.4 ± 2.188
+Cluster: 1 9.576 ± 2.657
+Cluster: 2 9.653 ± 4.178
+Feature: Hct HTFD score: 1.8021826694558578
+Cluster: 0 30.994 ± 5.924
+Cluster: 1 28.81 ± 7.61
+Cluster: 2 29.279 ± 12.122
+Feature: Bilirubin_total HTFD score: 1.8021826694558578
+Cluster: 0 0.234 ± 0.579
+Cluster: 1 2.491 ± 5.345
+Cluster: 2 0.303 ± 0.661
+Feature: Potassium HTFD score: 1.8021826694558578
+Cluster: 0 4.131 ± 0.69
+Cluster: 1 4.275 ± 0.959
+Cluster: 2 3.605 ± 1.292
+Feature: Magnesium HTFD score: 1.8021826694558578
+Cluster: 0 1.886 ± 0.67
+Cluster: 1 1.928 ± 0.717
+Cluster: 2 1.582 ± 0.885
+Feature: Lactate HTFD score: 1.8021826694558578
+Cluster: 0 1.006 ± 1.123
+Cluster: 1 1.472 ± 2.535
+Cluster: 2 0.037 ± 0.262
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 129.911 ± 40.733
+Cluster: 1 134.556 ± 62.478
+Cluster: 2 119.575 ± 56.49
+Feature: Creatinine HTFD score: 1.8021826694558578
+Cluster: 0 1.158 ± 1.06
+Cluster: 1 2.96 ± 3.524
+Cluster: 2 1.21 ± 1.56
+Feature: Chloride HTFD score: 1.8021826694558578
+Cluster: 0 83.4 ± 43.815
+Cluster: 1 70.321 ± 48.996
+Cluster: 2 30.704 ± 47.836
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 5.965 ± 3.689
+Cluster: 1 6.956 ± 3.199
+Cluster: 2 7.361 ± 3.085
+Feature: Alkalinephos HTFD score: 1.8021826694558578
+Cluster: 0 18.451 ± 39.614
+Cluster: 1 110.384 ± 191.391
+Cluster: 2 26.237 ± 47.197
+Feature: AST HTFD score: 1.8021826694558578
+Cluster: 0 19.722 ± 75.981
+Cluster: 1 325.868 ± 1071.198
+Cluster: 2 18.202 ± 64.757
+Feature: SaO2 HTFD score: 1.8021826694558578
+Cluster: 0 59.415 ± 45.888
+Cluster: 1 35.619 ± 45.078
+Cluster: 2 1.081 ± 9.453
+Feature: PaCO2 HTFD score: 1.8021826694558578
+Cluster: 0 37.703 ± 13.473
+Cluster: 1 23.059 ± 20.883
+Cluster: 2 0.458 ± 4.1
+Feature: pH HTFD score: 1.8021826694558578
+Cluster: 0 6.937 ± 1.779
+Cluster: 1 4.486 ± 3.604
+Cluster: 2 0.174 ± 1.12
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.406 ± 0.236
+Cluster: 1 0.3 ± 0.371
+Cluster: 2 0.024 ± 0.104
+Feature: HCO3 HTFD score: 1.8021826694558578
+Cluster: 0 17.578 ± 11.364
+Cluster: 1 14.639 ± 11.909
+Cluster: 2 7.219 ± 11.416
+Feature: EtCO2 HTFD score: 1.8021826694558578
+Cluster: 0 4.041 ± 11.383
+Cluster: 1 3.85 ± 12.08
+Cluster: 2 1.308 ± 6.682
+Feature: MAP HTFD score: 1.8021826694558578
+Cluster: 0 78.728 ± 14.785
+Cluster: 1 78.171 ± 21.36
+Cluster: 2 86.011 ± 16.844
+Feature: SBP HTFD score: 1.8021826694558578
+Cluster: 0 119.6 ± 25.502
+Cluster: 1 112.788 ± 33.903
+Cluster: 2 126.12 ± 25.338
+Feature: Temp HTFD score: 1.8021826694558578
+Cluster: 0 36.961 ± 2.199
+Cluster: 1 33.16 ± 10.871
+Cluster: 2 36.785 ± 0.622
+Feature: HR HTFD score: 1.8021826694558578
+Cluster: 0 86.084 ± 16.12
+Cluster: 1 87.623 ± 18.747
+Cluster: 2 81.919 ± 17.108
+Feature: TroponinI HTFD score: 1.8021826694557508
+Cluster: 0 0.338 ± 3.203
+Cluster: 1 3.4 ± 24.536
+Cluster: 2 1.31 ± 9.052
+Feature: Bilirubin_direct HTFD score: 1.8021826683403266
+Cluster: 0 0.009 ± 0.081
+Cluster: 1 0.421 ± 1.913
+Cluster: 2 0.012 ± 0.083
+Feature: O2Sat HTFD score: 1.8021826486759533
+Cluster: 0 97.191 ± 2.548
+Cluster: 1 95.596 ± 7.94
+Cluster: 2 96.997 ± 2.502
+Feature: BUN HTFD score: 1.802161009807762
+Cluster: 0 19.757 ± 14.008
+Cluster: 1 39.854 ± 31.293
+Cluster: 2 18.147 ± 16.211
+Feature: Gender HTFD score: 1.2939016799040481
+Cluster: 0 0.586 ± 0.493
+Cluster: 1 0.556 ± 0.497
+Cluster: 2 0.536 ± 0.499
+Feature: HospAdmTime HTFD score: 1.2773310077702464
+Cluster: 0 -45.932 ± 84.428
+Cluster: 1 -167.956 ± 361.598
+Cluster: 2 -35.008 ± 81.661
+Feature: DBP HTFD score: 0.9476683418149231
+Cluster: 0 52.987 ± 23.292
+Cluster: 1 41.415 ± 31.279
+Cluster: 2 52.851 ± 30.606
+Feature: Fibrinogen HTFD score: 0.8310296692221147
+Cluster: 0 35.928 ± 98.12
+Cluster: 1 117.327 ± 193.412
+Cluster: 2 9.804 ± 57.238
+Feature: Resp HTFD score: 0.6932456034576253
+Cluster: 0 19.082 ± 5.469
+Cluster: 1 19.449 ± 5.939
+Cluster: 2 18.588 ± 4.438
+Feature: Platelets HTFD score: 0.4899989779348663
+Cluster: 0 195.975 ± 98.815
+Cluster: 1 188.346 ± 149.133
+Cluster: 2 190.384 ± 113.397
+Feature: Phosphate HTFD score: 0.18449284507183608
+Cluster: 0 2.392 ± 1.839
+Cluster: 1 3.725 ± 2.506
+Cluster: 2 2.039 ± 1.858
+Feature: BaseExcess HTFD score: 0.14823568927681127
+Cluster: 0 -0.031 ± 2.908
+Cluster: 1 -0.501 ± 3.895
+Cluster: 2 -0.011 ± 0.43
+
+========
+
+|C1| = 2206
+|C1| = [0.87579329 0.12420671]
+Feature: Sofa_Creatinin HTFD score: 1.8021826694558578
+Cluster: 0 0.478 ± 0.943
+Cluster: 1 1.596 ± 1.545
+Cluster: 2 0.878 ± 1.436
+Feature: Sofa_Bilirubin HTFD score: 1.8021826694558578
+Cluster: 0 3.109 ± 1.602
+Cluster: 1 2.034 ± 1.716
+Cluster: 2 2.834 ± 1.749
+Feature: Sofa_MAP HTFD score: 1.8021826694558578
+Cluster: 0 0.294 ± 0.456
+Cluster: 1 0.378 ± 0.485
+Cluster: 2 0.119 ± 0.324
+Feature: HospAdmTime HTFD score: 1.8021826694558578
+Cluster: 0 -45.932 ± 84.428
+Cluster: 1 -167.956 ± 361.598
+Cluster: 2 -35.008 ± 81.661
+Feature: Unit1 HTFD score: 1.8021826694558578
+Cluster: 0 0.167 ± 0.373
+Cluster: 1 0.443 ± 0.497
+Cluster: 2 0.394 ± 0.489
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 35.928 ± 98.12
+Cluster: 1 117.327 ± 193.412
+Cluster: 2 9.804 ± 57.238
+Feature: PTT HTFD score: 1.8021826694558578
+Cluster: 0 22.443 ± 21.598
+Cluster: 1 34.59 ± 35.952
+Cluster: 2 11.192 ± 19.868
+Feature: Bilirubin_total HTFD score: 1.8021826694558578
+Cluster: 0 0.234 ± 0.579
+Cluster: 1 2.491 ± 5.345
+Cluster: 2 0.303 ± 0.661
+Feature: Potassium HTFD score: 1.8021826694558578
+Cluster: 0 4.131 ± 0.69
+Cluster: 1 4.275 ± 0.959
+Cluster: 2 3.605 ± 1.292
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 2.392 ± 1.839
+Cluster: 1 3.725 ± 2.506
+Cluster: 2 2.039 ± 1.858
+Feature: Magnesium HTFD score: 1.8021826694558578
+Cluster: 0 1.886 ± 0.67
+Cluster: 1 1.928 ± 0.717
+Cluster: 2 1.582 ± 0.885
+Feature: Lactate HTFD score: 1.8021826694558578
+Cluster: 0 1.006 ± 1.123
+Cluster: 1 1.472 ± 2.535
+Cluster: 2 0.037 ± 0.262
+Feature: Creatinine HTFD score: 1.8021826694558578
+Cluster: 0 1.158 ± 1.06
+Cluster: 1 2.96 ± 3.524
+Cluster: 2 1.21 ± 1.56
+Feature: Chloride HTFD score: 1.8021826694558578
+Cluster: 0 83.4 ± 43.815
+Cluster: 1 70.321 ± 48.996
+Cluster: 2 30.704 ± 47.836
+Feature: Alkalinephos HTFD score: 1.8021826694558578
+Cluster: 0 18.451 ± 39.614
+Cluster: 1 110.384 ± 191.391
+Cluster: 2 26.237 ± 47.197
+Feature: BUN HTFD score: 1.8021826694558578
+Cluster: 0 19.757 ± 14.008
+Cluster: 1 39.854 ± 31.293
+Cluster: 2 18.147 ± 16.211
+Feature: AST HTFD score: 1.8021826694558578
+Cluster: 0 19.722 ± 75.981
+Cluster: 1 325.868 ± 1071.198
+Cluster: 2 18.202 ± 64.757
+Feature: pH HTFD score: 1.8021826694558578
+Cluster: 0 6.937 ± 1.779
+Cluster: 1 4.486 ± 3.604
+Cluster: 2 0.174 ± 1.12
+Feature: DBP HTFD score: 1.8021826694558578
+Cluster: 0 52.987 ± 23.292
+Cluster: 1 41.415 ± 31.279
+Cluster: 2 52.851 ± 30.606
+Feature: SBP HTFD score: 1.8021826694558578
+Cluster: 0 119.6 ± 25.502
+Cluster: 1 112.788 ± 33.903
+Cluster: 2 126.12 ± 25.338
+Feature: Temp HTFD score: 1.8021826694558578
+Cluster: 0 36.961 ± 2.199
+Cluster: 1 33.16 ± 10.871
+Cluster: 2 36.785 ± 0.622
+Feature: FiO2 HTFD score: 1.8021826694558571
+Cluster: 0 0.406 ± 0.236
+Cluster: 1 0.3 ± 0.371
+Cluster: 2 0.024 ± 0.104
+Feature: Sofa_Platelets HTFD score: 1.8021826694548393
+Cluster: 0 0.484 ± 0.834
+Cluster: 1 0.914 ± 1.157
+Cluster: 2 0.764 ± 1.375
+Feature: PaCO2 HTFD score: 1.8021826693883636
+Cluster: 0 37.703 ± 13.473
+Cluster: 1 23.059 ± 20.883
+Cluster: 2 0.458 ± 4.1
+Feature: Bilirubin_direct HTFD score: 1.8021826642803143
+Cluster: 0 0.009 ± 0.081
+Cluster: 1 0.421 ± 1.913
+Cluster: 2 0.012 ± 0.083
+Feature: WBC HTFD score: 1.8021826478505578
+Cluster: 0 11.676 ± 5.239
+Cluster: 1 13.308 ± 15.612
+Cluster: 2 8.459 ± 5.329
+Feature: MAP HTFD score: 1.8021779048011173
+Cluster: 0 78.728 ± 14.785
+Cluster: 1 78.171 ± 21.36
+Cluster: 2 86.011 ± 16.844
+Feature: HCO3 HTFD score: 1.802177014829696
+Cluster: 0 17.578 ± 11.364
+Cluster: 1 14.639 ± 11.909
+Cluster: 2 7.219 ± 11.416
+Feature: HR HTFD score: 1.8020305370373508
+Cluster: 0 86.084 ± 16.12
+Cluster: 1 87.623 ± 18.747
+Cluster: 2 81.919 ± 17.108
+Feature: O2Sat HTFD score: 1.8014657043379962
+Cluster: 0 97.191 ± 2.548
+Cluster: 1 95.596 ± 7.94
+Cluster: 2 96.997 ± 2.502
+Feature: Glucose HTFD score: 1.435856467529252
+Cluster: 0 129.911 ± 40.733
+Cluster: 1 134.556 ± 62.478
+Cluster: 2 119.575 ± 56.49
+Feature: Hct HTFD score: 1.4274733960605808
+Cluster: 0 30.994 ± 5.924
+Cluster: 1 28.81 ± 7.61
+Cluster: 2 29.279 ± 12.122
+Feature: Hgb HTFD score: 1.3337783959389666
+Cluster: 0 10.4 ± 2.188
+Cluster: 1 9.576 ± 2.657
+Cluster: 2 9.653 ± 4.178
+Feature: SaO2 HTFD score: 1.2487910888514917
+Cluster: 0 59.415 ± 45.888
+Cluster: 1 35.619 ± 45.078
+Cluster: 2 1.081 ± 9.453
+Feature: BaseExcess HTFD score: 0.9082590939436674
+Cluster: 0 -0.031 ± 2.908
+Cluster: 1 -0.501 ± 3.895
+Cluster: 2 -0.011 ± 0.43
+Feature: Age HTFD score: 0.831823024673572
+Cluster: 0 63.507 ± 15.503
+Cluster: 1 60.234 ± 16.174
+Cluster: 2 61.039 ± 17.159
+Feature: TroponinI HTFD score: 0.6795919604778657
+Cluster: 0 0.338 ± 3.203
+Cluster: 1 3.4 ± 24.536
+Cluster: 2 1.31 ± 9.052
+Feature: Resp HTFD score: 0.6580904573034072
+Cluster: 0 19.082 ± 5.469
+Cluster: 1 19.449 ± 5.939
+Cluster: 2 18.588 ± 4.438
+Feature: EtCO2 HTFD score: 0.6369936329419459
+Cluster: 0 4.041 ± 11.383
+Cluster: 1 3.85 ± 12.08
+Cluster: 2 1.308 ± 6.682
+Feature: Sofa_O2 HTFD score: 0.5077096500647893
+Cluster: 0 2.629 ± 1.362
+Cluster: 1 3.24 ± 1.181
+Cluster: 2 4.0 ± 0.01
+Feature: Calcium HTFD score: 0.39378029213750954
+Cluster: 0 5.965 ± 3.689
+Cluster: 1 6.956 ± 3.199
+Cluster: 2 7.361 ± 3.085
+Feature: Unit2 HTFD score: 0.32622908120250727
+Cluster: 0 0.456 ± 0.498
+Cluster: 1 0.281 ± 0.449
+Cluster: 2 0.183 ± 0.387
+Feature: Platelets HTFD score: 0.09460448014262582
+Cluster: 0 195.975 ± 98.815
+Cluster: 1 188.346 ± 149.133
+Cluster: 2 190.384 ± 113.397
+Feature: Gender HTFD score: 0.012926183853184238
+Cluster: 0 0.586 ± 0.493
+Cluster: 1 0.556 ± 0.497
+Cluster: 2 0.536 ± 0.499
+
+========
+
+|C2| = 10475
+|C2| = [0.97288783 0.02711217]
+Feature: Sofa_Platelets HTFD score: 1.8021826694558578
+Cluster: 0 0.484 ± 0.834
+Cluster: 1 0.914 ± 1.157
+Cluster: 2 0.764 ± 1.375
+Feature: Sofa_MAP HTFD score: 1.8021826694558578
+Cluster: 0 0.294 ± 0.456
+Cluster: 1 0.378 ± 0.485
+Cluster: 2 0.119 ± 0.324
+Feature: Sofa_O2 HTFD score: 1.8021826694558578
+Cluster: 0 2.629 ± 1.362
+Cluster: 1 3.24 ± 1.181
+Cluster: 2 4.0 ± 0.01
+Feature: HospAdmTime HTFD score: 1.8021826694558578
+Cluster: 0 -45.932 ± 84.428
+Cluster: 1 -167.956 ± 361.598
+Cluster: 2 -35.008 ± 81.661
+Feature: Unit2 HTFD score: 1.8021826694558578
+Cluster: 0 0.456 ± 0.498
+Cluster: 1 0.281 ± 0.449
+Cluster: 2 0.183 ± 0.387
+Feature: Unit1 HTFD score: 1.8021826694558578
+Cluster: 0 0.167 ± 0.373
+Cluster: 1 0.443 ± 0.497
+Cluster: 2 0.394 ± 0.489
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 35.928 ± 98.12
+Cluster: 1 117.327 ± 193.412
+Cluster: 2 9.804 ± 57.238
+Feature: WBC HTFD score: 1.8021826694558578
+Cluster: 0 11.676 ± 5.239
+Cluster: 1 13.308 ± 15.612
+Cluster: 2 8.459 ± 5.329
+Feature: PTT HTFD score: 1.8021826694558578
+Cluster: 0 22.443 ± 21.598
+Cluster: 1 34.59 ± 35.952
+Cluster: 2 11.192 ± 19.868
+Feature: Hgb HTFD score: 1.8021826694558578
+Cluster: 0 10.4 ± 2.188
+Cluster: 1 9.576 ± 2.657
+Cluster: 2 9.653 ± 4.178
+Feature: Bilirubin_total HTFD score: 1.8021826694558578
+Cluster: 0 0.234 ± 0.579
+Cluster: 1 2.491 ± 5.345
+Cluster: 2 0.303 ± 0.661
+Feature: Potassium HTFD score: 1.8021826694558578
+Cluster: 0 4.131 ± 0.69
+Cluster: 1 4.275 ± 0.959
+Cluster: 2 3.605 ± 1.292
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 2.392 ± 1.839
+Cluster: 1 3.725 ± 2.506
+Cluster: 2 2.039 ± 1.858
+Feature: Magnesium HTFD score: 1.8021826694558578
+Cluster: 0 1.886 ± 0.67
+Cluster: 1 1.928 ± 0.717
+Cluster: 2 1.582 ± 0.885
+Feature: Lactate HTFD score: 1.8021826694558578
+Cluster: 0 1.006 ± 1.123
+Cluster: 1 1.472 ± 2.535
+Cluster: 2 0.037 ± 0.262
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 129.911 ± 40.733
+Cluster: 1 134.556 ± 62.478
+Cluster: 2 119.575 ± 56.49
+Feature: Creatinine HTFD score: 1.8021826694558578
+Cluster: 0 1.158 ± 1.06
+Cluster: 1 2.96 ± 3.524
+Cluster: 2 1.21 ± 1.56
+Feature: Chloride HTFD score: 1.8021826694558578
+Cluster: 0 83.4 ± 43.815
+Cluster: 1 70.321 ± 48.996
+Cluster: 2 30.704 ± 47.836
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 5.965 ± 3.689
+Cluster: 1 6.956 ± 3.199
+Cluster: 2 7.361 ± 3.085
+Feature: BUN HTFD score: 1.8021826694558578
+Cluster: 0 19.757 ± 14.008
+Cluster: 1 39.854 ± 31.293
+Cluster: 2 18.147 ± 16.211
+Feature: AST HTFD score: 1.8021826694558578
+Cluster: 0 19.722 ± 75.981
+Cluster: 1 325.868 ± 1071.198
+Cluster: 2 18.202 ± 64.757
+Feature: SaO2 HTFD score: 1.8021826694558578
+Cluster: 0 59.415 ± 45.888
+Cluster: 1 35.619 ± 45.078
+Cluster: 2 1.081 ± 9.453
+Feature: PaCO2 HTFD score: 1.8021826694558578
+Cluster: 0 37.703 ± 13.473
+Cluster: 1 23.059 ± 20.883
+Cluster: 2 0.458 ± 4.1
+Feature: pH HTFD score: 1.8021826694558578
+Cluster: 0 6.937 ± 1.779
+Cluster: 1 4.486 ± 3.604
+Cluster: 2 0.174 ± 1.12
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.406 ± 0.236
+Cluster: 1 0.3 ± 0.371
+Cluster: 2 0.024 ± 0.104
+Feature: HCO3 HTFD score: 1.8021826694558578
+Cluster: 0 17.578 ± 11.364
+Cluster: 1 14.639 ± 11.909
+Cluster: 2 7.219 ± 11.416
+Feature: EtCO2 HTFD score: 1.8021826694558578
+Cluster: 0 4.041 ± 11.383
+Cluster: 1 3.85 ± 12.08
+Cluster: 2 1.308 ± 6.682
+Feature: MAP HTFD score: 1.8021826694558578
+Cluster: 0 78.728 ± 14.785
+Cluster: 1 78.171 ± 21.36
+Cluster: 2 86.011 ± 16.844
+Feature: SBP HTFD score: 1.8021826694558578
+Cluster: 0 119.6 ± 25.502
+Cluster: 1 112.788 ± 33.903
+Cluster: 2 126.12 ± 25.338
+Feature: HR HTFD score: 1.8021826694558578
+Cluster: 0 86.084 ± 16.12
+Cluster: 1 87.623 ± 18.747
+Cluster: 2 81.919 ± 17.108
+Feature: Temp HTFD score: 1.802182669455525
+Cluster: 0 36.961 ± 2.199
+Cluster: 1 33.16 ± 10.871
+Cluster: 2 36.785 ± 0.622
+Feature: Sofa_Creatinin HTFD score: 1.8021826694511238
+Cluster: 0 0.478 ± 0.943
+Cluster: 1 1.596 ± 1.545
+Cluster: 2 0.878 ± 1.436
+Feature: Hct HTFD score: 1.8021826517785144
+Cluster: 0 30.994 ± 5.924
+Cluster: 1 28.81 ± 7.61
+Cluster: 2 29.279 ± 12.122
+Feature: Bilirubin_direct HTFD score: 1.8021820527984467
+Cluster: 0 0.009 ± 0.081
+Cluster: 1 0.421 ± 1.913
+Cluster: 2 0.012 ± 0.083
+Feature: Alkalinephos HTFD score: 1.8021819163813466
+Cluster: 0 18.451 ± 39.614
+Cluster: 1 110.384 ± 191.391
+Cluster: 2 26.237 ± 47.197
+Feature: Resp HTFD score: 1.7901957482532305
+Cluster: 0 19.082 ± 5.469
+Cluster: 1 19.449 ± 5.939
+Cluster: 2 18.588 ± 4.438
+Feature: Age HTFD score: 1.787144518360117
+Cluster: 0 63.507 ± 15.503
+Cluster: 1 60.234 ± 16.174
+Cluster: 2 61.039 ± 17.159
+Feature: Gender HTFD score: 1.2069679676421918
+Cluster: 0 0.586 ± 0.493
+Cluster: 1 0.556 ± 0.497
+Cluster: 2 0.536 ± 0.499
+Feature: DBP HTFD score: 0.8228703198539403
+Cluster: 0 52.987 ± 23.292
+Cluster: 1 41.415 ± 31.279
+Cluster: 2 52.851 ± 30.606
+Feature: BaseExcess HTFD score: 0.42786038822837336
+Cluster: 0 -0.031 ± 2.908
+Cluster: 1 -0.501 ± 3.895
+Cluster: 2 -0.011 ± 0.43
+Feature: Sofa_Bilirubin HTFD score: 0.3150261853677984
+Cluster: 0 3.109 ± 1.602
+Cluster: 1 2.034 ± 1.716
+Cluster: 2 2.834 ± 1.749
+Feature: TroponinI HTFD score: 0.27963533336932567
+Cluster: 0 0.338 ± 3.203
+Cluster: 1 3.4 ± 24.536
+Cluster: 2 1.31 ± 9.052
+Feature: Platelets HTFD score: 0.2570312316551792
+Cluster: 0 195.975 ± 98.815
+Cluster: 1 188.346 ± 149.133
+Cluster: 2 190.384 ± 113.397
+Feature: O2Sat HTFD score: 0.1975970848516616
+Cluster: 0 97.191 ± 2.548
+Cluster: 1 95.596 ± 7.94
+Cluster: 2 96.997 ± 2.502

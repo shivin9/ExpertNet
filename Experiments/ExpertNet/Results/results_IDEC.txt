@@ -1441,3 +1441,47 @@ Distilled Model Metrics
 
 
 
+IDEC
+Respiratory 24
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+IDEC
+Respiratory 24
+k = 5
+IDEC
+Respiratory 24
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	5	0.480	0.689	0.576	0.000	0.500	0.249	0.848	1.245
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.001	0.040	0.023	0.000	0.000	0.099	0.427	0.810
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+n_clusters 5
+alpha 1.0
+beta 0.5
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	5	0.480	0.689	0.576	0.000	0.500	0.249	0.848	1.245
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.001	0.040	0.023	0.000	0.000	0.099	0.427	0.810
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+

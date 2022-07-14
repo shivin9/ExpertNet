@@ -1,0 +1,2026 @@
+Stats:  1701 22450
+Run : 0
+89 89
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/ards24.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/ards24.pth
+Starting Training
+Training data
+Stats:  1701 22450
+Run : 0
+89 89
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/ards24.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/ards24.pth
+Starting Training
+Training data
+
+[  0/100] train_loss: 0.766 valid_loss: 4.215 valid_F1: 0.070 valid_AUC: 0.462 valid_AUPRC: 0.500 valid_MINPSE: 0.000 valid_Feature_p: 0.665 valid_WDFD: 44.000 valid_Silhouette: 0.214
+Epoch: 00 | Epoch KM Loss: 0.468 | Total Loss: 64.334 | Classification Loss: 10.379 | Cluster Balance Loss: 1.686
+Epoch: 01 | Epoch KM Loss: 0.222 | Total Loss: 44.308 | Classification Loss: 7.324 | Cluster Balance Loss: 1.365
+Training data
+
+[  2/100] train_loss: 0.219 valid_loss: 1.694 valid_F1: 0.480 valid_AUC: 0.820 valid_AUPRC: 0.662 valid_MINPSE: 0.000 valid_Feature_p: 0.688 valid_WDFD: 44.000 valid_Silhouette: 0.328
+Epoch: 02 | Epoch KM Loss: 0.845 | Total Loss: 49.472 | Classification Loss: 7.036 | Cluster Balance Loss: 1.358
+Epoch: 03 | Epoch KM Loss: 0.362 | Total Loss: 44.312 | Classification Loss: 6.865 | Cluster Balance Loss: 1.177
+Training data
+
+[  4/100] train_loss: 0.209 valid_loss: 1.838 valid_F1: 0.494 valid_AUC: 0.814 valid_AUPRC: 0.658 valid_MINPSE: 0.382 valid_Feature_p: 0.708 valid_WDFD: 44.000 valid_Silhouette: 0.392
+EarlyStopping counter: 1 out of 7
+Epoch: 04 | Epoch KM Loss: 1.100 | Total Loss: 52.796 | Classification Loss: 6.765 | Cluster Balance Loss: 1.629
+Epoch: 05 | Epoch KM Loss: 0.609 | Total Loss: 47.640 | Classification Loss: 6.610 | Cluster Balance Loss: 1.386
+Training data
+
+[  6/100] train_loss: 0.201 valid_loss: 1.899 valid_F1: 0.538 valid_AUC: 0.818 valid_AUPRC: 0.656 valid_MINPSE: 0.312 valid_Feature_p: 0.702 valid_WDFD: 44.000 valid_Silhouette: 0.488
+EarlyStopping counter: 2 out of 7
+Epoch: 06 | Epoch KM Loss: 1.345 | Total Loss: 55.757 | Classification Loss: 6.485 | Cluster Balance Loss: 2.150
+Epoch: 07 | Epoch KM Loss: 1.773 | Total Loss: 63.865 | Classification Loss: 6.806 | Cluster Balance Loss: 2.018
+Training data
+
+[  8/100] train_loss: 0.208 valid_loss: 2.122 valid_F1: 0.489 valid_AUC: 0.804 valid_AUPRC: 0.645 valid_MINPSE: 0.255 valid_Feature_p: 0.690 valid_WDFD: 44.000 valid_Silhouette: 0.589
+EarlyStopping counter: 3 out of 7
+Epoch: 08 | Epoch KM Loss: 1.386 | Total Loss: 58.684 | Classification Loss: 6.536 | Cluster Balance Loss: 1.855
+Epoch: 09 | Epoch KM Loss: 1.743 | Total Loss: 62.778 | Classification Loss: 6.473 | Cluster Balance Loss: 2.185
+Training data
+
+[ 10/100] train_loss: 0.205 valid_loss: 2.247 valid_F1: 0.480 valid_AUC: 0.743 valid_AUPRC: 0.624 valid_MINPSE: 0.000 valid_Feature_p: 0.690 valid_WDFD: 44.000 valid_Silhouette: 0.626
+EarlyStopping counter: 4 out of 7
+Epoch: 10 | Epoch KM Loss: 2.072 | Total Loss: 69.649 | Classification Loss: 6.523 | Cluster Balance Loss: 1.884
+Epoch: 11 | Epoch KM Loss: 1.158 | Total Loss: 55.131 | Classification Loss: 5.953 | Cluster Balance Loss: 1.759
+Training data
+
+[ 12/100] train_loss: 0.174 valid_loss: 2.069 valid_F1: 0.600 valid_AUC: 0.812 valid_AUPRC: 0.649 valid_MINPSE: 0.332 valid_Feature_p: 0.692 valid_WDFD: 44.000 valid_Silhouette: 0.660
+EarlyStopping counter: 5 out of 7
+Epoch: 12 | Epoch KM Loss: 1.343 | Total Loss: 55.589 | Classification Loss: 5.805 | Cluster Balance Loss: 1.697
+Epoch: 13 | Epoch KM Loss: 2.537 | Total Loss: 72.977 | Classification Loss: 6.395 | Cluster Balance Loss: 2.003
+Training data
+
+[ 14/100] train_loss: 0.190 valid_loss: 2.145 valid_F1: 0.576 valid_AUC: 0.799 valid_AUPRC: 0.644 valid_MINPSE: 0.335 valid_Feature_p: 0.698 valid_WDFD: 44.000 valid_Silhouette: 0.683
+EarlyStopping counter: 6 out of 7
+Epoch: 14 | Epoch KM Loss: 1.285 | Total Loss: 55.116 | Classification Loss: 5.673 | Cluster Balance Loss: 1.436
+Epoch: 15 | Epoch KM Loss: 1.603 | Total Loss: 58.681 | Classification Loss: 5.692 | Cluster Balance Loss: 1.962
+Training data
+
+[ 16/100] train_loss: 0.181 valid_loss: 2.109 valid_F1: 0.580 valid_AUC: 0.783 valid_AUPRC: 0.627 valid_MINPSE: 0.294 valid_Feature_p: 0.700 valid_WDFD: 44.000 valid_Silhouette: 0.697
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.48030495552731894, 0.6618516665144798]
+[11921  4298]
+
+[ 16/100] valid_loss: 0.214 valid_F1: 0.485 valid_AUC: 0.817 valid_AUPRC: 0.661 valid_MINPSE: 0.502 valid_Sil: 0.328
+
+[ 16/100] valid_loss: 0.213 valid_F1: 0.528 valid_AUC: 0.822 valid_AUPRC: 0.662 valid_MINPSE: 0.392 valid_Sil: 0.328
+
+[ 16/100] valid_loss: 0.212 valid_F1: 0.536 valid_AUC: 0.822 valid_AUPRC: 0.664 valid_MINPSE: 0.355 valid_Sil: 0.328
+
+[ 16/100] valid_loss: 0.212 valid_F1: 0.543 valid_AUC: 0.823 valid_AUPRC: 0.669 valid_MINPSE: 0.335 valid_Sil: 0.328
+
+[ 16/100] valid_loss: 0.212 valid_F1: 0.560 valid_AUC: 0.823 valid_AUPRC: 0.671 valid_MINPSE: 0.340 valid_Sil: 0.328
+
+[ 16/100] valid_loss: 0.212 valid_F1: 0.546 valid_AUC: 0.822 valid_AUPRC: 0.673 valid_MINPSE: 0.333 valid_Sil: 0.328
+
+[ 16/100] valid_loss: 0.212 valid_F1: 0.568 valid_AUC: 0.821 valid_AUPRC: 0.674 valid_MINPSE: 0.356 valid_Sil: 0.328
+
+[ 16/100] valid_loss: 0.212 valid_F1: 0.565 valid_AUC: 0.820 valid_AUPRC: 0.673 valid_MINPSE: 0.357 valid_Sil: 0.328
+EarlyStopping counter: 1 out of 7
+
+[ 16/100] valid_loss: 0.213 valid_F1: 0.566 valid_AUC: 0.817 valid_AUPRC: 0.671 valid_MINPSE: 0.319 valid_Sil: 0.328
+EarlyStopping counter: 2 out of 7
+
+[ 16/100] valid_loss: 0.215 valid_F1: 0.579 valid_AUC: 0.818 valid_AUPRC: 0.669 valid_MINPSE: 0.331 valid_Sil: 0.328
+EarlyStopping counter: 3 out of 7
+
+[ 16/100] valid_loss: 0.217 valid_F1: 0.576 valid_AUC: 0.815 valid_AUPRC: 0.668 valid_MINPSE: 0.305 valid_Sil: 0.328
+EarlyStopping counter: 4 out of 7
+
+[ 16/100] valid_loss: 0.218 valid_F1: 0.581 valid_AUC: 0.812 valid_AUPRC: 0.666 valid_MINPSE: 0.322 valid_Sil: 0.328
+EarlyStopping counter: 5 out of 7
+
+[ 16/100] valid_loss: 0.221 valid_F1: 0.580 valid_AUC: 0.811 valid_AUPRC: 0.664 valid_MINPSE: 0.317 valid_Sil: 0.328
+EarlyStopping counter: 6 out of 7
+
+[ 16/100] valid_loss: 0.221 valid_F1: 0.570 valid_AUC: 0.810 valid_AUPRC: 0.664 valid_MINPSE: 0.295 valid_Sil: 0.328
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  2  Attention =  11
+Loading Best model with score:  [0.5678627888686755, 0.6735340753570249]
+Run #0
+Loss Metrics - Test Loss 0.239, E-Test Loss 0.237, Local Sum Test Loss 0.000
+Clustering Metrics - Acc 0.0000 , nmi 0.0000 , ari 0.0000, HTFD 0.735
+Classification Metrics - Test F1 0.551, Test AUC 0.772, Test AUPRC 0.649, Test MIN_PSE 0.338 , E-Test F1 0.578, E-Test AUC 0.776, E-Test AUPRC 0.651, E-Test MIN_PSE 0.355
+
+
+Cluster #  0 sized:  11921 label distr:  [0.94815871 0.05184129]
+[('Platelets', 0.025), ('Heart Rate', 0.023), ('Diastolic blood pressure', 0.023), ('Hematocrit', 0.023), ('PTT', 0.023), ('Respiratory rate', 0.022), ('Temperature', 0.022), ('White blood cell count', 0.021), ('Mean blood pressure', 0.021), ('Systolic blood pressure', 0.021)]
+=========================
+
+Cluster #  1 sized:  4298 label distr:  [0.86179618 0.13820382]
+[('GCS Verbal', 0.046), ('GCS Total', 0.026), ('Extubated', 0.025), ('GCS Eye', 0.023), ('GCS Motor', 0.021), ('Temperature', 0.019), ('PaO2', 0.018), ('Heart Rate', 0.018), ('PIP', 0.018), ('White blood cell count', 0.018)]
+=========================
+
+Student Network Classification Metrics - Test F1 0.521, Test AUC 0.755,        Test AUPRC 0.645
+
+
+Average Feature Difference:  0.012642958812933319
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	2	0.578	0.776	0.651	0.355	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.000	0.000	0.000	0.000	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.325	1.223	44.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.000	0.000	0.000
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	2	0.521	0.755	0.645	0.375
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.000	0.000	0.000	0.000
+
+
+========
+
+|C0| = 11921
+|C0| = [0.94815871 0.05184129]
+Mean Airway Pressure 	 1.554	C0 :  13.0 ± 0.056	C1 :  9.733 ± 3.085	
+Ventilator 	 1.544	C0 :  0.033 ± 0.177	C1 :  0.642 ± 0.479	
+PIP 	 1.348	C0 :  12.001 ± 0.058	C1 :  17.528 ± 7.677	
+PEEP 	 1.123	C0 :  3.516 ± 0.207	C1 :  4.402 ± 2.062	
+Plateau Pressure 	 1.095	C0 :  28.0 ± 0.0	C1 :  24.59 ± 5.504	
+PaO2 	 0.79	C0 :  108.524 ± 35.676	C1 :  156.151 ± 92.714	
+Systemic Vascular Resistance Index 	 0.786	C0 :  1001.447 ± 30.317	C1 :  1179.746 ± 423.315	
+GCS Verbal 	 0.719	C0 :  4.745 ± 0.737	C1 :  3.926 ± 1.697	
+Stroke Volume 	 0.712	C0 :  79.986 ± 1.032	C1 :  77.783 ± 11.856	
+Cardiac Index 	 0.711	C0 :  3.298 ± 0.061	C1 :  3.226 ± 0.385	
+Tidal Volume 	 0.708	C0 :  500.029 ± 6.384	C1 :  525.729 ± 190.413	
+FiO2 	 0.693	C0 :  0.257 ± 0.15	C1 :  0.387 ± 0.239	
+GCS Eye 	 0.599	C0 :  3.885 ± 0.382	C1 :  3.526 ± 0.928	
+GCS Total 	 0.563	C0 :  14.799 ± 0.834	C1 :  13.901 ± 2.645	
+GCS Motor 	 0.528	C0 :  5.942 ± 0.327	C1 :  5.61 ± 1.066	
+
+========
+
+|C1| = 4298
+|C1| = [0.86179618 0.13820382]
+Mean Airway Pressure 	 1.554	C0 :  13.0 ± 0.056	C1 :  9.733 ± 3.085	
+Ventilator 	 1.544	C0 :  0.033 ± 0.177	C1 :  0.642 ± 0.479	
+PIP 	 1.348	C0 :  12.001 ± 0.058	C1 :  17.528 ± 7.677	
+PEEP 	 1.123	C0 :  3.516 ± 0.207	C1 :  4.402 ± 2.062	
+Plateau Pressure 	 1.095	C0 :  28.0 ± 0.0	C1 :  24.59 ± 5.504	
+PaO2 	 0.79	C0 :  108.524 ± 35.676	C1 :  156.151 ± 92.714	
+Systemic Vascular Resistance Index 	 0.786	C0 :  1001.447 ± 30.317	C1 :  1179.746 ± 423.315	
+GCS Verbal 	 0.719	C0 :  4.745 ± 0.737	C1 :  3.926 ± 1.697	
+Stroke Volume 	 0.712	C0 :  79.986 ± 1.032	C1 :  77.783 ± 11.856	
+Cardiac Index 	 0.711	C0 :  3.298 ± 0.061	C1 :  3.226 ± 0.385	
+Tidal Volume 	 0.708	C0 :  500.029 ± 6.384	C1 :  525.729 ± 190.413	
+FiO2 	 0.693	C0 :  0.257 ± 0.15	C1 :  0.387 ± 0.239	
+GCS Eye 	 0.599	C0 :  3.885 ± 0.382	C1 :  3.526 ± 0.928	
+GCS Total 	 0.563	C0 :  14.799 ± 0.834	C1 :  13.901 ± 2.645	
+GCS Motor 	 0.528	C0 :  5.942 ± 0.327	C1 :  5.61 ± 1.066	
+
+========
+
+|C0| = 11921
+|C0| = [0.94815871 0.05184129]
+Feature: Ethnicity_4 HTFD score: 1.8021826694558578
+Cluster: 0 0.756 ± 0.43
+Cluster: 1 0.611 ± 0.487
+Feature: Ethnicity_3 HTFD score: 1.8021826694558578
+Cluster: 0 0.014 ± 0.119
+Cluster: 1 0.094 ± 0.292
+Feature: Ventilator HTFD score: 1.8021826694558578
+Cluster: 0 0.033 ± 0.177
+Cluster: 1 0.642 ± 0.479
+Feature: Systemic Vascular Resistance Index HTFD score: 1.8021826694558578
+Cluster: 0 1001.447 ± 30.317
+Cluster: 1 1179.746 ± 423.315
+Feature: Stroke Volume HTFD score: 1.8021826694558578
+Cluster: 0 79.986 ± 1.032
+Cluster: 1 77.783 ± 11.856
+Feature: Platelets HTFD score: 1.8021826694558578
+Cluster: 0 226.225 ± 114.621
+Cluster: 1 205.451 ± 95.121
+Feature: Plateau Pressure HTFD score: 1.8021826694558578
+Cluster: 0 28.0 ± 0.0
+Cluster: 1 24.59 ± 5.504
+Feature: PaO2 HTFD score: 1.8021826694558578
+Cluster: 0 108.524 ± 35.676
+Cluster: 1 156.151 ± 92.714
+Feature: PIP HTFD score: 1.8021826694558578
+Cluster: 0 12.001 ± 0.058
+Cluster: 1 17.528 ± 7.677
+Feature: PEEP HTFD score: 1.8021826694558578
+Cluster: 0 3.516 ± 0.207
+Cluster: 1 4.402 ± 2.062
+Feature: Neutrophils HTFD score: 1.8021826694558578
+Cluster: 0 71.317 ± 16.655
+Cluster: 1 64.095 ± 17.155
+Feature: Minute Volume HTFD score: 1.8021826694558578
+Cluster: 0 6.503 ± 0.135
+Cluster: 1 7.953 ± 7.197
+Feature: Mean corpuscular hemoglobin HTFD score: 1.8021826694558578
+Cluster: 0 30.26 ± 2.534
+Cluster: 1 29.117 ± 6.038
+Feature: Mean Airway Pressure HTFD score: 1.8021826694558578
+Cluster: 0 13.0 ± 0.056
+Cluster: 1 9.733 ± 3.085
+Feature: Lymphocytes HTFD score: 1.8021826694558578
+Cluster: 0 18.117 ± 11.777
+Cluster: 1 22.085 ± 11.649
+Feature: Heart Rate HTFD score: 1.8021826694558578
+Cluster: 0 82.815 ± 16.89
+Cluster: 1 86.435 ± 16.974
+Feature: GCS Verbal HTFD score: 1.8021826694558578
+Cluster: 0 4.745 ± 0.737
+Cluster: 1 3.926 ± 1.697
+Feature: GCS Total HTFD score: 1.8021826694558578
+Cluster: 0 14.799 ± 0.834
+Cluster: 1 13.901 ± 2.645
+Feature: GCS Motor HTFD score: 1.8021826694558578
+Cluster: 0 5.942 ± 0.327
+Cluster: 1 5.61 ± 1.066
+Feature: GCS Eye HTFD score: 1.8021826694558578
+Cluster: 0 3.885 ± 0.382
+Cluster: 1 3.526 ± 0.928
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.257 ± 0.15
+Cluster: 1 0.387 ± 0.239
+Feature: Extubated HTFD score: 1.8021826694558578
+Cluster: 0 0.863 ± 0.344
+Cluster: 1 0.727 ± 0.445
+Feature: Eosinophils HTFD score: 1.8021826694558578
+Cluster: 0 1.609 ± 1.636
+Cluster: 1 2.205 ± 2.567
+Feature: Cardiac Index HTFD score: 1.8021826694558578
+Cluster: 0 3.298 ± 0.061
+Cluster: 1 3.226 ± 0.385
+Feature: Blood culture HTFD score: 1.8021826694558578
+Cluster: 0 -50086.151 ± 55407.083
+Cluster: 1 -62565.986 ± 52263.599
+Feature: Phosphate HTFD score: 1.8021826694558543
+Cluster: 0 3.421 ± 1.114
+Cluster: 1 3.683 ± 1.354
+Feature: Basophils HTFD score: 1.8021826694558483
+Cluster: 0 0.261 ± 0.374
+Cluster: 1 0.182 ± 0.403
+Feature: Temperature HTFD score: 1.8021826694554743
+Cluster: 0 36.764 ± 0.634
+Cluster: 1 36.97 ± 1.179
+Feature: Ethnicity_0 HTFD score: 1.8021826694508303
+Cluster: 0 0.095 ± 0.293
+Cluster: 1 0.161 ± 0.368
+Feature: Lactate HTFD score: 1.8021826691285583
+Cluster: 0 1.781 ± 0.686
+Cluster: 1 1.988 ± 1.256
+Feature: Calcium HTFD score: 1.8021826682166848
+Cluster: 0 8.431 ± 0.758
+Cluster: 1 8.577 ± 0.827
+Feature: Mean corpuscular hemoglobin concentration HTFD score: 1.8021825056268908
+Cluster: 0 33.766 ± 1.551
+Cluster: 1 34.035 ± 1.579
+Feature: Mean corpuscular volume HTFD score: 1.8021825008682577
+Cluster: 0 89.687 ± 6.773
+Cluster: 1 88.587 ± 6.288
+Feature: Antibiotics HTFD score: 1.8021821549015682
+Cluster: 0 -73546.534 ± 44218.481
+Cluster: 1 -80482.51 ± 39717.866
+Feature: Chloride HTFD score: 1.8021770279541434
+Cluster: 0 104.824 ± 5.759
+Cluster: 1 105.748 ± 5.548
+Feature: Tidal Volume HTFD score: 1.8018892715692592
+Cluster: 0 500.029 ± 6.384
+Cluster: 1 525.729 ± 190.413
+Feature: Ethnicity_1 HTFD score: 1.8005449197634438
+Cluster: 0 0.018 ± 0.134
+Cluster: 1 0.048 ± 0.215
+Feature: Band Forms HTFD score: 1.513341141523254
+Cluster: 0 5.848 ± 3.751
+Cluster: 1 6.358 ± 3.848
+Feature: Dobutamine HTFD score: 1.4911290237024168
+Cluster: 0 0.001 ± 0.03
+Cluster: 1 0.086 ± 0.753
+Feature: Hematocrit HTFD score: 1.3762613400414905
+Cluster: 0 32.221 ± 5.238
+Cluster: 1 31.575 ± 5.042
+Feature: Diastolic blood pressure HTFD score: 1.3466615383395928
+Cluster: 0 62.235 ± 15.263
+Cluster: 1 60.395 ± 14.469
+Feature: Age HTFD score: 1.3368016552669664
+Cluster: 0 64.544 ± 17.598
+Cluster: 1 62.374 ± 17.29
+Feature: Asparate aminotransferase HTFD score: 1.3304335995127914
+Cluster: 0 43.925 ± 160.004
+Cluster: 1 124.512 ± 747.63
+Feature: Alkaline phosphate HTFD score: 1.3073749730273239
+Cluster: 0 112.568 ± 93.182
+Cluster: 1 103.482 ± 65.213
+Feature: Norepinephrine HTFD score: 1.307180911681155
+Cluster: 0 0.002 ± 0.016
+Cluster: 1 0.007 ± 0.043
+Feature: Anion gap HTFD score: 1.2837328741960465
+Cluster: 0 13.536 ± 3.148
+Cluster: 1 13.092 ± 3.792
+Feature: Alanine aminotransferase HTFD score: 1.2503367083500028
+Cluster: 0 48.739 ± 139.67
+Cluster: 1 114.962 ± 634.962
+Feature: Dopamine HTFD score: 1.2418888415040694
+Cluster: 0 0.083 ± 0.649
+Cluster: 1 0.252 ± 1.6
+Feature: White blood cell count HTFD score: 1.217212852099132
+Cluster: 0 10.873 ± 7.99
+Cluster: 1 12.162 ± 11.71
+Feature: PTT HTFD score: 1.1807137396906515
+Cluster: 0 34.677 ± 17.726
+Cluster: 1 37.02 ± 20.836
+Feature: Ethnicity_2 HTFD score: 1.060403375212907
+Cluster: 0 0.117 ± 0.321
+Cluster: 1 0.085 ± 0.278
+Feature: Cholesterol HDL HTFD score: 0.934835942439789
+Cluster: 0 34.953 ± 5.56
+Cluster: 1 35.704 ± 7.82
+Feature: Alanine aminotransferase_lowest HTFD score: 0.9311038304002173
+Cluster: 0 40.411 ± 88.6
+Cluster: 1 81.495 ± 463.212
+Feature: Epinephrine HTFD score: 0.8575531468169282
+Cluster: 0 -0.0 ± 0.0
+Cluster: 1 0.0 ± 0.004
+Feature: Alanine aminotransferase_last HTFD score: 0.830866381258458
+Cluster: 0 46.235 ± 126.262
+Cluster: 1 96.583 ± 603.52
+Feature: Alanine aminotransferase_first HTFD score: 0.830866381258458
+Cluster: 0 46.235 ± 126.262
+Cluster: 1 96.583 ± 603.52
+Feature: Fibrinogen HTFD score: 0.8052875474367902
+Cluster: 0 286.045 ± 71.988
+Cluster: 1 277.46 ± 96.315
+Feature: Central Venous Pressure HTFD score: 0.7476957475883719
+Cluster: 0 5.365 ± 6.475
+Cluster: 1 7.066 ± 21.428
+Feature: Lactate Dehydrogenase HTFD score: 0.7436651179820497
+Cluster: 0 282.287 ± 212.071
+Cluster: 1 335.627 ± 673.217
+Feature: Cholesterol Total HTFD score: 0.6536005072053914
+Cluster: 0 106.116 ± 24.036
+Cluster: 1 108.613 ± 31.313
+Feature: Bicarbonate HTFD score: 0.5753570040435579
+Cluster: 0 24.339 ± 4.26
+Cluster: 1 24.008 ± 4.2
+Feature: Hemoglobin HTFD score: 0.5590533931584338
+Cluster: 0 10.852 ± 1.908
+Cluster: 1 10.713 ± 1.752
+Feature: Urine output HTFD score: 0.5271032356268706
+Cluster: 0 83.304 ± 81.035
+Cluster: 1 94.559 ± 168.513
+Feature: Blood urea nitrogen HTFD score: 0.4756942334095493
+Cluster: 0 25.278 ± 20.877
+Cluster: 1 23.803 ± 20.91
+Feature: Potassium HTFD score: 0.31314034863440515
+Cluster: 0 4.069 ± 0.554
+Cluster: 1 4.261 ± 4.05
+Feature: D Dimer HTFD score: 0.2951718282448647
+Cluster: 0 277.626 ± 710.373
+Cluster: 1 328.537 ± 1028.254
+Feature: Albumin HTFD score: 0.27111225974792824
+Cluster: 0 3.188 ± 0.476
+Cluster: 1 3.213 ± 0.504
+Feature: Red blood cell count HTFD score: 0.23616145314026396
+Cluster: 0 3.603 ± 0.649
+Cluster: 1 3.644 ± 0.948
+Feature: Cholesterol LDL HTFD score: 0.227602799545023
+Cluster: 0 68.48 ± 13.888
+Cluster: 1 69.233 ± 17.41
+Feature: Base excess HTFD score: 0.22539329659793444
+Cluster: 0 -0.179 ± 3.104
+Cluster: 1 -0.63 ± 11.475
+Feature: pH HTFD score: 0.18032372184175643
+Cluster: 0 7.392 ± 0.138
+Cluster: 1 7.495 ± 3.063
+Feature: Weight HTFD score: 0.1770548716473471
+Cluster: 0 80.024 ± 21.387
+Cluster: 1 80.867 ± 21.798
+Feature: Monocytes HTFD score: 0.16293458840764818
+Cluster: 0 4.767 ± 3.111
+Cluster: 1 4.679 ± 2.045
+Feature: Mean blood pressure HTFD score: 0.16032791412364966
+Cluster: 0 79.226 ± 15.921
+Cluster: 1 78.633 ± 16.374
+Feature: SO2 HTFD score: 0.1514361115742655
+Cluster: 0 96.53 ± 3.385
+Cluster: 1 96.98 ± 14.807
+Feature: Sodium HTFD score: 0.15017168516382107
+Cluster: 0 138.568 ± 4.453
+Cluster: 1 138.72 ± 4.315
+Feature: pH Urine HTFD score: 0.14416353248572186
+Cluster: 0 6.095 ± 0.822
+Cluster: 1 6.123 ± 0.79
+Feature: PaCO2 HTFD score: 0.13610507423796325
+Cluster: 0 40.169 ± 6.406
+Cluster: 1 40.415 ± 7.903
+Feature: Respiratory rate HTFD score: 0.13359407253376268
+Cluster: 0 19.227 ± 5.125
+Cluster: 1 19.047 ± 5.728
+Feature: Gender_2 HTFD score: 0.1251411710925174
+Cluster: 0 0.543 ± 0.498
+Cluster: 1 0.559 ± 0.497
+Feature: Gender_1 HTFD score: 0.1251411710925174
+Cluster: 0 0.457 ± 0.498
+Cluster: 1 0.441 ± 0.497
+Feature: Glucose HTFD score: 0.11732948476910875
+Cluster: 0 134.781 ± 52.498
+Cluster: 1 133.391 ± 44.655
+Feature: Height HTFD score: 0.11053460821210026
+Cluster: 0 169.658 ± 6.737
+Cluster: 1 169.875 ± 7.893
+Feature: Creatinine HTFD score: 0.10330294621312737
+Cluster: 0 1.443 ± 1.617
+Cluster: 1 1.571 ± 5.408
+Feature: Magnesium HTFD score: 0.08409879723176439
+Cluster: 0 2.014 ± 0.337
+Cluster: 1 2.137 ± 6.099
+Feature: Systolic blood pressure HTFD score: 0.05206751299314876
+Cluster: 0 121.762 ± 21.463
+Cluster: 1 147.484 ± 1815.067
+Feature: Troponin-T HTFD score: 0.026522851102041053
+Cluster: 0 0.267 ± 1.071
+Cluster: 1 0.28 ± 1.42
+Feature: Bilirubin Total HTFD score: 0.02571043632585539
+Cluster: 0 0.958 ± 2.269
+Cluster: 1 0.983 ± 2.89
+Feature: INR HTFD score: 0.003453226773244498
+Cluster: 0 1.378 ± 0.932
+Cluster: 1 1.379 ± 1.162
+
+========
+
+|C1| = 4298
+|C1| = [0.86179618 0.13820382]
+Feature: Ethnicity_4 HTFD score: 1.8021826694558578
+Cluster: 0 0.756 ± 0.43
+Cluster: 1 0.611 ± 0.487
+Feature: Ethnicity_3 HTFD score: 1.8021826694558578
+Cluster: 0 0.014 ± 0.119
+Cluster: 1 0.094 ± 0.292
+Feature: Ventilator HTFD score: 1.8021826694558578
+Cluster: 0 0.033 ± 0.177
+Cluster: 1 0.642 ± 0.479
+Feature: Systemic Vascular Resistance Index HTFD score: 1.8021826694558578
+Cluster: 0 1001.447 ± 30.317
+Cluster: 1 1179.746 ± 423.315
+Feature: Stroke Volume HTFD score: 1.8021826694558578
+Cluster: 0 79.986 ± 1.032
+Cluster: 1 77.783 ± 11.856
+Feature: Platelets HTFD score: 1.8021826694558578
+Cluster: 0 226.225 ± 114.621
+Cluster: 1 205.451 ± 95.121
+Feature: Plateau Pressure HTFD score: 1.8021826694558578
+Cluster: 0 28.0 ± 0.0
+Cluster: 1 24.59 ± 5.504
+Feature: PaO2 HTFD score: 1.8021826694558578
+Cluster: 0 108.524 ± 35.676
+Cluster: 1 156.151 ± 92.714
+Feature: PIP HTFD score: 1.8021826694558578
+Cluster: 0 12.001 ± 0.058
+Cluster: 1 17.528 ± 7.677
+Feature: PEEP HTFD score: 1.8021826694558578
+Cluster: 0 3.516 ± 0.207
+Cluster: 1 4.402 ± 2.062
+Feature: Neutrophils HTFD score: 1.8021826694558578
+Cluster: 0 71.317 ± 16.655
+Cluster: 1 64.095 ± 17.155
+Feature: Minute Volume HTFD score: 1.8021826694558578
+Cluster: 0 6.503 ± 0.135
+Cluster: 1 7.953 ± 7.197
+Feature: Mean corpuscular hemoglobin HTFD score: 1.8021826694558578
+Cluster: 0 30.26 ± 2.534
+Cluster: 1 29.117 ± 6.038
+Feature: Mean Airway Pressure HTFD score: 1.8021826694558578
+Cluster: 0 13.0 ± 0.056
+Cluster: 1 9.733 ± 3.085
+Feature: Lymphocytes HTFD score: 1.8021826694558578
+Cluster: 0 18.117 ± 11.777
+Cluster: 1 22.085 ± 11.649
+Feature: Heart Rate HTFD score: 1.8021826694558578
+Cluster: 0 82.815 ± 16.89
+Cluster: 1 86.435 ± 16.974
+Feature: GCS Verbal HTFD score: 1.8021826694558578
+Cluster: 0 4.745 ± 0.737
+Cluster: 1 3.926 ± 1.697
+Feature: GCS Total HTFD score: 1.8021826694558578
+Cluster: 0 14.799 ± 0.834
+Cluster: 1 13.901 ± 2.645
+Feature: GCS Motor HTFD score: 1.8021826694558578
+Cluster: 0 5.942 ± 0.327
+Cluster: 1 5.61 ± 1.066
+Feature: GCS Eye HTFD score: 1.8021826694558578
+Cluster: 0 3.885 ± 0.382
+Cluster: 1 3.526 ± 0.928
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.257 ± 0.15
+Cluster: 1 0.387 ± 0.239
+Feature: Extubated HTFD score: 1.8021826694558578
+Cluster: 0 0.863 ± 0.344
+Cluster: 1 0.727 ± 0.445
+Feature: Eosinophils HTFD score: 1.8021826694558578
+Cluster: 0 1.609 ± 1.636
+Cluster: 1 2.205 ± 2.567
+Feature: Cardiac Index HTFD score: 1.8021826694558578
+Cluster: 0 3.298 ± 0.061
+Cluster: 1 3.226 ± 0.385
+Feature: Blood culture HTFD score: 1.8021826694558578
+Cluster: 0 -50086.151 ± 55407.083
+Cluster: 1 -62565.986 ± 52263.599
+Feature: Phosphate HTFD score: 1.8021826694558543
+Cluster: 0 3.421 ± 1.114
+Cluster: 1 3.683 ± 1.354
+Feature: Basophils HTFD score: 1.8021826694558483
+Cluster: 0 0.261 ± 0.374
+Cluster: 1 0.182 ± 0.403
+Feature: Temperature HTFD score: 1.8021826694554743
+Cluster: 0 36.764 ± 0.634
+Cluster: 1 36.97 ± 1.179
+Feature: Ethnicity_0 HTFD score: 1.8021826694508303
+Cluster: 0 0.095 ± 0.293
+Cluster: 1 0.161 ± 0.368
+Feature: Lactate HTFD score: 1.8021826691285583
+Cluster: 0 1.781 ± 0.686
+Cluster: 1 1.988 ± 1.256
+Feature: Calcium HTFD score: 1.8021826682166848
+Cluster: 0 8.431 ± 0.758
+Cluster: 1 8.577 ± 0.827
+Feature: Mean corpuscular hemoglobin concentration HTFD score: 1.8021825056268908
+Cluster: 0 33.766 ± 1.551
+Cluster: 1 34.035 ± 1.579
+Feature: Mean corpuscular volume HTFD score: 1.8021825008682577
+Cluster: 0 89.687 ± 6.773
+Cluster: 1 88.587 ± 6.288
+Feature: Antibiotics HTFD score: 1.8021821549015682
+Cluster: 0 -73546.534 ± 44218.481
+Cluster: 1 -80482.51 ± 39717.866
+Feature: Chloride HTFD score: 1.8021770279541434
+Cluster: 0 104.824 ± 5.759
+Cluster: 1 105.748 ± 5.548
+Feature: Tidal Volume HTFD score: 1.8018892715692592
+Cluster: 0 500.029 ± 6.384
+Cluster: 1 525.729 ± 190.413
+Feature: Ethnicity_1 HTFD score: 1.8005449197634438
+Cluster: 0 0.018 ± 0.134
+Cluster: 1 0.048 ± 0.215
+Feature: Band Forms HTFD score: 1.513341141523254
+Cluster: 0 5.848 ± 3.751
+Cluster: 1 6.358 ± 3.848
+Feature: Dobutamine HTFD score: 1.4911290237024168
+Cluster: 0 0.001 ± 0.03
+Cluster: 1 0.086 ± 0.753
+Feature: Hematocrit HTFD score: 1.3762613400414905
+Cluster: 0 32.221 ± 5.238
+Cluster: 1 31.575 ± 5.042
+Feature: Diastolic blood pressure HTFD score: 1.3466615383395928
+Cluster: 0 62.235 ± 15.263
+Cluster: 1 60.395 ± 14.469
+Feature: Age HTFD score: 1.3368016552669664
+Cluster: 0 64.544 ± 17.598
+Cluster: 1 62.374 ± 17.29
+Feature: Asparate aminotransferase HTFD score: 1.3304335995127914
+Cluster: 0 43.925 ± 160.004
+Cluster: 1 124.512 ± 747.63
+Feature: Alkaline phosphate HTFD score: 1.3073749730273239
+Cluster: 0 112.568 ± 93.182
+Cluster: 1 103.482 ± 65.213
+Feature: Norepinephrine HTFD score: 1.307180911681155
+Cluster: 0 0.002 ± 0.016
+Cluster: 1 0.007 ± 0.043
+Feature: Anion gap HTFD score: 1.2837328741960465
+Cluster: 0 13.536 ± 3.148
+Cluster: 1 13.092 ± 3.792
+Feature: Alanine aminotransferase HTFD score: 1.2503367083500028
+Cluster: 0 48.739 ± 139.67
+Cluster: 1 114.962 ± 634.962
+Feature: Dopamine HTFD score: 1.2418888415040694
+Cluster: 0 0.083 ± 0.649
+Cluster: 1 0.252 ± 1.6
+Feature: White blood cell count HTFD score: 1.217212852099132
+Cluster: 0 10.873 ± 7.99
+Cluster: 1 12.162 ± 11.71
+Feature: PTT HTFD score: 1.1807137396906515
+Cluster: 0 34.677 ± 17.726
+Cluster: 1 37.02 ± 20.836
+Feature: Ethnicity_2 HTFD score: 1.060403375212907
+Cluster: 0 0.117 ± 0.321
+Cluster: 1 0.085 ± 0.278
+Feature: Cholesterol HDL HTFD score: 0.934835942439789
+Cluster: 0 34.953 ± 5.56
+Cluster: 1 35.704 ± 7.82
+Feature: Alanine aminotransferase_lowest HTFD score: 0.9311038304002173
+Cluster: 0 40.411 ± 88.6
+Cluster: 1 81.495 ± 463.212
+Feature: Epinephrine HTFD score: 0.8575531468169282
+Cluster: 0 -0.0 ± 0.0
+Cluster: 1 0.0 ± 0.004
+Feature: Alanine aminotransferase_last HTFD score: 0.830866381258458
+Cluster: 0 46.235 ± 126.262
+Cluster: 1 96.583 ± 603.52
+Feature: Alanine aminotransferase_first HTFD score: 0.830866381258458
+Cluster: 0 46.235 ± 126.262
+Cluster: 1 96.583 ± 603.52
+Feature: Fibrinogen HTFD score: 0.8052875474367902
+Cluster: 0 286.045 ± 71.988
+Cluster: 1 277.46 ± 96.315
+Feature: Central Venous Pressure HTFD score: 0.7476957475883719
+Cluster: 0 5.365 ± 6.475
+Cluster: 1 7.066 ± 21.428
+Feature: Lactate Dehydrogenase HTFD score: 0.7436651179820497
+Cluster: 0 282.287 ± 212.071
+Cluster: 1 335.627 ± 673.217
+Feature: Cholesterol Total HTFD score: 0.6536005072053914
+Cluster: 0 106.116 ± 24.036
+Cluster: 1 108.613 ± 31.313
+Feature: Bicarbonate HTFD score: 0.5753570040435579
+Cluster: 0 24.339 ± 4.26
+Cluster: 1 24.008 ± 4.2
+Feature: Hemoglobin HTFD score: 0.5590533931584338
+Cluster: 0 10.852 ± 1.908
+Cluster: 1 10.713 ± 1.752
+Feature: Urine output HTFD score: 0.5271032356268706
+Cluster: 0 83.304 ± 81.035
+Cluster: 1 94.559 ± 168.513
+Feature: Blood urea nitrogen HTFD score: 0.4756942334095493
+Cluster: 0 25.278 ± 20.877
+Cluster: 1 23.803 ± 20.91
+Feature: Potassium HTFD score: 0.31314034863440515
+Cluster: 0 4.069 ± 0.554
+Cluster: 1 4.261 ± 4.05
+Feature: D Dimer HTFD score: 0.2951718282448647
+Cluster: 0 277.626 ± 710.373
+Cluster: 1 328.537 ± 1028.254
+Feature: Albumin HTFD score: 0.27111225974792824
+Cluster: 0 3.188 ± 0.476
+Cluster: 1 3.213 ± 0.504
+Feature: Red blood cell count HTFD score: 0.23616145314026396
+Cluster: 0 3.603 ± 0.649
+Cluster: 1 3.644 ± 0.948
+Feature: Cholesterol LDL HTFD score: 0.227602799545023
+Cluster: 0 68.48 ± 13.888
+Cluster: 1 69.233 ± 17.41
+Feature: Base excess HTFD score: 0.22539329659793444
+Cluster: 0 -0.179 ± 3.104
+Cluster: 1 -0.63 ± 11.475
+Feature: pH HTFD score: 0.18032372184175643
+Cluster: 0 7.392 ± 0.138
+Cluster: 1 7.495 ± 3.063
+Feature: Weight HTFD score: 0.1770548716473471
+Cluster: 0 80.024 ± 21.387
+Cluster: 1 80.867 ± 21.798
+Feature: Monocytes HTFD score: 0.16293458840764818
+Cluster: 0 4.767 ± 3.111
+Cluster: 1 4.679 ± 2.045
+Feature: Mean blood pressure HTFD score: 0.16032791412364966
+Cluster: 0 79.226 ± 15.921
+Cluster: 1 78.633 ± 16.374
+Feature: SO2 HTFD score: 0.1514361115742655
+Cluster: 0 96.53 ± 3.385
+Cluster: 1 96.98 ± 14.807
+Feature: Sodium HTFD score: 0.15017168516382107
+Cluster: 0 138.568 ± 4.453
+Cluster: 1 138.72 ± 4.315
+Feature: pH Urine HTFD score: 0.14416353248572186
+Cluster: 0 6.095 ± 0.822
+Cluster: 1 6.123 ± 0.79
+Feature: PaCO2 HTFD score: 0.13610507423796325
+Cluster: 0 40.169 ± 6.406
+Cluster: 1 40.415 ± 7.903
+Feature: Respiratory rate HTFD score: 0.13359407253376268
+Cluster: 0 19.227 ± 5.125
+Cluster: 1 19.047 ± 5.728
+Feature: Gender_2 HTFD score: 0.1251411710925174
+Cluster: 0 0.543 ± 0.498
+Cluster: 1 0.559 ± 0.497
+Feature: Gender_1 HTFD score: 0.1251411710925174
+Cluster: 0 0.457 ± 0.498
+Cluster: 1 0.441 ± 0.497
+Feature: Glucose HTFD score: 0.11732948476910875
+Cluster: 0 134.781 ± 52.498
+Cluster: 1 133.391 ± 44.655
+Feature: Height HTFD score: 0.11053460821210026
+Cluster: 0 169.658 ± 6.737
+Cluster: 1 169.875 ± 7.893
+Feature: Creatinine HTFD score: 0.10330294621312737
+Cluster: 0 1.443 ± 1.617
+Cluster: 1 1.571 ± 5.408
+Feature: Magnesium HTFD score: 0.08409879723176439
+Cluster: 0 2.014 ± 0.337
+Cluster: 1 2.137 ± 6.099
+Feature: Systolic blood pressure HTFD score: 0.05206751299314876
+Cluster: 0 121.762 ± 21.463
+Cluster: 1 147.484 ± 1815.067
+Feature: Troponin-T HTFD score: 0.026522851102041053
+Cluster: 0 0.267 ± 1.071
+Cluster: 1 0.28 ± 1.42
+Feature: Bilirubin Total HTFD score: 0.02571043632585539
+Cluster: 0 0.958 ± 2.269
+Cluster: 1 0.983 ± 2.89
+Feature: INR HTFD score: 0.003453226773244498
+Cluster: 0 1.378 ± 0.932
+Cluster: 1 1.379 ± 1.162
+Stats:  1701 22450
+Run : 0
+89 89
+/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/ards24.pth
+load pretrained ae from /Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN/ards24.pth
+Starting Training
+Training data
+
+[  0/100] train_loss: 0.718 valid_loss: 3.932 valid_F1: 0.382 valid_AUC: 0.465 valid_AUPRC: 0.497 valid_MINPSE: 0.214 valid_Feature_p: 0.751 valid_WDFD: 44.000 valid_Silhouette: 0.132
+Epoch: 00 | Epoch KM Loss: 0.646 | Total Loss: 68.615 | Classification Loss: 10.913 | Cluster Balance Loss: 1.403
+Epoch: 01 | Epoch KM Loss: 0.271 | Total Loss: 45.052 | Classification Loss: 7.410 | Cluster Balance Loss: 1.444
+Training data
+
+[  2/100] train_loss: 0.220 valid_loss: 1.932 valid_F1: 0.480 valid_AUC: 0.742 valid_AUPRC: 0.650 valid_MINPSE: 0.000 valid_Feature_p: 0.762 valid_WDFD: 44.000 valid_Silhouette: 0.172
+Epoch: 02 | Epoch KM Loss: 1.145 | Total Loss: 53.339 | Classification Loss: 7.054 | Cluster Balance Loss: 1.403
+Epoch: 03 | Epoch KM Loss: 0.453 | Total Loss: 46.462 | Classification Loss: 6.882 | Cluster Balance Loss: 1.300
+Training data
+
+[  4/100] train_loss: 0.209 valid_loss: 2.183 valid_F1: 0.480 valid_AUC: 0.740 valid_AUPRC: 0.655 valid_MINPSE: 0.000 valid_Feature_p: 0.780 valid_WDFD: 44.000 valid_Silhouette: 0.232
+Epoch: 04 | Epoch KM Loss: 1.762 | Total Loss: 61.636 | Classification Loss: 6.818 | Cluster Balance Loss: 1.791
+Epoch: 05 | Epoch KM Loss: 1.064 | Total Loss: 54.897 | Classification Loss: 6.647 | Cluster Balance Loss: 1.790
+Training data
+
+[  6/100] train_loss: 0.198 valid_loss: 2.316 valid_F1: 0.572 valid_AUC: 0.732 valid_AUPRC: 0.647 valid_MINPSE: 0.328 valid_Feature_p: 0.775 valid_WDFD: 44.000 valid_Silhouette: 0.343
+EarlyStopping counter: 1 out of 7
+Epoch: 06 | Epoch KM Loss: 2.362 | Total Loss: 68.978 | Classification Loss: 6.537 | Cluster Balance Loss: 2.048
+Epoch: 07 | Epoch KM Loss: 1.887 | Total Loss: 65.082 | Classification Loss: 6.486 | Cluster Balance Loss: 2.372
+Training data
+
+[  8/100] train_loss: 0.205 valid_loss: 2.460 valid_F1: 0.494 valid_AUC: 0.737 valid_AUPRC: 0.637 valid_MINPSE: 0.257 valid_Feature_p: 0.772 valid_WDFD: 44.000 valid_Silhouette: 0.436
+EarlyStopping counter: 2 out of 7
+Epoch: 08 | Epoch KM Loss: 2.462 | Total Loss: 71.815 | Classification Loss: 6.530 | Cluster Balance Loss: 2.453
+Epoch: 09 | Epoch KM Loss: 2.372 | Total Loss: 70.780 | Classification Loss: 6.392 | Cluster Balance Loss: 2.117
+Training data
+
+[ 10/100] train_loss: 0.224 valid_loss: 2.589 valid_F1: 0.648 valid_AUC: 0.761 valid_AUPRC: 0.639 valid_MINPSE: 0.349 valid_Feature_p: 0.768 valid_WDFD: 44.000 valid_Silhouette: 0.499
+EarlyStopping counter: 3 out of 7
+Epoch: 10 | Epoch KM Loss: 3.217 | Total Loss: 82.974 | Classification Loss: 6.489 | Cluster Balance Loss: 2.488
+Epoch: 11 | Epoch KM Loss: 3.202 | Total Loss: 82.184 | Classification Loss: 6.338 | Cluster Balance Loss: 2.813
+Training data
+
+[ 12/100] train_loss: 0.221 valid_loss: 2.725 valid_F1: 0.612 valid_AUC: 0.741 valid_AUPRC: 0.627 valid_MINPSE: 0.340 valid_Feature_p: 0.768 valid_WDFD: 44.000 valid_Silhouette: 0.563
+EarlyStopping counter: 4 out of 7
+Epoch: 12 | Epoch KM Loss: 3.264 | Total Loss: 82.130 | Classification Loss: 6.361 | Cluster Balance Loss: 2.587
+Epoch: 13 | Epoch KM Loss: 2.944 | Total Loss: 77.636 | Classification Loss: 6.180 | Cluster Balance Loss: 2.760
+Training data
+
+[ 14/100] train_loss: 0.188 valid_loss: 2.627 valid_F1: 0.543 valid_AUC: 0.667 valid_AUPRC: 0.624 valid_MINPSE: 0.259 valid_Feature_p: 0.760 valid_WDFD: 44.000 valid_Silhouette: 0.593
+EarlyStopping counter: 5 out of 7
+Epoch: 14 | Epoch KM Loss: 2.647 | Total Loss: 73.367 | Classification Loss: 5.947 | Cluster Balance Loss: 2.211
+Epoch: 15 | Epoch KM Loss: 2.694 | Total Loss: 74.366 | Classification Loss: 5.974 | Cluster Balance Loss: 3.036
+Training data
+
+[ 16/100] train_loss: 0.173 valid_loss: 2.782 valid_F1: 0.584 valid_AUC: 0.778 valid_AUPRC: 0.643 valid_MINPSE: 0.329 valid_Feature_p: 0.763 valid_WDFD: 44.000 valid_Silhouette: 0.624
+EarlyStopping counter: 6 out of 7
+Epoch: 16 | Epoch KM Loss: 2.467 | Total Loss: 72.521 | Classification Loss: 5.841 | Cluster Balance Loss: 1.903
+Epoch: 17 | Epoch KM Loss: 1.880 | Total Loss: 63.299 | Classification Loss: 5.565 | Cluster Balance Loss: 2.370
+Training data
+
+[ 18/100] train_loss: 0.172 valid_loss: 2.626 valid_F1: 0.585 valid_AUC: 0.714 valid_AUPRC: 0.607 valid_MINPSE: 0.308 valid_Feature_p: 0.754 valid_WDFD: 44.000 valid_Silhouette: 0.649
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Training Local Networks
+Loading Best model with score:  [0.48030495552731894, 0.6550813375877769]
+[6413 5928 3878]
+
+[ 18/100] valid_loss: 0.212 valid_F1: 0.480 valid_AUC: 0.755 valid_AUPRC: 0.658 valid_MINPSE: 0.000 valid_Sil: 0.232
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.499 valid_AUC: 0.755 valid_AUPRC: 0.660 valid_MINPSE: 0.409 valid_Sil: 0.232
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.549 valid_AUC: 0.758 valid_AUPRC: 0.659 valid_MINPSE: 0.323 valid_Sil: 0.232
+EarlyStopping counter: 1 out of 7
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.562 valid_AUC: 0.759 valid_AUPRC: 0.660 valid_MINPSE: 0.318 valid_Sil: 0.232
+
+[ 18/100] valid_loss: 0.209 valid_F1: 0.590 valid_AUC: 0.759 valid_AUPRC: 0.663 valid_MINPSE: 0.332 valid_Sil: 0.232
+
+[ 18/100] valid_loss: 0.210 valid_F1: 0.593 valid_AUC: 0.761 valid_AUPRC: 0.663 valid_MINPSE: 0.339 valid_Sil: 0.232
+EarlyStopping counter: 1 out of 7
+
+[ 18/100] valid_loss: 0.210 valid_F1: 0.593 valid_AUC: 0.762 valid_AUPRC: 0.661 valid_MINPSE: 0.339 valid_Sil: 0.232
+EarlyStopping counter: 2 out of 7
+
+[ 18/100] valid_loss: 0.210 valid_F1: 0.595 valid_AUC: 0.762 valid_AUPRC: 0.661 valid_MINPSE: 0.336 valid_Sil: 0.232
+EarlyStopping counter: 3 out of 7
+
+[ 18/100] valid_loss: 0.211 valid_F1: 0.598 valid_AUC: 0.765 valid_AUPRC: 0.663 valid_MINPSE: 0.334 valid_Sil: 0.232
+EarlyStopping counter: 4 out of 7
+
+[ 18/100] valid_loss: 0.211 valid_F1: 0.599 valid_AUC: 0.762 valid_AUPRC: 0.661 valid_MINPSE: 0.325 valid_Sil: 0.232
+EarlyStopping counter: 5 out of 7
+
+[ 18/100] valid_loss: 0.211 valid_F1: 0.596 valid_AUC: 0.764 valid_AUPRC: 0.662 valid_MINPSE: 0.322 valid_Sil: 0.232
+EarlyStopping counter: 6 out of 7
+
+[ 18/100] valid_loss: 0.211 valid_F1: 0.595 valid_AUC: 0.764 valid_AUPRC: 0.661 valid_MINPSE: 0.332 valid_Sil: 0.232
+EarlyStopping counter: 7 out of 7
+
+####################################################################################
+
+Evaluating Test Data with k =  3  Attention =  11
+Loading Best model with score:  [0.5898632257097107, 0.663020407027771]
+Run #0
+Loss Metrics - Test Loss 0.238, E-Test Loss 0.238, Local Sum Test Loss 0.000
+Clustering Metrics - Acc 0.0000 , nmi 0.0000 , ari 0.0000, HTFD 0.816
+Classification Metrics - Test F1 0.593, Test AUC 0.676, Test AUPRC 0.633, Test MIN_PSE 0.350 , E-Test F1 0.594, E-Test AUC 0.728, E-Test AUPRC 0.644, E-Test MIN_PSE 0.340
+
+
+Cluster #  0 sized:  6413 label distr:  [0.95680649 0.04319351]
+[('PTT', 0.028), ('Red blood cell count', 0.025), ('Temperature', 0.025), ('Mean blood pressure', 0.024), ('Systolic blood pressure', 0.024), ('Diastolic blood pressure', 0.024), ('Calcium', 0.023), ('Platelets', 0.023), ('Hematocrit', 0.023), ('Mean corpuscular hemoglobin', 0.022)]
+=========================
+
+Cluster #  1 sized:  5928 label distr:  [0.93454791 0.06545209]
+[('Platelets', 0.028), ('Respiratory rate', 0.024), ('Temperature', 0.022), ('Heart Rate', 0.022), ('Bilirubin Total', 0.021), ('PTT', 0.021), ('White blood cell count', 0.021), ('Mean corpuscular hemoglobin concentration', 0.021), ('Weight', 0.02), ('FiO2', 0.02)]
+=========================
+
+Cluster #  2 sized:  3878 label distr:  [0.85894791 0.14105209]
+[('GCS Verbal', 0.054), ('GCS Motor', 0.028), ('Extubated', 0.027), ('GCS Total', 0.026), ('GCS Eye', 0.024), ('Age', 0.018), ('PIP', 0.018), ('PaO2', 0.017), ('Albumin', 0.017), ('Systolic blood pressure', 0.017)]
+=========================
+
+Student Network Classification Metrics - Test F1 0.537, Test AUC 0.750,        Test AUPRC 0.640
+
+
+Average Feature Difference:  0.013436319189621957
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.594	0.728	0.644	0.340	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.000	0.000	0.000	0.000	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.225	1.234	44.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.000	0.000	0.000
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.537	0.750	0.640	0.371
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.000	0.000	0.000	0.000
+
+
+========
+
+|C0| = 6413
+|C0| = [0.95680649 0.04319351]
+Mean Airway Pressure 	 0.681	C0 :  12.999 ± 0.044	C1 :  12.998 ± 0.1	C2 :  9.383 ± 3.047	
+Ventilator 	 0.635	C0 :  0.043 ± 0.202	C1 :  0.013 ± 0.112	C2 :  0.722 ± 0.448	
+PIP 	 0.591	C0 :  12.0 ± 0.0	C1 :  12.0 ± 0.026	C2 :  18.129 ± 7.85	
+Ethnicity_4 	 0.512	C0 :  0.857 ± 0.35	C1 :  0.602 ± 0.49	C2 :  0.663 ± 0.473	
+PEEP 	 0.498	C0 :  3.512 ± 0.159	C1 :  3.514 ± 0.214	C2 :  4.507 ± 2.149	
+Ethnicity_2 	 0.491	C0 :  0.016 ± 0.127	C1 :  0.229 ± 0.42	C2 :  0.075 ± 0.263	
+Blood culture 	 0.488	C0 :  -69520.129 ± 48227.484	C1 :  -25873.991 ± 54244.049	C2 :  -68791.132 ± 49216.408	
+FiO2 	 0.486	C0 :  0.235 ± 0.101	C1 :  0.286 ± 0.194	C2 :  0.392 ± 0.236	
+Plateau Pressure 	 0.48	C0 :  28.0 ± 0.0	C1 :  28.0 ± 0.0	C2 :  24.221 ± 5.673	
+Hemoglobin 	 0.449	C0 :  11.323 ± 1.82	C1 :  10.284 ± 1.854	C2 :  10.786 ± 1.736	
+Heart Rate 	 0.449	C0 :  79.203 ± 15.608	C1 :  87.337 ± 17.705	C2 :  85.887 ± 16.323	
+Extubated 	 0.443	C0 :  0.928 ± 0.258	C1 :  0.783 ± 0.412	C2 :  0.727 ± 0.446	
+GCS Verbal 	 0.415	C0 :  4.813 ± 0.575	C1 :  4.638 ± 0.925	C2 :  3.887 ± 1.729	
+Mean corpuscular hemoglobin concentration 	 0.395	C0 :  34.21 ± 1.328	C1 :  33.204 ± 1.653	C2 :  34.187 ± 1.472	
+Blood urea nitrogen 	 0.377	C0 :  20.164 ± 13.454	C1 :  32.208 ± 26.686	C2 :  21.508 ± 17.547	
+
+========
+
+|C1| = 5928
+|C1| = [0.93454791 0.06545209]
+Blood culture 	 0.793	C0 :  -69520.129 ± 48227.484	C1 :  -25873.991 ± 54244.049	C2 :  -68791.132 ± 49216.408	
+Ventilator 	 0.724	C0 :  0.043 ± 0.202	C1 :  0.013 ± 0.112	C2 :  0.722 ± 0.448	
+Mean Airway Pressure 	 0.648	C0 :  12.999 ± 0.044	C1 :  12.998 ± 0.1	C2 :  9.383 ± 3.047	
+Mean corpuscular hemoglobin concentration 	 0.639	C0 :  34.21 ± 1.328	C1 :  33.204 ± 1.653	C2 :  34.187 ± 1.472	
+Ethnicity_2 	 0.617	C0 :  0.016 ± 0.127	C1 :  0.229 ± 0.42	C2 :  0.075 ± 0.263	
+PIP 	 0.563	C0 :  12.0 ± 0.0	C1 :  12.0 ± 0.026	C2 :  18.129 ± 7.85	
+Blood urea nitrogen 	 0.556	C0 :  20.164 ± 13.454	C1 :  32.208 ± 26.686	C2 :  21.508 ± 17.547	
+Antibiotics 	 0.509	C0 :  -83514.247 ± 37194.469	C1 :  -61422.4 ± 48814.881	C2 :  -83283.445 ± 37391.048	
+PEEP 	 0.47	C0 :  3.512 ± 0.159	C1 :  3.514 ± 0.214	C2 :  4.507 ± 2.149	
+Plateau Pressure 	 0.457	C0 :  28.0 ± 0.0	C1 :  28.0 ± 0.0	C2 :  24.221 ± 5.673	
+Hemoglobin 	 0.447	C0 :  11.323 ± 1.82	C1 :  10.284 ± 1.854	C2 :  10.786 ± 1.736	
+Lymphocytes 	 0.439	C0 :  19.097 ± 10.756	C1 :  16.946 ± 13.159	C2 :  22.684 ± 10.661	
+PaO2 	 0.428	C0 :  112.191 ± 34.557	C1 :  104.793 ± 38.232	C2 :  160.947 ± 94.618	
+Anion gap 	 0.41	C0 :  12.953 ± 2.597	C1 :  14.323 ± 3.754	C2 :  12.806 ± 3.447	
+Fibrinogen 	 0.408	C0 :  274.721 ± 30.938	C1 :  303.772 ± 108.776	C2 :  268.158 ± 74.908	
+
+========
+
+|C2| = 3878
+|C2| = [0.85894791 0.14105209]
+Ventilator 	 1.758	C0 :  0.043 ± 0.202	C1 :  0.013 ± 0.112	C2 :  0.722 ± 0.448	
+Mean Airway Pressure 	 1.722	C0 :  12.999 ± 0.044	C1 :  12.998 ± 0.1	C2 :  9.383 ± 3.047	
+PIP 	 1.495	C0 :  12.0 ± 0.0	C1 :  12.0 ± 0.026	C2 :  18.129 ± 7.85	
+PEEP 	 1.254	C0 :  3.512 ± 0.159	C1 :  3.514 ± 0.214	C2 :  4.507 ± 2.149	
+Plateau Pressure 	 1.214	C0 :  28.0 ± 0.0	C1 :  28.0 ± 0.0	C2 :  24.221 ± 5.673	
+Systemic Vascular Resistance Index 	 0.871	C0 :  1002.217 ± 36.9	C1 :  1000.604 ± 20.448	C2 :  1199.072 ± 441.263	
+PaO2 	 0.868	C0 :  112.191 ± 34.557	C1 :  104.793 ± 38.232	C2 :  160.947 ± 94.618	
+Cardiac Index 	 0.798	C0 :  3.297 ± 0.062	C1 :  3.301 ± 0.053	C2 :  3.216 ± 0.405	
+Stroke Volume 	 0.787	C0 :  79.989 ± 1.085	C1 :  79.969 ± 1.139	C2 :  77.567 ± 12.436	
+Tidal Volume 	 0.784	C0 :  500.001 ± 7.279	C1 :  500.122 ± 6.973	C2 :  528.419 ± 200.183	
+GCS Verbal 	 0.74	C0 :  4.813 ± 0.575	C1 :  4.638 ± 0.925	C2 :  3.887 ± 1.729	
+FiO2 	 0.711	C0 :  0.235 ± 0.101	C1 :  0.286 ± 0.194	C2 :  0.392 ± 0.236	
+GCS Eye 	 0.616	C0 :  3.915 ± 0.308	C1 :  3.839 ± 0.477	C2 :  3.51 ± 0.947	
+Minute Volume 	 0.581	C0 :  6.502 ± 0.109	C1 :  6.504 ± 0.155	C2 :  8.111 ± 7.56	
+GCS Total 	 0.579	C0 :  14.83 ± 0.674	C1 :  14.73 ± 1.106	C2 :  13.858 ± 2.696	
+
+========
+
+|C0| = 6413
+|C0| = [0.95680649 0.04319351]
+Feature: Ethnicity_4 HTFD score: 1.8021826694558578
+Cluster: 0 0.857 ± 0.35
+Cluster: 1 0.602 ± 0.49
+Cluster: 2 0.663 ± 0.473
+Feature: Ethnicity_3 HTFD score: 1.8021826694558578
+Cluster: 0 0.0 ± 0.0
+Cluster: 1 0.074 ± 0.261
+Cluster: 2 0.036 ± 0.187
+Feature: Ethnicity_2 HTFD score: 1.8021826694558578
+Cluster: 0 0.016 ± 0.127
+Cluster: 1 0.229 ± 0.42
+Cluster: 2 0.075 ± 0.263
+Feature: Ethnicity_1 HTFD score: 1.8021826694558578
+Cluster: 0 0.0 ± 0.0
+Cluster: 1 0.047 ± 0.211
+Cluster: 2 0.038 ± 0.191
+Feature: Age HTFD score: 1.8021826694558578
+Cluster: 0 66.225 ± 17.234
+Cluster: 1 62.215 ± 17.879
+Cluster: 2 62.919 ± 17.121
+Feature: pH Urine HTFD score: 1.8021826694558578
+Cluster: 0 6.219 ± 0.755
+Cluster: 1 5.939 ± 0.869
+Cluster: 2 6.161 ± 0.776
+Feature: Ventilator HTFD score: 1.8021826694558578
+Cluster: 0 0.043 ± 0.202
+Cluster: 1 0.013 ± 0.112
+Cluster: 2 0.722 ± 0.448
+Feature: Systemic Vascular Resistance Index HTFD score: 1.8021826694558578
+Cluster: 0 1002.217 ± 36.9
+Cluster: 1 1000.604 ± 20.448
+Cluster: 2 1199.072 ± 441.263
+Feature: Stroke Volume HTFD score: 1.8021826694558578
+Cluster: 0 79.989 ± 1.085
+Cluster: 1 79.969 ± 1.139
+Cluster: 2 77.567 ± 12.436
+Feature: Red blood cell count HTFD score: 1.8021826694558578
+Cluster: 0 3.717 ± 0.61
+Cluster: 1 3.472 ± 0.672
+Cluster: 2 3.659 ± 0.967
+Feature: Plateau Pressure HTFD score: 1.8021826694558578
+Cluster: 0 28.0 ± 0.0
+Cluster: 1 28.0 ± 0.0
+Cluster: 2 24.221 ± 5.673
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 3.229 ± 0.82
+Cluster: 1 3.719 ± 1.456
+Cluster: 2 3.573 ± 1.162
+Feature: PaO2 HTFD score: 1.8021826694558578
+Cluster: 0 112.191 ± 34.557
+Cluster: 1 104.793 ± 38.232
+Cluster: 2 160.947 ± 94.618
+Feature: PTT HTFD score: 1.8021826694558578
+Cluster: 0 32.363 ± 14.238
+Cluster: 1 37.315 ± 20.473
+Cluster: 2 37.067 ± 21.26
+Feature: PIP HTFD score: 1.8021826694558578
+Cluster: 0 12.0 ± 0.0
+Cluster: 1 12.0 ± 0.026
+Cluster: 2 18.129 ± 7.85
+Feature: PEEP HTFD score: 1.8021826694558578
+Cluster: 0 3.512 ± 0.159
+Cluster: 1 3.514 ± 0.214
+Cluster: 2 4.507 ± 2.149
+Feature: Norepinephrine HTFD score: 1.8021826694558578
+Cluster: 0 0.001 ± 0.007
+Cluster: 1 0.006 ± 0.035
+Cluster: 2 0.005 ± 0.031
+Feature: Minute Volume HTFD score: 1.8021826694558578
+Cluster: 0 6.502 ± 0.109
+Cluster: 1 6.504 ± 0.155
+Cluster: 2 8.111 ± 7.56
+Feature: Mean corpuscular hemoglobin concentration HTFD score: 1.8021826694558578
+Cluster: 0 34.21 ± 1.328
+Cluster: 1 33.204 ± 1.653
+Cluster: 2 34.187 ± 1.472
+Feature: Mean corpuscular hemoglobin HTFD score: 1.8021826694558578
+Cluster: 0 30.571 ± 2.185
+Cluster: 1 29.827 ± 2.913
+Cluster: 2 29.14 ± 6.247
+Feature: Mean Airway Pressure HTFD score: 1.8021826694558578
+Cluster: 0 12.999 ± 0.044
+Cluster: 1 12.998 ± 0.1
+Cluster: 2 9.383 ± 3.047
+Feature: INR HTFD score: 1.8021826694558578
+Cluster: 0 1.227 ± 0.336
+Cluster: 1 1.573 ± 1.531
+Cluster: 2 1.329 ± 0.547
+Feature: Hemoglobin HTFD score: 1.8021826694558578
+Cluster: 0 11.323 ± 1.82
+Cluster: 1 10.284 ± 1.854
+Cluster: 2 10.786 ± 1.736
+Feature: Hematocrit HTFD score: 1.8021826694558578
+Cluster: 0 33.158 ± 4.999
+Cluster: 1 31.108 ± 5.31
+Cluster: 2 31.656 ± 4.99
+Feature: Heart Rate HTFD score: 1.8021826694558578
+Cluster: 0 79.203 ± 15.608
+Cluster: 1 87.337 ± 17.705
+Cluster: 2 85.887 ± 16.323
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 127.061 ± 39.031
+Cluster: 1 143.889 ± 64.457
+Cluster: 2 132.084 ± 39.763
+Feature: GCS Verbal HTFD score: 1.8021826694558578
+Cluster: 0 4.813 ± 0.575
+Cluster: 1 4.638 ± 0.925
+Cluster: 2 3.887 ± 1.729
+Feature: GCS Total HTFD score: 1.8021826694558578
+Cluster: 0 14.83 ± 0.674
+Cluster: 1 14.73 ± 1.106
+Cluster: 2 13.858 ± 2.696
+Feature: GCS Motor HTFD score: 1.8021826694558578
+Cluster: 0 5.976 ± 0.168
+Cluster: 1 5.885 ± 0.498
+Cluster: 2 5.604 ± 1.078
+Feature: GCS Eye HTFD score: 1.8021826694558578
+Cluster: 0 3.915 ± 0.308
+Cluster: 1 3.839 ± 0.477
+Cluster: 2 3.51 ± 0.947
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 274.721 ± 30.938
+Cluster: 1 303.772 ± 108.776
+Cluster: 2 268.158 ± 74.908
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.235 ± 0.101
+Cluster: 1 0.286 ± 0.194
+Cluster: 2 0.392 ± 0.236
+Feature: Extubated HTFD score: 1.8021826694558578
+Cluster: 0 0.928 ± 0.258
+Cluster: 1 0.783 ± 0.412
+Cluster: 2 0.727 ± 0.446
+Feature: Dopamine HTFD score: 1.8021826694558578
+Cluster: 0 0.028 ± 0.293
+Cluster: 1 0.217 ± 1.294
+Cluster: 2 0.156 ± 1.193
+Feature: D Dimer HTFD score: 1.8021826694558578
+Cluster: 0 215.989 ± 182.982
+Cluster: 1 392.031 ± 1224.52
+Cluster: 2 261.098 ± 593.213
+Feature: Creatinine HTFD score: 1.8021826694558578
+Cluster: 0 1.035 ± 0.713
+Cluster: 1 1.99 ± 2.255
+Cluster: 2 1.422 ± 5.58
+Feature: Blood urea nitrogen HTFD score: 1.8021826694558578
+Cluster: 0 20.164 ± 13.454
+Cluster: 1 32.208 ± 26.686
+Cluster: 2 21.508 ± 17.547
+Feature: Blood culture HTFD score: 1.8021826694558578
+Cluster: 0 -69520.129 ± 48227.484
+Cluster: 1 -25873.991 ± 54244.049
+Cluster: 2 -68791.132 ± 49216.408
+Feature: Bilirubin Total HTFD score: 1.8021826694558578
+Cluster: 0 0.696 ± 0.896
+Cluster: 1 1.364 ± 3.653
+Cluster: 2 0.798 ± 1.721
+Feature: Antibiotics HTFD score: 1.8021826694558578
+Cluster: 0 -83514.247 ± 37194.469
+Cluster: 1 -61422.4 ± 48814.881
+Cluster: 2 -83283.445 ± 37391.048
+Feature: Anion gap HTFD score: 1.8021826694558578
+Cluster: 0 12.953 ± 2.597
+Cluster: 1 14.323 ± 3.754
+Cluster: 2 12.806 ± 3.447
+Feature: Alkaline phosphate HTFD score: 1.8021826694558578
+Cluster: 0 99.673 ± 40.53
+Cluster: 1 128.091 ± 128.357
+Cluster: 2 100.093 ± 52.874
+Feature: Bicarbonate HTFD score: 1.8021826694557654
+Cluster: 0 24.683 ± 3.615
+Cluster: 1 23.877 ± 4.978
+Cluster: 2 24.112 ± 3.923
+Feature: Cardiac Index HTFD score: 1.8021826694555931
+Cluster: 0 3.297 ± 0.062
+Cluster: 1 3.301 ± 0.053
+Cluster: 2 3.216 ± 0.405
+Feature: Monocytes HTFD score: 1.8021826693707155
+Cluster: 0 4.488 ± 1.76
+Cluster: 1 5.052 ± 4.103
+Cluster: 2 4.695 ± 1.81
+Feature: Asparate aminotransferase HTFD score: 1.8021826677367099
+Cluster: 0 32.432 ± 90.235
+Cluster: 1 61.0 ± 242.537
+Cluster: 2 126.146 ± 771.086
+Feature: Lactate HTFD score: 1.8021825685969315
+Cluster: 0 1.763 ± 0.531
+Cluster: 1 1.85 ± 1.019
+Cluster: 2 1.936 ± 1.076
+Feature: Lactate Dehydrogenase HTFD score: 1.8021823073177001
+Cluster: 0 266.603 ± 97.749
+Cluster: 1 311.313 ± 437.714
+Cluster: 2 322.971 ± 575.92
+Feature: Tidal Volume HTFD score: 1.8018657999509036
+Cluster: 0 500.001 ± 7.279
+Cluster: 1 500.122 ± 6.973
+Cluster: 2 528.419 ± 200.183
+Feature: Alanine aminotransferase HTFD score: 1.7091728608562697
+Cluster: 0 43.823 ± 103.605
+Cluster: 1 54.139 ± 157.131
+Cluster: 2 122.007 ± 671.36
+Feature: Dobutamine HTFD score: 1.510379704900143
+Cluster: 0 0.0 ± 0.02
+Cluster: 1 0.001 ± 0.031
+Cluster: 2 0.096 ± 0.792
+Feature: Height HTFD score: 1.440605022894881
+Cluster: 0 170.15 ± 3.831
+Cluster: 1 169.154 ± 10.07
+Cluster: 2 169.855 ± 5.341
+Feature: Central Venous Pressure HTFD score: 1.391635445904932
+Cluster: 0 5.118 ± 1.313
+Cluster: 1 6.182 ± 15.464
+Cluster: 2 6.409 ± 16.443
+Feature: White blood cell count HTFD score: 1.186533558460356
+Cluster: 0 10.703 ± 5.259
+Cluster: 1 11.296 ± 13.195
+Cluster: 2 11.937 ± 6.061
+Feature: Gender_1 HTFD score: 1.1852917049729723
+Cluster: 0 0.421 ± 0.494
+Cluster: 1 0.494 ± 0.5
+Cluster: 2 0.441 ± 0.497
+Feature: Gender_2 HTFD score: 1.1852917049729697
+Cluster: 0 0.579 ± 0.494
+Cluster: 1 0.506 ± 0.5
+Cluster: 2 0.559 ± 0.497
+Feature: Alanine aminotransferase_lowest HTFD score: 1.0830350237745565
+Cluster: 0 38.69 ± 73.619
+Cluster: 1 41.599 ± 82.713
+Cluster: 2 86.974 ± 492.148
+Feature: Alanine aminotransferase_last HTFD score: 0.9982657425195314
+Cluster: 0 43.644 ± 107.283
+Cluster: 1 47.798 ± 114.694
+Cluster: 2 103.93 ± 642.661
+Feature: Alanine aminotransferase_first HTFD score: 0.9982657425195314
+Cluster: 0 43.644 ± 107.283
+Cluster: 1 47.798 ± 114.694
+Cluster: 2 103.93 ± 642.661
+Feature: Epinephrine HTFD score: 0.8561521196752753
+Cluster: 0 -0.0 ± 0.0
+Cluster: 1 -0.0 ± 0.0
+Cluster: 2 0.0 ± 0.004
+Feature: Potassium HTFD score: 0.7104067270167838
+Cluster: 0 4.035 ± 0.493
+Cluster: 1 4.119 ± 0.659
+Cluster: 2 4.261 ± 4.249
+Feature: Cholesterol LDL HTFD score: 0.6589377655702987
+Cluster: 0 69.372 ± 15.114
+Cluster: 1 66.977 ± 10.876
+Cluster: 2 70.136 ± 19.062
+Feature: Diastolic blood pressure HTFD score: 0.6537393013772959
+Cluster: 0 61.063 ± 14.461
+Cluster: 1 63.451 ± 16.18
+Cluster: 2 60.275 ± 14.055
+Feature: PaCO2 HTFD score: 0.6534434637233935
+Cluster: 0 39.95 ± 4.673
+Cluster: 1 40.339 ± 8.182
+Cluster: 2 40.543 ± 7.533
+Feature: Albumin HTFD score: 0.6091494256882336
+Cluster: 0 3.215 ± 0.416
+Cluster: 1 3.146 ± 0.544
+Cluster: 2 3.236 ± 0.482
+Feature: Ethnicity_0 HTFD score: 0.5878524445466378
+Cluster: 0 0.127 ± 0.333
+Cluster: 1 0.048 ± 0.215
+Cluster: 2 0.188 ± 0.39
+Feature: Cholesterol Total HTFD score: 0.5602957115528441
+Cluster: 0 107.874 ± 25.546
+Cluster: 1 103.046 ± 18.785
+Cluster: 2 110.669 ± 34.796
+Feature: Basophils HTFD score: 0.5135114220118019
+Cluster: 0 0.225 ± 0.297
+Cluster: 1 0.303 ± 0.487
+Cluster: 2 0.166 ± 0.306
+Feature: Neutrophils HTFD score: 0.5060079398245945
+Cluster: 0 70.075 ± 16.403
+Cluster: 1 72.673 ± 17.206
+Cluster: 2 63.293 ± 16.413
+Feature: Base excess HTFD score: 0.45918581425944843
+Cluster: 0 -0.094 ± 2.338
+Cluster: 1 -0.377 ± 3.915
+Cluster: 2 -0.516 ± 11.963
+Feature: Troponin-T HTFD score: 0.4501885687699265
+Cluster: 0 0.313 ± 1.136
+Cluster: 1 0.175 ± 0.806
+Cluster: 2 0.345 ± 1.617
+Feature: SO2 HTFD score: 0.2809720318893838
+Cluster: 0 96.455 ± 3.356
+Cluster: 1 96.553 ± 3.517
+Cluster: 2 97.119 ± 15.51
+Feature: Urine output HTFD score: 0.27605404002454464
+Cluster: 0 89.167 ± 85.523
+Cluster: 1 76.184 ± 71.481
+Cluster: 2 96.966 ± 177.684
+Feature: Cholesterol HDL HTFD score: 0.21501111036896306
+Cluster: 0 35.298 ± 5.763
+Cluster: 1 34.288 ± 4.213
+Cluster: 2 36.232 ± 8.881
+Feature: Respiratory rate HTFD score: 0.20938443612114077
+Cluster: 0 19.058 ± 4.844
+Cluster: 1 19.422 ± 5.436
+Cluster: 2 19.009 ± 5.746
+Feature: Platelets HTFD score: 0.20322844626953673
+Cluster: 0 223.157 ± 95.443
+Cluster: 1 228.367 ± 133.645
+Cluster: 2 204.999 ± 89.738
+Feature: Calcium HTFD score: 0.19250609803839092
+Cluster: 0 8.487 ± 0.715
+Cluster: 1 8.345 ± 0.812
+Cluster: 2 8.634 ± 0.799
+Feature: Band Forms HTFD score: 0.15200738563846514
+Cluster: 0 5.915 ± 3.008
+Cluster: 1 5.837 ± 4.709
+Cluster: 2 6.319 ± 3.296
+Feature: pH HTFD score: 0.14988408071676737
+Cluster: 0 7.395 ± 0.13
+Cluster: 1 7.463 ± 2.612
+Cluster: 2 7.392 ± 0.056
+Feature: Weight HTFD score: 0.14837731377199695
+Cluster: 0 79.864 ± 17.845
+Cluster: 1 80.253 ± 26.401
+Cluster: 2 80.876 ± 18.455
+Feature: Magnesium HTFD score: 0.1390044848735192
+Cluster: 0 2.0 ± 0.312
+Cluster: 1 2.101 ± 5.182
+Cluster: 2 2.039 ± 0.609
+Feature: Eosinophils HTFD score: 0.08350336329909086
+Cluster: 0 1.744 ± 1.529
+Cluster: 1 1.469 ± 1.92
+Cluster: 2 2.26 ± 2.437
+Feature: Sodium HTFD score: 0.04892847380342092
+Cluster: 0 138.644 ± 3.82
+Cluster: 1 138.506 ± 5.156
+Cluster: 2 138.704 ± 4.102
+Feature: Systolic blood pressure HTFD score: 0.0430328519431932
+Cluster: 0 122.696 ± 20.725
+Cluster: 1 120.339 ± 22.563
+Cluster: 2 150.9 ± 1910.779
+Feature: Temperature HTFD score: 0.03271508923180767
+Cluster: 0 36.814 ± 0.6
+Cluster: 1 36.701 ± 0.761
+Cluster: 2 37.006 ± 1.13
+Feature: Lymphocytes HTFD score: 0.0325101639864561
+Cluster: 0 19.097 ± 10.756
+Cluster: 1 16.946 ± 13.159
+Cluster: 2 22.684 ± 10.661
+Feature: Mean corpuscular volume HTFD score: 0.030983956907602053
+Cluster: 0 89.434 ± 5.804
+Cluster: 1 89.902 ± 7.822
+Cluster: 2 88.558 ± 5.959
+Feature: Mean blood pressure HTFD score: 0.015181490728019165
+Cluster: 0 79.12 ± 15.074
+Cluster: 1 79.141 ± 17.207
+Cluster: 2 78.875 ± 15.754
+Feature: Chloride HTFD score: 0.01342860684156414
+Cluster: 0 105.084 ± 4.906
+Cluster: 1 104.518 ± 6.704
+Cluster: 2 105.883 ± 5.21
+
+========
+
+|C1| = 5928
+|C1| = [0.93454791 0.06545209]
+Feature: Ethnicity_4 HTFD score: 1.8021826694558578
+Cluster: 0 0.857 ± 0.35
+Cluster: 1 0.602 ± 0.49
+Cluster: 2 0.663 ± 0.473
+Feature: Ethnicity_3 HTFD score: 1.8021826694558578
+Cluster: 0 0.0 ± 0.0
+Cluster: 1 0.074 ± 0.261
+Cluster: 2 0.036 ± 0.187
+Feature: Ethnicity_2 HTFD score: 1.8021826694558578
+Cluster: 0 0.016 ± 0.127
+Cluster: 1 0.229 ± 0.42
+Cluster: 2 0.075 ± 0.263
+Feature: Ethnicity_0 HTFD score: 1.8021826694558578
+Cluster: 0 0.127 ± 0.333
+Cluster: 1 0.048 ± 0.215
+Cluster: 2 0.188 ± 0.39
+Feature: pH Urine HTFD score: 1.8021826694558578
+Cluster: 0 6.219 ± 0.755
+Cluster: 1 5.939 ± 0.869
+Cluster: 2 6.161 ± 0.776
+Feature: Ventilator HTFD score: 1.8021826694558578
+Cluster: 0 0.043 ± 0.202
+Cluster: 1 0.013 ± 0.112
+Cluster: 2 0.722 ± 0.448
+Feature: Temperature HTFD score: 1.8021826694558578
+Cluster: 0 36.814 ± 0.6
+Cluster: 1 36.701 ± 0.761
+Cluster: 2 37.006 ± 1.13
+Feature: Systemic Vascular Resistance Index HTFD score: 1.8021826694558578
+Cluster: 0 1002.217 ± 36.9
+Cluster: 1 1000.604 ± 20.448
+Cluster: 2 1199.072 ± 441.263
+Feature: Red blood cell count HTFD score: 1.8021826694558578
+Cluster: 0 3.717 ± 0.61
+Cluster: 1 3.472 ± 0.672
+Cluster: 2 3.659 ± 0.967
+Feature: Plateau Pressure HTFD score: 1.8021826694558578
+Cluster: 0 28.0 ± 0.0
+Cluster: 1 28.0 ± 0.0
+Cluster: 2 24.221 ± 5.673
+Feature: Phosphate HTFD score: 1.8021826694558578
+Cluster: 0 3.229 ± 0.82
+Cluster: 1 3.719 ± 1.456
+Cluster: 2 3.573 ± 1.162
+Feature: PaO2 HTFD score: 1.8021826694558578
+Cluster: 0 112.191 ± 34.557
+Cluster: 1 104.793 ± 38.232
+Cluster: 2 160.947 ± 94.618
+Feature: PIP HTFD score: 1.8021826694558578
+Cluster: 0 12.0 ± 0.0
+Cluster: 1 12.0 ± 0.026
+Cluster: 2 18.129 ± 7.85
+Feature: PEEP HTFD score: 1.8021826694558578
+Cluster: 0 3.512 ± 0.159
+Cluster: 1 3.514 ± 0.214
+Cluster: 2 4.507 ± 2.149
+Feature: Neutrophils HTFD score: 1.8021826694558578
+Cluster: 0 70.075 ± 16.403
+Cluster: 1 72.673 ± 17.206
+Cluster: 2 63.293 ± 16.413
+Feature: Minute Volume HTFD score: 1.8021826694558578
+Cluster: 0 6.502 ± 0.109
+Cluster: 1 6.504 ± 0.155
+Cluster: 2 8.111 ± 7.56
+Feature: Mean corpuscular hemoglobin concentration HTFD score: 1.8021826694558578
+Cluster: 0 34.21 ± 1.328
+Cluster: 1 33.204 ± 1.653
+Cluster: 2 34.187 ± 1.472
+Feature: Mean Airway Pressure HTFD score: 1.8021826694558578
+Cluster: 0 12.999 ± 0.044
+Cluster: 1 12.998 ± 0.1
+Cluster: 2 9.383 ± 3.047
+Feature: Lymphocytes HTFD score: 1.8021826694558578
+Cluster: 0 19.097 ± 10.756
+Cluster: 1 16.946 ± 13.159
+Cluster: 2 22.684 ± 10.661
+Feature: INR HTFD score: 1.8021826694558578
+Cluster: 0 1.227 ± 0.336
+Cluster: 1 1.573 ± 1.531
+Cluster: 2 1.329 ± 0.547
+Feature: Hemoglobin HTFD score: 1.8021826694558578
+Cluster: 0 11.323 ± 1.82
+Cluster: 1 10.284 ± 1.854
+Cluster: 2 10.786 ± 1.736
+Feature: Hematocrit HTFD score: 1.8021826694558578
+Cluster: 0 33.158 ± 4.999
+Cluster: 1 31.108 ± 5.31
+Cluster: 2 31.656 ± 4.99
+Feature: Heart Rate HTFD score: 1.8021826694558578
+Cluster: 0 79.203 ± 15.608
+Cluster: 1 87.337 ± 17.705
+Cluster: 2 85.887 ± 16.323
+Feature: Glucose HTFD score: 1.8021826694558578
+Cluster: 0 127.061 ± 39.031
+Cluster: 1 143.889 ± 64.457
+Cluster: 2 132.084 ± 39.763
+Feature: GCS Total HTFD score: 1.8021826694558578
+Cluster: 0 14.83 ± 0.674
+Cluster: 1 14.73 ± 1.106
+Cluster: 2 13.858 ± 2.696
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 274.721 ± 30.938
+Cluster: 1 303.772 ± 108.776
+Cluster: 2 268.158 ± 74.908
+Feature: Eosinophils HTFD score: 1.8021826694558578
+Cluster: 0 1.744 ± 1.529
+Cluster: 1 1.469 ± 1.92
+Cluster: 2 2.26 ± 2.437
+Feature: Creatinine HTFD score: 1.8021826694558578
+Cluster: 0 1.035 ± 0.713
+Cluster: 1 1.99 ± 2.255
+Cluster: 2 1.422 ± 5.58
+Feature: Cholesterol Total HTFD score: 1.8021826694558578
+Cluster: 0 107.874 ± 25.546
+Cluster: 1 103.046 ± 18.785
+Cluster: 2 110.669 ± 34.796
+Feature: Cholesterol LDL HTFD score: 1.8021826694558578
+Cluster: 0 69.372 ± 15.114
+Cluster: 1 66.977 ± 10.876
+Cluster: 2 70.136 ± 19.062
+Feature: Cholesterol HDL HTFD score: 1.8021826694558578
+Cluster: 0 35.298 ± 5.763
+Cluster: 1 34.288 ± 4.213
+Cluster: 2 36.232 ± 8.881
+Feature: Cardiac Index HTFD score: 1.8021826694558578
+Cluster: 0 3.297 ± 0.062
+Cluster: 1 3.301 ± 0.053
+Cluster: 2 3.216 ± 0.405
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 8.487 ± 0.715
+Cluster: 1 8.345 ± 0.812
+Cluster: 2 8.634 ± 0.799
+Feature: Blood urea nitrogen HTFD score: 1.8021826694558578
+Cluster: 0 20.164 ± 13.454
+Cluster: 1 32.208 ± 26.686
+Cluster: 2 21.508 ± 17.547
+Feature: Blood culture HTFD score: 1.8021826694558578
+Cluster: 0 -69520.129 ± 48227.484
+Cluster: 1 -25873.991 ± 54244.049
+Cluster: 2 -68791.132 ± 49216.408
+Feature: Bilirubin Total HTFD score: 1.8021826694558578
+Cluster: 0 0.696 ± 0.896
+Cluster: 1 1.364 ± 3.653
+Cluster: 2 0.798 ± 1.721
+Feature: Basophils HTFD score: 1.8021826694558578
+Cluster: 0 0.225 ± 0.297
+Cluster: 1 0.303 ± 0.487
+Cluster: 2 0.166 ± 0.306
+Feature: Antibiotics HTFD score: 1.8021826694558578
+Cluster: 0 -83514.247 ± 37194.469
+Cluster: 1 -61422.4 ± 48814.881
+Cluster: 2 -83283.445 ± 37391.048
+Feature: Anion gap HTFD score: 1.8021826694558578
+Cluster: 0 12.953 ± 2.597
+Cluster: 1 14.323 ± 3.754
+Cluster: 2 12.806 ± 3.447
+Feature: Alkaline phosphate HTFD score: 1.8021826694558578
+Cluster: 0 99.673 ± 40.53
+Cluster: 1 128.091 ± 128.357
+Cluster: 2 100.093 ± 52.874
+Feature: Stroke Volume HTFD score: 1.8021826694558571
+Cluster: 0 79.989 ± 1.085
+Cluster: 1 79.969 ± 1.139
+Cluster: 2 77.567 ± 12.436
+Feature: Ethnicity_1 HTFD score: 1.8021826694555534
+Cluster: 0 0.0 ± 0.0
+Cluster: 1 0.047 ± 0.211
+Cluster: 2 0.038 ± 0.191
+Feature: Extubated HTFD score: 1.8021826694549867
+Cluster: 0 0.928 ± 0.258
+Cluster: 1 0.783 ± 0.412
+Cluster: 2 0.727 ± 0.446
+Feature: Diastolic blood pressure HTFD score: 1.8021826694476861
+Cluster: 0 61.063 ± 14.461
+Cluster: 1 63.451 ± 16.18
+Cluster: 2 60.275 ± 14.055
+Feature: Urine output HTFD score: 1.8021826685398694
+Cluster: 0 89.167 ± 85.523
+Cluster: 1 76.184 ± 71.481
+Cluster: 2 96.966 ± 177.684
+Feature: GCS Verbal HTFD score: 1.8021826682761348
+Cluster: 0 4.813 ± 0.575
+Cluster: 1 4.638 ± 0.925
+Cluster: 2 3.887 ± 1.729
+Feature: PTT HTFD score: 1.8021826668286143
+Cluster: 0 32.363 ± 14.238
+Cluster: 1 37.315 ± 20.473
+Cluster: 2 37.067 ± 21.26
+Feature: D Dimer HTFD score: 1.8021825880441604
+Cluster: 0 215.989 ± 182.982
+Cluster: 1 392.031 ± 1224.52
+Cluster: 2 261.098 ± 593.213
+Feature: Age HTFD score: 1.8021824554115726
+Cluster: 0 66.225 ± 17.234
+Cluster: 1 62.215 ± 17.879
+Cluster: 2 62.919 ± 17.121
+Feature: Albumin HTFD score: 1.802177529485362
+Cluster: 0 3.215 ± 0.416
+Cluster: 1 3.146 ± 0.544
+Cluster: 2 3.236 ± 0.482
+Feature: Troponin-T HTFD score: 1.8020902724437293
+Cluster: 0 0.313 ± 1.136
+Cluster: 1 0.175 ± 0.806
+Cluster: 2 0.345 ± 1.617
+Feature: Tidal Volume HTFD score: 1.8008977577654328
+Cluster: 0 500.001 ± 7.279
+Cluster: 1 500.122 ± 6.973
+Cluster: 2 528.419 ± 200.183
+Feature: Chloride HTFD score: 1.800847158058228
+Cluster: 0 105.084 ± 4.906
+Cluster: 1 104.518 ± 6.704
+Cluster: 2 105.883 ± 5.21
+Feature: Monocytes HTFD score: 1.8008244840357728
+Cluster: 0 4.488 ± 1.76
+Cluster: 1 5.052 ± 4.103
+Cluster: 2 4.695 ± 1.81
+Feature: GCS Eye HTFD score: 1.7991319239176875
+Cluster: 0 3.915 ± 0.308
+Cluster: 1 3.839 ± 0.477
+Cluster: 2 3.51 ± 0.947
+Feature: Gender_2 HTFD score: 1.7371629487622053
+Cluster: 0 0.579 ± 0.494
+Cluster: 1 0.506 ± 0.5
+Cluster: 2 0.559 ± 0.497
+Feature: Gender_1 HTFD score: 1.7371629487622053
+Cluster: 0 0.421 ± 0.494
+Cluster: 1 0.494 ± 0.5
+Cluster: 2 0.441 ± 0.497
+Feature: Norepinephrine HTFD score: 1.7043450328328906
+Cluster: 0 0.001 ± 0.007
+Cluster: 1 0.006 ± 0.035
+Cluster: 2 0.005 ± 0.031
+Feature: Bicarbonate HTFD score: 1.6812500171535192
+Cluster: 0 24.683 ± 3.615
+Cluster: 1 23.877 ± 4.978
+Cluster: 2 24.112 ± 3.923
+Feature: Dopamine HTFD score: 1.5589041170837277
+Cluster: 0 0.028 ± 0.293
+Cluster: 1 0.217 ± 1.294
+Cluster: 2 0.156 ± 1.193
+Feature: Dobutamine HTFD score: 1.466362788489435
+Cluster: 0 0.0 ± 0.02
+Cluster: 1 0.001 ± 0.031
+Cluster: 2 0.096 ± 0.792
+Feature: Mean corpuscular volume HTFD score: 1.2695986170623348
+Cluster: 0 89.434 ± 5.804
+Cluster: 1 89.902 ± 7.822
+Cluster: 2 88.558 ± 5.959
+Feature: Height HTFD score: 1.1312042618910207
+Cluster: 0 170.15 ± 3.831
+Cluster: 1 169.154 ± 10.07
+Cluster: 2 169.855 ± 5.341
+Feature: Platelets HTFD score: 1.0402740156127412
+Cluster: 0 223.157 ± 95.443
+Cluster: 1 228.367 ± 133.645
+Cluster: 2 204.999 ± 89.738
+Feature: Epinephrine HTFD score: 0.8561007410039418
+Cluster: 0 -0.0 ± 0.0
+Cluster: 1 -0.0 ± 0.0
+Cluster: 2 0.0 ± 0.004
+Feature: GCS Motor HTFD score: 0.7703312866781361
+Cluster: 0 5.976 ± 0.168
+Cluster: 1 5.885 ± 0.498
+Cluster: 2 5.604 ± 1.078
+Feature: Alanine aminotransferase_lowest HTFD score: 0.6519767385448677
+Cluster: 0 38.69 ± 73.619
+Cluster: 1 41.599 ± 82.713
+Cluster: 2 86.974 ± 492.148
+Feature: Respiratory rate HTFD score: 0.5666034456105494
+Cluster: 0 19.058 ± 4.844
+Cluster: 1 19.422 ± 5.436
+Cluster: 2 19.009 ± 5.746
+Feature: Alanine aminotransferase_last HTFD score: 0.5622534426613524
+Cluster: 0 43.644 ± 107.283
+Cluster: 1 47.798 ± 114.694
+Cluster: 2 103.93 ± 642.661
+Feature: Alanine aminotransferase_first HTFD score: 0.5622534426613524
+Cluster: 0 43.644 ± 107.283
+Cluster: 1 47.798 ± 114.694
+Cluster: 2 103.93 ± 642.661
+Feature: Alanine aminotransferase HTFD score: 0.5115812490320214
+Cluster: 0 43.823 ± 103.605
+Cluster: 1 54.139 ± 157.131
+Cluster: 2 122.007 ± 671.36
+Feature: Mean corpuscular hemoglobin HTFD score: 0.4088575568811561
+Cluster: 0 30.571 ± 2.185
+Cluster: 1 29.827 ± 2.913
+Cluster: 2 29.14 ± 6.247
+Feature: Lactate Dehydrogenase HTFD score: 0.382251193260344
+Cluster: 0 266.603 ± 97.749
+Cluster: 1 311.313 ± 437.714
+Cluster: 2 322.971 ± 575.92
+Feature: Band Forms HTFD score: 0.35918495114734994
+Cluster: 0 5.915 ± 3.008
+Cluster: 1 5.837 ± 4.709
+Cluster: 2 6.319 ± 3.296
+Feature: FiO2 HTFD score: 0.2756285111325027
+Cluster: 0 0.235 ± 0.101
+Cluster: 1 0.286 ± 0.194
+Cluster: 2 0.392 ± 0.236
+Feature: Central Venous Pressure HTFD score: 0.22960340313835387
+Cluster: 0 5.118 ± 1.313
+Cluster: 1 6.182 ± 15.464
+Cluster: 2 6.409 ± 16.443
+Feature: Sodium HTFD score: 0.16374216424778215
+Cluster: 0 138.644 ± 3.82
+Cluster: 1 138.506 ± 5.156
+Cluster: 2 138.704 ± 4.102
+Feature: pH HTFD score: 0.15905034275931573
+Cluster: 0 7.395 ± 0.13
+Cluster: 1 7.463 ± 2.612
+Cluster: 2 7.392 ± 0.056
+Feature: SO2 HTFD score: 0.09267691188574512
+Cluster: 0 96.455 ± 3.356
+Cluster: 1 96.553 ± 3.517
+Cluster: 2 97.119 ± 15.51
+Feature: Lactate HTFD score: 0.09008444125737738
+Cluster: 0 1.763 ± 0.531
+Cluster: 1 1.85 ± 1.019
+Cluster: 2 1.936 ± 1.076
+Feature: Base excess HTFD score: 0.0884606791037771
+Cluster: 0 -0.094 ± 2.338
+Cluster: 1 -0.377 ± 3.915
+Cluster: 2 -0.516 ± 11.963
+Feature: PaCO2 HTFD score: 0.08807932861436549
+Cluster: 0 39.95 ± 4.673
+Cluster: 1 40.339 ± 8.182
+Cluster: 2 40.543 ± 7.533
+Feature: Magnesium HTFD score: 0.08021212518084596
+Cluster: 0 2.0 ± 0.312
+Cluster: 1 2.101 ± 5.182
+Cluster: 2 2.039 ± 0.609
+Feature: Asparate aminotransferase HTFD score: 0.07221473691192296
+Cluster: 0 32.432 ± 90.235
+Cluster: 1 61.0 ± 242.537
+Cluster: 2 126.146 ± 771.086
+Feature: Systolic blood pressure HTFD score: 0.06702373396465282
+Cluster: 0 122.696 ± 20.725
+Cluster: 1 120.339 ± 22.563
+Cluster: 2 150.9 ± 1910.779
+Feature: White blood cell count HTFD score: 0.03670988131897852
+Cluster: 0 10.703 ± 5.259
+Cluster: 1 11.296 ± 13.195
+Cluster: 2 11.937 ± 6.061
+Feature: Mean blood pressure HTFD score: 0.019713732741019743
+Cluster: 0 79.12 ± 15.074
+Cluster: 1 79.141 ± 17.207
+Cluster: 2 78.875 ± 15.754
+Feature: Potassium HTFD score: 0.0020200101745305745
+Cluster: 0 4.035 ± 0.493
+Cluster: 1 4.119 ± 0.659
+Cluster: 2 4.261 ± 4.249
+Feature: Weight HTFD score: 0.0007801006113797018
+Cluster: 0 79.864 ± 17.845
+Cluster: 1 80.253 ± 26.401
+Cluster: 2 80.876 ± 18.455
+
+========
+
+|C2| = 3878
+|C2| = [0.85894791 0.14105209]
+Feature: Ethnicity_0 HTFD score: 1.8021826694558578
+Cluster: 0 0.127 ± 0.333
+Cluster: 1 0.048 ± 0.215
+Cluster: 2 0.188 ± 0.39
+Feature: Ventilator HTFD score: 1.8021826694558578
+Cluster: 0 0.043 ± 0.202
+Cluster: 1 0.013 ± 0.112
+Cluster: 2 0.722 ± 0.448
+Feature: Temperature HTFD score: 1.8021826694558578
+Cluster: 0 36.814 ± 0.6
+Cluster: 1 36.701 ± 0.761
+Cluster: 2 37.006 ± 1.13
+Feature: Systemic Vascular Resistance Index HTFD score: 1.8021826694558578
+Cluster: 0 1002.217 ± 36.9
+Cluster: 1 1000.604 ± 20.448
+Cluster: 2 1199.072 ± 441.263
+Feature: Stroke Volume HTFD score: 1.8021826694558578
+Cluster: 0 79.989 ± 1.085
+Cluster: 1 79.969 ± 1.139
+Cluster: 2 77.567 ± 12.436
+Feature: Platelets HTFD score: 1.8021826694558578
+Cluster: 0 223.157 ± 95.443
+Cluster: 1 228.367 ± 133.645
+Cluster: 2 204.999 ± 89.738
+Feature: Plateau Pressure HTFD score: 1.8021826694558578
+Cluster: 0 28.0 ± 0.0
+Cluster: 1 28.0 ± 0.0
+Cluster: 2 24.221 ± 5.673
+Feature: PaO2 HTFD score: 1.8021826694558578
+Cluster: 0 112.191 ± 34.557
+Cluster: 1 104.793 ± 38.232
+Cluster: 2 160.947 ± 94.618
+Feature: PIP HTFD score: 1.8021826694558578
+Cluster: 0 12.0 ± 0.0
+Cluster: 1 12.0 ± 0.026
+Cluster: 2 18.129 ± 7.85
+Feature: PEEP HTFD score: 1.8021826694558578
+Cluster: 0 3.512 ± 0.159
+Cluster: 1 3.514 ± 0.214
+Cluster: 2 4.507 ± 2.149
+Feature: Neutrophils HTFD score: 1.8021826694558578
+Cluster: 0 70.075 ± 16.403
+Cluster: 1 72.673 ± 17.206
+Cluster: 2 63.293 ± 16.413
+Feature: Minute Volume HTFD score: 1.8021826694558578
+Cluster: 0 6.502 ± 0.109
+Cluster: 1 6.504 ± 0.155
+Cluster: 2 8.111 ± 7.56
+Feature: Mean corpuscular hemoglobin concentration HTFD score: 1.8021826694558578
+Cluster: 0 34.21 ± 1.328
+Cluster: 1 33.204 ± 1.653
+Cluster: 2 34.187 ± 1.472
+Feature: Mean Airway Pressure HTFD score: 1.8021826694558578
+Cluster: 0 12.999 ± 0.044
+Cluster: 1 12.998 ± 0.1
+Cluster: 2 9.383 ± 3.047
+Feature: Lymphocytes HTFD score: 1.8021826694558578
+Cluster: 0 19.097 ± 10.756
+Cluster: 1 16.946 ± 13.159
+Cluster: 2 22.684 ± 10.661
+Feature: GCS Verbal HTFD score: 1.8021826694558578
+Cluster: 0 4.813 ± 0.575
+Cluster: 1 4.638 ± 0.925
+Cluster: 2 3.887 ± 1.729
+Feature: GCS Total HTFD score: 1.8021826694558578
+Cluster: 0 14.83 ± 0.674
+Cluster: 1 14.73 ± 1.106
+Cluster: 2 13.858 ± 2.696
+Feature: GCS Motor HTFD score: 1.8021826694558578
+Cluster: 0 5.976 ± 0.168
+Cluster: 1 5.885 ± 0.498
+Cluster: 2 5.604 ± 1.078
+Feature: GCS Eye HTFD score: 1.8021826694558578
+Cluster: 0 3.915 ± 0.308
+Cluster: 1 3.839 ± 0.477
+Cluster: 2 3.51 ± 0.947
+Feature: Fibrinogen HTFD score: 1.8021826694558578
+Cluster: 0 274.721 ± 30.938
+Cluster: 1 303.772 ± 108.776
+Cluster: 2 268.158 ± 74.908
+Feature: FiO2 HTFD score: 1.8021826694558578
+Cluster: 0 0.235 ± 0.101
+Cluster: 1 0.286 ± 0.194
+Cluster: 2 0.392 ± 0.236
+Feature: Extubated HTFD score: 1.8021826694558578
+Cluster: 0 0.928 ± 0.258
+Cluster: 1 0.783 ± 0.412
+Cluster: 2 0.727 ± 0.446
+Feature: Eosinophils HTFD score: 1.8021826694558578
+Cluster: 0 1.744 ± 1.529
+Cluster: 1 1.469 ± 1.92
+Cluster: 2 2.26 ± 2.437
+Feature: Cardiac Index HTFD score: 1.8021826694558578
+Cluster: 0 3.297 ± 0.062
+Cluster: 1 3.301 ± 0.053
+Cluster: 2 3.216 ± 0.405
+Feature: Calcium HTFD score: 1.8021826694558578
+Cluster: 0 8.487 ± 0.715
+Cluster: 1 8.345 ± 0.812
+Cluster: 2 8.634 ± 0.799
+Feature: Blood urea nitrogen HTFD score: 1.8021826694558578
+Cluster: 0 20.164 ± 13.454
+Cluster: 1 32.208 ± 26.686
+Cluster: 2 21.508 ± 17.547
+Feature: Blood culture HTFD score: 1.8021826694558578
+Cluster: 0 -69520.129 ± 48227.484
+Cluster: 1 -25873.991 ± 54244.049
+Cluster: 2 -68791.132 ± 49216.408
+Feature: Basophils HTFD score: 1.8021826694558578
+Cluster: 0 0.225 ± 0.297
+Cluster: 1 0.303 ± 0.487
+Cluster: 2 0.166 ± 0.306
+Feature: Antibiotics HTFD score: 1.8021826694558578
+Cluster: 0 -83514.247 ± 37194.469
+Cluster: 1 -61422.4 ± 48814.881
+Cluster: 2 -83283.445 ± 37391.048
+Feature: Anion gap HTFD score: 1.8021826694558578
+Cluster: 0 12.953 ± 2.597
+Cluster: 1 14.323 ± 3.754
+Cluster: 2 12.806 ± 3.447
+Feature: Alkaline phosphate HTFD score: 1.8021826694557346
+Cluster: 0 99.673 ± 40.53
+Cluster: 1 128.091 ± 128.357
+Cluster: 2 100.093 ± 52.874
+Feature: Chloride HTFD score: 1.8021826694549774
+Cluster: 0 105.084 ± 4.906
+Cluster: 1 104.518 ± 6.704
+Cluster: 2 105.883 ± 5.21
+Feature: Mean corpuscular hemoglobin HTFD score: 1.8021826693650447
+Cluster: 0 30.571 ± 2.185
+Cluster: 1 29.827 ± 2.913
+Cluster: 2 29.14 ± 6.247
+Feature: Mean corpuscular volume HTFD score: 1.8021825393531978
+Cluster: 0 89.434 ± 5.804
+Cluster: 1 89.902 ± 7.822
+Cluster: 2 88.558 ± 5.959
+Feature: Cholesterol HDL HTFD score: 1.8021817037455983
+Cluster: 0 35.298 ± 5.763
+Cluster: 1 34.288 ± 4.213
+Cluster: 2 36.232 ± 8.881
+Feature: Heart Rate HTFD score: 1.8021621619790933
+Cluster: 0 79.203 ± 15.608
+Cluster: 1 87.337 ± 17.705
+Cluster: 2 85.887 ± 16.323
+Feature: Tidal Volume HTFD score: 1.8017996648963193
+Cluster: 0 500.001 ± 7.279
+Cluster: 1 500.122 ± 6.973
+Cluster: 2 528.419 ± 200.183
+Feature: Cholesterol Total HTFD score: 1.7997621773538357
+Cluster: 0 107.874 ± 25.546
+Cluster: 1 103.046 ± 18.785
+Cluster: 2 110.669 ± 34.796
+Feature: Ethnicity_2 HTFD score: 1.7992961911803496
+Cluster: 0 0.016 ± 0.127
+Cluster: 1 0.229 ± 0.42
+Cluster: 2 0.075 ± 0.263
+Feature: Ethnicity_4 HTFD score: 1.775600821904083
+Cluster: 0 0.857 ± 0.35
+Cluster: 1 0.602 ± 0.49
+Cluster: 2 0.663 ± 0.473
+Feature: Dobutamine HTFD score: 1.5031571341160985
+Cluster: 0 0.0 ± 0.02
+Cluster: 1 0.001 ± 0.031
+Cluster: 2 0.096 ± 0.792
+Feature: Diastolic blood pressure HTFD score: 1.441965443444193
+Cluster: 0 61.063 ± 14.461
+Cluster: 1 63.451 ± 16.18
+Cluster: 2 60.275 ± 14.055
+Feature: White blood cell count HTFD score: 1.4007328234888972
+Cluster: 0 10.703 ± 5.259
+Cluster: 1 11.296 ± 13.195
+Cluster: 2 11.937 ± 6.061
+Feature: Lactate HTFD score: 1.3258979907140342
+Cluster: 0 1.763 ± 0.531
+Cluster: 1 1.85 ± 1.019
+Cluster: 2 1.936 ± 1.076
+Feature: Band Forms HTFD score: 1.3105546071916754
+Cluster: 0 5.915 ± 3.008
+Cluster: 1 5.837 ± 4.709
+Cluster: 2 6.319 ± 3.296
+Feature: Alanine aminotransferase HTFD score: 1.2403246873343126
+Cluster: 0 43.823 ± 103.605
+Cluster: 1 54.139 ± 157.131
+Cluster: 2 122.007 ± 671.36
+Feature: Asparate aminotransferase HTFD score: 1.1251913879379185
+Cluster: 0 32.432 ± 90.235
+Cluster: 1 61.0 ± 242.537
+Cluster: 2 126.146 ± 771.086
+Feature: PTT HTFD score: 1.052489037468656
+Cluster: 0 32.363 ± 14.238
+Cluster: 1 37.315 ± 20.473
+Cluster: 2 37.067 ± 21.26
+Feature: Albumin HTFD score: 1.0159723975228188
+Cluster: 0 3.215 ± 0.416
+Cluster: 1 3.146 ± 0.544
+Cluster: 2 3.236 ± 0.482
+Feature: Bilirubin Total HTFD score: 1.0031199030980191
+Cluster: 0 0.696 ± 0.896
+Cluster: 1 1.364 ± 3.653
+Cluster: 2 0.798 ± 1.721
+Feature: Alanine aminotransferase_lowest HTFD score: 0.9701917830345765
+Cluster: 0 38.69 ± 73.619
+Cluster: 1 41.599 ± 82.713
+Cluster: 2 86.974 ± 492.148
+Feature: Cholesterol LDL HTFD score: 0.9456771087799286
+Cluster: 0 69.372 ± 15.114
+Cluster: 1 66.977 ± 10.876
+Cluster: 2 70.136 ± 19.062
+Feature: Alanine aminotransferase_last HTFD score: 0.8857363393708712
+Cluster: 0 43.644 ± 107.283
+Cluster: 1 47.798 ± 114.694
+Cluster: 2 103.93 ± 642.661
+Feature: Alanine aminotransferase_first HTFD score: 0.8857363393708712
+Cluster: 0 43.644 ± 107.283
+Cluster: 1 47.798 ± 114.694
+Cluster: 2 103.93 ± 642.661
+Feature: Hematocrit HTFD score: 0.8697303847652423
+Cluster: 0 33.158 ± 4.999
+Cluster: 1 31.108 ± 5.31
+Cluster: 2 31.656 ± 4.99
+Feature: Epinephrine HTFD score: 0.8578241603088975
+Cluster: 0 -0.0 ± 0.0
+Cluster: 1 -0.0 ± 0.0
+Cluster: 2 0.0 ± 0.004
+Feature: pH Urine HTFD score: 0.7814671506985371
+Cluster: 0 6.219 ± 0.755
+Cluster: 1 5.939 ± 0.869
+Cluster: 2 6.161 ± 0.776
+Feature: Phosphate HTFD score: 0.7245012985208361
+Cluster: 0 3.229 ± 0.82
+Cluster: 1 3.719 ± 1.456
+Cluster: 2 3.573 ± 1.162
+Feature: INR HTFD score: 0.6697002757678281
+Cluster: 0 1.227 ± 0.336
+Cluster: 1 1.573 ± 1.531
+Cluster: 2 1.329 ± 0.547
+Feature: Urine output HTFD score: 0.658926640802989
+Cluster: 0 89.167 ± 85.523
+Cluster: 1 76.184 ± 71.481
+Cluster: 2 96.966 ± 177.684
+Feature: Ethnicity_1 HTFD score: 0.616978602251696
+Cluster: 0 0.0 ± 0.0
+Cluster: 1 0.047 ± 0.211
+Cluster: 2 0.038 ± 0.191
+Feature: Age HTFD score: 0.5585121539971492
+Cluster: 0 66.225 ± 17.234
+Cluster: 1 62.215 ± 17.879
+Cluster: 2 62.919 ± 17.121
+Feature: Glucose HTFD score: 0.4472291396436397
+Cluster: 0 127.061 ± 39.031
+Cluster: 1 143.889 ± 64.457
+Cluster: 2 132.084 ± 39.763
+Feature: Lactate Dehydrogenase HTFD score: 0.40391381071823834
+Cluster: 0 266.603 ± 97.749
+Cluster: 1 311.313 ± 437.714
+Cluster: 2 322.971 ± 575.92
+Feature: Red blood cell count HTFD score: 0.4017859940822488
+Cluster: 0 3.717 ± 0.61
+Cluster: 1 3.472 ± 0.672
+Cluster: 2 3.659 ± 0.967
+Feature: Troponin-T HTFD score: 0.39543796943026743
+Cluster: 0 0.313 ± 1.136
+Cluster: 1 0.175 ± 0.806
+Cluster: 2 0.345 ± 1.617
+Feature: D Dimer HTFD score: 0.330857943733726
+Cluster: 0 215.989 ± 182.982
+Cluster: 1 392.031 ± 1224.52
+Cluster: 2 261.098 ± 593.213
+Feature: PaCO2 HTFD score: 0.2983154583452358
+Cluster: 0 39.95 ± 4.673
+Cluster: 1 40.339 ± 8.182
+Cluster: 2 40.543 ± 7.533
+Feature: Central Venous Pressure HTFD score: 0.25961574115028174
+Cluster: 0 5.118 ± 1.313
+Cluster: 1 6.182 ± 15.464
+Cluster: 2 6.409 ± 16.443
+Feature: Potassium HTFD score: 0.25042223679213665
+Cluster: 0 4.035 ± 0.493
+Cluster: 1 4.119 ± 0.659
+Cluster: 2 4.261 ± 4.249
+Feature: Bicarbonate HTFD score: 0.2152301566952975
+Cluster: 0 24.683 ± 3.615
+Cluster: 1 23.877 ± 4.978
+Cluster: 2 24.112 ± 3.923
+Feature: SO2 HTFD score: 0.21347841643758564
+Cluster: 0 96.455 ± 3.356
+Cluster: 1 96.553 ± 3.517
+Cluster: 2 97.119 ± 15.51
+Feature: Weight HTFD score: 0.19248102438187278
+Cluster: 0 79.864 ± 17.845
+Cluster: 1 80.253 ± 26.401
+Cluster: 2 80.876 ± 18.455
+Feature: Respiratory rate HTFD score: 0.1749499903681422
+Cluster: 0 19.058 ± 4.844
+Cluster: 1 19.422 ± 5.436
+Cluster: 2 19.009 ± 5.746
+Feature: pH HTFD score: 0.1730009982222394
+Cluster: 0 7.395 ± 0.13
+Cluster: 1 7.463 ± 2.612
+Cluster: 2 7.392 ± 0.056
+Feature: Norepinephrine HTFD score: 0.15812743301840754
+Cluster: 0 0.001 ± 0.007
+Cluster: 1 0.006 ± 0.035
+Cluster: 2 0.005 ± 0.031
+Feature: Dopamine HTFD score: 0.13362995625146926
+Cluster: 0 0.028 ± 0.293
+Cluster: 1 0.217 ± 1.294
+Cluster: 2 0.156 ± 1.193
+Feature: Height HTFD score: 0.11898672601061766
+Cluster: 0 170.15 ± 3.831
+Cluster: 1 169.154 ± 10.07
+Cluster: 2 169.855 ± 5.341
+Feature: Gender_1 HTFD score: 0.1154334848348345
+Cluster: 0 0.421 ± 0.494
+Cluster: 1 0.494 ± 0.5
+Cluster: 2 0.441 ± 0.497
+Feature: Gender_2 HTFD score: 0.11543348483483394
+Cluster: 0 0.579 ± 0.494
+Cluster: 1 0.506 ± 0.5
+Cluster: 2 0.559 ± 0.497
+Feature: Sodium HTFD score: 0.11333681954157547
+Cluster: 0 138.644 ± 3.82
+Cluster: 1 138.506 ± 5.156
+Cluster: 2 138.704 ± 4.102
+Feature: Monocytes HTFD score: 0.10867555886066832
+Cluster: 0 4.488 ± 1.76
+Cluster: 1 5.052 ± 4.103
+Cluster: 2 4.695 ± 1.81
+Feature: Base excess HTFD score: 0.09809952084332631
+Cluster: 0 -0.094 ± 2.338
+Cluster: 1 -0.377 ± 3.915
+Cluster: 2 -0.516 ± 11.963
+Feature: Hemoglobin HTFD score: 0.06941276903639769
+Cluster: 0 11.323 ± 1.82
+Cluster: 1 10.284 ± 1.854
+Cluster: 2 10.786 ± 1.736
+Feature: Systolic blood pressure HTFD score: 0.05406528167967739
+Cluster: 0 122.696 ± 20.725
+Cluster: 1 120.339 ± 22.563
+Cluster: 2 150.9 ± 1910.779
+Feature: Mean blood pressure HTFD score: 0.04822252614512354
+Cluster: 0 79.12 ± 15.074
+Cluster: 1 79.141 ± 17.207
+Cluster: 2 78.875 ± 15.754
+Feature: Creatinine HTFD score: 0.042289774108945674
+Cluster: 0 1.035 ± 0.713
+Cluster: 1 1.99 ± 2.255
+Cluster: 2 1.422 ± 5.58
+Feature: Magnesium HTFD score: 0.012146871343816965
+Cluster: 0 2.0 ± 0.312
+Cluster: 1 2.101 ± 5.182
+Cluster: 2 2.039 ± 0.609
+Feature: Ethnicity_3 HTFD score: 0.009813300532507854
+Cluster: 0 0.0 ± 0.0
+Cluster: 1 0.074 ± 0.261
+Cluster: 2 0.036 ± 0.187
