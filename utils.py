@@ -441,7 +441,7 @@ def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, X_
 
             if X_latents != None:
                 idx = range(int(0.2*len(X_train)))
-                plot_data_feature_colored(X_train[idx], X_latents[idx], dataset + "_" + str(n_clusters), column_names[feature], column=feature)
+                plot_data_feature_colored(X_train[idx], X_latents[idx], dataset + "_k" + str(n_clusters), column_names[feature], column=feature)
 
             f = column_names[feature]
             print(f, "\t", -np.round(pval,3), end='\t')
@@ -622,10 +622,16 @@ def plot_data_feature_colored(X, X_latents, dataset, feature_name, column=-1):
     fig.savefig(BASE_DIR + "/figures/" + dataset + "_" + str(feature_name) + ".png")
 
 
-def plot(model, X_train, y_train, args, X_test=None, y_test=None, labels=None, epoch=0):
-    # idx = torch.Tensor(np.random.randint(0,len(X_train), int(0.1*len(X_train)))).type(torch.LongTensor).to(device)
+def plot(model, X_train, y_train, args, X_latents=None, X_test=None, y_test=None, labels=None, epoch=0):
     idx = range(int(0.2*len(X_train)))
-    q_train, latents_X = model.encoder_forward(X_train[idx], output="latent")
+
+    model.ae.eval() # prep model for evaluation
+    for j in range(model.n_clusters):
+        model.classifiers[j][0].eval()
+
+    q_train, latents_X = model.encoder_forward(X_train, output="latent")
+    latents_X = latents_X[idx]
+    q_train = q_train[idx]
     y_train = y_train[idx]
 
     if labels is not None:
@@ -633,7 +639,6 @@ def plot(model, X_train, y_train, args, X_test=None, y_test=None, labels=None, e
     else:
         cluster_id_train = torch.argmax(q_train, axis=1)
 
-    print("Training data")
     # Plot latent space embedding clusters
     plot_data(latents_X, y_train, cluster_id_train, args.dataset+"_emb_k"+str(args.n_clusters), epoch)
 
