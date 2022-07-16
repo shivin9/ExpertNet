@@ -230,8 +230,8 @@ for r in range(len(iter_array)):
         eta = args.eta
         if epoch % args.log_interval == 0:
 
-            if args.plot == 'True':
-                plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, labels=cluster_indices, epoch=epoch)
+            # if args.plot == 'True':
+            #     plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, labels=cluster_indices, epoch=epoch)
 
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):
@@ -492,6 +492,10 @@ for r in range(len(iter_array)):
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
 
+    model.ae.eval() # prep model for evaluation
+    for j in range(model.n_clusters):
+        model.classifiers[j][0].eval()
+
     # Evaluate model on Test dataset
     q_test, z_test = model.encoder_forward(torch.FloatTensor(X_test).to(args.device), output="latent")
     cluster_ids = torch.argmax(q_test, axis=1)
@@ -717,6 +721,8 @@ print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
 #     np.avg(test_losses), np.avg(e_test_losses)))
 
 if args.cluster_analysis == "True":
+    _ , z_train = model.encoder_forward(torch.FloatTensor(X_train).to(args.device), output='latent')
+    plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, X_latents=z_train, labels=cluster_indices, epoch=epoch)
     WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names,\
         scale=scale, X_latents=z_train, dataset=args.dataset, n_results=15)
 
