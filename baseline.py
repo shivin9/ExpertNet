@@ -12,7 +12,7 @@ import pandas as pd
 
 import argparse
 import numpy as np
-from sklearn.cluster import KMeans
+from scipy.cluster.vq import vq, kmeans2
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score, confusion_matrix
 from sklearn.ensemble import GradientBoostingRegressor
@@ -40,7 +40,8 @@ parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 
 # Training parameters
-parser.add_argument('--lr', default= 0.002, type=float)
+parser.add_argument('--lr_enc', default= 0.002, type=float)
+parser.add_argument('--lr_exp', default= 0.002, type=float)
 parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
@@ -54,6 +55,7 @@ parser.add_argument("--tol", default=0.01, type=float)
 parser.add_argument("--attention", default="True")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
+parser.add_argument('--optimize', default= 'auprc')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -71,7 +73,8 @@ parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
-parser.add_argument('--other', default= 'False')
+parser.add_argument('--plot', default= 'False')
+parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 
@@ -101,17 +104,19 @@ for r in range(args.n_runs):
     val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
     test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
-    # ae_layers = [64, 32, args.n_z, 32, 64]
-    # expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    if args.expt == 'ExpertNet':
+        ae_layers = [128, 64, args.n_z, 64, 128]
+        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
 
-    ae_layers = [64, args.n_z, 64]
-    expert_layers = [args.n_z, 30, args.n_classes]
+    else:
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, 30, args.n_classes]
 
     model = NNClassifier(ae_layers, expert_layers, args).to(args.device)
     model.pretrain(train_loader, args.pretrain_path)
     
     # Single Big NN    
-    # layers = [args.input_dim, 64, 32, 16, 8, args.n_classes]
+    # layers = [args.input_dim, 512, 256, 64, args.n_classes]
     # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
     # For DeepCAC baselines. Single Big NN
@@ -140,18 +145,31 @@ for r in range(args.n_runs):
             epoch_f1 += f1.item()
 
         model.classifier.eval()
-        _, val_preds = model(torch.FloatTensor(np.array(X_val)).to(args.device))
+        _, last_vals, val_preds = model(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_preds, torch.tensor(y_val).to(device))
-
         val_metrics = performance_metrics(y_val, val_preds.detach().numpy(), args.n_classes)
+
         val_f1  = val_metrics['f1_score']
         val_auc = val_metrics['auroc']
         val_auprc = val_metrics['auprc']
         val_minpse = val_metrics['minpse']
         val_acc = val_metrics['acc']
 
-        es([val_f1, val_auprc], model)
+        if args.optimize == 'auc':
+            opt = val_auc
+        elif args.optimize == 'auprc':
+            opt = val_auprc
+        else:
+            opt = -val_loss
 
+        es([val_f1, opt], model)
+
+        # original_cluster_centers, cluster_indices = kmeans2(last_vals.data.cpu().numpy(), k=args.n_clusters, minit='++')
+        # plot(model, torch.FloatTensor(last_vals).to(args.device), y_val, args, labels=cluster_indices, epoch=e)
+        # idx = range(int(0.2*len(X_val)))
+
+        # plot_data(torch.FloatTensor(last_vals)[idx].to(args.device), y_val[idx], cluster_indices[idx], args, e)
+        
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
         	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f} | ',
         	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
@@ -174,7 +192,7 @@ for r in range(args.n_runs):
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
     model.classifier.eval()
-    _, test_preds = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    _, last_test, test_preds = model(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_preds, torch.tensor(y_test).to(device))
 
     test_f1 = f1_score(np.argmax(test_preds.detach().numpy(), axis=1), y_test, average="macro")
@@ -190,7 +208,6 @@ for r in range(args.n_runs):
     test_acc = test_metrics['acc']
 
     y_preds = np.argmax(test_preds.detach().numpy(), axis=1)
-    # print(confusion_matrix(y_test, y_preds))
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
     	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train Auc: {epoch_auc/len(train_loader):.3f}| ',
@@ -200,7 +217,7 @@ for r in range(args.n_runs):
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
     auprc_scores.append(test_auprc)
-    minpse_scores.append(minpse_scores)
+    minpse_scores.append(test_minpse)
     acc_scores.append(test_acc)
 
 enablePrint()
@@ -212,7 +229,7 @@ print("ACC:", acc_scores)
 
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
-    np.average(f1_scores), np.average(auc_scores), np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores)))
+    np.avg(f1_scores), np.avg(auc_scores), np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores)))
 
 print("[Std]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
 print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\

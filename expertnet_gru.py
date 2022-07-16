@@ -36,12 +36,13 @@ from utils import *
 from ts_utils import *
 
 parser = argparse.ArgumentParser()
-
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
+parser.add_argument('--n_feats', default= 7, type=int)
 
 # Training parameters
-parser.add_argument('--lr', default= 0.002, type=float)
+parser.add_argument('--lr_enc', default= 0.002, type=float)
+parser.add_argument('--lr_exp', default= 0.002, type=float)
 parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
@@ -52,9 +53,10 @@ parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
-parser.add_argument("--attention", default="True")
+parser.add_argument("--attention", default=11, type=int)
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
+parser.add_argument('--end_t', default= 24, type=int)
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -64,19 +66,20 @@ parser.add_argument('--delta', default= 0.01, type=float) # Class equalization w
 parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
-parser.add_argument('--n_feats', default= 7, type=int)
-parser.add_argument('--end_t', default= 24, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
 parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
+parser.add_argument('--optimize', default= 'auprc')
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--plot', default= 'False')
+parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN')
+
 
 parser = parser.parse_args()  
 args = parameters(parser)

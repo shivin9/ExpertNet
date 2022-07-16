@@ -17,7 +17,7 @@ import numpy as np
 from scipy.cluster.vq import kmeans2, vq
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
-from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -41,7 +41,8 @@ parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 
 # Training parameters
-parser.add_argument('--lr', default= 0.002, type=float)
+parser.add_argument('--lr_enc', default= 0.002, type=float)
+parser.add_argument('--lr_exp', default= 0.002, type=float)
 parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
@@ -52,9 +53,10 @@ parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
-parser.add_argument("--attention", default="True")
+parser.add_argument("--attention", default="False")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
+parser.add_argument('--optimize', default= 'auprc')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -71,9 +73,11 @@ parser.add_argument('--n_classes', default= 2, type=int)
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--verbose', default= 'False')
+parser.add_argument('--plot', default= 'False')
+parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/KM')
 # parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 parser = parser.parse_args()  
@@ -101,6 +105,10 @@ if args.verbose == False:
 ####################################################################################
 
 f1_scores, auc_scores, auprc_scores, minpse_scores, acc_scores, sil_scores, HTFD_scores, wdfd_scores = [], [], [], [], [], [], [], []
+nmi_scores, ari_scores = [], []
+
+stu_f1_scores, stu_auc_scores, stu_auprc_scores, stu_acc_scores, stu_minpse_scores = [], [], [], [], [] #Attentive test results
+stu_sil_scores, stu_wdfd_scores, stu_HTFD_scores, stu_w_HTFD_scores = [], [], [], []
 
 # to track the training loss as the model trains
 train_losses, e_train_losses = [], []
@@ -155,26 +163,30 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    ae_layers = [64, 32, args.n_z, 32, 64]
-    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
 
-    # DeepCAC expts
-    ae_layers = [64, args.n_z, 64]
-    expert_layers = [args.n_z, 30, args.n_classes]
+    if args.expt == 'ExpertNet':
+        ae_layers = [128, 64, args.n_z, 64, 128]
+        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+
+    else:
+        # DeepCAC expts
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, 30, args.n_classes]
 
     model = ExpertNet(
             ae_layers,
             expert_layers,
+            args.lr_enc,
+            args.lr_exp,
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
 
-    optimizer = Adam(model.parameters(), lr=args.lr)
+    optimizer = Adam(model.parameters(), lr=args.lr_enc)
 
     # cluster parameter initiate
     device = args.device
-    qs, hidden = model(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
-    q_train = qs[0]
+    q_train, hidden = model.encoder_forward(torch.FloatTensor(np.array(X_train)).to(args.device), output="latent")
 
     original_cluster_centers, cluster_ids_train = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
     model.cluster_layer.data = torch.tensor(original_cluster_centers).to(device)
@@ -217,6 +229,7 @@ for r in range(len(iter_array)):
             model.classifiers[j][0].train()
 
         train_loss = 0
+
         # Full training of local networks
         for batch_idx, (X_latents, cluster_train_indices, y_batch) in enumerate(train_loader_latents):
             for k in range(args.n_clusters):
@@ -237,8 +250,8 @@ for r in range(len(iter_array)):
             model.classifiers[j][0].eval()
 
         # Evaluate model on Validation set
-        qs, z_val = model(torch.FloatTensor(X_val).to(args.device), output="latent")
-        q_val = qs[0]
+        q_val, z_val = model.encoder_forward(torch.FloatTensor(X_val).to(args.device), output="latent")
+
         # cluster_ids_val = kmeans.predict(z_val.detach().data.cpu().numpy())
         cluster_ids_val, _ = vq(z_val.detach().data.cpu().numpy(), original_cluster_centers)
         preds = torch.zeros((len(z_val), args.n_classes))
@@ -279,7 +292,15 @@ for r in range(len(iter_array)):
         
         # early_stopping needs the validation loss to check if it has decresed, 
         # and if it has, it will make a checkpoint of the current model
-        es([val_f1, val_minpse], model)
+        if args.optimize == 'auc':
+            opt = val_auc
+        elif args.optimize == 'auprc':
+            opt = val_auprc
+        else:
+            opt = -val_loss
+
+        es([val_f1, opt], model)
+       
         if es.early_stop == True or epoch == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(hidden.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
@@ -301,9 +322,7 @@ for r in range(len(iter_array)):
     print("Evaluating Test Data with k = ", args.n_clusters, " Attention = ", args.attention)
 
     # # Evaluate model on Test dataset
-    qs, z_test = model(torch.FloatTensor(X_test).to(args.device), output="latent")
-    q_test = qs[0]
-
+    q_test, z_test = model.encoder_forward(torch.FloatTensor(X_test).to(args.device), output="latent")
     test_cluster_indices = np.argmax(distance_matrix(z_test.data.cpu().numpy(), model.cluster_layer.data.cpu().numpy()), axis=1)
 
     test_loss = 0
@@ -320,7 +339,6 @@ for r in range(len(iter_array)):
         test_preds[cluster_id,:] = cluster_test_preds
         local_sum_loss += torch.sum(q_test[cluster_id,j]*criterion(cluster_test_preds, y_cluster))
     
-
     test_metrics = performance_metrics(y_test, test_preds.detach().numpy(), args.n_classes)
     test_f1  = test_metrics['f1_score']
     test_auc = test_metrics['auroc']
@@ -351,6 +369,9 @@ for r in range(len(iter_array)):
     auprc_scores.append(test_auprc)
     acc_scores.append(test_acc)
     minpse_scores.append(test_minpse)
+    nmi_scores.append(nmi_score(test_cluster_indices, y_test))
+    ari_scores.append(ari_score(test_cluster_indices, y_test))
+    # sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), test_cluster_indices, metric='euclidean'))
 
     ####################################################################################
     ####################################################################################
@@ -360,81 +381,119 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
 
-    # regs = [GradientBoostingClassifier(random_state=0) for _ in range(args.n_clusters)]
-    # qs, z_train = model(torch.FloatTensor(X_train).to(args.device), output="latent")
-    # q_train = qs[0]
-    # cluster_ids = torch.argmax(q_train, axis=1)
-    # train_preds_e = torch.zeros((len(z_train), args.n_classes))
-    # feature_importances = np.zeros((args.n_clusters, args.input_dim))
+    encoder_reg = RandomForestClassifier(random_state=0)
+    regs = [RandomForestClassifier(random_state=0) for _ in range(args.n_clusters)]
 
-    # # Weighted predictions
-    # for j in range(model.n_clusters):
-    #     X_cluster = z_train
-    #     cluster_preds = model.classifiers[j][0](X_cluster)
-    #     # print(q_test, cluster_preds[:,0])
-    #     for c in range(args.n_classes):
-    #         train_preds_e[:,c] += q_train[:,j]*cluster_preds[:,c]
+    _ , z_train = model.encoder_forward(torch.FloatTensor(X_train).to(args.device), output='latent')
+    cluster_ids, _ = vq(z_train.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+    cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
 
-    # for j in range(model.n_clusters):
-    #     cluster_id = torch.where(cluster_ids == j)[0]
-    #     X_cluster = X_train[cluster_id]
-    #     y_cluster = torch.Tensor(y_train[cluster_id])
+    train_preds = torch.zeros((len(z_train), args.n_classes))
+    feature_importances = np.zeros((args.n_clusters, args.input_dim))
 
-    #     # Some test data might not belong to any cluster
-    #     if len(cluster_id) > 0:
-    #         regs[j].fit(X_cluster, y_cluster.detach().cpu().numpy())
-    #         best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
-    #         feature_importances[j,:] = regs[j].feature_importances_
-    #         print("|C{}|={}, +/total = {:.3f}".format(j, len(cluster_id), sum(y_cluster.cpu().data.numpy())/len(cluster_id)))
-    #         print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
-    #         print("=========================\n")
+    encoder_reg.fit(X_train, cluster_ids.numpy())
 
-    # feature_diff = 0
-    # cntr = 0
-    # for i in range(args.n_clusters):
-    #     for j in range(args.n_clusters):
-    #         if i > j:
-    #             ci = torch.where(cluster_ids == i)[0]
-    #             cj = torch.where(cluster_ids == j)[0]
-    #             Xi = X_train[ci]
-    #             Xj = X_train[cj]
-    #             feature_diff += sum(feature_importances[i]*feature_importances[j]*(ttest_ind(Xi, Xj, axis=0)[1] < 0.05))/args.input_dim
-    #             # print("Cluster [{}, {}] p-value: ".format(i,j), feature_diff)
-    #             cntr += 1
+    # Weighted predictions... should be without attention only
+    for j in range(model.n_clusters):
+        cluster_id = torch.where(cluster_ids == j)[0]
+        X_cluster = z_train[cluster_id]
+        cluster_preds = model.classifiers[j][0](X_cluster)
+        train_preds[cluster_id,:] = cluster_preds
 
-    # print("Average Feature Difference: ", feature_diff/cntr)
+        # train student on teacher's predictions
+        y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
+        
+        # train student on real labels
+        # y_cluster = y_train[cluster_id]
+
+        # Train the local regressors on the data embeddings
+        # Some test data might not belong to any cluster
+        if len(cluster_id) > 0:
+            regs[j].fit(X_train[cluster_id], y_cluster)
+            best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
+            feature_importances[j,:] = regs[j].feature_importances_
+            print("Cluster # ", j, "sized: ", len(cluster_id), "label distr: ", np.bincount(y_cluster)/len(y_cluster))
+            print(list(zip(column_names[best_features], np.round(regs[j].feature_importances_[best_features], 3))))
+            print("=========================\n")
+
+    # Testing performance of downstream classifier on cluster embeddings
+    _, z_test = model.encoder_forward(torch.FloatTensor(X_test).to(args.device), output='latent')
+    cluster_ids_test_model, _ = vq(z_test.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+
+    cluster_ids_test = encoder_reg.predict(X_test)
+    cluster_ids_test = torch.Tensor(cluster_ids_test).type(torch.LongTensor)
+        
+    test_preds = torch.zeros((len(X_test), args.n_classes))
+    y_pred = np.zeros((len(X_test), args.n_classes))
+
+    for j in range(model.n_clusters):
+        cluster_id = torch.where(cluster_ids_test == j)[0]
+        X_cluster = X_test[cluster_id]
+
+        # Some test data might not belong to any cluster
+        if len(cluster_id) > 0:
+            y_pred[cluster_id] = regs[j].predict_proba(X_cluster)
+
+    test_metrics = performance_metrics(y_test, y_pred, args.n_classes)
+    test_f1  = test_metrics['f1_score']
+    test_auc = test_metrics['auroc']
+    test_auprc = test_metrics['auprc']
+    test_minpse = test_metrics['minpse']
+    test_acc = test_metrics['acc']
+
+    stu_f1_scores.append(test_f1)
+    stu_auc_scores.append(test_auc)
+    stu_auprc_scores.append(test_auprc)
+    stu_minpse_scores.append(test_minpse)
+
+    print('Student Network Classification Metrics - Test F1 {:.3f}, Test AUC {:.3f},\
+        Test AUPRC {:.3f}'.format(test_f1, test_auc, test_auprc))
+
+    print("\n")
+
 
 enablePrint()
-print("Test F1: ", f1_scores)
-print("Test AUC: ", auc_scores)
-print("Test AUPRC: ", auprc_scores)
-print("Test MISPSE: ", minpse_scores)
+# print("Test F1: ", f1_scores)
+# print("Test AUC: ", auc_scores)
+# print("Test AUPRC: ", auprc_scores)
+# print("Test MISPSE: ", minpse_scores)
 
-print("Sil scores: ", sil_scores)
-print("HTFD: ", HTFD_scores)
-print("WDFD: ", wdfd_scores)
+# print("Sil scores: ", sil_scores)
+# print("HTFD: ", HTFD_scores)
+# print("WDFD: ", wdfd_scores)
 
-print("Train Loss: ", train_losses)
-print("E-Train Loss: ", e_train_losses)
+# print("Train Loss: ", train_losses)
+# print("E-Train Loss: ", e_train_losses)
 
-print("Test Loss: ", test_losses)
-print("E-Test Loss: ", e_test_losses)
-print("Local Test Loss: ", local_sum_test_losses)
-print("Model Complexity: ", model_complexity)
+# print("Test Loss: ", test_losses)
+# print("E-Test Loss: ", e_test_losses)
+# print("Local Test Loss: ", local_sum_test_losses)
+# print("Model Complexity: ", model_complexity)
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTr-SIL\tTr-HTFD\tTr-WDFD")
 
-print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
-    (args.dataset, args.n_clusters, np.average(f1_scores), np.average(auc_scores),\
-    np.average(auprc_scores), np.average(minpse_scores), np.average(acc_scores),\
-    np.average(sil_scores), np.average(HTFD_scores)))
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+    (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
+    np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores),\
+    np.avg(np.array(sil_scores)), np.avg(HTFD_scores), np.avg(wdfd_scores)))
 
-print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTr-SIL\tTr-HTFD\tTr-WDFD")
 
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
-    np.std(minpse_scores), np.std(acc_scores), np.std(sil_scores),\
-    np.std(HTFD_scores)))
+    np.std(minpse_scores), np.std(acc_scores), np.std(np.array(sil_scores)),\
+    np.std(HTFD_scores), np.std(wdfd_scores)))
+
+
+print("Distilled Model Metrics")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE")
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
+    np.avg(stu_f1_scores), np.avg(stu_auc_scores), np.avg(stu_auprc_scores), np.avg(stu_minpse_scores)))
+
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE")
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
+    (np.std(stu_f1_scores), np.std(stu_auc_scores), np.std(stu_auprc_scores), np.std(stu_minpse_scores)))
+
 
 print("\n")
 # HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)

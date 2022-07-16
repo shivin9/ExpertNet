@@ -1,0 +1,728 @@
+ExpertNet Experiments
+ExpertNet
+Respiratory 24
+k = 1
+k = 2
+ExpertNet Experiments
+ExpertNet
+Respiratory 24
+k = 1
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	ards24	1	0.563	0.791	0.639	0.316	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.036	0.007	0.010	0.026	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.000	1.802	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.000	0.000	0.000
+
+k = 2
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	ards24	2	0.551	0.791	0.642	0.196	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.059	0.005	0.012	0.161	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.416	1.185	0.835
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.064	0.074	0.078
+
+k = 3
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	ards24	3	0.620	0.778	0.633	0.335	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.032	0.018	0.008	0.024	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.313	1.077	0.996
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.066	0.125	0.192
+
+k = 4
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	ards24	4	0.593	0.797	0.642	0.312	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.019	0.010	0.010	0.010	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.244	1.017	2.106
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.068	0.190	1.587
+
+k = 5
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	ards24	5	0.593	0.793	0.643	0.267	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.058	0.007	0.007	0.135	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.161	0.832	0.985
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.043	0.420	0.570
+
+k = 6
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	ards24	6	0.550	0.795	0.642	0.192	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.060	0.010	0.004	0.157	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.169	0.738	1.292
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.084	0.374	0.726
+
+k = 7
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	ards24	7	0.567	0.791	0.644	0.265	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.069	0.011	0.008	0.134	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.095	0.780	1.344
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.037	0.390	0.810
+
+ExpertNet Experiments
+ExpertNet
+Sepsis 24
+k = 2
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	sepsis24	2	0.673	0.844	0.683	0.425	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.035	0.016	0.012	0.028	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.492	1.525	1.411
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.084	0.063	0.243
+
+k = 3
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	sepsis24	3	0.666	0.823	0.672	0.405	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.020	0.032	0.025	0.027	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.368	1.415	1.450
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.160	0.157	0.134
+
+k = 4
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	sepsis24	4	0.669	0.838	0.676	0.423	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.037	0.018	0.015	0.032	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.360	1.462	1.554
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.029	0.064	0.163
+
+k = 5
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	sepsis24	5	0.661	0.825	0.676	0.410	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.024	0.024	0.017	0.028	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.405	1.457	1.520
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.048	0.004	0.102
+
+ExpertNet
+Respiratory 24
+k = 2
+ExpertNet
+Sepsis 24
+k = 2
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	2	0.678	0.844	0.684	0.426	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.024	0.017	0.014	0.030	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.535	1.523	1.461
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.016	0.062	0.149
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	2	0.502	0.826	0.651	0.420
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.024	0.017	0.014	0.030
+
+k = 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	2	0.537	0.788	0.638	0.182	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.049	0.016	0.007	0.149	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.330	1.354	0.615
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.222	0.251	0.327
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	2	0.503	0.609	0.559	0.127
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.049	0.016	0.007	0.149
+
+k = 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.673	0.837	0.678	0.412	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.031	0.023	0.019	0.043	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.455	1.459	1.559
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.077	0.048	0.145
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.502	0.822	0.649	0.415
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.031	0.023	0.019	0.043
+
+k = 4
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.564	0.770	0.629	0.193	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.071	0.028	0.013	0.161	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.282	1.186	0.910
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.064	0.105	0.037
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.523	0.645	0.570	0.182
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.071	0.028	0.013	0.161
+
+k = 4
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	4	0.671	0.818	0.675	0.416	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.026	0.038	0.012	0.034	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.456	1.387	1.815
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.034	0.134	0.602
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	4	0.502	0.828	0.646	0.367
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.026	0.038	0.012	0.034
+
+k = 5
+k = 5
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	5	0.629	0.828	0.669	0.362	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.073	0.033	0.013	0.101	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.396	1.420	1.589
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.121	0.030	0.112
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	5	0.496	0.786	0.616	0.316
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.073	0.033	0.013	0.101
+
+ExpertNet
+Respiratory 24
+k = 4
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	4	0.618	0.790	0.641	0.328	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.016	0.004	0.008	0.019	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.186	1.140	0.957
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.022	0.089	0.109
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	4	0.577	0.710	0.617	0.343
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.016	0.004	0.008	0.019
+
+k = 5
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	5	0.569	0.785	0.636	0.276	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.055	0.012	0.006	0.078	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.194	0.854	0.845
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.099	0.427	0.426
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	5	0.547	0.628	0.565	0.340
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.055	0.012	0.006	0.078
+
+ExpertNet Student Experiments
+ExpertNet
+Respiratory 24
+k = 2
+Stats:  1701 22450
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	2	0.563	0.782	0.638	0.191	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.072	0.012	0.011	0.160	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.462	1.193	0.949
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.089	0.129	0.301
+
+k = 3
+Stats:  1701 22450
+k = 4
+Stats:  1701 22450
+k = 5
+Stats:  1701 22450
+ExpertNet
+Sepsis 24
+k = 2
+Stats:  1844 30661
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	2	0.665	0.845	0.678	0.414	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.023	0.016	0.016	0.027	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.603	1.510	1.486
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.038	0.067	0.218
+
+k = 3
+Stats:  1844 30661
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	 0.674	0.839	0.678	0.419	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.027	0.023	0.011	0.036	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.483	1.460	1.507
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.083	0.049	0.265
+
+k = 4
+Stats:  1844 30661
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	4	0.677	0.839	0.682	0.420	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.030	0.019	0.010	0.030	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.380	1.357	1.567
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.084	0.151	0.154
+
+k = 5
+Stats:  1844 30661
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	5	0.676	0.838	0.681	0.422	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.022	0.023	0.014	0.032	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.406	1.374	1.704
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.082	0.065	0.317
+
+ExpertNet Student Experiments
+ExpertNet
+Respiratory 24
+k = 2
+Stats:  1701 22450
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	2	0.601	0.781	0.633	0.320	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.021	0.005	0.005	0.034	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.402	1.230	0.805
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.022	0.034	0.061
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	2	0.542	0.743	0.619	0.332
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.008	0.012	0.003	0.020
+
+k = 3
+Stats:  1701 22450
+k = 4
+Stats:  1701 22450
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	4	0.598	0.783	0.634	0.262	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.060	0.006	0.004	0.133	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.243	1.041	1.431
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.131	0.151	0.239
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	4	0.533	0.738	0.613	0.304
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.011	0.021	0.012	0.031
+
+k = 5
+Stats:  1701 22450
+ExpertNet
+Sepsis 24
+k = 2
+Stats:  1844 30661
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	2	0.668	0.837	0.680	0.412	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.030	0.020	0.014	0.032	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.597	1.510	1.432
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.030	0.048	0.084
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	2	0.502	0.844	0.652	0.413
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.009	0.011	0.010	0.088
+
+k = 3
+Stats:  1844 30661
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.669	0.843	0.682	0.416	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.027	0.016	0.014	0.016	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.483	1.476	1.441
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.092	0.041	0.082
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.497	0.837	0.644	0.390
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.003	0.014	0.014	0.067
+
+k = 4
+Stats:  1844 30661
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	4	0.675	0.843	0.678	0.425	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.023	0.021	0.013	0.019	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.337	1.448	1.580
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.056	0.039	0.287
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	4	0.495	0.839	0.646	0.347
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.006	0.011	0.012	0.095
+
+k = 5
+Stats:  1844 30661
+
+========================================================================
+========================================================================
+========================================================================
+ExpertNet Student Experiments
+ExpertNet
+Respiratory 24
+k = 2
+Stats:  1701 22450
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	2	0.576	0.783	0.638	0.207	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.078	0.012	0.008	0.169	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.544	1.289	0.745
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.104	0.056	0.108
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	2	0.548	0.622	0.557	0.298
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.055	0.080	0.051	0.165
+
+k = 3
+Stats:  1701 22450
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.568	0.771	0.635	0.243	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.074	0.009	0.005	0.128	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.432	1.165	1.330
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.057	0.155	0.599
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.541	0.638	0.572	0.263
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.045	0.105	0.058	0.141
+
+k = 4
+Stats:  1701 22450
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	4	0.603	0.785	0.638	0.346	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.030	0.015	0.007	0.036	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.339	1.101	1.495
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.097	0.096	0.826
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	4	0.531	0.663	0.586	0.292
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.030	0.076	0.045	0.052
+
+k = 5
+Stats:  1701 22450
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	5	0.614	0.780	0.637	0.339	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.018	0.004	0.004	0.017	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.256	1.047	1.387
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.075	0.069	0.317
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	5	0.538	0.636	0.561	0.306
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.031	0.070	0.046	0.059
+
+ExpertNet
+Sepsis 24
+k = 2
+Stats:  1844 30661
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	2	0.676	0.844	0.679	0.410	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.011	0.021	0.012	0.025	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.742	1.610	1.268
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.056	0.032	0.159
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	2	0.499	0.827	0.649	0.391
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.006	0.006	0.011	0.115
+
+k = 3
+Stats:  1844 30661
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.665	0.831	0.672	0.409	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.020	0.020	0.017	0.027	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.701	1.491	1.379
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.056	0.033	0.100
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.499	0.823	0.640	0.318
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.010	0.008	0.008	0.105
+
+k = 4
+Stats:  1844 30661
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	4	0.662	0.840	0.670	0.395	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.018	0.010	0.015	0.022	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.706	1.435	1.384
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.028	0.044	0.049
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	4	0.501	0.826	0.639	0.365
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.010	0.016	0.012	0.085
+
+k = 5
+Stats:  1844 30661
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	5	0.666	0.848	0.679	0.418	0.500
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.020	0.008	0.013	0.027	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.578	1.435	1.571
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.166	0.026	0.172
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	5	0.497	0.811	0.629	0.313
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	0.008	0.014	0.007	0.104
+

@@ -17,16 +17,21 @@ from scipy.optimize import linear_sum_assignment as linear_assignment
 from scipy.stats import ttest_ind, wasserstein_distance as wd
 from read_patients import get_aki
 from matplotlib import pyplot as plt
+import matplotlib.colors as mc
+import colorsys
 import sys
 import umap
 
 color = ['grey', 'red', 'blue', 'pink', 'olive', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan']
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
             'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic',\
-            'sepsis_ts', 'aki_ts', 'ards_ts']
+            'sepsis_ts', 'aki_ts', 'ards_ts', 'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
+
+# np.random.seed(108)
+# torch.manual_seed(108)
 
 def avg(x):
     if len(x) == 0:
@@ -89,8 +94,17 @@ def calculate_mutual_HTFD(X, cluster_ids):
     return feature_diff/cntr
 
 
+def adjust_lightness(color, amount=0.5):
+    try:
+        c = mc.cnames[color]
+    except:
+        c = color
+    c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+    return colorsys.hls_to_rgb(c[0], max(0, min(1, amount * c[1])), c[2])
+
+
 def calculate_HTFD(X_train, cluster_ids):
-    print("\nCluster Wise discriminative features (HTFD)")
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_features = X_train.shape[1]
@@ -235,36 +249,43 @@ def calculate_MIFD(X, cluster_ids):
     return cluster_entrpy/cntr
 
 
-def calculate_WDFD(X, cluster_ids):
+def calculate_WDFD(X_train, cluster_ids):
     cluster_entrpy = 0
     cntr = 0
-    n_columns = X.shape[1]
-    n_clusters = len(torch.unique(cluster_ids))
-    top_quartile = np.int(n_columns/4)
-    col_entrpy = np.zeros(n_columns)
+    n_columns = X_train.shape[1]
+    n_clusters = len(np.unique(cluster_ids))
+    input_dim = X_train.shape[1]
+    mi_scores = {}
+    cluster_entrpy = 0
     for i in range(n_clusters):
-        for j in range(n_clusters):
-            if i > j:
-                col_entrpy *= 0
-                ci = torch.where(cluster_ids == i)[0]
-                cj = torch.where(cluster_ids == j)[0]
-                if len(ci) < 2 or len(cj) < 2:
-                    return 0
-                Xi = X[ci]
-                Xj = X[cj]
-                for c in range(n_columns):
-                    col_entrpy[c] = wd(Xi[:,c], Xj[:,c])
-                # Sort col_entrpy
-                col_entrpy = np.sort(col_entrpy)[::-1]
-                cluster_entrpy += np.sum(col_entrpy[:top_quartile])/top_quartile
-                cntr += 1
-    if cntr == 0:
-        return 0
-    return cluster_entrpy/cntr
+        mi_scores[i] = {}
+        ci = np.where(cluster_ids == i)[0]
+        for c in range(n_columns):
+            Xi_c = X_train[ci][:,c]
+            Zc = []
+            p_vals = 1
+            # Collect values from other clusters
+            for j in range(n_clusters):
+                if i != j:
+                    cj = np.where(cluster_ids == j)[0]
+                    if len(X_train[cj].shape) == 1:
+                        Xj_c = X_train[cj].reshape(1,n_features)[:,c]
+                    else:
+                        Xj_c = X_train[cj][:,c]
+                    Zc = np.concatenate([Zc, Xj_c])
+                    # p_vals *= -np.nan_to_num(wd(Xi_c, Xj_c))
+
+            # p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
+            p_vals = -np.nan_to_num(wd(Xi_c, Zc))
+            # p_vals = np.nan_to_num(calc_MI(Xi_c, Zc,0))
+            mi_scores[i][c] = p_vals
+
+        cluster_entrpy += sum(mi_scores[i])/n_columns
+    return cluster_entrpy/n_clusters
 
 
 def MIFD_Cluster_Analysis(X_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (MIFD)")
+    # print("\nCluster Wise discriminative features (MIFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
@@ -297,8 +318,8 @@ def MIFD_Cluster_Analysis(X_train, cluster_ids, column_names):
                     print(np.mean(Xi[:,k]), "C2:", np.mean(Xj[:,k]))
 
 
-def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (HTFD)")
+def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, n_results=25):
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
@@ -325,7 +346,7 @@ def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
                 cntr += 1
                 print("\n========\n")
                 print(joint_col_name)
-                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:50]
+                sorted_dict = sorted(mi_scores[joint_col_name].items(), key=lambda item: -item[1])[:n_results]
                 for k, v in sorted_dict:
                     c = column_names[k]
                     print("Feature:", c, "Val:", v)
@@ -334,8 +355,8 @@ def HTFD_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
     print(mi_scores)
 
 
-def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (HTFD)")
+def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, scale=None, n_results=25):
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
@@ -349,16 +370,20 @@ def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
         for c in range(n_columns):
             Xi_c = X_train[ci][:,c]
             Zc = []
+            p_vals = 1
             # Collect values from other clusters
             for j in range(n_clusters):
                 if i != j:
                     cj = torch.where(cluster_ids == j)[0]
                     Xj_c = X_train[cj][:,c]
                     Zc = np.concatenate([Zc, Xj_c])
+                    # local_p_val = np.nan_to_num(ttest_ind(Xi_c, Xj_c, axis=0, equal_var=True))[1]
+                    # p_vals *= np.round(-np.log(local_p_val + np.finfo(float).eps)*0.05, 3)
 
             col_entrpy = 0
-            p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
-            HTFD_scores[i][c] = np.round(-np.log(p_vals + np.finfo(float).eps)*0.05, 3)
+            p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=False))[1]
+            HTFD_scores[i][c] = -np.log(p_vals + np.finfo(float).eps)*0.05
+            # HTFD_scores[i][c] = p_vals
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
@@ -368,36 +393,40 @@ def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
             f = column_names[feature]
             print("Feature:", f, "HTFD score:", pval)
             for cluster_id in range(n_clusters):
-                    c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
+                c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
+                if scale != None:
+                    X_cluster_f = scale.inverse_transform(X_train[c_cluster_id])[:,feature]
+                else:
                     X_cluster_f = X_train[c_cluster_id][:,feature]
-                    print("Cluster:", cluster_id, np.round(np.mean(X_cluster_f),3))
+                print("Cluster:", cluster_id, np.round(np.mean(X_cluster_f),3), "±", np.round(np.std(X_cluster_f),3))
 
 
-def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
-    print("\nCluster Wise discriminative features (HTFD)")
+def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, X_latents=None, scale=None, dataset=None, n_results=15):
+    # print("\nCluster Wise discriminative features (HTFD)")
     cluster_entrpy = 0
     cntr = 0
     n_columns = X_train.shape[1]
-    n_clusters = len(torch.unique(cluster_ids))
+    n_clusters = len(np.unique(cluster_ids))
     input_dim = X_train.shape[1]
     mi_scores = {}
     for i in range(n_clusters):
         mi_scores[i] = {}
-        ci = torch.where(cluster_ids == i)[0]
+        ci = np.where(cluster_ids == i)[0]
         for c in range(n_columns):
             Xi_c = X_train[ci][:,c]
             Zc = []
+            p_vals = 1
             # Collect values from other clusters
             for j in range(n_clusters):
                 if i != j:
-                    cj = torch.where(cluster_ids == j)[0]
+                    cj = np.where(cluster_ids == j)[0]
                     if len(X_train[cj].shape) == 1:
                         Xj_c = X_train[cj].reshape(1,n_features)[:,c]
                     else:
                         Xj_c = X_train[cj][:,c]
                     Zc = np.concatenate([Zc, Xj_c])
+                    # p_vals *= -np.nan_to_num(wd(Xi_c, Xj_c))
 
-            col_entrpy = 0
             # p_vals = np.nan_to_num(ttest_ind(Xi_c, Zc, axis=0, equal_var=True))[1]
             p_vals = -np.nan_to_num(wd(Xi_c, Zc))
             # p_vals = np.nan_to_num(calc_MI(Xi_c, Zc,0))
@@ -405,16 +434,25 @@ def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names):
 
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
-        print("|C{}| = {:.3f}".format(i, np.bincount(y_train[ci])/len(ci)))
+        print("|C{}| = {}".format(i, np.bincount(y_train[ci])/len(ci)))
 
-        sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])
+        sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])[:n_results]
         for feature, pval in sorted_dict:
+
+            if X_latents != None:
+                idx = range(int(0.2*len(X_train)))
+                plot_data_feature_colored(X_train[idx], X_latents[idx], dataset + "_k" + str(n_clusters), column_names[feature], column=feature)
+
             f = column_names[feature]
-            print(f, "\t", -pval, end='\t')
+            print(f, "\t", -np.round(pval,3), end='\t')
             for cluster_id in range(n_clusters):
-                    c_cluster_id = torch.where(cluster_ids == cluster_id)[0]
+                c_cluster_id = np.where(cluster_ids == cluster_id)[0]
+                if scale != None:
+                    X_cluster_f = scale.inverse_transform(X_train[c_cluster_id])[:,feature]
+                else:
                     X_cluster_f = X_train[c_cluster_id][:,feature]
-                    # print(np.round(np.mean(X_cluster_f),3), end='\t')
+                print("C{}".format(cluster_id), ": ", np.round(np.mean(X_cluster_f),3),\
+                    "±", np.round(np.std(X_cluster_f),3), end='\t')
             print('')
 
 
@@ -426,9 +464,15 @@ class parameters(object):
     def __init__(self, parser):
         self.input_dim = -1
         self.dataset = parser.dataset
+        if parser.n_features == -1:
+            self.n_features = parser.input_dim
+        else:
+            self.input_dim = parser.n_features
+            self.n_features = parser.n_features
         
         # Training parameters
-        self.lr = parser.lr
+        self.lr_enc = parser.lr_enc
+        self.lr_exp = parser.lr_exp
         self.alpha = float(parser.alpha)
         self.wd = parser.wd
         self.batch_size = parser.batch_size
@@ -439,7 +483,7 @@ class parameters(object):
         self.load_ae = parser.load_ae
         self.classifier = parser.classifier
         self.tol = parser.tol
-        self.attention = parser.attention == "True"
+        self.attention = parser.attention
         self.ablation = parser.ablation
         self.cluster_balance = parser.cluster_balance
 
@@ -454,19 +498,19 @@ class parameters(object):
         self.n_clusters = parser.n_clusters
         self.clustering = parser.clustering
         self.n_classes = parser.n_classes
+        self.optimize = parser.optimize
 
         # Utility parameters
         self.device = parser.device
         self.verbose = parser.verbose
         self.plot = parser.plot
+        self.expt = parser.expt
         self.cluster_analysis = parser.cluster_analysis
         self.log_interval = parser.log_interval
         self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
 
 
-
 class AdMSoftmaxLoss(nn.Module):
-
     def __init__(self, in_features, out_features, s=30.0, m=0.4):
         '''
         AM Softmax Loss
@@ -497,6 +541,7 @@ class AdMSoftmaxLoss(nn.Module):
         denominator = torch.exp(numerator) + torch.sum(torch.exp(self.s * excl), dim=1)
         L = numerator - torch.log(denominator)
         return -torch.mean(L)
+
 
 #######################################################
 # Evaluate Critiron
@@ -542,16 +587,86 @@ def multi_class_auprc(y_true, y_scores, n_classes):
     return np.avg(scores)
 
 
-def drop_constant_column(df):
+def plot_data(X, y, cluster_ids, dataset, e):
+    reducer = umap.UMAP(random_state=42)
+    X2 = reducer.fit_transform(X.cpu().detach().numpy())
+    c_clusters = [color[3+int(cluster_ids[i])] for i in range(len(cluster_ids))]
+    c_labels = [color[int(y[i])] for i in range(len(cluster_ids))]
+    c_final = []
+
+    for i in range(len(cluster_ids)):
+        c_final.append(adjust_lightness(color[3+int(cluster_ids[i])], 1))
+        if y[i] == 1:
+            c_final[i] = adjust_lightness(color[3+int(cluster_ids[i])], 0.5)
+
+    fig, ax1 = plt.subplots(1, 1)
+    # fig.suptitle('Clusters vs Labels')
+    # ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
+    # ax1.scatter(X2[:,0], X2[:,1], color=c_final, edgecolors='black')
+    ax1.scatter(X2[:,0], X2[:,1], color=c_final)
+    plt.xticks(fontsize = 18)
+    plt.yticks(fontsize = 18)
+    fig.savefig(BASE_DIR + "/figures/" + dataset + "_e" + str(e) + ".png")
+
+
+def plot_data_feature_colored(X, X_latents, dataset, feature_name, column=-1):
+    reducer = umap.UMAP(random_state=42)
+    X2 = reducer.fit_transform(X_latents.cpu().detach().numpy())
+
+    fig, ax1 = plt.subplots(1, 1)
+    # fig.suptitle('Clusters vs Labels')
+    # ax1.scatter(X2[:,0], X2[:,1], c=X[:,column], cmap='plasma', edgecolors='black')
+    ax1.scatter(X2[:,0], X2[:,1], c=X[:,column], cmap='plasma')
+    plt.xticks(fontsize = 18)
+    plt.yticks(fontsize = 18)
+    fig.savefig(BASE_DIR + "/figures/" + dataset + "_" + str(feature_name) + ".png")
+
+
+def plot(model, X_train, y_train, args, X_latents=None, X_test=None, y_test=None, labels=None, epoch=0):
+    idx = range(int(0.2*len(X_train)))
+
+    model.ae.eval() # prep model for evaluation
+    for j in range(model.n_clusters):
+        model.classifiers[j][0].eval()
+
+    q_train, latents_X = model.encoder_forward(X_train, output="latent")
+    latents_X = latents_X[idx]
+    q_train = q_train[idx]
+    y_train = y_train[idx]
+
+    if labels is not None:
+        cluster_id_train = labels[idx]
+    else:
+        cluster_id_train = torch.argmax(q_train, axis=1)
+
+    # Plot latent space embedding clusters
+    plot_data(latents_X, y_train, cluster_id_train, args.dataset+"_emb_k"+str(args.n_clusters), epoch)
+
+    # Plot feature space cluster
+    plot_data(X_train[idx], y_train, cluster_id_train, args.dataset+"_ori_k"+str(args.n_clusters), epoch)
+
+    if X_test is not None:
+        qs, latents_test = model.encoder_forward(X_test, output="latent")
+        q_test = qs[0]
+        cluster_id_test = torch.argmax(q_test, axis=1)
+
+        print("Test data")
+        plot_data(latents_test, y_test, cluster_id_test, args.dataset, epoch)
+
+
+def drop_constant_column(df, columns):
     """
     Drops constant value columns of pandas dataframe.
     """
-    return df.loc[:, (df != df.iloc[0]).any()]
+    df.dropna(how='all', axis=1, inplace=True)
+    df = df.loc[:, (df != df.iloc[0]).any()]
+    cols = df.columns
+    return df, cols
 
 
-def get_dataset(DATASET, DATA_DIR):
-    scale = None
-    if DATASET == "cic" or DATASET == "cic_new":
+def get_dataset(DATASET, DATA_DIR, n_features):
+    scale = StandardScaler()
+    if DATASET == "cic" or DATASET == "cic_new" or DATASET == "cic_24":
         Xa = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_a.csv")
         Xb = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_b.csv")
         Xc = pd.read_csv(DATA_DIR + '/' + DATASET + '/' + "cic_set_c.csv")
@@ -566,15 +681,6 @@ def get_dataset(DATASET, DATA_DIR):
 
         cols = Xa.columns
 
-        scale = StandardScaler()
-        Xa = scale.fit_transform(Xa)
-        Xb = scale.transform(Xb)
-        Xc = scale.transform(Xc)
-
-        Xa = pd.DataFrame(Xa, columns=cols)
-        Xb = pd.DataFrame(Xb, columns=cols)
-        Xc = pd.DataFrame(Xc, columns=cols)
-
         Xa = Xa.fillna(0)
         Xb = Xb.fillna(0)
         Xc = Xc.fillna(0)
@@ -587,13 +693,18 @@ def get_dataset(DATASET, DATA_DIR):
 
         X = pd.concat([X_train, X_test])
         y = pd.concat([y_train, y_test]).to_numpy()
+        y = np.array(y, dtype=int)
         columns = cols
+        X, columns = drop_constant_column(X, columns)
+
         X = X.to_numpy()
 
 
     elif DATASET == "infant":
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
+        X, columns = drop_constant_column(X, columns)
+
         y = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y.csv").to_numpy()
         y1 = []
         
@@ -604,20 +715,26 @@ def get_dataset(DATASET, DATA_DIR):
         y = y.astype(int)
         enc = OneHotEncoder(handle_unknown='ignore')
         X = enc.fit_transform(X).toarray()
-        X = scale.fit_transform(X)
 
     else:
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
+        X, columns = drop_constant_column(X, columns)
+
         y = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "y.csv").to_numpy()
         y1 = []
         for i in range(len(y)):
             y1.append(y[i][0])
         y = np.array(y1)
-        scale = StandardScaler()
+
+    if n_features != -1:
+        n_features = int(n_features)
+        X = scale.fit_transform(X.to_numpy()[:,:n_features])
+        columns = columns[:n_features]
+
+    else:
         X = scale.fit_transform(X)
 
-    # X, columns = drop_constant_column(X, columns)
     return X, y, columns, scale
 
 
@@ -673,7 +790,7 @@ def generate_data_loaders(X, y, batch_size):
     return data_loader
 
 
-def get_train_val_test_loaders(args, r_state=0):
+def get_train_val_test_loaders(args, r_state=0, n_features=-1):
     if args.dataset in DATASETS:
         if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los" and args.dataset != "cic_los_new":
             if args.dataset == "synthetic":
@@ -687,27 +804,26 @@ def get_train_val_test_loaders(args, r_state=0):
                 n_feat = 100
                 X, y = paper_synthetic(2500, centers=args.n_clusters)
                 args.input_dim = n_feat
-                print(args.input_dim)
                 scale = None
                 columns = ["feature_"+str(i) for i in range(n_feat)]
 
             else:
-                X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
+                X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
                 args.input_dim = X.shape[1]
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
-            scale = StandardScaler()
-            X_train = scale.fit_transform(X_train)
-            X_val = scale.fit_transform(X_val)
-            X_test = scale.fit_transform(X_test)
+            # scale = StandardScaler()
+            # X_train = scale.fit_transform(X_train)
+            # X_val = scale.fit_transform(X_val)
+            # X_test = scale.fit_transform(X_test)
 
         elif args.dataset == "cic_los" or args.dataset == "cic_los_new":
             if args.dataset == "cic_los":
-                X, y, columns, scale = get_dataset("cic", DATA_DIR)
+                X, y, columns, scale = get_dataset("cic", DATA_DIR, n_features)
             else:
-                X, y, columns, scale = get_dataset("cic_new", DATA_DIR)
+                X, y, columns, scale = get_dataset("cic_new", DATA_DIR, n_features)
 
             los_quantiles = np.quantile(X[:,2], [0, 0.33, 0.66, 1])
             columns = columns.delete(2)
@@ -724,30 +840,28 @@ def get_train_val_test_loaders(args, r_state=0):
 
             X_los = np.delete(scale.inverse_transform(X), 2, 1) # 2nd column is LOS
             y = np.array(y_los)
-            args.input_dim = X_los.shape[1]
 
-            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
+            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
-            scale = StandardScaler()
-            X_train = scale.fit_transform(X_train)
-            X_val = scale.fit_transform(X_val)
-            X_test = scale.fit_transform(X_test)
+            # scale = StandardScaler()
+            # X_train = scale.fit_transform(X_train)
+            # X_val = scale.fit_transform(X_val)
+            # X_test = scale.fit_transform(X_test)
 
         elif args.dataset == "aki":
-            X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
+            X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
-            args.input_dim = X_train.shape[1]
 
         else:
-            X, y, columns, scale = get_dataset(args.dataset, DATA_DIR)
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state)
-
-            args.input_dim = X_train.shape[1]
+            X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
+        
+        args.input_dim = X_train.shape[1]
 
         return scale, columns, (X_train, y_train), (X_val, y_val), (X_test, y_test)
     else:
@@ -798,6 +912,10 @@ def performance_metrics(y_true, y_pred, n_classes=2):
 
 
 '''
+<<<<<<< HEAD
+=======
+Code to generate latex table code using python
+>>>>>>> old_working
 for d in datasets:
     out = ""
     for k in K:
@@ -819,6 +937,32 @@ for d in datasets:
     if k == 4:
         out += "\\midrule \n"
     print(out)
+<<<<<<< HEAD
+=======
+
+In [22]: for d in datasets:
+    out = ""
+    for k in K:
+     if k == 2:
+         out = d
+     out += " & " + str(k) + " & "
+     itr = 0
+     for df_idx in range(len(df_list)):
+         itr += 1
+         df = df_list[df_idx]
+         if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
+             out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
+             out += " \\pm "
+             out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_STD.values[0])  + "$}"
+             if df_idx < len(df_list) - 1:
+                 out += " & "
+     out += "\\\\ \n"
+    #out += "\\\\ \n"
+    if k == 4:
+     out += "\\midrule \n"
+    print(out)
+    
+>>>>>>> old_working
 '''
 
 ## Ablation Parameter Ranges ##
