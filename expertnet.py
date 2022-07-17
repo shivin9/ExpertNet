@@ -230,8 +230,8 @@ for r in range(len(iter_array)):
         eta = args.eta
         if epoch % args.log_interval == 0:
 
-            # if args.plot == 'True':
-            #     plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, labels=cluster_indices, epoch=epoch)
+            if args.plot == 'True':
+                plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, labels=cluster_indices, epoch=epoch)
 
             model.ae.eval() # prep model for evaluation
             for j in range(model.n_clusters):

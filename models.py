@@ -71,7 +71,7 @@ def pretrain_ae(model, train, args):
     X_train, y_train, X_train_len = train
     pad_token = np.zeros(args.input_dim)
 
-    for epoch in range(100):
+    for epoch in range(10):
         total_loss = 0.
         for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size, shuffle=True)):
             x_batch = torch.tensor(pad_sents(x_batch, pad_token, args.n_feats, args.end_t), dtype=torch.float32).to(args.device)
@@ -416,6 +416,7 @@ class ExpertNet(nn.Module):
 
             if backprop_local == True:
                 optimizer_k.zero_grad()
+                # print(cluster_loss, X_cluster)
                 cluster_loss.backward(retain_graph=True)
                 optimizer_k.step()
             total_loss += cluster_loss
@@ -562,6 +563,8 @@ class GRUModel(nn.Module):
 class ExpertNet_GRU(nn.Module):
     def __init__(self,
                  expert_layers,
+                 lr_enc,
+                 lr_exp,
                  args):
         super(ExpertNet_GRU, self).__init__()
         self.alpha = args.alpha
@@ -571,6 +574,10 @@ class ExpertNet_GRU(nn.Module):
         self.input_dim = args.input_dim
         self.n_z = args.n_z
         self.args = args
+        self.criterion = nn.CrossEntropyLoss(reduction='none')
+        self.args = args
+        self.lr_exp = lr_exp
+        self.lr_enc = lr_enc
 
         # append input_dim at the end
         self.ae = GRUModel(self.input_dim, self.n_z)
@@ -587,7 +594,9 @@ class ExpertNet_GRU(nn.Module):
             for i in range(n_layers-2):
                 classifier.update(
                     {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                    # "bn{}".format(i): nn.BatchNorm1d(expert_layers[i+1]),
                     'activation{}'.format(i): nn.ReLU(),
+                    # 'dropout{}'.format(i): nn.dropout(0.7)
                     })
 
             i = n_layers - 2
@@ -596,13 +605,14 @@ class ExpertNet_GRU(nn.Module):
                 })
 
             classifier = nn.Sequential(classifier).to(self.device)
-            optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr)
+            optimizer = torch.optim.Adam(classifier.parameters(), lr=self.lr_exp)
             self.classifiers.append([classifier, optimizer])
+            # nn.init.xavier_uniform_(classifier.weight)
+            
+        self.optimizer = torch.optim.Adam(self.ae.parameters(), lr=self.lr_enc)
             
 
     def pretrain(self, train, path=''):
-        # print(path)
-        # return
         if not is_non_zero_file(path):
             path = ''
         if path == '':
@@ -613,28 +623,96 @@ class ExpertNet_GRU(nn.Module):
             print('load pretrained ae from', path)
 
 
-    def predict(self, X_test):
-        q_test, z_test = self.forward(X_test)
-        cluster_ids = torch.argmax(q_test, axis=1)
-        preds = torch.zeros((self.n_clusters, 2))
-        for j in range(self.n_clusters):
-            preds[j,:] = self.classifiers[cluster_ids[j]]
-        return preds
-
-
-    def forward(self, x, output="default"):
-        x_bar, _ , z = self.ae(x)
-        # Cluster
-        q   = source_distribution(z, self.cluster_layer, alpha=self.alpha)
+    def encoder_forward(self, x, output="default"):
+        x_bar, out, z = self.ae(x)
+        q = source_distribution(z, self.cluster_layer, alpha=self.alpha)
 
         if output == "latent":
             return q, z
 
         elif output == "classifier":
-            preds = torch.zeros((len(z), 2))
+            preds = torch.zeros((len(z), self.n_classes))
             for j in range(len(z)):
                 preds[j,:] = self.classifiers[j](z)
             return preds
         
         else:
             return z, x_bar, q
+
+
+    def predict(self, X, attention=True):
+        z, _, q = self.encoder_forward(X)
+        cluster_ids = torch.argmax(q, axis=1)
+        preds = torch.zeros((len(X), self.n_classes))
+        X_cluster = z
+        total_loss = 0
+        for j in range(self.n_clusters):
+            if attention == True:
+                # Weighted predictions
+                cluster_id = np.where(cluster_ids == j)[0]
+                X_cluster = z
+                cluster_preds = self.classifiers[j][0](X_cluster)
+                for c in range(self.n_classes):
+                    preds[:,c] += q[:,j]*cluster_preds[:,c]
+
+            else:
+                cluster_id = np.where(cluster_ids == j)[0]
+                X_cluster = z[cluster_id]
+                cluster_test_preds = self.classifiers[j][0](X_cluster)
+                preds[cluster_id,:] = cluster_test_preds
+    
+        return preds
+
+
+    def expert_forward(self, X, y, z=None, q=None, backprop_enc=False, backprop_local=False, attention=True):
+        if z == None and q == None:
+            z, out, q = self.encoder_forward(X)
+
+        cluster_ids = torch.argmax(q, axis=1)
+        y_cluster = y
+        total_loss = 0
+
+        for k in range(self.n_clusters):
+            classifier_k, optimizer_k = self.classifiers[k]
+
+            if attention == False:
+                cluster_id = np.where(cluster_ids == k)[0]
+                X_cluster = z[cluster_id]
+                y_cluster = y[cluster_id]
+                if backprop_enc == True:
+                    y_pred_cluster = classifier_k(X_cluster) # Backprop the error to encoder
+                else:
+                    y_pred_cluster = classifier_k(X_cluster.detach()) # Do not backprop the error to encoder
+
+                cluster_loss = torch.sum(self.criterion(y_pred_cluster, y_cluster))
+
+            else:
+                # classifier_labels = np.argmax(q.detach().cpu().numpy(), axis=1)
+                # for j in range(len(q)):
+                #     classifier_labels[j] = np.random.choice(range(self.n_clusters), p = q[j].detach().numpy())
+
+                # for k in range(self.n_clusters):
+                #     idx_cluster = np.where(classifier_labels == k)[0]
+                #     X_cluster = z[idx_cluster]
+                #     y_cluster = y[idx_cluster]
+
+                #     y_pred_cluster = classifier_k(X_cluster.detach())
+                #     cluster_loss = torch.mean(self.criterion(y_pred_cluster, y_cluster))
+
+                X_cluster = z
+                if backprop_enc == True:
+                    y_pred_cluster = classifier_k(X_cluster)
+                    cluster_loss = torch.sum(q[:,k]*self.criterion(y_pred_cluster, y_cluster))
+                else:
+                    y_pred_cluster = classifier_k(X_cluster.detach())
+                    cluster_loss = torch.sum(q.detach()[:,k]*self.criterion(y_pred_cluster, y_cluster))
+
+                # cluster_loss = Variable(cluster_loss.data, requires_grad=True)
+
+            if backprop_local == True:
+                optimizer_k.zero_grad()
+                cluster_loss.backward(retain_graph=True)
+                optimizer_k.step()
+            total_loss += cluster_loss
+
+        return q, total_loss
