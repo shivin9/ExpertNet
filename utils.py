@@ -469,6 +469,8 @@ class parameters(object):
         else:
             self.input_dim = parser.n_features
             self.n_features = parser.n_features
+
+        self.end_t = parser.end_t
         
         # Training parameters
         self.lr_enc = parser.lr_enc
@@ -507,7 +509,7 @@ class parameters(object):
         self.expt = parser.expt
         self.cluster_analysis = parser.cluster_analysis
         self.log_interval = parser.log_interval
-        self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
+        self.pretrain_path = parser.pretrain_path + "/" + self.dataset + "_" + str(self.n_features) + ".pth"
 
 
 class AdMSoftmaxLoss(nn.Module):

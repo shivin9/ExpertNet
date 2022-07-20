@@ -191,7 +191,7 @@ for r in range(len(iter_array)):
         ae_layers = [64, args.n_z, 64]
         expert_layers = [args.n_z, 30, args.n_classes]
 
-    print(args.input_dim, args.n_features)
+    print("Input Dim: ", args.input_dim, "#Features:", X_train.shape[1])
     model = ExpertNet(
             ae_layers,
             expert_layers,

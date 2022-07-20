@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 import math
 import umap
 
+
 def pad_sents(sents, pad_token, N_FEATS=7, END_T=-1):
     j = 0
     sents_padded = []
@@ -16,7 +17,7 @@ def pad_sents(sents, pad_token, N_FEATS=7, END_T=-1):
         padded = list(i) + [pad_token]*(max_length-len(i))
         padded = np.array(np.stack(padded, axis=0), dtype='float')
         padded = padded[:,:N_FEATS][:END_T]
-        sents_padded.append(padded)
+        sents_padded.append(padded[:,:N_FEATS][:END_T])
     return np.array(sents_padded, dtype='float')
 
 
@@ -34,6 +35,8 @@ def get_ts_datasets(args, r_state=0):
     X = np.hstack([train_x, test_x])
     y = np.hstack([train_y, test_y])
     lens = np.hstack([train_x_len, test_x_len])
+    
+    args.input_dim = train_x[0].shape[1]
 
     train_x, test_x, train_y, test_y, train_x_len, test_x_len = train_test_split(X, y, lens, random_state=r_state)
 

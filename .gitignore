@@ -4,3 +4,4 @@ pretrained_model/*.pt
 __pycache__/
 ./figures
 /Results/*
+pretrained_model/*
