@@ -17,7 +17,7 @@ import pandas as pd
 import os
 
 NUM_CLUSTERS = 4
-DATASET = '/Users/shivin/Document/NUS/Research/Data/aki48_new/'
+DATASET = '/Users/shivin/Document/NUS/Research/Data/aki/'
 ORIGINAL = os.path.abspath(".")
 
 data_train = get_aki(DATASET+'train', ORIGINAL)
@@ -79,7 +79,7 @@ train_case_2(X, X_test, ENSEMBLE=True)
 NUM_CLUSTERS = 4
 DATASET = '/Users/shivin/Document/NUS/Research/Data/ards_new/'
 
-	
+
 X = get_aki(DATASET+'train', ORIGINAL)
 X = pd.concat(X,axis=1).T
 columns = X.columns
@@ -124,3 +124,34 @@ y_total.to_csv(DATASET+"y.csv", index=False)
 train_case_1(X, X_test)
 train_case_2(X, X_test, ENSEMBLE=True)
 
+
+################################################################
+######################## ARDS TS Dataset #######################
+################################################################
+
+final_train = get_aki_TS('./train', ori_direc=os.curdir, t_end=24)
+final_test = get_aki_TS('./test', ori_direc=os.curdir, t_end=24)
+y_train = []
+
+for i in range(len(final_train)):
+    final_train[i] = final_train[i][data_columns]
+    final_train[i] = final_train[i].ffill(axis=0)
+    y_train.append(final_train[i].y.iloc[-1])
+    final_train[i] = final_train[i].drop(columns=['y'])
+
+y_test = []
+
+for i in range(len(final_test)):
+    final_test[i] = final_test[i][data_columns]
+    final_test[i] = final_test[i].ffill(axis=0)
+    y_test.append(final_test[i].y.iloc[-1])
+    final_test[i] = final_test[i].drop(columns=['y'])
+
+X_tr = []
+X_te = []
+
+for i in range(len(final_train)):
+	X_tr.append(final_train[i].to_numpy())
+
+for i in range(len(final_test)):
+	X_te.append(final_test[i].to_numpy())

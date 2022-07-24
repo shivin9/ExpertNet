@@ -551,7 +551,7 @@ class DMNN(nn.Module):
 
 
 class GRUModel(nn.Module):
-    def __init__(self, input_dim, hidden_dim, layer_dim=3, dropout_prob=0.3):
+    def __init__(self, input_dim, hidden_dim, layer_dim=3, dropout_prob=0.7):
         super(GRUModel, self).__init__()
 
         # Defining the number of layers and the nodes in each layer
@@ -590,7 +590,7 @@ class GRUModel(nn.Module):
         # Convert the final state to our desired output shape (batch_size, output_dim)
         x_bar = self.fc(dec_out.reshape(batch_size*seq_len, n_features))
         # print(x_bar.shape)
-        return x_bar.reshape(batch_size,seq_len, self.input_dim), hidden, hidden
+        return x_bar.reshape(batch_size, seq_len, self.input_dim), hidden, hidden
 
 
 class Encoder(nn.Module):
@@ -722,12 +722,13 @@ class ExpertNet_GRU(nn.Module):
         if not is_non_zero_file(path):
             path = ''
         if path == '':
+            print("Pretraining AE")
             pretrain_ts_ae(self, train, self.args)
         else:
             # load pretrain weights
             self.ae.load_state_dict(torch.load(self.pretrain_path))
-            pretrain_ts_ae(self, train, self.args)
-            print('load pretrained ae from', path)
+            # pretrain_ts_ae(self, train, self.args)
+            print('Loading Pretrained AE from', path)
 
 
     def encoder_forward(self, x, output="default"):

@@ -160,6 +160,7 @@ def get_aki_exp(direc, ori_direc, t_end=24):
 	final['y'] = ys
 	return final
 
+
 if __name__ == '__main__':
 	final_train = get_aki_exp('./train', ori_direc=os.curdir, t_end=24)
 	final_test = get_aki_exp('./test', ori_direc=os.curdir, t_end=24)
@@ -174,6 +175,7 @@ if __name__ == '__main__':
 	final = final.fillna(0)
 	final.to_csv('X.csv', index=False)
 	final_y.to_csv('y.csv', index=False)
+
 
 def get_sofa_features(data):
 	sofa_features = []

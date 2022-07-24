@@ -32,16 +32,20 @@ def get_ts_datasets(args, r_state=0):
     train_x_len = np.load(DATA_DIR + '/' + DATASET + '/train_x_len.npy', allow_pickle=True)
     test_x_len = np.load(DATA_DIR + '/' + DATASET + '/test_x_len.npy', allow_pickle=True)
 
-    X = np.hstack([train_x, test_x])
+    if DATASET == 'sepsis_ts':
+        X = np.hstack([train_x, test_x])
+    else:
+        X = np.vstack([train_x, test_x])
+
     y = np.hstack([train_y, test_y])
     lens = np.hstack([train_x_len, test_x_len])
     
     args.input_dim = train_x[0].shape[1]
 
-    train_x, test_x, train_y, test_y, train_x_len, test_x_len = train_test_split(X, y, lens, random_state=r_state)
+    train_x, test_x, train_y, test_y, train_x_len, test_x_len = train_test_split(X, y, lens, random_state=r_state, test_size=0.15)
 
     scale = StandardScaler()
-    _ = scale.fit(np.nan_to_num(np.concatenate(train_x)))
+    scale.fit(np.nan_to_num(np.concatenate(train_x)))
 
     for idx in range(len(train_x)):
         train_x[idx] = torch.Tensor(scale.transform(np.nan_to_num(train_x[idx])))
@@ -49,7 +53,7 @@ def get_ts_datasets(args, r_state=0):
     for idx in range(len(test_x)):
         test_x[idx] = torch.Tensor(scale.transform(np.nan_to_num(test_x[idx])))
 
-    train_x, dev_x, train_y, dev_y, train_x_len, dev_x_len = train_test_split(train_x, train_y, train_x_len, random_state=r_state)
+    train_x, dev_x, train_y, dev_y, train_x_len, dev_x_len = train_test_split(train_x, train_y, train_x_len, random_state=r_state, test_size=0.15)
 
     return (train_x, train_x_len, train_y), (dev_x, dev_x_len, dev_y), (test_x, test_x_len, test_y), scale
 

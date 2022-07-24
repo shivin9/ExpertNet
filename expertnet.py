@@ -39,7 +39,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
-parser.add_argument('--n_features', default= '-1')
+parser.add_argument('--n_features', default=-1)
+parser.add_argument('--end_t', default=24)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)

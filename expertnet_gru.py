@@ -37,8 +37,8 @@ from ts_utils import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default= 'creditcard')
-parser.add_argument('--input_dim', default= '-1')
-parser.add_argument('--n_features', default= 7, type=int)
+parser.add_argument('--input_dim', default= -1, type=int)
+parser.add_argument('--n_features', default= -1, type=int)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -47,7 +47,7 @@ parser.add_argument('--alpha', default= 1, type=float)
 parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
-parser.add_argument('--n_runs', default= 5, type=int)
+parser.add_argument('--n_runs', default= 3, type=int)
 parser.add_argument('--pre_epoch', default= 40, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
@@ -175,7 +175,7 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
 
-    train, val, test, scale = get_ts_datasets(args, r_state=0)
+    train, val, test, scale = get_ts_datasets(args, r_state=r)
     X_train, X_train_len, y_train = train
     X_val, X_val_len, y_val = val
     X_test, X_test_len, y_test = test
