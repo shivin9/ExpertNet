@@ -645,11 +645,10 @@ def plot(model, X_train, y_train, args, X_latents=None, X_test=None, y_test=None
     plot_data(latents_X, y_train, cluster_id_train, args.dataset+"_emb_k"+str(args.n_clusters), epoch)
 
     # Plot feature space cluster
-    plot_data(X_train[idx], y_train, cluster_id_train, args.dataset+"_ori_k"+str(args.n_clusters), epoch)
+    # plot_data(X_train[idx], y_train, cluster_id_train, args.dataset+"_ori_k"+str(args.n_clusters), epoch)
 
     if X_test is not None:
-        qs, latents_test = model.encoder_forward(X_test, output="latent")
-        q_test = qs[0]
+        q_test, latents_test = model.encoder_forward(X_test, output="latent")
         cluster_id_test = torch.argmax(q_test, axis=1)
 
         print("Test data")
@@ -914,10 +913,7 @@ def performance_metrics(y_true, y_pred, n_classes=2):
 
 
 '''
-<<<<<<< HEAD
-=======
 Code to generate latex table code using python
->>>>>>> old_working
 for d in datasets:
     out = ""
     for k in K:
@@ -939,32 +935,7 @@ for d in datasets:
     if k == 4:
         out += "\\midrule \n"
     print(out)
-<<<<<<< HEAD
-=======
 
-In [22]: for d in datasets:
-    out = ""
-    for k in K:
-     if k == 2:
-         out = d
-     out += " & " + str(k) + " & "
-     itr = 0
-     for df_idx in range(len(df_list)):
-         itr += 1
-         df = df_list[df_idx]
-         if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
-             out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
-             out += " \\pm "
-             out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_STD.values[0])  + "$}"
-             if df_idx < len(df_list) - 1:
-                 out += " & "
-     out += "\\\\ \n"
-    #out += "\\\\ \n"
-    if k == 4:
-     out += "\\midrule \n"
-    print(out)
-    
->>>>>>> old_working
 '''
 
 ## Ablation Parameter Ranges ##

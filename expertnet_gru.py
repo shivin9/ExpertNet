@@ -182,7 +182,7 @@ for r in range(len(iter_array)):
     pad_token = np.zeros(args.input_dim)
     device = args.device
 
-    expert_layers = [args.n_z, 64, 32, 16, 8, args.n_classes]
+    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
     model = ExpertNet_GRU(
             expert_layers,
             args.lr_enc,
@@ -324,7 +324,6 @@ for r in range(len(iter_array)):
         train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
 
         if epoch % args.log_interval == 0:
-            # q_train = torch.Tensor(np.concatenate(q_train, axis=0))
             x_train = torch.Tensor(np.concatenate(x_train, axis=0))
             _, _, q_train = model.encoder_forward(x_train, output="decoded")
             p_train = target_distribution(q_train.detach())
@@ -339,6 +338,7 @@ for r in range(len(iter_array)):
         y_pred = []
         z_val = []
         q_val = []
+        x_val = []
         cluster_ids_val = np.array([])
         with torch.no_grad():
             model.eval()
@@ -367,9 +367,6 @@ for r in range(len(iter_array)):
                 x_batch = torch.nan_to_num(x_batch)
 
                 # Evaluate model on Validation dataset
-                # q_batch, z_batch = model(torch.FloatTensor(x_batch).to(args.device), output="latent")
-
-                # z_train, _, q_train = model.encoder_forward(torch.Tensor(X_train).to(args.device), output="decoded")
                 z_batch, _, q_batch = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
 
                 cluster_ids = torch.argmax(q_batch, axis=1)
@@ -377,6 +374,8 @@ for r in range(len(iter_array)):
 
                 z_val.append(z_batch.detach().numpy())
                 q_val.append(q_batch.detach().numpy())
+                x_val.append(x_batch.detach().numpy())
+                
                 cluster_ids_val = np.hstack([cluster_ids_val, cluster_ids.detach().numpy()])
 
                 # Weighted predictions
@@ -389,10 +388,10 @@ for r in range(len(iter_array)):
 
                 else:
                     # for j in range(model.n_clusters):
-                        X_cluster = z_batch
-                        cluster_preds = model.classifiers[j][0](X_cluster)
-                        for c in range(args.n_classes):
-                            preds[:,c] += q_batch[:,j]*cluster_preds[:,c]
+                    X_cluster = z_batch
+                    cluster_preds = model.classifiers[j][0](X_cluster)
+                    for c in range(args.n_classes):
+                        preds[:,c] += q_batch[:,j]*cluster_preds[:,c]
 
                 y_pred += list(preds.cpu().detach().numpy())
                 y_true += list(y_batch.cpu().numpy())
@@ -401,12 +400,13 @@ for r in range(len(iter_array)):
         y_pred = np.array(y_pred)
         z_val = np.concatenate(z_val, axis=0)
         q_val = np.concatenate(q_val, axis=0)
-
-        if args.plot == 'True':
-            plot(z_val, q_batch, y_train, args, labels=cluster_ids_val, epoch=epoch)
+        x_val = np.concatenate(x_val, axis=0)
 
         # if args.plot == 'True':
-        #     plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, labels=cluster_indices, epoch=epoch)
+        #     plot(z_val, q_batch, y_train, args, labels=cluster_ids_val, epoch=epoch)
+
+        if args.plot == 'True':
+            plot(model, torch.FloatTensor(x_val).to(args.device), y_val, args, labels=cluster_ids_val, epoch=epoch)
 
         # Classification Matrics
         val_metrics = performance_metrics(y_true, y_pred, args.n_classes)
@@ -880,6 +880,9 @@ print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(np.std(sil_scores),\
 #     np.average(test_losses), np.average(e_test_losses)))
 
 if args.cluster_analysis == "True":
-    WDFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-    HTFD_Cluster_Analysis(torch.Tensor(X_train), cluster_ids_train, column_names)
-    HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names)
+    _ , z_train = model.encoder_forward(torch.FloatTensor(X_train).to(args.device), output='latent')
+    WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names,\
+        scale=scale, X_latents=z_train, dataset=args.dataset, n_results=15)
+
+    HTFD_Single_Cluster_Analysis(scale.inverse_transform(X_train), y_train, cluster_ids_train, column_names,\
+        scale=None, n_results=25)

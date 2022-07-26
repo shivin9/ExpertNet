@@ -67,6 +67,7 @@ parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
+parser.add_argument('--n_features', default= -1, type=int)
 parser.add_argument('--pre_epoch', default= 40, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
@@ -197,6 +198,8 @@ for classifier in classifiers:
         acc_scores.append(test_acc)
         # best_features = np.argsort(np.abs(clf.coef_))[:10]
 
+    print("AUC:", auc_scores)
+    print("AUPRC:", auprc_scores)
     print("Dataset\tCLF\tF1\tAUC\tAUPRC\tMINPSE\tACC")
     print("[Avg]\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
         (args.dataset, classifier, np.average(f1_scores), np.average(auc_scores),\

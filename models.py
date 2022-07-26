@@ -551,7 +551,7 @@ class DMNN(nn.Module):
 
 
 class GRUModel(nn.Module):
-    def __init__(self, input_dim, hidden_dim, layer_dim=3, dropout_prob=0.7):
+    def __init__(self, input_dim, hidden_dim, layer_dim=1, dropout_prob=0.7):
         super(GRUModel, self).__init__()
 
         # Defining the number of layers and the nodes in each layer
@@ -560,105 +560,126 @@ class GRUModel(nn.Module):
         self.input_dim = input_dim
 
         # GRU layers
-        self.gru_enc = nn.GRU(
-            input_dim, hidden_dim, layer_dim, batch_first=True, dropout=dropout_prob
+        self.gru_enc1 = nn.GRU(
+            input_dim, hidden_dim[0], layer_dim, batch_first=True, dropout=dropout_prob
         )
 
-        self.gru_dec = nn.GRU(
-            hidden_dim, hidden_dim, layer_dim, batch_first=True, dropout=dropout_prob
+        self.gru_enc2 = nn.GRU(
+            hidden_dim[0], hidden_dim[1], layer_dim, batch_first=True, dropout=dropout_prob
+        )
+
+        self.gru_enc3 = nn.GRU(
+            hidden_dim[1], hidden_dim[2], layer_dim, batch_first=True, dropout=dropout_prob
+        )
+
+        self.gru_dec1 = nn.GRU(
+            hidden_dim[2], hidden_dim[1], layer_dim, batch_first=True, dropout=dropout_prob
+        )
+
+        self.gru_dec2 = nn.GRU(
+            hidden_dim[1], hidden_dim[0], layer_dim, batch_first=True, dropout=dropout_prob
+        )
+
+        self.gru_dec3 = nn.GRU(
+            hidden_dim[0], hidden_dim[0], layer_dim, batch_first=True, dropout=dropout_prob
         )
 
         # Fully connected layer
-        self.fc = nn.Linear(hidden_dim, input_dim)
+        self.fc = nn.Linear(hidden_dim[0], input_dim)
 
     def forward(self, x):
         # Initializing hidden state for first input with zeros
-        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
+        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim[0]).requires_grad_()
 
         # Forward propagation by passing in the input and hidden state into the model
-        gru_out, h1 = self.gru_enc(x, h0.detach())
+        enc_out1, h_enc1 = self.gru_enc1(x, h0.detach())
+        enc_out2, h_enc2 = self.gru_enc2(enc_out1)
+        enc_out3, h_enc3 = self.gru_enc3(enc_out2)
 
-        dec_out, h2 = self.gru_dec(gru_out)
+        dec_out1, h_dec1 = self.gru_dec1(enc_out3)
+        dec_out2, h_dec2 = self.gru_dec2(dec_out1)
+        dec_out3, h_dec3 = self.gru_dec3(dec_out2)
+
         # print(dec_out.shape)
         # Reshaping the outputs in the shape of (batch_size, seq_length, hidden_size)
         # so that it can fit into the fully connected layer
-        hidden = gru_out[:, -1, :].squeeze()
+        hidden = enc_out3[:, -1, :].squeeze()
 
-        batch_size = dec_out.shape[0]
-        seq_len = dec_out.shape[1]
-        n_features = dec_out.shape[2]
+        batch_size = dec_out3.shape[0]
+        seq_len = dec_out3.shape[1]
+        n_features = dec_out3.shape[2]
         # Convert the final state to our desired output shape (batch_size, output_dim)
-        x_bar = self.fc(dec_out.reshape(batch_size*seq_len, n_features))
+        x_bar = self.fc(dec_out3.reshape(batch_size*seq_len, n_features))
         # print(x_bar.shape)
         return x_bar.reshape(batch_size, seq_len, self.input_dim), hidden, hidden
 
 
-class Encoder(nn.Module):
-    def __init__(self, batch_size, seq_len, n_features, embedding_dim=64):
-        super(Encoder, self).__init__()
-        self.batch_size, self.seq_len, self.n_features = batch_size, seq_len, n_features
-        self.embedding_dim, self.hidden_dim = embedding_dim, 2 * embedding_dim
-        self.rnn1 = nn.LSTM(
-          input_size=n_features,
-          hidden_size=self.hidden_dim,
-          num_layers=1,
-          batch_first=True
-        )
-        self.rnn2 = nn.LSTM(
-          input_size=self.hidden_dim,
-          hidden_size=embedding_dim,
-          num_layers=1,
-          batch_first=True
-        )
+# class Encoder(nn.Module):
+#     def __init__(self, batch_size, seq_len, n_features, embedding_dim=64):
+#         super(Encoder, self).__init__()
+#         self.batch_size, self.seq_len, self.n_features = batch_size, seq_len, n_features
+#         self.embedding_dim, self.hidden_dim = embedding_dim, 2 * embedding_dim
+#         self.rnn1 = nn.LSTM(
+#           input_size=n_features,
+#           hidden_size=self.hidden_dim,
+#           num_layers=1,
+#           batch_first=True
+#         )
+#         self.rnn2 = nn.LSTM(
+#           input_size=self.hidden_dim,
+#           hidden_size=embedding_dim,
+#           num_layers=1,
+#           batch_first=True
+#         )
 
-    def forward(self, x):
-        batch_size = x.shape[0]
-        x = x.reshape((batch_size, self.seq_len, self.n_features))
-        x, (_, _) = self.rnn1(x)
-        x, (hidden_n, _) = self.rnn2(x)
-        return hidden_n.reshape((batch_size, self.embedding_dim))
-
-
-class Decoder(nn.Module):
-    def __init__(self, batch_size, seq_len, embedding_dim, input_dim=64):
-        super(Decoder, self).__init__()
-        self.batch_size, self.seq_len, self.embedding_dim, self.input_dim = batch_size, seq_len, embedding_dim, input_dim
-        self.hidden_dim = 2 * embedding_dim
-        self.rnn1 = nn.LSTM(
-          input_size=embedding_dim,
-          hidden_size=embedding_dim,
-          num_layers=1,
-          batch_first=True
-        )
-        self.rnn2 = nn.LSTM(
-          input_size=embedding_dim,
-          hidden_size=self.hidden_dim,
-          num_layers=1,
-          batch_first=True
-        )
-        self.output_layer = nn.Linear(self.hidden_dim, input_dim)
-
-    def forward(self, x):
-        batch_size = x.shape[0]
-        x = x.repeat(self.seq_len, 1)
-        x = x.reshape((batch_size, self.seq_len, self.embedding_dim))
-        x, (hidden_n, cell_n) = self.rnn1(x)
-        x, (hidden_n, cell_n) = self.rnn2(x)
-        x = x.reshape((batch_size*self.seq_len, self.hidden_dim))
-        out = self.output_layer(x)
-        return out.reshape((batch_size, self.seq_len, self.input_dim))
+#     def forward(self, x):
+#         batch_size = x.shape[0]
+#         x = x.reshape((batch_size, self.seq_len, self.n_features))
+#         x, (_, _) = self.rnn1(x)
+#         x, (hidden_n, _) = self.rnn2(x)
+#         return hidden_n.reshape((batch_size, self.embedding_dim))
 
 
-class RecurrentAutoencoder(nn.Module):
-    def __init__(self, batch_size, seq_len, n_features, device, embedding_dim=64):
-        super(RecurrentAutoencoder, self).__init__()
-        self.encoder = Encoder(batch_size, seq_len, n_features, embedding_dim).to(device)
-        self.decoder = Decoder(batch_size, seq_len, embedding_dim, n_features).to(device)
+# class Decoder(nn.Module):
+#     def __init__(self, batch_size, seq_len, embedding_dim, input_dim=64):
+#         super(Decoder, self).__init__()
+#         self.batch_size, self.seq_len, self.embedding_dim, self.input_dim = batch_size, seq_len, embedding_dim, input_dim
+#         self.hidden_dim = 2 * embedding_dim
+#         self.rnn1 = nn.LSTM(
+#           input_size=embedding_dim,
+#           hidden_size=embedding_dim,
+#           num_layers=1,
+#           batch_first=True
+#         )
+#         self.rnn2 = nn.LSTM(
+#           input_size=embedding_dim,
+#           hidden_size=self.hidden_dim,
+#           num_layers=1,
+#           batch_first=True
+#         )
+#         self.output_layer = nn.Linear(self.hidden_dim, input_dim)
 
-    def forward(self, x):
-        x = self.encoder(x)
-        x = self.decoder(x)
-        return x
+#     def forward(self, x):
+#         batch_size = x.shape[0]
+#         x = x.repeat(self.seq_len, 1)
+#         x = x.reshape((batch_size, self.seq_len, self.embedding_dim))
+#         x, (hidden_n, cell_n) = self.rnn1(x)
+#         x, (hidden_n, cell_n) = self.rnn2(x)
+#         x = x.reshape((batch_size*self.seq_len, self.hidden_dim))
+#         out = self.output_layer(x)
+#         return out.reshape((batch_size, self.seq_len, self.input_dim))
+
+
+# class RecurrentAutoencoder(nn.Module):
+#     def __init__(self, batch_size, seq_len, n_features, device, embedding_dim=64):
+#         super(RecurrentAutoencoder, self).__init__()
+#         self.encoder = Encoder(batch_size, seq_len, n_features, embedding_dim).to(device)
+#         self.decoder = Decoder(batch_size, seq_len, embedding_dim, n_features).to(device)
+
+#     def forward(self, x):
+#         x = self.encoder(x)
+#         x = self.decoder(x)
+#         return x
 
 
 class ExpertNet_GRU(nn.Module):
@@ -683,8 +704,11 @@ class ExpertNet_GRU(nn.Module):
         self.batch_size = args.batch_size
         self.seq_len = args.end_t
 
+        self.hidden_dim = [128, 64, self.n_z]
+
         # append input_dim at the end
-        self.ae = GRUModel(self.n_features, self.n_z)
+        # self.ae = GRUModel(self.n_features, self.n_z)
+        self.ae = GRUModel(self.n_features, self.hidden_dim)
         # self.ae = RecurrentAutoencoder(self.batch_size, self.seq_len, self.n_features, self.device, self.n_z)
 
         # cluster layer
@@ -801,18 +825,6 @@ class ExpertNet_GRU(nn.Module):
                 cluster_loss = torch.sum(self.criterion(y_pred_cluster, y_cluster))
 
             else:
-                # classifier_labels = np.argmax(q.detach().cpu().numpy(), axis=1)
-                # for j in range(len(q)):
-                #     classifier_labels[j] = np.random.choice(range(self.n_clusters), p = q[j].detach().numpy())
-
-                # for k in range(self.n_clusters):
-                #     idx_cluster = np.where(classifier_labels == k)[0]
-                #     X_cluster = z[idx_cluster]
-                #     y_cluster = y[idx_cluster]
-
-                #     y_pred_cluster = classifier_k(X_cluster.detach())
-                #     cluster_loss = torch.mean(self.criterion(y_pred_cluster, y_cluster))
-
                 X_cluster = z
                 if backprop_enc == True:
                     y_pred_cluster = classifier_k(X_cluster)

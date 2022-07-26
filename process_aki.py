@@ -155,3 +155,12 @@ for i in range(len(final_train)):
 
 for i in range(len(final_test)):
 	X_te.append(final_test[i].to_numpy())
+
+trn_len = []
+te_len = []
+
+for i in range(len(final_train)):
+	trn_len.append(len(final_train[i]))
+
+for i in range(len(final_test)):
+	te_len.append(len(final_test[i]))
