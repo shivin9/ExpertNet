@@ -70,7 +70,7 @@ def pretrain_ae(model, train_loader, args):
     '''
     print(model)
     optimizer = Adam(model.parameters(), lr=args.lr_enc)
-    for epoch in range(200):
+    for epoch in range(100):
         total_loss = 0.
         for batch_idx, (x, _, _) in enumerate(train_loader):
             x = x.to(args.device)
@@ -354,7 +354,6 @@ class ExpertNet(nn.Module):
         for j in range(self.n_clusters):
             if attention == True:
                 # Weighted predictions
-                cluster_id = np.where(cluster_ids == j)[0]
                 X_cluster = z
                 cluster_preds = self.classifiers[j][0](X_cluster)
                 for c in range(self.n_classes):

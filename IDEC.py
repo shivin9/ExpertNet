@@ -648,10 +648,10 @@ for r in range(len(iter_array)):
 
 enablePrint()
 
-# print("Test F1: ", f1_scores)
-# print("Test AUC: ", auc_scores)
-# print("Test AUPRC: ", auprc_scores)
-# print("Test MISPSE: ", minpse_scores)
+print("Test F1: ", f1_scores)
+print("Test AUC: ", auc_scores)
+print("Test AUPRC: ", auprc_scores)
+print("Test MISPSE: ", minpse_scores)
 
 # print("Sil scores: ", sil_scores)
 # print("HTFD: ", HTFD_scores)

@@ -39,6 +39,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
+parser.add_argument('--n_features', default= '-1')
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -101,7 +102,7 @@ if args.verbose == "False":
     blockPrint()
 
 for r in range(args.n_runs):
-    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r, n_features=args.n_features)
     X_train, y_train = train_data
     X_val, y_val = val_data
     X_test, y_test = test_data
@@ -143,7 +144,7 @@ for r in range(args.n_runs):
 
     cluster_ids_train = torch.argmax(gate_vals, axis=1)
     HTFD_scores.append(calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train))
-    wdfd_scores.append(calculate_WDFD(torch.FloatTensor(X_train), cluster_ids_train))
+    # wdfd_scores.append(calculate_WDFD(torch.FloatTensor(X_train), cluster_ids_train))
     sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
 
     # train Local Experts
@@ -244,10 +245,18 @@ for r in range(args.n_runs):
         test_pred += torch.reshape(gate_test[:,j], shape=(len(preds_j), 1)) * preds_j
 
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
-    test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
-    test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
-    test_auprc = multi_class_auprc(y_test, test_pred.detach().numpy(), args.n_classes)
-    test_acc = accuracy_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
+
+    test_metrics = performance_metrics(y_test, test_pred.detach().numpy(), args.n_classes)
+    test_f1  = test_metrics['f1_score']
+    test_auc = test_metrics['auroc']
+    test_auprc = test_metrics['auprc']
+    test_minpse = test_metrics['minpse']
+    test_acc = test_metrics['acc']
+
+    # test_f1 = f1_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test, average="macro")
+    # test_auc = multi_class_auc(y_test, test_pred.detach().numpy(), args.n_classes)
+    # test_auprc = multi_class_auprc(y_test, test_pred.detach().numpy(), args.n_classes)
+    # test_acc = accuracy_score(np.argmax(test_pred.detach().numpy(), axis=1), y_test)
     es([val_f1, val_auprc], model)
 
     y_preds = np.argmax(test_pred.detach().numpy(), axis=1)
@@ -261,6 +270,7 @@ for r in range(args.n_runs):
     f1_scores.append(test_f1)
     auc_scores.append(test_auc)
     auprc_scores.append(test_auprc)
+    minpse_scores.append(test_minpse)
     acc_scores.append(test_acc)
     nmi_scores.append(nmi_score(cluster_ids_test.data.cpu().numpy(), y_test))
     ari_scores.append(ari_score(cluster_ids_test.data.cpu().numpy(), y_test))
@@ -268,10 +278,10 @@ for r in range(args.n_runs):
 
 
 enablePrint()
-# print("F1:", f1_scores)
-# print("AUC:", auc_scores)
-# print("AUPRC:", auprc_scores)
-# print("ACC:", acc_scores)
+print("F1:", f1_scores)
+print("AUC:", auc_scores)
+print("AUPRC:", auprc_scores)
+print("MINPSE:", minpse_scores)
 
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD\tWDFD")
 

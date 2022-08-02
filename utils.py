@@ -25,7 +25,7 @@ import umap
 color = ['grey', 'red', 'blue', 'pink', 'olive', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan']
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
             'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic',\
-            'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24']
+            'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24', 'sepsis24_correct', 'ards24_correct']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
@@ -727,13 +727,17 @@ def get_dataset(DATASET, DATA_DIR, n_features):
             y1.append(y[i][0])
         y = np.array(y1)
 
-    if n_features != -1:
+    if int(n_features) != -1:
         n_features = int(n_features)
-        X = scale.fit_transform(X.to_numpy()[:,:n_features])
+        data = np.nan_to_num(X.to_numpy()[:,:n_features])
+        X = scale.fit_transform(data)
+        X = np.nan_to_num(X)
         columns = columns[:n_features]
 
     else:
-        X = scale.fit_transform(X)
+        data = np.nan_to_num(X.to_numpy())
+        X = scale.fit_transform(data)
+        X = np.nan_to_num(X)
 
     return X, y, columns, scale
 
@@ -814,11 +818,6 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
-            # scale = StandardScaler()
-            # X_train = scale.fit_transform(X_train)
-            # X_val = scale.fit_transform(X_val)
-            # X_test = scale.fit_transform(X_test)
-
         elif args.dataset == "cic_los" or args.dataset == "cic_los_new":
             if args.dataset == "cic_los":
                 X, y, columns, scale = get_dataset("cic", DATA_DIR, n_features)
@@ -843,18 +842,6 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
 
             X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state, test_size=0.15)
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
-
-            # scale = StandardScaler()
-            # X_train = scale.fit_transform(X_train)
-            # X_val = scale.fit_transform(X_val)
-            # X_test = scale.fit_transform(X_test)
-
-        elif args.dataset == "aki":
-            X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
-
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
-
 
         else:
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
@@ -923,40 +910,42 @@ for d in datasets:
         for df_idx in range(len(df_list)):
             itr += 1
             df = df_list[df_idx]
-            if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
-                out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
+            #print(df_idx)
+            df_d_k = df[(df.Dataset == d) & (df.k == k)]
+            if len(df_d_k) > 0:
+                out += "{$" + str(np.round(df_d_k.SIL.values[0], 3))
                 out += " \\pm "
-                out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_std.values[0])  + "$}"
+                if 'SIL_STD' in df_d_k:
+                    out += str(np.round(df_d_k.SIL_STD.values[0], 3))  + "$}"
+                else:
+                    out += '0.00' + "$}"
                 if df_idx < len(df_list) - 1:
                     out += " & "
-        out += "\\ \n"
-    out += "\\\\ \n"
-    if k == 4:
+            else:
+                out += "$-$ & "
+        out += "\\\\ \n"
+    #out += "\\\\ \n"
+    if k == K[-1]:
         out += "\\midrule \n"
     print(out)
 
-In [22]: for d in datasets:
-    out = ""
-    for k in K:
-     if k == 2:
-         out = d
-     out += " & " + str(k) + " & "
-     itr = 0
-     for df_idx in range(len(df_list)):
-         itr += 1
-         df = df_list[df_idx]
-         if len(df[(df.Dataset == d) & (df.k == k)]) > 0:
-             out += "{$" + str(df[(df.Dataset == d) & (df.k == k)].AUPRC.values[0])
-             out += " \\pm "
-             out += str(df[(df.Dataset == d) & (df.k == k)].AUPRC_STD.values[0])  + "$}"
-             if df_idx < len(df_list) - 1:
-                 out += " & "
-     out += "\\\\ \n"
-    #out += "\\\\ \n"
-    if k == 4:
-     out += "\\midrule \n"
-    print(out)
-    
+Code to calculate p-values
+for dataset in datasets:
+    for algo in algos:
+        for k in ks:
+            print("Dataset:", dataset, ", Algo:", algo, ", k:", k)
+            df_temp   = auc[(auc.k == k) & (auc.dataset == dataset)]
+            algo_mean = algo + "_mean"
+            algo_std  = algo + "_std"
+            en_mean   = "EN_mean"
+            en_std    = "EN_std"
+            algo_mean_val = df_temp[[algo_mean]].iloc[0,0]
+            algo_std_val  = df_temp[[algo_std]].iloc[0,0]
+            en_mean_val   = df_temp[[en_mean]].iloc[0,0]
+            en_std_val    = df_temp[[en_std]].iloc[0,0]
+            print("pval = ", ttest_ind_from_stats(algo_mean_val, algo_std_val, 5, en_mean_val, en_std_val, 5)[1])
+
+
 '''
 
 ## Ablation Parameter Ranges ##

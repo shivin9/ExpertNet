@@ -38,6 +38,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
+parser.add_argument('--n_features', default= '-1')
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -135,7 +136,7 @@ else:
     iteration_name = "Run"
 
 for r in range(len(iter_array)):
-    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
+    scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r, n_features=args.n_features)
     X_train, y_train = train_data
     X_val, y_val = val_data
     X_test, y_test = test_data
@@ -597,10 +598,10 @@ for r in range(len(iter_array)):
 
 enablePrint()
 
-# print("Test F1: ", f1_scores)
-# print("Test AUC: ", auc_scores)
-# print("Test AUPRC: ", auprc_scores)
-# print("Test MINPSE: ", minpse_scores)
+print("Test F1: ", f1_scores)
+print("Test AUC: ", auc_scores)
+print("Test AUPRC: ", auprc_scores)
+print("Test MINPSE: ", minpse_scores)
 
 # print("Sil scores: ", sil_scores)
 # print("HTFD: ", HTFD_scores)

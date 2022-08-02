@@ -67,20 +67,22 @@ echo "KMeans Experiments" >> Results/results_KM.txt
 echo "KMeans" >> Results/results_KM.txt
 echo "Respiratory 24" >> Results/results_KM.txt
 
-for j in 2 3 4 5
+# for j in 2 3 4 5
+for j in 3 4 5
 do
     echo "k = $(($j))" >> Results/results_KM.txt
-    python3 ../../KMeans.py --dataset ards24 --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 >> Results/results_KM.txt
+    python3 ../../KMeans.py --dataset ards24 --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 --n_runs 21 >> Results/results_KM.txt
 done
 
 
 echo "KMeans" >> Results/results_KM.txt
 echo "Sepsis 24" >> Results/results_KM.txt
 
-for j in 2 3 4 5
+# for j in 2 3 4 5
+for j in 3 4 5
 do
     echo "k = $(($j))" >> Results/results_KM.txt
-    python3 ../../KMeans.py --dataset sepsis24 --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 >> Results/results_KM.txt
+    python3 ../../KMeans.py --dataset sepsis24 --n_clusters $j --n_runs 3 --log_interval 2 --n_epochs 100 --n_z 32 --n_runs 21 >> Results/results_KM.txt
 done
 
 

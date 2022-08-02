@@ -68,6 +68,7 @@ parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
 parser.add_argument('--pre_epoch', default= 40, type=int)
+parser.add_argument('--n_features', default= -1, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
 parser.add_argument("--classifier", default="LR")
@@ -112,7 +113,7 @@ test_results = pd.DataFrame(columns=['Dataset', 'Classifier', 'alpha',\
 
 def get_classifier(classifier, n_classes=2):
     if classifier == "LR":
-        model = LogisticRegression(random_state=0, max_iter=1000, penalty='l2') # C=0.001
+        model = LogisticRegression(random_state=0, max_iter=1000, penalty='l2')# C=0.01)
     elif classifier == "RF":
         model = RandomForestClassifier(n_estimators=50)
     elif classifier == "SVM":
@@ -196,6 +197,10 @@ for classifier in classifiers:
         minpse_scores.append(test_minpse)
         acc_scores.append(test_acc)
         # best_features = np.argsort(np.abs(clf.coef_))[:10]
+
+    print("\nAUC", auc_scores)
+    print("AUPRC", auprc_scores)
+    print("MINPSE", minpse_scores)
 
     print("Dataset\tCLF\tF1\tAUC\tAUPRC\tMINPSE\tACC")
     print("[Avg]\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
