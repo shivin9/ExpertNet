@@ -181,7 +181,11 @@ for r in range(len(iter_array)):
     elif args.ablation == "k":
         args.n_clusters = iter_array[r]
 
-    suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
+    suffix = base_suffix + "_alpha_" + str(args.alpha) +\
+    "_beta_" + str(args.beta) +\
+    "_gamma_" + str(args.gamma) +\
+    "_delta_" + str(args.delta) +\
+    "_" + iteration_name + "_" + str(iter_array[r])
 
     if args.expt == 'ExpertNet':
         ae_layers = [128, 64, args.n_z, 64, 128]

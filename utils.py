@@ -507,7 +507,7 @@ class parameters(object):
         self.expt = parser.expt
         self.cluster_analysis = parser.cluster_analysis
         self.log_interval = parser.log_interval
-        self.pretrain_path = parser.pretrain_path + "/" + self.dataset + ".pth"
+        self.pretrain_path = parser.pretrain_path + "/" + self.dataset + "_" + str(self.n_features) + ".pth"
 
 
 class AdMSoftmaxLoss(nn.Module):
@@ -950,7 +950,7 @@ for dataset in datasets:
 
 ## Ablation Parameter Ranges ##
 alphas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
-betas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
-gammas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+betas  = [0, 0.01, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100]
+gammas = [0, 0.01, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100]
 deltas = [0, 0.001, 0.002, 0.005, 0.008, 0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
 ks = [1, 2, 3, 4, 5]

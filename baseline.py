@@ -38,6 +38,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
+parser.add_argument('--n_features', default= '-1')
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -64,7 +65,7 @@ parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss w
 parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
-parser.add_argument('--n_z', default= 20, type=int)
+parser.add_argument('--n_z', default= 32, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
 parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
@@ -76,7 +77,7 @@ parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--plot', default= 'False')
 parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/Base')
 
 
 parser = parser.parse_args()
@@ -117,6 +118,7 @@ for r in range(args.n_runs):
     
     # Single Big NN    
     # layers = [args.input_dim, 512, 256, 64, args.n_classes]
+    # layers = [args.input_dim, 128, 64, 32, 16, args.n_classes]
     # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
     # For DeepCAC baselines. Single Big NN
