@@ -169,7 +169,6 @@ for r in range(args.n_runs):
         # original_cluster_centers, cluster_indices = kmeans2(last_vals.data.cpu().numpy(), k=args.n_clusters, minit='++')
         # plot(model, torch.FloatTensor(last_vals).to(args.device), y_val, args, labels=cluster_indices, epoch=e)
         # idx = range(int(0.2*len(X_val)))
-
         # plot_data(torch.FloatTensor(last_vals)[idx].to(args.device), y_val[idx], cluster_indices[idx], args, e)
         
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',

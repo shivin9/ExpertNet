@@ -25,7 +25,7 @@ import umap
 color = ['grey', 'red', 'blue', 'pink', 'olive', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan']
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
             'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic',\
-            'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24', 'sepsis24_correct', 'ards24_correct']
+            'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24', 'aki24', 'sepsis24_correct', 'ards24_correct']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
@@ -697,9 +697,6 @@ def get_dataset(DATASET, DATA_DIR, n_features):
         columns = cols
         X, columns = drop_constant_column(X, columns)
 
-        X = X.to_numpy()
-
-
     elif DATASET == "infant":
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
@@ -905,7 +902,7 @@ for d in datasets:
     for k in K:
         if k == 2:
             out = d
-        out += " & " + str(k) + " & "
+        out += " & " + "$" + str(k) + "$" + " & "
         itr = 0
         for df_idx in range(len(df_list)):
             itr += 1
@@ -934,7 +931,7 @@ for dataset in datasets:
     for algo in algos:
         for k in ks:
             print("Dataset:", dataset, ", Algo:", algo, ", k:", k)
-            df_temp   = auc[(auc.k == k) & (auc.dataset == dataset)]
+            df_temp   = auprc[(auprc.k == k) & (auprc.Dataset == dataset)]
             algo_mean = algo + "_mean"
             algo_std  = algo + "_std"
             en_mean   = "EN_mean"
@@ -944,8 +941,6 @@ for dataset in datasets:
             en_mean_val   = df_temp[[en_mean]].iloc[0,0]
             en_std_val    = df_temp[[en_std]].iloc[0,0]
             print("pval = ", ttest_ind_from_stats(algo_mean_val, algo_std_val, 5, en_mean_val, en_std_val, 5)[1])
-
-
 '''
 
 ## Ablation Parameter Ranges ##
