@@ -1,28 +1,3 @@
-ExpertNet Student Experiments
-ExpertNet
-Respiratory TS
-k = 2
-n_clusters 2
-alpha 1.0
-beta 10.0
-gamma 5.0
-delta 0.1
-eta 0.01
-attention 11
-k = 3
-ExpertNet Student Experiments
-ExpertNet
-Sepsis 24
-k = 2
-n_clusters 2
-alpha 1.0
-beta 10.0
-gamma 5.0
-delta 0.1
-eta 0.01
-attention 11
-k = 4
-ExpertNet Student Experiments
 ExpertNet
 Respiratory TS
 k = 2
@@ -256,3 +231,48 @@ attention 11
 [Std]	SIL	HTFD	WDFD	W-HTFD
 	0.052	nan	nan	nan
 
+
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.7637218045112784, 0.6857039393704251, 0.6869240348692404]
+Test AUC:  [0.8797040555352575, 0.8071556844868075, 0.78502538071066]
+Test AUPRC:  [0.7925475435487488, 0.741538092015865, 0.7060229176503894]
+Test MINPSE:  [0.6547619047619048, 0.5861244019138756, 0.49]
+Sil scores:  [0.29015216, 0.3314645]
+HTFD:  []
+WDFD:  []
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	sepsis_ts	4	0.712	0.824	0.747	0.577	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.036	0.040	0.036	0.068	0.000
+
+[Avg]	SIL	HTFD	WDFD	W-HTFD
+	0.311	nan	nan	nan
+
+[Std]	SIL	HTFD	WDFD	W-HTFD
+	0.021	nan	nan	nan
+
+
+Experiment  Run
+range(0, 3)
+Test F1:  [0.7374686716791979, 0.7079437567600049, 0.6692105263157895]
+Test AUC:  [0.8845451223967848, 0.7852258599254041, 0.7528426395939087]
+Test AUPRC:  [0.8018547548448671, 0.7359729739525974, 0.6870907250164952]
+Test MINPSE:  [0.5952380952380952, 0.5578947368421052, 0.40923076923076923]
+Sil scores:  [0.5934316, 0.29840735]
+HTFD:  []
+WDFD:  []
+[Avg]	Dataset	k	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	sepsis_ts	3	0.705	0.808	0.742	0.521	0.500
+
+[Std]	E-F1	E-AUC	E-AUPRC	E-MINPSE	E-ACC
+	0.028	0.056	0.047	0.080	0.000
+
+[Avg]	SIL	HTFD	WDFD	W-HTFD
+	0.446	nan	nan	nan
+
+[Std]	SIL	HTFD	WDFD	W-HTFD
+	0.148	nan	nan	nan

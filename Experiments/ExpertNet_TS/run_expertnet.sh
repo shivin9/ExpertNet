@@ -85,9 +85,18 @@ echo "Sepsis TS" >> Results/results_EN.txt
 for j in 2 3 4 5
 do
     echo "k = $(($j))" >> Results/results_EN.txt
-    python3 ../../expertnet_gru.py --dataset sepsis_ts --n_clusters $j --beta 10 --gamma 5 --delta 0.1 --n_epochs 100 --n_z 20  --n_features 44 >> Results/results_EN.txt
+    python3 ../../expertnet_gru.py --dataset sepsis_ts --n_clusters $j --beta 10 --gamma 5 --delta 0.1 --n_epochs 100 --n_z 32 --n_features 44 --n_runs 3 >> Results/results_EN.txt
 done
 
+
+echo "ExpertNet" >> Results/results_EN.txt
+echo "ARDS TS" >> Results/results_EN.txt
+
+for j in 2 3 4 5
+do
+    echo "k = $(($j))" >> Results/results_EN.txt
+    python3 ../../expertnet_gru.py --dataset ards_ts --n_clusters $j --beta 10 --gamma 5 --delta 0.1 --n_epochs 100 --n_z 32  --n_features 89 --n_runs 3 >> Results/results_EN.txt
+done
 
 # echo "ExpertNet" >> Results/results_EN.txt
 # echo "CIC 48" >> Results/results_EN.txt

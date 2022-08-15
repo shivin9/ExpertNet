@@ -700,7 +700,6 @@ def get_dataset(DATASET, DATA_DIR, n_features):
 
         X = X.to_numpy()
 
-
     elif DATASET == "infant":
         X = pd.read_csv(DATA_DIR + "/" + DATASET + "/" + "X.csv")
         columns = X.columns
