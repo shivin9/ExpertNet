@@ -77,7 +77,7 @@ parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model')
 
-parser = parser.parse_args()  
+parser = parser.parse_args()
 args = parameters(parser)
 base_suffix = ""
 
@@ -159,12 +159,11 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    # ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
+
     ae_layers = [64, args.n_z, 64]
     expert_layers = [args.n_z, 30, args.n_classes]
 
     model = DeepCAC(
-            ae_layers,
             expert_layers,
             args=args).to(args.device)
 
@@ -342,7 +341,7 @@ for r in range(len(iter_array)):
         epoch_sep_loss = 0
         epoch_balance_loss = 0
 
-        model.ae.train() # prep model for evaluation
+        model.ae.train() # prep model for training
         for j in range(model.n_clusters):
             model.classifiers[j][0].train()
 

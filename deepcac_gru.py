@@ -13,7 +13,7 @@ from scipy.spatial import distance_matrix
 
 import argparse
 import numpy as np
-from scipy.cluster.vq import kmeans2
+from scipy.cluster.vq import vq, kmeans2
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
 from sklearn.metrics import adjusted_rand_score as ari_score
 from sklearn.linear_model import LogisticRegression
@@ -24,14 +24,14 @@ from torch.nn.parameter import Parameter
 from torch.optim import Adam
 from torch.utils.data import DataLoader, random_split
 from torch.nn import Linear
-from pytorchtools import EarlyStoppingEN_TS
+from pytorchtools import EarlyStoppingDeepCAC_TS
 
 import numbers
 from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as ari
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import ExpertNet_GRU,  target_distribution, source_distribution
+from models import DeepCAC_GRU
 from utils import *
 from ts_utils import *
 
@@ -78,7 +78,7 @@ parser.add_argument('--plot', default= 'False')
 parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--log_interval', default= 10, type=int)
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN_TS')
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/DeepCAC_TS')
 
 
 parser = parser.parse_args()
@@ -182,20 +182,23 @@ for r in range(len(iter_array)):
     pad_token = np.zeros(args.input_dim)
     device = args.device
 
-    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
-    model = ExpertNet_GRU(
+    expert_layers = [args.n_z, 30, args.n_classes]
+
+    model = DeepCAC_GRU(
             expert_layers,
             args.lr_enc,
             args.lr_exp,
             args=args).to(args.device)
+
 
     model.train()
 
     print("Initializing Network Cluster Parameters")
     counter_batch = 0
     model.pretrain(train, args.pretrain_path)
-    
-    print("Input Dim:", args.input_dim, "#Features:", args.n_features)
+    optimizer = Adam(model.parameters(), lr=args.lr_enc)
+
+    print("Input Dim:", args.input_dim, "#Features:", args.n_features, "#Clusters:", args.n_clusters)
 
     # Initializing cluster centers, can't pass all points in one go
     for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size)):
@@ -208,12 +211,26 @@ for r in range(len(iter_array)):
         _, _, hidden = model.ae(torch.Tensor(x_batch).to(args.device))
         original_cluster_centers, cluster_indices = kmeans2(hidden.data.cpu().numpy(), k=args.n_clusters, minit='++')
         model.cluster_layer.data += torch.tensor(original_cluster_centers).to(device)
+        y_cluster = y_train[idx_batch]
+
+        for i in range(args.n_clusters):
+            cluster_idx = np.where(cluster_indices == i)[0]
+            for c in range(args.n_classes):
+                cluster_idx_c = np.where(y_cluster[cluster_idx] == c)[0]
+                hidden_c = hidden[cluster_idx][cluster_idx_c]    
+                model.class_cluster_layer.data[i,c,:] += torch.mean(hidden_c, axis=0)
+
 
     model.cluster_layer.data /= batch_idx
+    model.class_cluster_layer.data /= batch_idx
+
+    # Initiate cluster parameters
     criterion = nn.CrossEntropyLoss(reduction='none')
+    cac_criterion = AdMSoftmaxLoss(args.n_z, args.n_classes, s=30.0, m=0.4) # Default values recommended by [1]
+
 
     print("Starting Training")
-    es = EarlyStoppingEN_TS(dataset=suffix)
+    es = EarlyStoppingDeepCAC_TS(dataset=suffix)
     p_train = torch.zeros(len(X_train), args.n_clusters)
 
     for epoch in range(args.n_epochs):
@@ -233,6 +250,7 @@ for r in range(len(iter_array)):
         epoch_balance_loss = 0
         epoch_class_loss = 0
         epoch_km_loss = 0
+        epoch_sep_loss = 0
         n_batches = 0
 
         for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size)):
@@ -269,64 +287,73 @@ for r in range(len(iter_array)):
             x_batch = x_batch.to(device)
             y_batch = torch.Tensor(y_batch).type(torch.LongTensor).to(model.device)
 
-            X_latents, x_bar, q_batch = model.encoder_forward(x_batch, output="decoded")
-            q_train.append(q_batch.detach().numpy())
+            X_latents, x_bar = model.encoder_forward(x_batch, output="decoded")
             x_train.append(x_batch.detach().numpy())
 
             reconstr_loss = F.mse_loss(x_bar, x_batch)
             classifier_labels = np.zeros(len(x_batch))
-            sub_epochs = min(10, 1 + int(epoch/5))
 
-            for _ in range(sub_epochs):
-                model.expert_forward(x_batch, y_batch, backprop_enc=False, backprop_local=True, attention=attention_train)
+            cluster_ids, _ = vq(X_latents.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+            cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
 
-            _, class_loss = model.expert_forward(x_batch, y_batch, backprop_enc=True, backprop_local=False, attention=attention_train)
-
-            class_loss /= len(X_latents)
-            cluster_id = torch.argmax(q_batch, 1)
             delta_mu   = torch.zeros((args.n_clusters, args.latent_dim)).to(args.device)
-
             km_loss = 0
-            q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
+            km_loss        = 0
+            dcn_loss       = 0
+            class_sep_loss = 0
+            cluster_balance_loss = 0
 
-            P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
-            P = P/P.sum()
-            Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
+            for j in range(args.n_clusters):
+                cluster_pts_idx = torch.where(cluster_ids == j)[0]
+                if len(cluster_pts_idx) > 0:
+                    X_cluster = X_latents[cluster_pts_idx]
+                    y_cluster = y_batch[cluster_pts_idx]
+                    y_clstr = label_binarize(y_batch[cluster_pts_idx], classes=list(range(args.n_classes+1)))[:,:args.n_classes]
+                    y_clstr = torch.Tensor(y_clstr).type(torch.LongTensor)
 
-            if args.cluster_balance == "kl":
-                cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
-            else:
-                cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
+                    # create centroid distance matrix for cluster 'j'
+                    csl = cac_criterion(X_cluster, y_cluster.clone().detach())
 
-            # print(p_train.shape, idx_batch)
-            km_loss = F.kl_div(q_batch.log(), p_train[idx_batch], reduction='batchmean')
+                    dcn_loss += args.beta*torch.linalg.norm(X_latents[cluster_pts_idx] - model.cluster_layer[j].detach())/len(cluster_pts_idx)
+                    dcn_loss += args.alpha*csl
+                    class_sep_loss += csl
 
-            loss = args.alpha*reconstr_loss
-            if args.beta != 0:
-                loss += args.beta*km_loss
-            if args.gamma != 0:
-                loss += args.gamma*class_loss
-            if args.delta != 0:
-                loss += args.delta*cluster_balance_loss
+            loss = reconstr_loss
+            loss += dcn_loss
 
             epoch_loss += loss
-            epoch_class_loss += class_loss
             epoch_balance_loss += cluster_balance_loss
-            epoch_km_loss += km_loss
-            model.optimizer.zero_grad()
+            epoch_sep_loss += class_sep_loss
+            optimizer.zero_grad()
             loss.backward(retain_graph=True)
-            model.optimizer.step()
+            optimizer.step()
             n_batches += 1
 
-        print('Epoch: {:02d} | Batch: {:02d} | Batch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} |\
-        Cluster Balance Loss: {:.3f}'.format(epoch, batch_idx, epoch_km_loss/n_batches, epoch_loss/n_batches,\
-        epoch_class_loss/n_batches, epoch_balance_loss/n_batches))
-        train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
+            # Update Assignments
+            X_latents = model.encoder_forward(x_batch, output='latent')
+            cluster_id, _ = vq(X_latents.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+            cluster_id = torch.Tensor(cluster_id).type(torch.LongTensor)
 
-        if epoch % args.log_interval == 0:
-            x_train = torch.Tensor(np.concatenate(x_train, axis=0))
-            _, _, q_train = model.encoder_forward(x_train, output="decoded")
-            p_train = target_distribution(q_train.detach())
+            # Update all the class centroids
+            counter = torch.ones(args.n_clusters)*100
+            class_counter = torch.ones(args.n_clusters, args.n_classes)*100
+            for pt in range(len(X_latents)):
+                pt_cluster = cluster_id[pt]
+                eta = 1/counter[pt_cluster]
+                udpated_cluster = ((1 - eta) * model.cluster_layer.data[pt_cluster] +
+                               eta * X_latents.data[pt])
+                model.cluster_layer.data[pt_cluster] = udpated_cluster
+                counter[pt_cluster] += 1
+                
+                pt_class = y_batch[pt]
+                eta = 1/class_counter[pt_cluster][pt_class]
+                updated_class_cluster = ((1 - eta) * model.class_cluster_layer.data[pt_cluster][pt_class] +
+                               eta * X_latents.data[pt])
+                model.class_cluster_layer.data[pt_cluster][pt_class] = updated_class_cluster
+                class_counter[pt_cluster][pt_class] += 1
+
+        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Cluster Sep Loss: {:.3f}'.format(
+                    epoch, dcn_loss, epoch_loss, epoch_sep_loss))
 
         ######################################################
         ######################################################
@@ -367,30 +394,22 @@ for r in range(len(iter_array)):
                 x_batch = torch.nan_to_num(x_batch)
 
                 # Evaluate model on Validation dataset
-                z_batch, _, q_batch = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
+                z_batch, _ = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
 
-                cluster_ids = torch.argmax(q_batch, axis=1)
+                cluster_ids, _ = vq(z_batch.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+                cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
                 preds = torch.zeros((len(z_batch), args.n_classes))
 
                 z_val.append(z_batch.detach().numpy())
-                q_val.append(q_batch.detach().numpy())
                 x_val.append(x_batch.detach().numpy())
                 
                 cluster_ids_val = np.hstack([cluster_ids_val, cluster_ids.detach().numpy()])
 
-                # Weighted predictions
-                if args.attention == False:
-                    for j in range(model.n_clusters):
-                        cluster_id = np.where(cluster_ids == j)[0]
-                        X_cluster = z_batch[cluster_id]
-                        cluster_preds_val = model.classifiers[j][0](X_cluster)
-                        preds[cluster_id,:] = cluster_preds_val
-
-                else:
-                    X_cluster = z_batch
+                for j in range(model.n_clusters):
+                    cluster_id = np.where(cluster_ids == j)[0]
+                    X_cluster = z_batch[cluster_id]
                     cluster_preds = model.classifiers[j][0](X_cluster)
-                    for c in range(args.n_classes):
-                        preds[:,c] += q_batch[:,j]*cluster_preds[:,c]
+                    preds[cluster_id,:] += cluster_preds
 
                 y_pred += list(preds.cpu().detach().numpy())
                 y_true += list(y_batch.cpu().numpy())
@@ -398,7 +417,6 @@ for r in range(len(iter_array)):
         y_true = np.array(y_true)
         y_pred = np.array(y_pred)
         z_val = np.concatenate(z_val, axis=0)
-        q_val = np.concatenate(q_val, axis=0)
         x_val = np.concatenate(x_val, axis=0)
 
         if args.plot == 'True':
@@ -462,7 +480,7 @@ for r in range(len(iter_array)):
     print("\n####################################################################################\n")
     print("Training Local Networks")
     model = es.load_checkpoint(model)
-    es = EarlyStoppingEN_TS(dataset=suffix)
+    es = EarlyStoppingDeepCAC_TS(dataset=suffix)
 
     for epoch in range(args.n_epochs):
         for batch_idx, (idx_batch, x_batch, y_batch, batch_lens) in enumerate(batch_iter(X_train, y_train, X_train_len, args.batch_size)):
@@ -482,10 +500,13 @@ for r in range(len(iter_array)):
 
             masks = length_to_mask(batch_lens).unsqueeze(-1).float()
             x_batch = torch.nan_to_num(x_batch)
-            z_batch, _, q_batch = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
-            cluster_id_batch = torch.argmax(q_batch, axis=1)
+            z_batch, _ = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
+
+            cluster_id_batch, _ = vq(z_batch.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+            cluster_id_batch = torch.Tensor(cluster_id_batch).type(torch.LongTensor)
 
             # Post clustering training
+            # for e in range(args.n_epochs):
             epoch_loss = 0
             epoch_acc = 0
             epoch_f1 = 0
@@ -495,17 +516,8 @@ for r in range(len(iter_array)):
             for j in range(args.n_clusters):
                 model.classifiers[j][0].train()
 
-            classifier_labels = np.zeros(len(z_batch))
-
-            # Choose classifier for a point probabilistically            
-            if args.attention == True:
-                for j in range(len(z_batch)):
-                    classifier_labels[j] = np.random.choice(range(args.n_clusters), p = q_batch[j].detach().numpy())
-            else:
-                classifier_labels = torch.argmax(q_batch, axis=1).data.cpu().numpy()
-
             for k in range(args.n_clusters):
-                idx_cluster = np.where(classifier_labels == k)[0]
+                idx_cluster = np.where(cluster_id_batch == k)[0]
                 X_cluster = z_batch[idx_cluster]
                 y_cluster = y_batch[idx_cluster].type(torch.LongTensor)
 
@@ -517,39 +529,6 @@ for r in range(len(iter_array)):
                 optimizer_k.zero_grad()
                 cluster_loss.backward(retain_graph=True)
                 optimizer_k.step()
-
-            # Ready local classifiers for evaluation
-            # for j in range(model.n_clusters):
-            #     model.classifiers[j][0].eval()
-
-            # train_preds = torch.zeros((len(z_batch), args.n_classes))
-            # train_loss = 0
-
-            # # Weighted predictions
-            # z_batch, _, q_batch = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
-
-            # cluster_ids_batch = torch.argmax(q_batch, axis=1)
-            
-            # for j in range(model.n_clusters):
-            #     cluster_id = np.where(cluster_ids_batch == j)[0]
-            #     X_cluster = z_batch
-            #     y_cluster = torch.Tensor(y_batch[cluster_id]).type(torch.LongTensor)
-
-            #     # Ensemble train loss
-            #     cluster_preds = model.classifiers[j][0](X_cluster)
-            #     for c in range(args.n_classes):
-            #         train_preds[:,c] += q_batch[:,j]*cluster_preds[:,c]
-
-            #     X_cluster = z_batch[cluster_id]
-            #     cluster_preds = model.classifiers[j][0](X_cluster)
-            #     train_loss += torch.sum(q_batch[cluster_id,j]*criterion(cluster_preds, y_cluster))
-
-            # train_loss /= len(z_batch)
-            
-            # print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
-            #                  f'train_loss: {train_loss:.3f} ')
-            # print(print_msg)
-            # print("\n")
 
         ###########################################
         ## Local training validation performance ##
@@ -578,20 +557,13 @@ for r in range(len(iter_array)):
 
             # Evaluate model on Validation dataset
             # q_batch, z_batch = model(torch.FloatTensor(x_batch).to(args.device), output="latent")
-            z_batch, _, q_batch = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
-            cluster_ids = torch.argmax(q_batch, axis=1)
+            z_batch, _ = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
+
+            cluster_ids, _ = vq(z_batch.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+            cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
 
             # preds = torch.zeros((len(z_batch), args.n_classes))
-            preds = model.predict(z=torch.FloatTensor(z_batch).to(args.device), q=q_batch, attention=attention_test)
-
-            # # Weighted predictions
-            # for j in range(model.n_clusters):
-            #     cluster_id = np.where(cluster_ids == j)[0]
-            #     X_cluster = z_batch
-            #     cluster_preds = model.classifiers[j][0](X_cluster)
-            #     for c in range(args.n_classes):
-            #         preds[:,c] += q_batch[:,j]*cluster_preds[:,c]
-
+            preds = model.predict(z=torch.FloatTensor(z_batch).to(args.device))
             y_pred += list(preds.cpu().detach().numpy())
             y_true += list(y_batch.cpu().numpy())
             z_val.append(z_batch.detach().numpy())
@@ -640,11 +612,12 @@ for r in range(len(iter_array)):
         es([val_f1, opt], model)
         if es.early_stop == True:
             # train_losses.append(train_loss.item())
-            sil_scores.append(silhouette_new(z_val, cluster_ids_val, metric='euclidean'))
+            # sil_scores.append(silhouette_new(z_val, cluster_ids_val, metric='euclidean'))
             # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
             # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
 
+    sil_scores.append(silhouette_new(z_val, cluster_ids_val, metric='euclidean'))
 
     ####################################################################################
     ####################################################################################
@@ -682,17 +655,12 @@ for r in range(len(iter_array)):
         x_batch = torch.nan_to_num(x_batch)
 
         # Evaluate model on Validation dataset
-        z_batch, _, q_batch = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
-        cluster_ids = torch.argmax(q_batch, axis=1)
-        preds = model.predict(z=torch.FloatTensor(z_batch).to(args.device), q=q_batch, attention=attention_test)
+        z_batch, _ = model.encoder_forward(torch.FloatTensor(x_batch).to(args.device), output="decoded")
 
-        # # Weighted predictions
-        # for j in range(model.n_clusters):
-        #     cluster_id = np.where(cluster_ids == j)[0]
-        #     X_cluster = z_batch
-        #     cluster_preds = model.classifiers[j][0](X_cluster)
-        #     for c in range(args.n_classes):
-        #         preds[:,c] += q_batch[:,j]*cluster_preds[:,c]
+        cluster_ids, _ = vq(z_batch.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
+        cluster_ids = torch.Tensor(cluster_ids).type(torch.LongTensor)
+
+        preds = model.predict(z=torch.FloatTensor(z_batch).to(args.device))
 
         y_pred += list(preds.cpu().detach().numpy())
         y_true += list(y_batch.cpu().numpy())
@@ -828,6 +796,8 @@ for r in range(len(iter_array)):
     #     w_HTFD_scores.append(feature_diff/cntr)
 
 
+enablePrint()
+
 print("\n")
 print("Experiment ", iteration_name)
 print(iter_array)
@@ -839,13 +809,6 @@ print("Test MINPSE: ", minpse_scores)
 print("Sil scores: ", sil_scores)
 print("HTFD: ", HTFD_scores)
 print("WDFD: ", wdfd_scores)
-
-# print("Train Loss: ", train_losses)
-# print("E-Train Loss: ", e_train_losses)
-
-# print("Test Loss: ", test_losses)
-
-enablePrint()
 
 print("[Avg]\tDataset\tk\tE-F1\tE-AUC\tE-AUPRC\tE-MINPSE\tE-ACC")
 print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(args.dataset, args.n_clusters,\
