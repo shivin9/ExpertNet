@@ -104,7 +104,7 @@ U = torch.eye(args.n_classes, args.n_classes)*1000
 ####################################################################################
 
 f1_scores, auc_scores, auprc_scores, acc_scores, minpse_scores = [], [], [], [], [] #Inattentive test results
-sil_scores, wdfd_scores, HTFD_scores, w_HTFD_scores = [], [], [], []
+sil_scores, wdfd_scores, htfd_scores, w_htfd_scores = [], [], [], []
 nmi_scores, ari_scores = [], []
 
 # to track the training loss as the model trains
@@ -601,7 +601,8 @@ for r in range(len(iter_array)):
 
         if es.early_stop == True:
             # sil_scores[e].append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
+            sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
+            htfd_scores.append(calculate_HTFD(X_train, cluster_ids_train))
             # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
 
@@ -669,7 +670,7 @@ for r in range(len(iter_array)):
     minpse_scores.append(test_minpse)
     nmi_scores.append(nmi_score(cluster_ids.data.cpu().numpy(), y_test))
     ari_scores.append(ari_score(cluster_ids.data.cpu().numpy(), y_test))
-    sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean'))
+    # sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean'))
 
     ###################################################################################
     ###################################################################################
@@ -758,10 +759,10 @@ for r in range(len(iter_array)):
     #             cntr += 1
 
     # if cntr == 0:
-    #     w_HTFD_scores.append(0)
+    #     w_htfd_scores.append(0)
     # else:
     #     print("Average Feature Difference: ", feature_diff/cntr)
-    #     w_HTFD_scores.append(feature_diff/cntr)
+    #     w_htfd_scores.append(feature_diff/cntr)
 
 
 enablePrint()
@@ -774,7 +775,7 @@ enablePrint()
 # print("Test AUPRC: ", auprc_scores)
 
 # print("Sil scores: ", sil_scores)
-# print("HTFD: ", HTFD_scores)
+# print("HTFD: ", htfd_scores)
 
 # print("Train Cluster Counts: ", np.bincount(cluster_ids_train))
 
@@ -788,19 +789,19 @@ enablePrint()
 # print('Dataset\tk')
 # print("{}\t{}\n".format(args.dataset, args.n_clusters))
 
-print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTe-SIL\tTe-NMI\tTe-ARI")
+print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTr-SIL\tTr-HTFD\tTe-NMI\tTe-ARI")
 
-print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("\t{}\t{}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (args.dataset, args.n_clusters, np.avg(f1_scores), np.avg(auc_scores),\
     np.avg(auprc_scores), np.avg(minpse_scores), np.avg(acc_scores),\
-    np.avg(np.array(sil_scores)), np.avg(nmi_scores), np.avg(ari_scores)))
+    np.avg(np.array(sil_scores)), np.avg(np.array(htfd_scores)), np.avg(nmi_scores), np.avg(ari_scores)))
 
-print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTe-SIL\tTe-NMI\tTe-ARI")
+print("[Std]\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTe-SIL\tTr-HTFD\tTe-NMI\tTe-ARI")
 
-print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
+print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}".format\
     (np.std(f1_scores), np.std(auc_scores),np.std(auprc_scores),\
     np.std(minpse_scores), np.std(acc_scores), np.std(np.array(sil_scores)),\
-    np.std(nmi_scores), np.std(ari_scores)))
+    np.std(np.array(htfd_scores)), np.std(nmi_scores), np.std(ari_scores)))
 
 # print("Train Loss\tTest Loss")
 
