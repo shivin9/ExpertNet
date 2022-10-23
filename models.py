@@ -22,7 +22,6 @@ class AE(nn.Module):
                 'activation{}'.format(i): nn.ReLU(),
                 })
 
-
         self.encoder = nn.Sequential(self.encoder)
         self.z_layer = nn.Linear(layers[n_layers-1], layers[n_layers])
 
@@ -37,7 +36,6 @@ class AE(nn.Module):
 
 
     def forward(self, x, output="decoded"):
-
         # encoder
         enc = self.encoder(x)
         z = self.z_layer(enc)
@@ -74,7 +72,6 @@ def pretrain_ae(model, train_loader, args):
         total_loss = 0.
         for batch_idx, (x, _, _) in enumerate(train_loader):
             x = x.to(args.device)
-
             optimizer.zero_grad()
             x_bar, _ = model(x)
             loss = F.mse_loss(x_bar, x)

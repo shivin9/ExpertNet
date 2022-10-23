@@ -205,6 +205,7 @@ for r in range(len(iter_array)):
             args=args).to(args.device)
 
     model.pretrain(train_loader, args.pretrain_path)
+    # model.pretrain(train_loader, '')
 
     # Initiate cluster parameters
     device = args.device

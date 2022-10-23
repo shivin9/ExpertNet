@@ -600,9 +600,6 @@ def plot_data(X, y, cluster_ids, dataset, e):
             c_final[i] = adjust_lightness(color[3+int(cluster_ids[i])], 0.5)
 
     fig, ax1 = plt.subplots(1, 1)
-    # fig.suptitle('Clusters vs Labels')
-    # ax1.scatter(X2[:,0], X2[:,1], color=c_clusters)
-    # ax1.scatter(X2[:,0], X2[:,1], color=c_final, edgecolors='black')
     ax1.scatter(X2[:,0], X2[:,1], color=c_final)
     plt.xticks(fontsize = 18)
     plt.yticks(fontsize = 18)
@@ -762,7 +759,7 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
         X = np.vstack((X,x_new))
         Y = np.hstack((Y,y_new))
 
-    X = pd.DataFrame(X[1:,:])
+    X = X[1:,:]
     Y = Y[1:]
     columns = ["feature_"+str(i) for i in range(n_features)]
     return X, np.array(Y).astype('int'), columns
@@ -795,11 +792,12 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
     if args.dataset in DATASETS:
         if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los" and args.dataset != "cic_los_new":
             if args.dataset == "synthetic":
-                n_feat = 45
-                X, y, columns = create_imbalanced_data_clusters(n_samples=5000,\
-                       n_clusters=args.n_clusters, n_features = n_feat,\
-                       inner_class_sep=0.2, outer_class_sep=5, seed=0)
+                n_feat = 90
+                X, y, columns = create_imbalanced_data_clusters(n_samples=10000,\
+                       n_clusters=10, n_features=n_feat,\
+                       inner_class_sep=0.2, outer_class_sep=2, seed=0)
                 args.input_dim = n_feat
+                scale = None
 
             elif args.dataset == "paper_synthetic":
                 n_feat = 100
