@@ -587,7 +587,7 @@ class GRUModel(nn.Module):
 
     def forward(self, x):
         # Initializing hidden state for first input with zeros
-        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim[0]).requires_grad_()
+        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim[0], device=x.device).requires_grad_()
 
         # Forward propagation by passing in the input and hidden state into the model
         enc_out1, h_enc1 = self.gru_enc1(x, h0.detach())
@@ -637,12 +637,10 @@ class ExpertNet_GRU(nn.Module):
         self.hidden_dim = [128, 64, self.n_z]
 
         # append input_dim at the end
-        # self.ae = GRUModel(self.n_features, self.n_z)
-        self.ae = GRUModel(self.n_features, self.hidden_dim)
-        # self.ae = RecurrentAutoencoder(self.batch_size, self.seq_len, self.n_features, self.device, self.n_z)
+        self.ae = GRUModel(self.n_features, self.hidden_dim).to(args.device)
 
         # cluster layer
-        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z).to(args.device)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
 
         self.classifiers = []

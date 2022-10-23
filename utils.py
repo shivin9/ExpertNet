@@ -30,6 +30,9 @@ DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', '
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
 
+# DATA_DIR = "/home/shivin/CAC_DL/data"
+# BASE_DIR = "/home/shivin/CAC_DL/ExpertNet"
+
 # np.random.seed(108)
 # torch.manual_seed(108)
 
