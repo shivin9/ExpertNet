@@ -32,7 +32,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import ExpertNet,  target_distribution, source_distribution
+from models import ExpertNet,  target_distribution, source_distribution, CNN_AE, DAE
 from utils import *
 
 parser = argparse.ArgumentParser()
@@ -40,6 +40,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 parser.add_argument('--n_features', default= '-1')
+parser.add_argument('--target', default= -1, type=int)
+parser.add_argument('--data_ratio', default= 1, type=float)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -51,7 +53,7 @@ parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
 parser.add_argument('--pre_epoch', default= 40, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
-parser.add_argument("--load_ae",  default=False, type=bool)
+parser.add_argument("--load_ae", default= False, type=bool)
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
 parser.add_argument("--attention", default=11, type=int)
@@ -70,6 +72,8 @@ parser.add_argument('--n_clusters', default= 3, type=int)
 parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--optimize', default= 'auprc')
+parser.add_argument('--ae_type', default= 'dae')
+parser.add_argument('--n_channels', default= 1, type=int)
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
@@ -81,7 +85,7 @@ parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN')
 # parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
-parser = parser.parse_args()  
+parser = parser.parse_args()
 args = parameters(parser)
 base_suffix = ""
 
@@ -157,6 +161,14 @@ for r in range(len(iter_array)):
     X_val, y_val = val_data
     X_test, y_test = test_data
 
+    X_train, y_train = extract_column(X_train, y_train, args)
+    X_val, y_val = extract_column(X_val, y_val, args)
+    X_test, y_test = extract_column(X_test, y_test, args)
+    if args.target != -1:
+        args.input_dim -= 1
+        print("Predicting on column: ", column_names[args.target])
+    column_names = column_names.delete(args.target)
+
     print("Stats: ", (sum(y_train)+sum(y_val)+sum(y_test)), (len(y_train)+len(y_val)+len(y_test)))
     print("Dataset dim:", X_train.shape)
 
@@ -196,14 +208,20 @@ for r in range(len(iter_array)):
         ae_layers = [64, args.n_z, 64]
         expert_layers = [args.n_z, 30, args.n_classes]
 
-    print(args.input_dim, args.n_features)
+    if args.ae_type == 'cnn':
+        expertnet_ae = CNN_AE(encoded_space_dim=args.n_z, fc2_input_dim=128, n_channels=args.n_channels)
+    
+    else:
+        ae_layers.append(args.input_dim)
+        ae_layers = [args.input_dim] + ae_layers
+        expertnet_ae = DAE(ae_layers)
+
     model = ExpertNet(
-            ae_layers,
+            expertnet_ae,
             expert_layers,
             args.lr_enc,
             args.lr_exp,
             args=args).to(args.device)
-
     model.pretrain(train_loader, args.pretrain_path)
     # model.pretrain(train_loader, '')
 
@@ -422,7 +440,7 @@ for r in range(len(iter_array)):
          # torch.FloatTensor(np.array(X_test)).to(args.device), y_test)
 
     # Post clustering training
-    for e in range(N_EPOCHS):
+    for local_epoch in range(N_EPOCHS):
         epoch_loss = 0
         epoch_acc = 0
         epoch_f1 = 0
@@ -433,7 +451,7 @@ for r in range(len(iter_array)):
 
         # Full training of local networks
         for batch_idx, (X_latents, q_batch, y_batch) in enumerate(train_loader_latents):
-            _, total_loss = model.expert_forward(x_batch, y_batch, X_latents, q_batch, backprop_enc=False, backprop_local=True)
+            _, total_loss = model.expert_forward(None, y_batch, X_latents, q_batch, backprop_enc=False, backprop_local=True)
 
         for j in range(model.n_clusters):
             model.classifiers[j][0].eval()
@@ -454,7 +472,7 @@ for r in range(len(iter_array)):
         val_loss = torch.mean(criterion(preds, torch.Tensor(y_val).type(torch.LongTensor)))
         epoch_len = len(str(N_EPOCHS))
         
-        print_msg = (f'\n[{epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
+        print_msg = (f'\n[{local_epoch:>{epoch_len}}/{N_EPOCHS:>{epoch_len}}] ' +
                      f'valid_loss: {val_loss:.3f} '  +
                      f'valid_F1: {val_f1:.3f} '  +
                      f'valid_AUC: {val_auc:.3f} ' +
@@ -476,7 +494,7 @@ for r in range(len(iter_array)):
             opt = -val_loss
         es([val_f1, opt], model)
 
-        if es.early_stop == True or epoch == N_EPOCHS - 1:
+        if es.early_stop == True or local_epoch == N_EPOCHS - 1:
             # train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))

@@ -6,13 +6,16 @@ import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader,random_split
+import torchvision
+from torchvision import transforms
+import torch.optim as optim
 from sklearn.datasets import make_classification, make_blobs
-from sklearn.metrics import mutual_info_score, roc_auc_score, average_precision_score, accuracy_score, davies_bouldin_score as dbs
-from sklearn import metrics
+from sklearn.metrics import mutual_info_score, roc_auc_score, f1_score, average_precision_score, accuracy_score, davies_bouldin_score as dbs, confusion_matrix
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
+from sklearn import utils as skutils
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from scipy.stats import ttest_ind, wasserstein_distance as wd
 from read_patients import get_aki
@@ -25,7 +28,8 @@ import umap
 color = ['grey', 'red', 'blue', 'pink', 'olive', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan']
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
             'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic',\
-            'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24', 'aki24', 'sepsis24_correct', 'ards24_correct']
+            'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24', 'aki24', 'sepsis24_correct', 'ards24_correct',\
+            'MNIST', 'FashionMNIST', 'CIFAR10']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
@@ -470,6 +474,9 @@ class parameters(object):
             self.input_dim = parser.n_features
             self.n_features = parser.n_features
         
+        self.target = parser.target
+        self.data_ratio = parser.data_ratio
+
         # Training parameters
         self.lr_enc = parser.lr_enc
         self.lr_exp = parser.lr_exp
@@ -499,6 +506,8 @@ class parameters(object):
         self.clustering = parser.clustering
         self.n_classes = parser.n_classes
         self.optimize = parser.optimize
+        self.ae_type = parser.ae_type
+        self.n_channels = parser.n_channels
 
         # Utility parameters
         self.device = parser.device
@@ -765,22 +774,6 @@ def create_imbalanced_data_clusters(n_samples=1000, n_features=8, n_informative=
     return X, np.array(Y).astype('int'), columns
 
 
-def extract_column(X, col_idx, n_classes):
-    los_quantiles = np.quantile(X[:,col_idx], np.arange(n_classes+1)/n_classes)
-    y_new = []
-    for i in range(len(X)):
-        lbl = int(X[i,col_idx]/n_classes)
-        for j in range(n_classes):
-            if los_quantiles[j] <= X[i,col_idx] < los_quantiles[j+1]:
-                lbl = j
-        y_new.append(lbl)
-
-    X_new = np.delete(X, col_idx, 1) # delete col_idx column
-    y_new = np.array(y_new)
-
-    return X_new, y_new
-
-
 def generate_data_loaders(X, y, batch_size):
     X_data_loader = list(zip(X.astype(np.float32), y, range(len(X))))
     data_loader = torch.utils.data.DataLoader(X_data_loader,\
@@ -790,30 +783,8 @@ def generate_data_loaders(X, y, batch_size):
 
 def get_train_val_test_loaders(args, r_state=0, n_features=-1):
     if args.dataset in DATASETS:
-        if args.dataset != "aki" and args.dataset != "ards" and args.dataset != "cic_los" and args.dataset != "cic_los_new":
-            if args.dataset == "synthetic":
-                n_feat = 90
-                X, y, columns = create_imbalanced_data_clusters(n_samples=10000,\
-                       n_clusters=10, n_features=n_feat,\
-                       inner_class_sep=0.2, outer_class_sep=2, seed=0)
-                args.input_dim = n_feat
-                scale = None
-
-            elif args.dataset == "paper_synthetic":
-                n_feat = 100
-                X, y = paper_synthetic(2500, centers=args.n_clusters)
-                args.input_dim = n_feat
-                scale = None
-                columns = ["feature_"+str(i) for i in range(n_feat)]
-
-            else:
-                X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
-                args.input_dim = X.shape[1]
-
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
-
-        elif args.dataset == "cic_los" or args.dataset == "cic_los_new":
+        IMG_FLAG = 0
+        if args.dataset == "cic_los" or args.dataset == "cic_los_new":
             if args.dataset == "cic_los":
                 X, y, columns, scale = get_dataset("cic", DATA_DIR, n_features)
             else:
@@ -832,18 +803,75 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
                     lbl = 2
                 y_los.append(lbl)
 
-            X_los = np.delete(scale.inverse_transform(X), 2, 1) # 2nd column is LOS
+            X = np.delete(scale.inverse_transform(X), 2, 1) # 2nd column is LOS
             y = np.array(y_los)
 
-            X_train, X_test, y_train, y_test = train_test_split(X_los, y, random_state=r_state, test_size=0.15)
-            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
+        if args.dataset == "synthetic":
+            n_feat = 90
+            X, y, columns = create_imbalanced_data_clusters(n_samples=10000,\
+                    n_clusters=10, n_features=n_feat,\
+                    inner_class_sep=0.2, outer_class_sep=2, seed=0)
+            args.input_dim = n_feat
+            scale = None
+
+        elif args.dataset == "paper_synthetic":
+            n_feat = 100
+            X, y = paper_synthetic(2500, centers=args.n_clusters)
+            args.input_dim = n_feat
+            scale = None
+            columns = ["feature_"+str(i) for i in range(n_feat)]
+
+        elif args.dataset == "MNIST" or args.dataset == "FashionMNIST" or args.dataset == "CIFAR10":
+            if args.dataset == "MNIST":
+                train_dataset = torchvision.datasets.MNIST(DATA_DIR + '/' + args.dataset, train=True, download=True)
+                test_dataset  = torchvision.datasets.MNIST(DATA_DIR + '/' + args.dataset, train=False, download=True)
+            elif args.dataset == "CIFAR10":
+                train_dataset = torchvision.datasets.CIFAR10(DATA_DIR + '/' + args.dataset, train=True, download=True)
+                test_dataset  = torchvision.datasets.CIFAR10(DATA_DIR + '/' + args.dataset, train=False, download=True)
+            elif args.dataset == "FashionMNIST":
+                train_dataset = torchvision.datasets.FashionMNIST(DATA_DIR + '/' + args.dataset, train=True, download=True)
+                test_dataset  = torchvision.datasets.FashionMNIST(DATA_DIR + '/' + args.dataset, train=False, download=True)
+
+            train_transform = transforms.Compose([
+            transforms.ToTensor(),
+            ])
+
+            test_transform = transforms.Compose([
+            transforms.ToTensor(),
+            ])
+
+            train_dataset.transform = train_transform
+            test_dataset.transform = test_transform
+
+            X_train = np.array([train_dataset[i][0].numpy() for i in range(len(train_dataset))])
+            y_train = np.array([train_dataset[i][1] for i in range(len(train_dataset))])
+            X_test = np.array([test_dataset[i][0].numpy() for i in range(len(test_dataset))])
+            y_test = np.array([test_dataset[i][1] for i in range(len(test_dataset))])
+            IMG_FLAG = 1
+            scale, columns = None, None
 
         else:
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
-            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+
+        if IMG_FLAG == 1:
+            # Here X_test is fixed
+            # N_tr = len(X_train)
+            N_tr = len(X_test)
+            sample_data_size_tr = int(args.data_ratio*N_tr)
+            sample_idx = skutils.random.sample_without_replacement(N_tr, sample_data_size_tr, random_state=r_state)
+            X_train, y_train = X_train[sample_idx], y_train[sample_idx]
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
-        
-        args.input_dim = X_train.shape[1]
+
+        else:
+            X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
+            # N_tr = len(X_train)
+            N_tr = len(X_test)
+            sample_data_size_tr = int(args.data_ratio*N_tr)
+            sample_idx = skutils.random.sample_without_replacement(N_tr, sample_data_size_tr, random_state=r_state)
+            X_train, y_train = X_train[sample_idx], y_train[sample_idx]
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)        
+
+            args.input_dim = X_train.shape[1]
 
         return scale, columns, (X_train, y_train), (X_val, y_val), (X_test, y_test)
     else:
@@ -862,10 +890,31 @@ def paper_synthetic(n_pts=1000, centers=4):
     return X2.T, y
 
 
+# to predict on some other variable
+def extract_column(X, y, args):
+    col_idx = args.target
+    n_classes = args.n_classes
+    if col_idx == -1:
+        return X, y
+    # Create categorical variable of the col_idx'th column
+    los_quantiles = np.quantile(X[:,col_idx], np.arange(n_classes+1)/n_classes)
+    y_new = []
+    for i in range(len(X)):
+        lbl = int(X[i,col_idx]/n_classes)
+        for j in range(n_classes):
+            if los_quantiles[j] <= X[i,col_idx] <= los_quantiles[j+1]:
+                lbl = j
+        y_new.append(lbl)
+
+    X_new = np.delete(X, col_idx, 1) # delete col_idx column
+    y_new = np.array(y_new)
+    return X_new, y_new
+
+
 def performance_metrics(y_true, y_pred, n_classes=2):
     acc_scores, auroc_scores, auprc_scores, minpse_scores = [], [], [], []
     y = label_binarize(y_true, classes=list(range(n_classes+1)))[:,:n_classes]
-    cm = metrics.confusion_matrix(y_true, y_pred.argmax(axis=1))
+    cm = confusion_matrix(y_true, y_pred.argmax(axis=1))
     cm = cm.astype(np.float32)
 
     for c in range(n_classes):
@@ -886,11 +935,11 @@ def performance_metrics(y_true, y_pred, n_classes=2):
         minpse_scores.append(min(precision, specificity))
         acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
 
-    return {"acc": np.avg(acc_scores),
-            "auroc": np.avg(auroc_scores),
-            "auprc": np.avg(auprc_scores),
-            "minpse": np.avg(minpse_scores),
-            "f1_score":metrics.f1_score(y_true, y_pred.argmax(axis=1), average="macro")}
+    return {"acc": np.round(np.avg(acc_scores), 3),
+            "auroc": np.round(np.avg(auroc_scores), 3),
+            "auprc": np.round(np.avg(auprc_scores), 3),
+            "minpse": np.round(np.avg(minpse_scores), 3),
+            "f1_score":np.round(f1_score(y_true, y_pred.argmax(axis=1), average="macro"), 3)}
 
 
 '''

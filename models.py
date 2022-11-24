@@ -9,9 +9,9 @@ from utils import is_non_zero_file
 from collections import OrderedDict
 import numpy as np
 
-class AE(nn.Module):
+class DAE(nn.Module):
     def __init__(self, layers):
-        super(AE, self).__init__()
+        super(DAE, self).__init__()
 
         self.encoder = OrderedDict()
         self.decoder = OrderedDict()
@@ -47,6 +47,139 @@ class AE(nn.Module):
         x_bar = self.x_bar_layer(dec)
 
         return x_bar, z
+
+
+# Define CNN classifier
+class CNN_Classifier(nn.Module):
+    def __init__(self, args, layers, n_channels=1):
+        super().__init__()
+        ### Convolutional section
+        self.encoder_cnn = nn.Sequential(
+            nn.Conv2d(n_channels, 8, 3, stride=2, padding=1),
+            nn.ReLU(True),
+            nn.Conv2d(8, 16, 3, stride=2, padding=1),
+            nn.BatchNorm2d(16),
+            nn.ReLU(True),
+            nn.Conv2d(16, 32, 3, stride=2, padding=0),
+            nn.ReLU(True)
+        )
+        
+        ### Flatten layer
+        self.flatten = nn.Flatten(start_dim=1)
+
+        ### Linear section
+        self.classifier = OrderedDict()
+        layers[0] = 3 * 3 * 32
+        n_layers = int(len(layers))
+        for i in range(n_layers-1):
+            self.classifier.update(
+                {"layer{}".format(i): nn.Linear(layers[i], layers[i+1]),
+                'activation{}'.format(i): nn.ReLU(),
+                })
+
+        self.classifier = nn.Sequential(self.classifier)
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=args.lr_enc)
+        self.criterion = nn.CrossEntropyLoss(reduction='mean')
+
+    def forward(self, x):
+        x = self.encoder_cnn(x)
+        x_hat = self.flatten(x)
+        y_hat = self.classifier(x_hat)
+        return x_hat, y_hat
+    
+    def fit(self, X_batch, y_batch):
+        self.optimizer.zero_grad()
+        # forward + backward + optimize
+        input_hat, y_pred = self.forward(X_batch)
+        train_loss = self.criterion(y_pred, y_batch)
+        train_loss.backward()
+        self.optimizer.step()
+        return y_pred.detach().numpy(), train_loss.item()
+
+
+# Define Autoencoder
+class CNN_Encoder(nn.Module):
+    def __init__(self, encoded_space_dim, fc2_input_dim, n_channels=1):
+        super().__init__()
+        ### Convolutional section
+        self.encoder_cnn = nn.Sequential(
+            nn.Conv2d(n_channels, 8, 3, stride=2, padding=1),
+            nn.ReLU(True),
+            nn.Conv2d(8, 16, 3, stride=2, padding=1),
+            nn.BatchNorm2d(16),
+            nn.ReLU(True),
+            nn.Conv2d(16, 32, 3, stride=2, padding=0),
+            nn.ReLU(True)
+        )
+        
+        ### Flatten layer
+        self.flatten = nn.Flatten(start_dim=1)
+
+        ### Linear section
+        self.encoder_lin = nn.Sequential(
+            nn.Linear(3 * 3 * 32, fc2_input_dim),
+            nn.ReLU(True),
+            nn.Linear(fc2_input_dim, encoded_space_dim)
+        )
+        
+    def forward(self, x):
+        x = self.encoder_cnn(x)
+        x = self.flatten(x)
+        x = self.encoder_lin(x)
+        return x
+
+
+class CNN_Decoder(nn.Module):
+    def __init__(self, encoded_space_dim, fc2_input_dim, n_channels=1):
+        super().__init__()
+        ### Convolutional section
+        self.decoder_lin = nn.Sequential(
+            nn.Linear(encoded_space_dim, 128),
+            nn.ReLU(True),
+            nn.Linear(128, 3 * 3 * 32),
+            nn.ReLU(True)
+        )
+
+        self.unflatten = nn.Unflatten(dim=1, 
+        unflattened_size=(32, 3, 3))
+
+        self.decoder_conv = nn.Sequential(
+            nn.ConvTranspose2d(32, 16, 3, 
+            stride=2, output_padding=0),
+            nn.BatchNorm2d(16),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(16, 8, 3, stride=2, 
+            padding=1, output_padding=1),
+            nn.BatchNorm2d(8),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(8, n_channels, 3, stride=2, 
+            padding=1, output_padding=1)
+        )
+        
+    def forward(self, x):
+        x = self.decoder_lin(x)
+        x = self.unflatten(x)
+        x = self.decoder_conv(x)
+        x = torch.sigmoid(x)
+        return x
+
+
+class CNN_AE(nn.Module):
+    def __init__(self, encoded_space_dim, fc2_input_dim, n_channels=1):
+        super().__init__()
+        ### Convolutional section
+        self.encoder = CNN_Encoder(encoded_space_dim, fc2_input_dim, n_channels)
+        self.decoder = CNN_Decoder(encoded_space_dim, fc2_input_dim, n_channels)
+    
+    def forward(self, x, output="decoded"):
+        # encoder
+        enc = self.encoder(x)
+        if output == "latent":
+            return enc
+
+        # decoder
+        x_bar = self.decoder(enc)
+        return x_bar, enc
 
 
 def target_distribution(q):
@@ -136,16 +269,19 @@ class NNClassifier(nn.Module):
             print('load pretrained ae from', path)
 
 
-    def forward(self, inputs):
+    def forward(self, inputs, output='default'):
         input_bar, z = self.ae(inputs)
         last_tensor = self.classifier(z)
-        return input_bar, last_tensor, self.last_layer(last_tensor)
+        if output == 'default':
+            return last_tensor, self.last_layer(last_tensor)
+        else:
+            return input_bar, last_tensor, self.last_layer(last_tensor)
 
 
     def fit(self, X_batch, y_batch):
         self.optimizer.zero_grad()
         self.classifier.train()
-        x_bar, _, y_pred = self.forward(X_batch)
+        x_bar, _, y_pred = self.forward(X_batch, output='reconstructed')
         train_loss = self.criterion(y_pred, y_batch)
         reconstr_loss = F.mse_loss(x_bar, X_batch)
         total_loss = self.alpha*reconstr_loss + self.gamma*train_loss
@@ -186,12 +322,12 @@ class NNClassifierBase(nn.Module):
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr=args.lr_enc)
 
     def forward(self, inputs):
-        return None, None, self.classifier(inputs)
+        return None, self.classifier(inputs)
 
     def fit(self, X_batch, y_batch):
         self.optimizer.zero_grad()
         self.classifier.train()
-        _, _, y_pred = self.forward(X_batch)
+        _, y_pred = self.forward(X_batch)
         train_loss = self.criterion(y_pred, y_batch)
         total_loss = train_loss
         total_loss.backward()
@@ -277,7 +413,7 @@ class DeepCAC(nn.Module):
 
 class ExpertNet(nn.Module):
     def __init__(self,
-                 ae_layers,
+                 DAE_model,
                  expert_layers,
                  lr_enc,
                  lr_exp,
@@ -294,17 +430,15 @@ class ExpertNet(nn.Module):
         self.lr_enc = lr_enc
         self.criterion = nn.CrossEntropyLoss(reduction='none')
         self.alpha = 1
+        self.ae = DAE_model
         # self.bn = nn.BatchNorm1d(self.hidden_dim)
 
-        # append input_dim at the end
-        ae_layers.append(self.input_dim)
-        ae_layers = [self.input_dim] + ae_layers
-        self.ae = AE(ae_layers)
+
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
-        # nn.init.xavier_uniform_(self.ae.encoder.weight)
-        # nn.init.xavier_uniform_(self.ae.decoder.weight)
+        # torch.nn.init.xavier_uniform_(self.ae.encoder.weight)
+        # torch.nn.init.xavier_uniform_(self.ae.decoder.weight)
 
         self.classifiers = []
         n_layers = int(len(expert_layers))

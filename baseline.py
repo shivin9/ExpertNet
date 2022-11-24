@@ -30,7 +30,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import NNClassifier, NNClassifierBase, pretrain_ae
+from models import NNClassifier, NNClassifierBase, pretrain_ae, CNN_Classifier
 from utils import *
 
 
@@ -39,6 +39,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 parser.add_argument('--n_features', default= '-1')
+parser.add_argument('--target', default= -1, type=int)
+parser.add_argument('--data_ratio', default= 1, type=float)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -50,34 +52,37 @@ parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
 parser.add_argument('--pre_epoch', default= 40, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
-parser.add_argument("--load_ae",  default=False, type=bool)
+parser.add_argument("--load_ae", default= False, type=bool)
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
-parser.add_argument("--attention", default="True")
+parser.add_argument("--attention", default=11, type=int)
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
-parser.add_argument('--optimize', default= 'auprc')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
 parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--delta', default= 0.01, type=float) # Class equalization wt
 parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
-parser.add_argument('--n_z', default= 32, type=int)
+parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
 parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
+parser.add_argument('--optimize', default= 'auprc')
+parser.add_argument('--ae_type', default= 'dae')
+parser.add_argument('--n_channels', default= 1, type=int)
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
-parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--plot', default= 'False')
 parser.add_argument('--expt', default= 'ExpertNet')
 parser.add_argument('--cluster_analysis', default= 'False')
-parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/Base')
+parser.add_argument('--log_interval', default= 10, type=int)
+parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/EN')
+# parser.add_argument('--pretrain_path', default= '/home/shivin/CAC_code/data')
 
 
 parser = parser.parse_args()
@@ -105,25 +110,29 @@ for r in range(args.n_runs):
     val_loader = generate_data_loaders(X_val, y_val, args.batch_size)
     test_loader = generate_data_loaders(X_test, y_test, args.batch_size)
 
-    if args.expt == 'ExpertNet':
-        ae_layers = [128, 64, args.n_z, 64, 128]
-        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+    if args.ae_type == "dae":
+        if args.expt == 'ExpertNet':
+            ae_layers = [128, 64, args.n_z, 64, 128]
+            expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
 
-    else:
-        ae_layers = [64, args.n_z, 64]
-        expert_layers = [args.n_z, 30, args.n_classes]
+        else:
+            ae_layers = [64, args.n_z, 64]
+            expert_layers = [args.n_z, 30, args.n_classes]
 
-    model = NNClassifier(ae_layers, expert_layers, args).to(args.device)
-    model.pretrain(train_loader, args.pretrain_path)
-    
-    # Single Big NN    
-    # layers = [args.input_dim, 512, 256, 64, args.n_classes]
-    # layers = [args.input_dim, 128, 64, 32, 16, args.n_classes]
-    # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+        # model = NNClassifier(ae_layers, expert_layers, args).to(args.device)
+        # model.pretrain(train_loader, args.pretrain_path)
+        
+        # Single Big NN    
+        layers = [args.input_dim, 128, 64, 32, 16, args.n_classes]
+        model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
 
-    # For DeepCAC baselines. Single Big NN
-    # layers = [args.input_dim, 64, 32, 30, args.n_classes]
-    # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+        # For DeepCAC baselines. Single Big NN
+        # layers = [args.input_dim, 64, 32, 30, args.n_classes]
+        # model = NNClassifierBase(args, input_dim=args.input_dim, layers=layers)
+
+    elif args.ae_type == "cnn":
+        linear_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+        model = CNN_Classifier(args, linear_layers)
 
     device = args.device
 
@@ -147,7 +156,7 @@ for r in range(args.n_runs):
             epoch_f1 += f1.item()
 
         model.classifier.eval()
-        _, last_vals, val_preds = model(torch.FloatTensor(np.array(X_val)).to(args.device))
+        last_vals, val_preds = model(torch.FloatTensor(np.array(X_val)).to(args.device))
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_preds, torch.tensor(y_val).to(device))
         val_metrics = performance_metrics(y_val, val_preds.detach().numpy(), args.n_classes)
 
@@ -193,7 +202,7 @@ for r in range(args.n_runs):
     # Load best model trained from local training phase
     model = es.load_checkpoint(model)
     model.classifier.eval()
-    _, last_test, test_preds = model(torch.FloatTensor(np.array(X_test)).to(args.device))
+    last_test, test_preds = model(torch.FloatTensor(np.array(X_test)).to(args.device))
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_preds, torch.tensor(y_test).to(device))
 
     test_f1 = f1_score(np.argmax(test_preds.detach().numpy(), axis=1), y_test, average="macro")
