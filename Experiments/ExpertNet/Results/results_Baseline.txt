@@ -127,3 +127,94 @@ ACC: [0.164]
 [Std]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
 	0.000	0.000	0.000	0.000	0.000
 
+F1: [0.432]
+AUC: [0.794]
+AUPRC: [0.486]
+MINPSE: [0.387]
+ACC: [0.19]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	FashionMNIST	3	0.432	0.794	0.486	0.387	0.190
+
+[Std]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	0.000	0.000	0.000	0.000	0.000
+
+F1: [0.612]
+AUC: [0.824]
+AUPRC: [0.486]
+MINPSE: [0.572]
+ACC: [0.198]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	FashionMNIST	3	0.612	0.824	0.486	0.572	0.198
+
+[Std]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	0.000	0.000	0.000	0.000	0.000
+
+F1: [0.597]
+AUC: [0.858]
+AUPRC: [0.623]
+MINPSE: [0.573]
+ACC: [0.249]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	FashionMNIST	3	0.597	0.858	0.623	0.573	0.249
+
+[Std]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	0.000	0.000	0.000	0.000	0.000
+
+F1: [0.628]
+AUC: [0.86]
+AUPRC: [0.628]
+MINPSE: [0.601]
+ACC: [0.242]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	FashionMNIST	3	0.628	0.860	0.628	0.601	0.242
+
+[Std]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	0.000	0.000	0.000	0.000	0.000
+
+F1: [0.584]
+AUC: [0.82]
+AUPRC: [0.619]
+MINPSE: [0.555]
+ACC: [0.312]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	FashionMNIST	3	0.584	0.820	0.619	0.555	0.312
+
+[Std]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	0.000	0.000	0.000	0.000	0.000
+
+
+F1: [0.657]
+AUC: [0.828]
+AUPRC: [0.697]
+MINPSE: [0.642]
+ACC: [0.257]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	FashionMNIST	3	0.657	0.828	0.697	0.642	0.257
+
+[Std]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	0.000	0.000	0.000	0.000	0.000
+
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST
+ExpertNet
+FashionMNIST

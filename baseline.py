@@ -149,7 +149,7 @@ for r in range(args.n_runs):
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
             y_pred, train_loss = model.fit(X_batch, y_batch)
             epoch_loss += train_loss
-
+        
             f1 = f1_score(np.argmax(y_pred, axis=1), y_batch.detach().numpy(), average="macro")
             auc = multi_class_auc(y_batch, y_pred, args.n_classes)
             epoch_auc += auc.item()

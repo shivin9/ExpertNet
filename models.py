@@ -51,11 +51,11 @@ class DAE(nn.Module):
 
 # Define CNN classifier
 class CNN_Classifier(nn.Module):
-    def __init__(self, args, layers, n_channels=1):
+    def __init__(self, args, layers):
         super().__init__()
         ### Convolutional section
         self.encoder_cnn = nn.Sequential(
-            nn.Conv2d(n_channels, 8, 3, stride=2, padding=1),
+            nn.Conv2d(args.n_channels, 8, 3, stride=2, padding=1),
             nn.ReLU(True),
             nn.Conv2d(8, 16, 3, stride=2, padding=1),
             nn.BatchNorm2d(16),
@@ -134,9 +134,9 @@ class CNN_Decoder(nn.Module):
         super().__init__()
         ### Convolutional section
         self.decoder_lin = nn.Sequential(
-            nn.Linear(encoded_space_dim, 128),
+            nn.Linear(encoded_space_dim, fc2_input_dim),
             nn.ReLU(True),
-            nn.Linear(128, 3 * 3 * 32),
+            nn.Linear(fc2_input_dim, 3 * 3 * 32),
             nn.ReLU(True)
         )
 
@@ -165,11 +165,11 @@ class CNN_Decoder(nn.Module):
 
 
 class CNN_AE(nn.Module):
-    def __init__(self, encoded_space_dim, fc2_input_dim, n_channels=1):
+    def __init__(self, args, fc2_input_dim):
         super().__init__()
         ### Convolutional section
-        self.encoder = CNN_Encoder(encoded_space_dim, fc2_input_dim, n_channels)
-        self.decoder = CNN_Decoder(encoded_space_dim, fc2_input_dim, n_channels)
+        self.encoder = CNN_Encoder(args.n_z, fc2_input_dim, args.n_channels)
+        self.decoder = CNN_Decoder(args.n_z, fc2_input_dim, args.n_channels)
     
     def forward(self, x, output="decoded"):
         # encoder
@@ -180,6 +180,68 @@ class CNN_AE(nn.Module):
         # decoder
         x_bar = self.decoder(enc)
         return x_bar, enc
+
+
+class CIFAR_AE(nn.Module):
+    def __init__(self, args, fc2_input_dim):
+        super(CIFAR_AE, self).__init__()
+        # Input size: [batch, 3, 32, 32]
+        # Output size: [batch, 3, 32, 32]
+        self.encoder_conv = nn.Sequential(
+            nn.Conv2d(3, 12, 4, stride=2, padding=1),            # [batch, 12, 16, 16]
+            nn.ReLU(),
+            nn.Conv2d(12, 24, 4, stride=2, padding=1),           # [batch, 24, 8, 8]
+            nn.ReLU(),
+			nn.Conv2d(24, 48, 4, stride=2, padding=1),           # [batch, 48, 4, 4]
+            nn.ReLU(),
+			# nn.Conv2d(48, 96, 4, stride=2, padding=1),           # [batch, 96, 2, 2]
+            # nn.ReLU(),
+        )
+
+        ### Flatten layer
+        self.flatten = nn.Flatten(start_dim=1)
+
+        ### Linear section
+        self.encoder_lin = nn.Sequential(
+            nn.Linear(4 * 4 * 48, fc2_input_dim),
+            nn.ReLU(True),
+            nn.Linear(fc2_input_dim, args.n_z)
+        )
+
+        self.unflatten = nn.Unflatten(dim=1, 
+        unflattened_size=(48, 4, 4))
+
+        self.decoder_lin = nn.Sequential(
+            nn.Linear(args.n_z, fc2_input_dim),
+            nn.ReLU(True),
+            nn.Linear(fc2_input_dim, 4 * 4 * 48),
+            nn.ReLU(True)
+        )
+
+        self.decoder_conv = nn.Sequential(
+            # nn.ConvTranspose2d(96, 48, 4, stride=2, padding=1),  # [batch, 48, 4, 4]
+            # nn.ReLU(),
+			nn.ConvTranspose2d(48, 24, 4, stride=2, padding=1),  # [batch, 24, 8, 8]
+            nn.ReLU(),
+			nn.ConvTranspose2d(24, 12, 4, stride=2, padding=1),  # [batch, 12, 16, 16]
+            nn.ReLU(),
+            nn.ConvTranspose2d(12, 3, 4, stride=2, padding=1),   # [batch, 3, 32, 32]
+        )
+
+    def forward(self, x, output="decoded"):
+        x = self.encoder_conv(x)
+        x = self.flatten(x)
+        encoded_lin = self.encoder_lin(x)
+
+        if output == "latent":
+            return encoded_lin
+
+        x = self.decoder_lin(encoded_lin)
+        x = self.unflatten(x)
+        x = self.decoder_conv(x)
+        decoded = torch.sigmoid(x)
+
+        return decoded, encoded_lin
 
 
 def target_distribution(q):
@@ -201,7 +263,7 @@ def pretrain_ae(model, train_loader, args):
     '''
     print(model)
     optimizer = Adam(model.parameters(), lr=args.lr_enc)
-    for epoch in range(100):
+    for epoch in range(args.pre_epoch):
         total_loss = 0.
         for batch_idx, (x, _, _) in enumerate(train_loader):
             x = x.to(args.device)
@@ -433,7 +495,6 @@ class ExpertNet(nn.Module):
         self.ae = DAE_model
         # self.bn = nn.BatchNorm1d(self.hidden_dim)
 
-
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
@@ -464,8 +525,8 @@ class ExpertNet(nn.Module):
             
         self.optimizer = torch.optim.Adam(self.ae.parameters(), lr=self.lr_enc)
 
+
     def pretrain(self, train_loader, path=''):
-        print(path)
         if not is_non_zero_file(path):
             path = ''
         if path == '':

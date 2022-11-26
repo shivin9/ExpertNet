@@ -41,19 +41,17 @@ def initialization(args):
     for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'eta', 'attention']:
         print(key, args.__dict__[key])
 
+
     base_suffix += args.dataset
     base_suffix += "_" + args.ae_type
     base_suffix += "_k_" + str(args.n_clusters)
     base_suffix += "_att_" + str(args.attention)
+    base_suffix += "_dr_" + str(args.data_ratio)
+    base_suffix += "_target_" + str(args.target)
 
-    base_suffix += str(args.target) + "_"
-    base_suffix += str(args.n_clusters) + "_"
-    base_suffix += str(args.attention)
+    # So that different AEs are trained for different data ratios
+    args.pretrain_path += "/AE" + base_suffix + ".pth"
 
-    args.pretrain_path += "/" + args.dataset
-    args.pretrain_path += "_" + args.ae_type
-    args.pretrain_path += "_feats_" + str(args.n_features)
-    args.pretrain_path += "_target_" + str(args.target) + ".pth"
 
     ####################################################################################
     ####################################################################################
@@ -224,8 +222,8 @@ def local_training_expertnet(args, model, es, X_train, y_train, X_val, y_val, su
 
         if es.early_stop == True or local_epoch == args.n_epochs - 1:
             # train_losses.append(train_loss.item())
-            #sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            #HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
+            # sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
+            # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
             # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
 

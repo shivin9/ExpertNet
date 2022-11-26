@@ -67,11 +67,10 @@ def calculate_bound(model, B, m):
 
 
 def silhouette_new(X, labels, metric="euclidean"):
-    if len(np.unique(labels)) == 1:
+    if len(np.unique(labels)) == 1 or X.shape[0] <= 2:
         return 0
     else:
         return silhouette_score(X, labels, metric=metric)
-        # return dbs(X, labels)
 
 
 def calculate_mutual_HTFD(X, cluster_ids):
@@ -516,7 +515,7 @@ class parameters(object):
         self.expt = parser.expt
         self.cluster_analysis = parser.cluster_analysis
         self.log_interval = parser.log_interval
-        self.pretrain_path = parser.pretrain_path + "/" + self.dataset + "_" + str(self.n_features) + ".pth"
+        self.pretrain_path = parser.pretrain_path
 
 
 class AdMSoftmaxLoss(nn.Module):
@@ -583,7 +582,11 @@ def multi_class_auc(y_true, y_scores, n_classes):
     y = label_binarize(y_true, classes=list(range(n_classes+1)))[:,:n_classes]
     scores = []
     for i in range(n_classes):
-        scores.append(roc_auc_score(y[:,i], y_scores[:,i]))
+        if len(np.unique(y[:,i])) == 1:
+            auc = 0
+        else:
+            auc = roc_auc_score(y[:,i], y_scores[:,i])
+        scores.append(auc)
     return np.avg(scores)
 
 
@@ -592,7 +595,11 @@ def multi_class_auprc(y_true, y_scores, n_classes):
     y = label_binarize(y_true, classes=list(range(n_classes+1)))[:,:n_classes]
     scores = []
     for i in range(n_classes):
-        scores.append(average_precision_score(y[:,i], y_scores[:,i]))
+        if len(np.unique(y[:,i])) == 1:
+            auprc = 0
+        else:
+            auprc = average_precision_score(y[:,i], y_scores[:,i])
+        scores.append(auprc)
     return np.avg(scores)
 
 
@@ -854,11 +861,14 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
             X, y, columns, scale = get_dataset(args.dataset, DATA_DIR, n_features)
 
         if IMG_FLAG == 1:
-            # Here X_test is fixed
+            # Here X_test is fixed ... not anymore
             # N_tr = len(X_train)
             N_tr = len(X_test)
-            sample_data_size_tr = int(args.data_ratio*N_tr)
-            sample_idx = skutils.random.sample_without_replacement(N_tr, sample_data_size_tr, random_state=r_state)
+            if args.data_ratio == -1:
+                sample_data_size_tr = int(len(X_train))
+            else:
+                sample_data_size_tr = int(args.data_ratio*N_tr)
+            sample_idx = skutils.random.sample_without_replacement(len(X_train), sample_data_size_tr, random_state=r_state)
             X_train, y_train = X_train[sample_idx], y_train[sample_idx]
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)
 
@@ -866,8 +876,11 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
             # N_tr = len(X_train)
             N_tr = len(X_test)
-            sample_data_size_tr = int(args.data_ratio*N_tr)
-            sample_idx = skutils.random.sample_without_replacement(N_tr, sample_data_size_tr, random_state=r_state)
+            if args.data_ratio == -1:
+                sample_data_size_tr = int(len(X_train))
+            else:
+                sample_data_size_tr = int(args.data_ratio*N_tr)
+            sample_idx = skutils.random.sample_without_replacement(len(X_train), sample_data_size_tr, random_state=r_state)
             X_train, y_train = X_train[sample_idx], y_train[sample_idx]
             X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, random_state=r_state, test_size=0.15)        
 
@@ -916,29 +929,39 @@ def performance_metrics(y_true, y_pred, n_classes=2):
     y = label_binarize(y_true, classes=list(range(n_classes+1)))[:,:n_classes]
     cm = confusion_matrix(y_true, y_pred.argmax(axis=1))
     cm = cm.astype(np.float32)
-
+    non_zero_class_cnt = 0
+    # Adjust for situations when some class points are absent
+    n_classes = cm.shape[0]
     for c in range(n_classes):
-        tp = cm[c,c]
-        fp = sum(cm[:,c]) - cm[c,c]
-        fn = sum(cm[c,:]) - cm[c,c]
-        tn = sum(np.delete(sum(cm)-cm[c,:],c))
-        
-        recall = tp/(tp+fn)
-        if (tp+fp == 0):
-            precision = 0
+        if len(np.unique(y[:,c])) == 1:
+            auroc_scores.append(0)
+            auprc_scores.append(0)
+            minpse_scores.append(0)
+            acc_scores.append(0)
         else:
-            precision = tp/(tp+fp)
-        specificity = tn/(tn+fp)
+            tp = cm[c,c]
+            fp = sum(cm[:,c]) - cm[c,c]
+            fn = sum(cm[c,:]) - cm[c,c]
+            tn = sum(np.delete(sum(cm)-cm[c,:],c))
+            
+            recall = tp/(tp+fn)
+            if (tp+fp == 0):
+                precision = 0
+            else:
+                precision = tp/(tp+fp)
+            specificity = tn/(tn+fp)
 
-        auroc_scores.append(roc_auc_score(y[:,c], y_pred[:,c]))
-        auprc_scores.append(average_precision_score(y[:,c], y_pred[:,c]))
-        minpse_scores.append(min(precision, specificity))
-        acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
+            auroc_scores.append(roc_auc_score(y[:,c], y_pred[:,c]))
+            auprc_scores.append(average_precision_score(y[:,c], y_pred[:,c]))
+            minpse_scores.append(min(precision, specificity))
+            # acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
+            non_zero_class_cnt += 1
 
-    return {"acc": np.round(np.avg(acc_scores), 3),
-            "auroc": np.round(np.avg(auroc_scores), 3),
-            "auprc": np.round(np.avg(auprc_scores), 3),
-            "minpse": np.round(np.avg(minpse_scores), 3),
+    return {# "acc": np.round(np.sum(acc_scores)/non_zero_class_cnt, 3),
+            "acc": np.round(accuracy_score(y_true, y_pred.argmax(axis=1)), 3),
+            "auroc": np.round(np.sum(auroc_scores)/non_zero_class_cnt, 3),
+            "auprc": np.round(np.sum(auprc_scores)/non_zero_class_cnt, 3),
+            "minpse": np.round(np.sum(minpse_scores)/non_zero_class_cnt, 3),
             "f1_score":np.round(f1_score(y_true, y_pred.argmax(axis=1), average="macro"), 3)}
 
 
