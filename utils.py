@@ -29,7 +29,7 @@ color = ['grey', 'red', 'blue', 'pink', 'olive', 'brown', 'black', 'magenta', 'p
 DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', 'aki', 'aki_new', 'infant', 'wid_mortality',\
             'synthetic', 'titanic', 'magic', 'adult', 'creditcard', 'heart', 'cic_los', 'cic_los_new', 'paper_synthetic',\
             'ihm_new', 'cic_24', 'ards48', 'aki48', 'sepsis48', 'sepsis24', 'ards24', 'aki24', 'sepsis24_correct', 'ards24_correct',\
-            'MNIST', 'FashionMNIST', 'CIFAR10']
+            'MNIST', 'FashionMNIST', 'CIFAR10', 'TEXT']
 
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"

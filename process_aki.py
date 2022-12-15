@@ -20,7 +20,7 @@ NUM_CLUSTERS = 4
 DATASET = '/Users/shivin/Document/NUS/Research/Data/aki48_new/'
 ORIGINAL = os.path.abspath(".")
 
-data_train = get_aki(DATASET+'train', ORIGINAL)
+data_train = get_aki_static(DATASET+'train', ORIGINAL)
 X = pd.concat(data_train,axis=1).T
 
 # X['Sofa_O2'] = X.apply(lambda x: Sofa_Oxygen(x.SaO2, x.FiO2), axis=1)
@@ -45,7 +45,7 @@ X_train[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X[non_binary_co
 
 # FS, ESTIMATORS, alt_clusterings, X_val, y_val = cluster_case_2(data, NUM_CLUSTERS, NUM_CLUSTERS, USE_FULL_FEATURES, CLUSTERINGS)
 
-data_test = get_aki(DATASET+ 'test', ORIGINAL)
+data_test = get_aki_static(DATASET+ 'test', ORIGINAL)
 X_test = pd.concat(data_test,axis=1).T
 columns = X_test.columns
 
@@ -80,7 +80,7 @@ NUM_CLUSTERS = 4
 DATASET = '/Users/shivin/Document/NUS/Research/Data/ards_new/'
 
 	
-X = get_aki(DATASET+'train', ORIGINAL)
+X = get_aki_static(DATASET+'train', ORIGINAL)
 X = pd.concat(X,axis=1).T
 columns = X.columns
 
@@ -98,7 +98,7 @@ scaler = MinMaxScaler()
 X_train[non_binary_columns] = scaler.fit_transform(np.nan_to_num(X_train[non_binary_columns]))
 
 #### Test
-X_test = get_aki(DATASET+'test', ORIGINAL)
+X_test = get_aki_static(DATASET+'test', ORIGINAL)
 X_test = pd.concat(X_test,axis=1).T
 columns = X_test.columns
 
