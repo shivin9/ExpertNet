@@ -10,6 +10,7 @@ from utils import is_non_zero_file
 from collections import OrderedDict
 from ts_utils import batch_iter, pad_sents
 from scipy.cluster.vq import vq, kmeans2
+from transformers import BertModel, BertTokenizer, AdamW
 
 class AE(nn.Module):
     def __init__(self, layers):
@@ -899,3 +900,182 @@ class DeepCAC_GRU(nn.Module):
             total_loss += cluster_loss
 
         return q, total_loss
+
+
+class ExpertNet_BioBERT_GRU(nn.Module):
+    def __init__(self,
+                 expert_layers,
+                 lr_enc,
+                 lr_exp,
+                 args):
+        super(ExpertNet_BioBERT_GRU, self).__init__()
+        self.alpha = args.alpha
+        self.pretrain_path = args.pretrain_path
+        self.device = args.device
+        self.n_clusters = args.n_clusters
+        self.n_classes = args.n_classes
+        self.n_features = args.n_features
+        self.n_z = args.n_z
+        self.args = args
+        self.criterion = nn.CrossEntropyLoss(reduction='none')
+        self.lr_exp = lr_exp
+        self.lr_enc = lr_enc
+        self.batch_size = args.batch_size
+        self.seq_len = args.end_t
+
+        self.hidden_dim = [128, 64, self.n_z]
+
+        # append input_dim at the end
+        self.ae = GRUModel(self.n_features, self.hidden_dim).to(args.device)
+
+        # Load the BioBert model and tokenizer
+        self.text_model = AutoModel.from_pretrained("dmis-lab/biobert-base-cased-v1.1")
+        self.tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-base-cased-v1.1")
+
+        # Add a new layer on top of the BioBert model for the embedding task
+        text_embedding = torch.nn.Linear(768, args.n_z)
+        self.text_model.classifier = text_embedding
+
+        # cluster layer
+        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z).to(args.device)
+        torch.nn.init.xavier_normal_(self.cluster_layer.data)
+
+        self.classifiers = []
+        n_layers = int(len(expert_layers))
+        for _ in range(self.n_clusters):
+            classifier = OrderedDict()
+            for i in range(n_layers-2):
+                classifier.update(
+                    {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                    # "bn{}".format(i): nn.BatchNorm1d(expert_layers[i+1]),
+                    'activation{}'.format(i): nn.ReLU(),
+                    # 'dropout{}'.format(i): nn.dropout(0.7)
+                    })
+
+            i = n_layers - 2
+            classifier.update(
+                {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
+                })
+
+            classifier = nn.Sequential(classifier).to(self.device)
+            optimizer = torch.optim.Adam(classifier.parameters(), lr=self.lr_exp)
+            self.classifiers.append([classifier, optimizer])
+            # nn.init.xavier_uniform_(classifier.weight)
+        
+        learnable_params = list(self.ae.parameters()) + list(self.text_model.text_embedding.parameters())
+        self.optimizer = torch.optim.Adam(learnable_params, lr=self.lr_enc)
+            
+
+    def pretrain(self, train, path=''):
+        print(self.ae)
+
+        if not is_non_zero_file(path):
+            path = ''
+        if path == '':
+            print("Pretraining AE")
+            pretrain_ts_ae(self, train, self.args)
+        else:
+            # load pretrain weights
+            self.ae.load_state_dict(torch.load(self.pretrain_path))
+            # pretrain_ts_ae(self, train, self.args)
+            print('Loading Pretrained AE from', path)
+
+
+    def encoder_forward(self, x, output="default"):
+        x_bar, _, z = self.ae(x)
+        q = source_distribution(z, self.cluster_layer, alpha=self.alpha)
+
+        if output == "latent":
+            return q, z
+
+        elif output == "classifier":
+            preds = torch.zeros((len(z), self.n_classes))
+            for j in range(len(z)):
+                preds[j,:] = self.classifiers[j](z)
+            return preds
+        
+        else:
+            return z, x_bar, q
+
+
+    def predict(self, X=None, z=None, q=None, attention=True):
+        if z != None and q != None:
+            z = z
+            q = q
+        else:
+            z, _, q = self.encoder_forward(X)
+
+        preds = torch.zeros((len(z), self.n_classes))
+
+        cluster_ids = torch.argmax(q, axis=1)
+        X_cluster = z
+        total_loss = 0
+        for j in range(self.n_clusters):
+            if attention == True:
+                # Weighted predictions
+                cluster_id = np.where(cluster_ids == j)[0]
+                X_cluster = z
+                cluster_preds = self.classifiers[j][0](X_cluster)
+                for c in range(self.n_classes):
+                    preds[:,c] += q[:,j]*cluster_preds[:,c]
+
+            else:
+                cluster_id = np.where(cluster_ids == j)[0]
+                X_cluster = z[cluster_id]
+                cluster_test_preds = self.classifiers[j][0](X_cluster)
+                preds[cluster_id,:] = cluster_test_preds
+    
+        return preds
+
+
+    def expert_forward(self, X, y, z=None, q=None, backprop_enc=False, backprop_local=False, attention=True):
+        if z == None and q == None:
+            z, out, q = self.encoder_forward(X)
+
+        cluster_ids = torch.argmax(q, axis=1)
+        y_cluster = y
+        total_loss = 0
+
+        for k in range(self.n_clusters):
+            classifier_k, optimizer_k = self.classifiers[k]
+
+            if attention == False:
+                cluster_id = np.where(cluster_ids == k)[0]
+                X_cluster = z[cluster_id]
+                y_cluster = y[cluster_id]
+                if backprop_enc == True:
+                    y_pred_cluster = classifier_k(X_cluster) # Backprop the error to encoder
+                else:
+                    y_pred_cluster = classifier_k(X_cluster.detach()) # Do not backprop the error to encoder
+
+                cluster_loss = torch.sum(self.criterion(y_pred_cluster, y_cluster))
+
+            else:
+                X_cluster = z
+                if backprop_enc == True:
+                    y_pred_cluster = classifier_k(X_cluster)
+                    cluster_loss = torch.sum(q[:,k]*self.criterion(y_pred_cluster, y_cluster))
+                else:
+                    y_pred_cluster = classifier_k(X_cluster.detach())
+                    cluster_loss = torch.sum(q.detach()[:,k]*self.criterion(y_pred_cluster, y_cluster))
+
+            if backprop_local == True:
+                optimizer_k.zero_grad()
+                cluster_loss.backward(retain_graph=True)
+                optimizer_k.step()
+            total_loss += cluster_loss
+
+        return q, total_loss
+
+
+    def get_text_embeddings(self, clinical_notes):
+        encoded_notes = [tokenizer.encode(note, return_tensors='pt') for note in clinical_notes]
+
+        # Define the loss function and optimizer
+        note_embeddings = [model(note)[0] for note in encoded_notes]
+        average_embeddings = [embedding.mean(dim=1) for embedding in note_embeddings]
+        final_vec = torch.zeros(average_embeddings[0].shape)
+        for sentence_embed in average_embeddings:
+            final_vec = 0.7*final_vec + 0.3*sentence_embed
+        
+        return final_vec
