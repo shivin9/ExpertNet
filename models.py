@@ -11,6 +11,7 @@ from collections import OrderedDict
 from ts_utils import batch_iter, pad_sents
 from scipy.cluster.vq import vq, kmeans2
 from transformers import BertModel, BertTokenizer, AdamW
+from transformers import AutoModel, AutoTokenizer
 
 class AE(nn.Module):
     def __init__(self, layers):
@@ -40,7 +41,6 @@ class AE(nn.Module):
 
 
     def forward(self, x, output="decoded"):
-
         # encoder
         enc = self.encoder(x)
         z = self.z_layer(enc)
@@ -962,7 +962,7 @@ class ExpertNet_BioBERT_GRU(nn.Module):
             self.classifiers.append([classifier, optimizer])
             # nn.init.xavier_uniform_(classifier.weight)
         
-        learnable_params = list(self.ae.parameters()) + list(self.text_model.text_embedding.parameters())
+        learnable_params = list(self.ae.parameters()) + list(self.text_model.classifier.parameters())
         self.optimizer = torch.optim.Adam(learnable_params, lr=self.lr_enc)
             
 
@@ -1068,14 +1068,65 @@ class ExpertNet_BioBERT_GRU(nn.Module):
         return q, total_loss
 
 
+    # Gets concatenated embeddings for the time quarters upto some time
     def get_text_embeddings(self, clinical_notes):
-        encoded_notes = [tokenizer.encode(note, return_tensors='pt') for note in clinical_notes]
+        encoded_notes = []
+        accumulation_time = 0
+        six_hour_chunks = int(self.seq_len/6)
+        CHUNK_LEN = 512
+        encoded_notes = []
+        for i in range(six_hour_chunks):
+            encoded_notes.append(self.tokenizer.encode("", return_tensors='pt'))
+
+        for note in clinical_notes:
+            note_time = note[0]
+            note_text = note[1]
+            note_quarter = int(note_time/6)
+            # Quarters for which notes are available
+            if note_quarter <= six_hour_chunks:
+                note_text_chunks = [note_text[i:i+CHUNK_LEN] for i in range(0, len(note_text), CHUNK_LEN)]
+                for chunk in note_text_chunks:
+                    encoded_notes.append(self.tokenizer.encode(chunk, return_tensors='pt'))
+            else:
+                break
 
         # Define the loss function and optimizer
-        note_embeddings = [model(note)[0] for note in encoded_notes]
+        note_embeddings = [self.text_model(note)[0] for note in encoded_notes]
         average_embeddings = [embedding.mean(dim=1) for embedding in note_embeddings]
         final_vec = torch.zeros(average_embeddings[0].shape)
         for sentence_embed in average_embeddings:
             final_vec = 0.7*final_vec + 0.3*sentence_embed
         
         return final_vec
+
+'''
+def get_text_embeddings(clinical_notes, seq_len=24):
+    encoded_notes = []
+    accumulation_time = 0
+    six_hour_chunks = int(seq_len/6)
+    CHUNK_LEN = 512
+    encoded_notes = []
+    for i in range(six_hour_chunks):
+        encoded_notes.append(tokenizer.encode("", return_tensors='pt'))
+
+    for note in clinical_notes:
+        note_time = note[0]
+        note_text = note[1]
+        note_quarter = int(note_time/6)
+        # Quarters for which notes are available
+        if note_quarter <= six_hour_chunks:
+            note_text_chunks = [note_text[i:i+CHUNK_LEN] for i in range(0, len(note_text), CHUNK_LEN)]
+            for chunk in note_text_chunks:
+                encoded_notes.append(tokenizer.encode(chunk, return_tensors='pt'))
+        else:
+            break
+
+    # Define the loss function and optimizer
+    note_embeddings = [text_model(note)[0] for note in encoded_notes]
+    average_embeddings = [embedding.mean(dim=1) for embedding in note_embeddings]
+    final_vec = torch.zeros(average_embeddings[0].shape)
+    for sentence_embed in average_embeddings:
+        final_vec = 0.7*final_vec + 0.3*sentence_embed
+    
+    return final_vec
+'''

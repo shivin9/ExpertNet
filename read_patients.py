@@ -336,10 +336,10 @@ def get_sepsis_TS(direc, t_end=24):
 
 
 def get_notes(patient_notes, key):
-    pat_notes = patient_notes[patient_notes.SUBJECT_ID==key]
-    if len(pat_notes) == 0:
+    patient_notes_key = patient_notes[patient_notes.SUBJECT_ID==key]
+    if len(patient_notes_key) == 0:
         return []
-    patient_note_times = pd.to_datetime(pat_notes.sort_values(by='CHARTTIME').CHARTTIME.values)
+    patient_note_times = pd.to_datetime(patient_notes_key.sort_values(by='CHARTTIME').CHARTTIME.values)
     base_date  = patient_note_times[0]
     base_date -= timedelta(hours=23, minutes=59, seconds=59)
     final_date = patient_note_times[-1]
@@ -351,13 +351,19 @@ def get_notes(patient_notes, key):
     cnt = 0
 
     for i in range(4*stay_length):
-        cur_notes = pat_notes[(cur_time < pat_notes.CHARTTIME) & (pat_notes.CHARTTIME <= next_time)]
+        cur_notes = patient_notes_key[(cur_time < patient_notes_key.CHARTTIME) & (patient_notes_key.CHARTTIME <= next_time)]
         if len(cur_notes) > 0:
-            notes.append((cnt, cur_notes.category_text.values))
+            # cur_patient_note = cur_notes.category_text.values
+            cur_patient_note = " ".join(cur_notes.category_text.values)
+            cur_patient_note = cur_patient_note.replace("\\n", " ")
+            cur_patient_note = cur_patient_note.strip()
+            cur_patient_note = cur_patient_note.replace("_", "")
+            cur_patient_note = cur_patient_note.replace("  ", "")
+            cur_patient_note = re.sub(r'\W+', ' ', cur_patient_note)
+            notes.append((cnt, cur_patient_note))
         cur_time = next_time
         next_time += six_hours
-        cnt += 4
-
+        cnt += 6 # 24/4 = 6
     return np.array(notes, dtype=object)
 
 
@@ -375,7 +381,7 @@ def generate_timestamped_notes(patient_notes, patient_ids):
 
 if __name__ == '__main__':
     final_train = get_static_aki_expanded('./train', ori_direc=os.curdir, t_end=24)
-    final_test = get_static_aki_expanded('./test', ori_direc=os.curdir, t_end=24)
+    final_test  = get_static_aki_expanded('./test', ori_direc=os.curdir, t_end=24)
 
     y_train = final_train.y
     y_test = final_test.y
