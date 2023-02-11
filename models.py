@@ -244,43 +244,6 @@ class CIFAR_AE(nn.Module):
         return decoded, encoded_lin
 
 
-def target_distribution(q):
-    weight = q**2 / q.sum(0)
-    return (weight.t() / weight.sum(1)).t()
-
-
-def source_distribution(z, cluster_layer, alpha=1):
-    q = 1.0 / (1.0 + torch.sum(
-        torch.pow(z.unsqueeze(1) - cluster_layer, 2), 2) / alpha)
-    q = q.pow((alpha + 1.0) / 2.0)
-    q = (q.t() / torch.sum(q, 1)).t()
-    return q
-
-
-def pretrain_ae(model, train_loader, args):
-    '''
-    pretrain autoencoder
-    '''
-    print(model)
-    optimizer = Adam(model.parameters(), lr=args.lr_enc)
-    for epoch in range(args.pre_epoch):
-        total_loss = 0.
-        for batch_idx, (x, _, _) in enumerate(train_loader):
-            x = x.to(args.device)
-            optimizer.zero_grad()
-            x_bar, _ = model(x)
-            loss = F.mse_loss(x_bar, x)
-            total_loss += loss.item()
-
-            loss.backward()
-            optimizer.step()
-
-        print("Pretraining epoch {} loss={:.4f}".format(epoch,
-                                            total_loss / (batch_idx + 1)))
-        torch.save(model.state_dict(), args.pretrain_path)
-    print("model saved to {}.".format(args.pretrain_path))
-
-
 class NNClassifier(nn.Module):
     def __init__(self, ae_layers, expert_layers, args):
         super(NNClassifier, self).__init__()
@@ -358,7 +321,6 @@ class NNClassifierBase(nn.Module):
         self.args = args
         self.n_classes = args.n_classes
         self.criterion = nn.CrossEntropyLoss(reduction='mean')
-        # self.criterion = torch.nn.HingeEmbeddingLoss(reduction='mean')
         self.device = args.device
         self.input_dim = args.input_dim
         self.alpha = args.alpha
@@ -399,7 +361,7 @@ class NNClassifierBase(nn.Module):
 
 class DeepCAC(nn.Module):
     def __init__(self,
-                 ae_layers,
+                 DAE_model,
                  expert_layers,
                  args):
         super(DeepCAC, self).__init__()
@@ -411,10 +373,7 @@ class DeepCAC(nn.Module):
         self.n_z = args.n_z
         self.args = args
 
-        # append input_dim at the end
-        ae_layers.append(self.input_dim)
-        ae_layers = [self.input_dim] + ae_layers
-        self.ae = AE(ae_layers)
+        self.ae = DAE_model
 
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
@@ -471,6 +430,43 @@ class DeepCAC(nn.Module):
         
         else:
             return z
+
+
+def target_distribution(q):
+    weight = q**2 / q.sum(0)
+    return (weight.t() / weight.sum(1)).t()
+
+
+def source_distribution(z, cluster_layer, alpha=1):
+    q = 1.0 / (1.0 + torch.sum(
+        torch.pow(z.unsqueeze(1) - cluster_layer, 2), 2) / alpha)
+    q = q.pow((alpha + 1.0) / 2.0)
+    q = (q.t() / torch.sum(q, 1)).t()
+    return q
+
+
+def pretrain_ae(model, train_loader, args):
+    '''
+    pretrain autoencoder
+    '''
+    print(model)
+    optimizer = Adam(model.parameters(), lr=args.lr_enc)
+    for epoch in range(args.pre_epoch):
+        total_loss = 0.
+        for batch_idx, (x, _, _) in enumerate(train_loader):
+            x = x.to(args.device)
+            optimizer.zero_grad()
+            x_bar, _ = model(x)
+            loss = F.mse_loss(x_bar, x)
+            total_loss += loss.item()
+
+            loss.backward()
+            optimizer.step()
+
+        print("Pretraining epoch {} loss={:.4f}".format(epoch,
+                                            total_loss / (batch_idx + 1)))
+        torch.save(model.state_dict(), args.pretrain_path)
+    print("model saved to {}.".format(args.pretrain_path))
 
 
 class ExpertNet(nn.Module):

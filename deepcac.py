@@ -33,7 +33,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import DeepCAC,  target_distribution, source_distribution
+from models import DeepCAC,  target_distribution, source_distribution, CNN_AE, DAE, CIFAR_AE
 from utils import *
 
 parser = argparse.ArgumentParser()
@@ -41,6 +41,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 parser.add_argument('--n_features', default= '-1')
+parser.add_argument('--target', default= -1, type=int)
+parser.add_argument('--data_ratio', default= 1, type=float)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -58,6 +60,8 @@ parser.add_argument("--tol", default=0.01, type=float)
 parser.add_argument("--attention", default="True")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
+parser.add_argument('--ae_type', default= 'dae')
+parser.add_argument('--n_channels', default= 1, type=int)
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -83,14 +87,17 @@ parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Rese
 
 parser = parser.parse_args()  
 args = parameters(parser)
-base_suffix = ""
 
 for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'eta', 'attention']:
     print(key, args.__dict__[key])
 
-base_suffix += args.dataset + "_"
-base_suffix += str(args.n_clusters) + "_"
-base_suffix += str(args.attention)
+base_suffix = ""
+base_suffix += args.dataset
+base_suffix += "_" + args.ae_type
+base_suffix += "_k_" + str(args.n_clusters)
+base_suffix += "_att_" + str(args.attention)
+base_suffix += "_dr_" + str(args.data_ratio)
+base_suffix += "_target_" + str(args.target)
 
 softmin = torch.nn.Softmin(dim=0)
 U = torch.eye(args.n_classes, args.n_classes)*1000
@@ -135,6 +142,8 @@ else:
     iter_array = range(args.n_runs)
     iteration_name = "Run"
 
+args.pretrain_path += "/AE_" + base_suffix + ".pth"
+
 for r in range(len(iter_array)):
     scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r)
     X_train, y_train = train_data
@@ -163,12 +172,26 @@ for r in range(len(iter_array)):
         args.n_clusters = iter_array[r]
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
-    # ae_layers = [128, 64, 32, args.n_z, 32, 64, 128]
-    ae_layers = [64, args.n_z, 64]
-    expert_layers = [args.n_z, 30, args.n_classes]
+
+    ae_layers = [128, 64, args.n_z, 64, 128]
+    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+
+    # ae_layers = [64, args.n_z, 64]
+    # expert_layers = [args.n_z, 30, args.n_classes]
+
+    if args.ae_type == 'cnn':
+        if X_train[0].shape[1] == 28:
+            expertnet_ae = CNN_AE(args, fc2_input_dim=128)
+        elif X_train[0].shape[1] == 32:
+            expertnet_ae = CIFAR_AE(args, fc2_input_dim=128)
+    
+    else:
+        ae_layers.append(args.input_dim)
+        ae_layers = [args.input_dim] + ae_layers
+        deepcac_ae = DAE(ae_layers)
 
     model = DeepCAC(
-            ae_layers,
+            deepcac_ae,
             expert_layers,
             args=args).to(args.device)
 
@@ -445,7 +468,6 @@ for r in range(len(iter_array)):
 
             # Update Assignments
             X_latents, x_bar = model(x_batch, output='latent')
-            # print(X_latents, model.cluster_layer)
             cluster_id, _ = vq(X_latents.data.cpu().numpy(), model.cluster_layer.cpu().numpy())
             cluster_id = torch.Tensor(cluster_id).type(torch.LongTensor)
 
@@ -548,7 +570,6 @@ for r in range(len(iter_array)):
             train_preds[cluster_id,:] += cluster_preds
             train_loss += torch.sum(criterion(cluster_preds, y_cluster))
             # B.append(torch.max(torch.linalg.norm(X_cluster, axis=1), axis=0).values)
-
 
         train_loss /= len(z_train)
         e_train_loss = torch.mean(criterion(train_preds, torch.Tensor(y_train).type(torch.LongTensor)))

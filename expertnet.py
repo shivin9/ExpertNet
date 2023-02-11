@@ -87,7 +87,6 @@ parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Rese
 
 parser = parser.parse_args()
 args = parameters(parser)
-base_suffix = ""
 
 # for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'eta', 'attention']:
 #     print(key, args.__dict__[key])
@@ -108,6 +107,7 @@ elif args.attention == 11:
     attention_train = 1
     attention_test = 1
 
+base_suffix = ""
 base_suffix += args.dataset
 base_suffix += "_" + args.ae_type
 base_suffix += "_k_" + str(args.n_clusters)
@@ -158,7 +158,7 @@ else:
     iter_array = range(args.n_runs)
     iteration_name = "Run"
 
-args.pretrain_path += "/AE" + base_suffix + ".pth"
+args.pretrain_path += "/AE_" + base_suffix + ".pth"
 
 for r in range(len(iter_array)):
     scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r, n_features=args.n_features)
@@ -205,14 +205,8 @@ for r in range(len(iter_array)):
     "_delta_" + str(args.delta) +\
     "_" + iteration_name + "_" + str(iter_array[r])
 
-    if args.expt == 'ExpertNet':
-        ae_layers = [128, 64, args.n_z, 64, 128]
-        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
-
-    else:
-        # DeepCAC expts
-        ae_layers = [64, args.n_z, 64]
-        expert_layers = [args.n_z, 30, args.n_classes]
+    ae_layers = [128, 64, args.n_z, 64, 128]
+    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
 
     if args.ae_type == 'cnn':
         if X_train[0].shape[1] == 28:
@@ -230,8 +224,7 @@ for r in range(len(iter_array)):
             expert_layers,
             args.lr_enc,
             args.lr_exp,
-            args=args).to(args.device)
-    
+            args=args).to(args.device)    
 
     model.pretrain(train_loader, args.pretrain_path)
     # model.pretrain(train_loader, '')

@@ -18,7 +18,6 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, l
 from sklearn import utils as skutils
 from scipy.optimize import linear_sum_assignment as linear_assignment
 from scipy.stats import ttest_ind, wasserstein_distance as wd
-from read_patients import get_aki
 from matplotlib import pyplot as plt
 import matplotlib.colors as mc
 import colorsys
@@ -813,7 +812,7 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
             X = np.delete(scale.inverse_transform(X), 2, 1) # 2nd column is LOS
             y = np.array(y_los)
 
-        if args.dataset == "synthetic":
+        elif args.dataset == "synthetic":
             n_feat = 90
             X, y, columns = create_imbalanced_data_clusters(n_samples=10000,\
                     n_clusters=10, n_features=n_feat,\
@@ -874,8 +873,8 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
 
         else:
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
-            # N_tr = len(X_train)
-            N_tr = len(X_test)
+            N_tr = len(X_train)
+            # N_tr = len(X_test)
             if args.data_ratio == -1:
                 sample_data_size_tr = int(len(X_train))
             else:
