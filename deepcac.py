@@ -88,7 +88,7 @@ parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Rese
 parser = parser.parse_args()  
 args = parameters(parser)
 
-for key in ['n_clusters', 'alpha', 'beta', 'gamma', 'delta', 'eta', 'attention']:
+for key in ['alpha', 'beta', 'gamma', 'delta', 'data_ratio', 'n_clusters', 'attention']:
     print(key, args.__dict__[key])
 
 base_suffix = ""
@@ -181,9 +181,9 @@ for r in range(len(iter_array)):
 
     if args.ae_type == 'cnn':
         if X_train[0].shape[1] == 28:
-            expertnet_ae = CNN_AE(args, fc2_input_dim=128)
+            deepcac_ae = CNN_AE(args, fc2_input_dim=128)
         elif X_train[0].shape[1] == 32:
-            expertnet_ae = CIFAR_AE(args, fc2_input_dim=128)
+            deepcac_ae = CIFAR_AE(args, fc2_input_dim=128)
     
     else:
         ae_layers.append(args.input_dim)
@@ -623,7 +623,7 @@ for r in range(len(iter_array)):
         if es.early_stop == True:
             # sil_scores[e].append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            htfd_scores.append(calculate_HTFD(X_train, cluster_ids_train))
+            # htfd_scores.append(calculate_HTFD(X_train, cluster_ids_train))
             # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
 

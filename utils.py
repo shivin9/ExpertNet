@@ -873,8 +873,8 @@ def get_train_val_test_loaders(args, r_state=0, n_features=-1):
 
         else:
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=r_state, test_size=0.15)
-            N_tr = len(X_train)
-            # N_tr = len(X_test)
+            # N_tr = len(X_train)
+            N_tr = len(X_test)
             if args.data_ratio == -1:
                 sample_data_size_tr = int(len(X_train))
             else:

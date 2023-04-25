@@ -226,8 +226,11 @@ for r in range(len(iter_array)):
             args.lr_exp,
             args=args).to(args.device)    
 
-    model.pretrain(train_loader, args.pretrain_path)
-    # model.pretrain(train_loader, '')
+    if args.pretrain == "True":
+        print("Pretraining ExpertNet")
+        model.pretrain(train_loader, args.pretrain_path)
+    else:
+        print("Not Pretraining ExpertNet")
 
     # Initiate cluster parameters
     device = args.device
@@ -418,7 +421,7 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
     ####################################################################################
-    ################################### Local Training #################################
+    ################################## Local Training ##################################
     ####################################################################################
     ####################################################################################
     ####################################################################################
