@@ -2183,5 +2183,3 @@ Distilled Model Metrics
 
 [Std]	F1	AUC	AUPRC	MINPSE
 	nan	nan	nan	nan
-
-ExpertNet Student Experiments

@@ -42,7 +42,7 @@ parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 parser.add_argument('--n_features', default= '-1')
 parser.add_argument('--target', default= -1, type=int)
-parser.add_argument('--data_ratio', default= 1, type=float)
+parser.add_argument('--data_ratio', default= -1, type=float)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)

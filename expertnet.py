@@ -4,6 +4,7 @@ import torch
 import argparse
 import numpy as np
 import os
+import random
 from torchvision import datasets, transforms
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score,\
 f1_score, roc_auc_score, average_precision_score, roc_curve, accuracy_score, matthews_corrcoef as mcc
@@ -12,11 +13,8 @@ import pandas as pd
 from scipy.spatial import distance_matrix
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, label_binarize
 
-import argparse
-import numpy as np
 from scipy.cluster.vq import vq, kmeans2
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
-from sklearn.metrics import adjusted_rand_score as ari_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 import torch.nn as nn
@@ -41,7 +39,7 @@ parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 parser.add_argument('--n_features', default= '-1')
 parser.add_argument('--target', default= -1, type=int)
-parser.add_argument('--data_ratio', default= 1, type=float)
+parser.add_argument('--data_ratio', default= -1, type=float)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -51,9 +49,9 @@ parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
-parser.add_argument('--pre_epoch', default= 100, type=int)
-parser.add_argument('--pretrain', default= True, type=bool)
-parser.add_argument("--load_ae", default= False, type=bool)
+parser.add_argument('--pre_epoch', default= 200, type=int)
+parser.add_argument('--pretrain', default= 'True')
+parser.add_argument("--load_ae", default= 'False')
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
 parser.add_argument("--attention", default=11, type=int)
@@ -73,6 +71,7 @@ parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
 parser.add_argument('--optimize', default= 'auprc')
 parser.add_argument('--ae_type', default= 'dae')
+parser.add_argument('--sub_epochs', default= 'False')
 parser.add_argument('--n_channels', default= 1, type=int)
 
 # Utility parameters
@@ -118,7 +117,7 @@ base_suffix += "_target_" + str(args.target)
 ####################################################################################
 ####################################################################################
 ####################################################################################
-################################### Initialiation ##################################
+################################## Initialiation ###################################
 ####################################################################################
 ####################################################################################
 ####################################################################################
@@ -149,6 +148,10 @@ elif args.ablation == "gamma":
 elif args.ablation == "delta":
     iter_array = deltas
     iteration_name = "Delta"
+
+elif args.ablation == "eta":
+    iter_array = etas
+    iteration_name = "Eta"
 
 elif args.ablation == "k":
     iter_array = ks
@@ -196,6 +199,9 @@ for r in range(len(iter_array)):
     elif args.ablation == "delta":
         args.delta = iter_array[r]
 
+    elif args.ablation == "eta":
+        args.delta = iter_array[r]
+
     elif args.ablation == "k":
         args.n_clusters = iter_array[r]
 
@@ -203,6 +209,7 @@ for r in range(len(iter_array)):
     "_beta_" + str(args.beta) +\
     "_gamma_" + str(args.gamma) +\
     "_delta_" + str(args.delta) +\
+    "_eta_" + str(args.eta) +\
     "_" + iteration_name + "_" + str(iter_array[r])
 
     ae_layers = [128, 64, args.n_z, 64, 128]
@@ -226,7 +233,8 @@ for r in range(len(iter_array)):
             args.lr_exp,
             args=args).to(args.device)    
 
-    if args.pretrain == "True":
+    print(args.pretrain)
+    if args.pretrain == 'True':
         print("Pretraining ExpertNet")
         model.pretrain(train_loader, args.pretrain_path)
     else:
@@ -319,7 +327,37 @@ for r in range(len(iter_array)):
                 val_cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
             else:
                 val_cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
+            
+            ################################
+            ########## DICE LOSS ###########
+            ################################
+            
+            list_k_in_c = list(range(args.n_clusters))
+            k1, k2 = random.sample(list_k_in_c, 2)
 
+            list_mask_k1 = np.zeros(len(cluster_ids))
+            list_mask_k1[np.where(cluster_ids == k1)[0]] = 1
+            
+            list_mask_k1k2 = np.zeros(len(cluster_ids))
+            list_mask_k1k2[np.where(cluster_ids == k1)[0]] = 1
+            list_mask_k1k2[np.where(cluster_ids == k2)[0]] = 1
+
+            mask_k1_tensor = torch.BoolTensor(list_mask_k1)
+            mask_k1k2_tensor = torch.BoolTensor(list_mask_k1k2)
+            
+            # print(preds.shape, mask_k1_tensor.shape)
+            output_outcome_mask_k1 = preds.T.masked_fill(mask = mask_k1_tensor, value=torch.tensor(0.0)).T
+            output_outcome_mask_k1k2 = preds.T.masked_fill(mask = mask_k1k2_tensor, value=torch.tensor(0.0)).T
+
+            loss_outcome_mask_k1 = torch.mean(criterion(output_outcome_mask_k1, torch.Tensor(y_val).type(torch.LongTensor)))
+            loss_outcome_mask_k1k2 = torch.mean(criterion(output_outcome_mask_k1k2, torch.Tensor(y_val).type(torch.LongTensor)))
+            loss_G = 2*(loss_outcome_mask_k1k2 - loss_outcome_mask_k1)
+            val_loss_p_value = 3.841 - loss_G #  we want loss_p_value < 0 as much as possible.
+
+            ####################################
+            ########## DICE LOSS END ###########
+            ####################################
+            
             p_val = target_distribution(q_val.detach())
             val_reconstr_loss = F.mse_loss(x_val_bar, torch.FloatTensor(X_val).to(args.device))
             val_km_loss = F.kl_div(q_val.log(), p_val, reduction='batchmean')
@@ -329,6 +367,7 @@ for r in range(len(iter_array)):
             val_loss += args.beta*val_km_loss
             val_loss += args.gamma*val_class_loss
             val_loss += args.delta*val_cluster_balance_loss
+            val_loss += args.eta*val_loss_p_value
 
             epoch_len = len(str(N_EPOCHS))
 
@@ -363,6 +402,7 @@ for r in range(len(iter_array)):
         epoch_balance_loss = 0
         epoch_class_loss = 0
         epoch_km_loss = 0
+        epoch_p_val_loss = 0
         
         model.ae.train() # prep model for evaluation
         for j in range(model.n_clusters):
@@ -383,10 +423,13 @@ for r in range(len(iter_array)):
                 model.expert_forward(x_batch, y_batch, X_latents, q_batch, backprop_enc=False, backprop_local=True, attention=attention_train)
 
             q, class_loss = model.expert_forward(x_batch, y_batch, X_latents, q_batch, backprop_enc=True, backprop_local=False, attention=attention_train)
+            preds_batch = model.predict(torch.FloatTensor(x_batch).to(args.device))
 
             class_loss /= len(X_latents)
 
             q_batch = source_distribution(X_latents, model.cluster_layer, alpha=model.alpha)
+            cluster_ids_batch = torch.argmax(q_batch, axis=1)
+
             P = torch.sum(torch.nn.Softmax(dim=1)(10*q_batch), axis=0)
             P = P/P.sum()
             Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
@@ -398,6 +441,36 @@ for r in range(len(iter_array)):
 
             km_loss = F.kl_div(q_batch.log(), p_train[idx], reduction='batchmean')
 
+            ################################
+            ########## DICE LOSS ###########
+            ################################
+            
+            list_k_in_c = list(range(args.n_clusters))
+            k1, k2 = random.sample(list_k_in_c, 2)
+
+            list_mask_k1 = np.zeros(len(cluster_ids_batch))
+            list_mask_k1[np.where(cluster_ids_batch == k1)[0]] = 1
+            
+            list_mask_k1k2 = np.zeros(len(cluster_ids_batch))
+            list_mask_k1k2[np.where(cluster_ids_batch == k1)[0]] = 1
+            list_mask_k1k2[np.where(cluster_ids_batch == k2)[0]] = 1
+
+            mask_k1_tensor = torch.BoolTensor(list_mask_k1)
+            mask_k1k2_tensor = torch.BoolTensor(list_mask_k1k2)
+            
+            output_outcome_mask_k1 = preds_batch.T.masked_fill(mask = mask_k1_tensor, value=torch.tensor(0.0)).T
+            output_outcome_mask_k1k2 = preds_batch.T.masked_fill(mask = mask_k1k2_tensor, value=torch.tensor(0.0)).T
+
+            loss_outcome_mask_k1 = torch.mean(criterion(output_outcome_mask_k1, y_batch))
+            loss_outcome_mask_k1k2 = torch.mean(criterion(output_outcome_mask_k1k2, y_batch))
+            loss_G = 2*(loss_outcome_mask_k1k2 - loss_outcome_mask_k1)
+            loss_p_value = 3.841 - loss_G #  we want loss_p_value < 0 as much as possible. 
+
+            ####################################
+            ########### DICE LOSS END ##########
+            ####################################
+            
+
             loss = args.alpha*reconstr_loss
             if args.beta != 0:
                 loss += beta*km_loss
@@ -405,17 +478,22 @@ for r in range(len(iter_array)):
                 loss += gamma*class_loss
             if args.delta != 0:
                 loss += delta*cluster_balance_loss
+            if args.eta != 0:
+                loss += eta*loss_p_value
 
             epoch_loss += loss
             epoch_class_loss += class_loss
             epoch_balance_loss += cluster_balance_loss
             epoch_km_loss += km_loss
+            epoch_p_val_loss += loss_p_value
+
             model.optimizer.zero_grad()
             loss.backward(retain_graph=True)
             model.optimizer.step()
 
-        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f}'\
-        .format(epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss))
+        print('Epoch: {:02d} | Epoch KM Loss: {:.3f} | Total Loss: {:.3f} | Classification Loss: {:.3f} | Cluster Balance Loss: {:.3f} | p-val-Loss: {:.3f}'\
+        .format(epoch, epoch_km_loss, epoch_loss, epoch_class_loss, loss, epoch_p_val_loss))
+
         train_losses.append([np.round(epoch_loss.item(),3), np.round(epoch_class_loss.item(),3)])
 
     ####################################################################################

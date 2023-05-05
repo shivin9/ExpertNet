@@ -505,6 +505,7 @@ class parameters(object):
         self.n_classes = parser.n_classes
         self.optimize = parser.optimize
         self.ae_type = parser.ae_type
+        self.sub_epochs = parser.sub_epochs
         self.n_channels = parser.n_channels
 
         # Utility parameters

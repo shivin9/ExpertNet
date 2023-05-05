@@ -627,8 +627,10 @@ class ExpertNet(nn.Module):
 
 class DMNN(nn.Module):
     def __init__(self,
-                 ae_layers,
+                 DAE_model,
                  expert_layers,
+                 lr_enc,
+                 lr_exp,
                  args):
         super(DMNN, self).__init__()
         self.alpha = args.alpha
@@ -639,20 +641,14 @@ class DMNN(nn.Module):
         self.n_z = args.n_z
         self.args = args
         self.n_classes = args.n_classes
-        ae_layers.append(self.input_dim)
-        ae_layers = [self.input_dim] + ae_layers
-        self.ae = AE(ae_layers)
+        self.ae = DAE_model
         self.classifiers = []
 
         # Gating layer
         self.gate = nn.Sequential(
-            Linear(self.n_z, self.n_clusters),
+            nn.Linear(int(self.n_z), self.n_clusters),
             nn.Softmax(dim=1)
             ).to(self.device)
-
-        # cluster layer
-        self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
-        torch.nn.init.xavier_normal_(self.cluster_layer.data)
 
         n_layers = int(len(expert_layers))
         for _ in range(self.n_clusters):

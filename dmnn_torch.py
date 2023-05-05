@@ -31,7 +31,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import DMNN
+from models import DMNN, CNN_AE, DAE, CIFAR_AE
 from utils import *
 
 
@@ -40,6 +40,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 parser.add_argument('--n_features', default= '-1')
+parser.add_argument('--target', default= -1, type=int)
+parser.add_argument('--data_ratio', default= -1, type=float)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -49,7 +51,7 @@ parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
-parser.add_argument('--pre_epoch', default= 40, type=int)
+parser.add_argument('--pre_epoch', default= 75, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
 parser.add_argument("--classifier", default="LR")
@@ -58,13 +60,16 @@ parser.add_argument("--attention", default="True")
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
 parser.add_argument('--optimize', default= 'auprc')
+parser.add_argument('--ae_type', default= 'dae')
+parser.add_argument('--sub_epochs', default= 'False')
+parser.add_argument('--n_channels', default= 1, type=int)
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
 parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
 parser.add_argument('--delta', default= 0.01, type=float) # Class seploss wt
-parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--eta', default= 0.01, type=float) # Cluster Balance loss
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 32, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -76,7 +81,7 @@ parser.add_argument('--device', default= 'cpu')
 parser.add_argument('--log_interval', default= 10, type=int)
 parser.add_argument('--verbose', default= 'False')
 parser.add_argument('--plot', default= 'False')
-parser.add_argument('--expt', default= 'ExpertNet')
+parser.add_argument('--expt', default= 'ExpertNet') # Running DMNN for which experiment?
 parser.add_argument('--other', default= 'False')
 parser.add_argument('--cluster_analysis', default= 'False')
 parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Research/CAC/CAC_DL/ExpertNet/pretrained_model/DMNN')
@@ -101,6 +106,16 @@ sil_scores, nmi_scores, ari_scores, HTFD_scores, wdfd_scores = [], [], [], [], [
 if args.verbose == "False":
     blockPrint()
 
+base_suffix = ""
+base_suffix += args.dataset
+base_suffix += "_" + args.ae_type
+base_suffix += "_k_" + str(args.n_clusters)
+base_suffix += "_att_" + str(args.attention)
+base_suffix += "_dr_" + str(args.data_ratio)
+base_suffix += "_target_" + str(args.target)
+es_path = args.pretrain_path + base_suffix
+args.pretrain_path += "/AE_" + base_suffix + ".pth"
+
 for r in range(args.n_runs):
     scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r, n_features=args.n_features)
     X_train, y_train = train_data
@@ -120,88 +135,135 @@ for r in range(args.n_runs):
         ae_layers = [64, args.n_z, 64]
         expert_layers = [args.n_z, 30, args.n_classes]
 
-    model = DMNN(ae_layers, expert_layers, args=args).to(args.device)
+    if args.ae_type == 'cnn':
+        if X_train[0].shape[1] == 28:
+            dmnn_ae = CNN_AE(args, fc2_input_dim=128)
+        elif X_train[0].shape[1] == 32:
+            dmnn_ae = CIFAR_AE(args, fc2_input_dim=128)
+    
+    else:
+        ae_layers.append(args.input_dim)
+        ae_layers = [args.input_dim] + ae_layers
+        dmnn_ae = DAE(ae_layers)
+
+    model = DMNN(dmnn_ae,
+            expert_layers,
+            args.lr_enc,
+            args.lr_exp,
+            args=args).to(args.device)
     device = args.device
 
     N_EPOCHS = args.n_epochs
-    es = EarlyStoppingDMNN(dataset=args.dataset)
+    es = EarlyStoppingDMNN(dataset=args.dataset, path=es_path)
     model.pretrain(train_loader, args.pretrain_path)
-    optimizer = Adam(model.ae.parameters(), lr=args.lr_enc)
+    # params = list(model.ae.parameters()) + list(model.gate.parameters())
+    params = list(model.parameters())
+    optimizer = Adam(params, lr=args.lr_enc)
 
     z_train, _, gate_vals = model(torch.FloatTensor(X_train))
     original_cluster_centers, cluster_indices = kmeans2(z_train.data.cpu().numpy(), k=args.n_clusters, minit='++')
     one_hot_cluster_indices = label_binarize(cluster_indices, classes=list(range(args.n_clusters+1)))[:,:args.n_clusters]
     one_hot_cluster_indices = torch.FloatTensor(one_hot_cluster_indices)
-
+    print("Pre Pre-training : ", np.bincount(cluster_indices))
     # train gating network
-    for e in range(N_EPOCHS):
-        z_batch, _, gate_vals = model(torch.FloatTensor(X_train))
+    for e in range(100):
+        z_train, _, gate_vals = model(torch.FloatTensor(X_train))
         model.train()
         optimizer.zero_grad()
         gating_err = criterion(gate_vals, one_hot_cluster_indices)
+
+        P = torch.sum(gate_vals, axis=0)
+        P = P/P.sum()
+        Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
+
+        if args.cluster_balance == "kl":
+            cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
+        else:
+            cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
+
+        gating_err += args.eta*cluster_balance_loss
         gating_err.backward()
         optimizer.step()
+        # print(f'Epoch {e+0:03}: | Gate Loss: {gating_err:.5f}')
 
     cluster_ids_train = torch.argmax(gate_vals, axis=1)
-    HTFD_scores.append(calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train))
+    print("Post Pre-training: ", np.bincount(cluster_ids_train))
     # wdfd_scores.append(calculate_WDFD(torch.FloatTensor(X_train), cluster_ids_train))
-    sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
 
     # train Local Experts
     for e in range(N_EPOCHS):
         epoch_loss = 0
         epoch_auc = 0
         epoch_f1 = 0
-        auc = 0
         model.train()
         for X_batch, y_batch, idx in train_loader:
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
             z_batch, x_bar, gate_vals = model(X_batch)
             train_loss = torch.tensor(0.).to(args.device)
             y_pred = torch.zeros((len(X_batch), args.n_classes))
+            cluster_ids_train = torch.argmax(gate_vals, axis=1)
 
             for j in range(args.n_clusters):
-                # cluster_ids = np.where(cluster_indices[idx] == j)[0]
+                # cluster_ids = np.where(cluster_indices[idx] == j)[0] # not what is done in paper
                 cluster_ids = range(len(X_batch))
-                z_cluster, y_cluster = z_train[cluster_ids], torch.Tensor(y_train[cluster_ids]).type(torch.LongTensor)
-                preds_j = model.classifiers[j][0](z_cluster.detach())
-                optimizer_j = model.classifiers[j][1]
-                optimizer_j.zero_grad()
-                loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
-                local_loss = torch.sum(gate_vals.detach()[cluster_ids,j]*loss_j)
-                local_loss.backward(retain_graph=True)
-                optimizer_j.step()
+                if args.sub_epochs == "True":
+                    sub_epochs = min(10, 1 + int(e/5))
+                else:
+                    sub_epochs = 1
+                z_cluster, y_cluster = z_batch[cluster_ids], y_batch[cluster_ids]
+                # for _ in range(sub_epochs):
+                #     preds_j = model.classifiers[j][0](z_cluster)
+                #     # optimizer_j = model.classifiers[j][1]
+                #     # optimizer_j.zero_grad()
+                #     loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
+                #     # local_loss = torch.sum(gate_vals.detach()[cluster_ids,j]*loss_j)
+                #     train_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
+                #     # local_loss.backward(retain_graph=True)
+                #     # optimizer_j.step()
 
-                preds_j = model.classifiers[j][0](z_cluster.detach())
+                preds_j = model.classifiers[j][0](z_cluster)
                 loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
-                y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids,j], shape=(len(preds_j), 1)) * preds_j
+                y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids, j], shape=(len(preds_j), 1)) * preds_j
                 train_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
 
-            # print(train_loss)
+            P = torch.sum(gate_vals, axis=0)
+            P = P/P.sum()
+            Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
+
+            if args.cluster_balance == "kl":
+                cluster_balance_loss = F.kl_div(P.log(), Q, reduction='batchmean')
+            else:
+                cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
+
+            train_loss += args.eta*cluster_balance_loss
+
             epoch_loss += train_loss
             optimizer.zero_grad()
             train_loss.backward(retain_graph=True)
             optimizer.step()
-
             f1 = f1_score(np.argmax(y_pred.detach().numpy(), axis=1), y_batch.detach().numpy(), average="macro")
             auc = multi_class_auc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
             auprc = multi_class_auprc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
             epoch_auc += auc.item()
             epoch_f1 += f1.item()
 
+        model.eval()
         z_val, x_bar, gate_vals = model(torch.FloatTensor(X_val).to(args.device))
+        cluster_ids_val = torch.argmax(gate_vals, axis=1)
+        print("Validation Cluster Situation: ", np.bincount(cluster_ids_val))
+
         val_pred = torch.zeros((len(X_val), args.n_classes))
         for j in range(args.n_clusters):
             model.classifiers[j][0].eval()
             preds_j = model.classifiers[j][0](z_val)
             loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, torch.Tensor(y_val).type(torch.LongTensor))
-            train_loss += torch.sum(gate_vals[:,j]*loss_j)
             val_pred += torch.reshape(gate_vals[:,j], shape=(len(preds_j), 1)) * preds_j
 
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
         val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
         val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
         val_auprc = multi_class_auprc(y_val, val_pred.detach().numpy(), args.n_classes)
+        val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids_val.data.cpu().numpy(), metric='euclidean')
 
         if args.optimize == 'auc':
             opt = val_auc
@@ -214,7 +276,7 @@ for r in range(args.n_runs):
 
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
         	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train AUC: {epoch_auc/len(train_loader):.3f} | ',
-        	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val Loss: {val_loss:.3f}')
+        	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val AUPRC: {val_auprc:.3f} | Val Sil: {val_sil:.3f} | Val Loss: {val_loss:.3f}')
 
         if es.early_stop == True:
             break
@@ -237,11 +299,13 @@ for r in range(args.n_runs):
     test_pred = torch.zeros((len(X_test), args.n_classes))
     cluster_ids_test = torch.argmax(gate_test, axis=1)
 
+    print("Test Cluster Situation: ", np.bincount(cluster_ids_test))
+    test_sil = silhouette_new(z_test.data.cpu().numpy(), cluster_ids_test.data.cpu().numpy(), metric='euclidean')
+
     for j in range(args.n_clusters):
         model.classifiers[j][0].eval()
         preds_j = model.classifiers[j][0](z_test)
         loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, torch.Tensor(y_test).type(torch.LongTensor))
-        train_loss += torch.sum(gate_test[:,j]*loss_j)
         test_pred += torch.reshape(gate_test[:,j], shape=(len(preds_j), 1)) * preds_j
 
     test_loss = nn.CrossEntropyLoss(reduction='mean')(test_pred, torch.tensor(y_test).to(device))
@@ -263,8 +327,9 @@ for r in range(args.n_runs):
     print(confusion_matrix(y_test, y_preds))
 
     print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
-    	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train AUC: {epoch_auc/len(train_loader):.3f}| ',
-    	f'Test F1: {test_f1:.3f} | Test AUC: {test_auc:.3f} | Test Loss: {test_loss:.3f}')
+    	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train AUC: {epoch_auc/len(train_loader):.3f} | ',
+    	f'Test F1: {test_f1:.3f} | Test AUC: {test_auc:.3f} | Test AUPRC: {test_auprc:.3f} | ',
+        f'Test Loss: {test_loss:.3f} | Test SIL: {test_sil:.3f}')
 
     print("\n####################################################################################\n")
     f1_scores.append(test_f1)
@@ -276,12 +341,19 @@ for r in range(args.n_runs):
     ari_scores.append(ari_score(cluster_ids_test.data.cpu().numpy(), y_test))
     # sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids_test.data.cpu().numpy(), metric='euclidean'))
 
+    z_train, _, gate_vals = model(torch.FloatTensor(X_train))
+    cluster_ids_train = torch.argmax(gate_vals, axis=1)
+    sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
+    HTFD_scores.append(calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train))
 
 enablePrint()
 print("F1:", f1_scores)
 print("AUC:", auc_scores)
 print("AUPRC:", auprc_scores)
 print("MINPSE:", minpse_scores)
+print("SIL:", sil_scores)
+print("Sub Epochs:", args.sub_epochs)
+print("Eta:", args.eta)
 
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tSIL\tHTFD\tWDFD")
 
