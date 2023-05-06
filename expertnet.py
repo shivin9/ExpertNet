@@ -30,7 +30,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import ExpertNet,  target_distribution, source_distribution, CNN_AE, DAE, CIFAR_AE
+from models import ExpertNet, target_distribution, source_distribution, CNN_AE, DAE, CIFAR_AE
 from utils import *
 
 parser = argparse.ArgumentParser()

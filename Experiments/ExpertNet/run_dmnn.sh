@@ -55,7 +55,7 @@ echo "Respiratory 24" >> Results/results_DMNN.txt
 for j in 2 3 4 5
 do
     echo "k = $(($j))" >> Results/results_DMNN.txt
-    python3 ../../dmnn_torch.py --dataset ards24 --n_clusters $j --n_runs 21 --n_epochs 100 --n_z 32 --eta 0 --sub_epochs False >> Results/results_DMNN.txt
+    python3 ../../dmnn_torch.py --dataset ards24 --n_clusters $j --n_runs 21 --n_epochs 100 --n_z 32 --eta 25 --sub_epochs False --data_ratio -1 >> Results/results_DMNN.txt
 done
 
 
@@ -65,7 +65,7 @@ echo "Sepsis 24" >> Results/results_DMNN.txt
 for j in 2 3 4 5
 do
     echo "k = $(($j))" >> Results/results_DMNN.txt
-    python3 ../../dmnn_torch.py --dataset sepsis24 --n_clusters $j --n_runs 21 --n_epochs 100 --n_z 32 --eta 0 --sub_epochs False >> Results/results_DMNN.txt
+    python3 ../../dmnn_torch.py --dataset sepsis24 --n_clusters $j --n_runs 21 --n_epochs 100 --n_z 32 --eta 25 --sub_epochs False --data_ratio -1 >> Results/results_DMNN.txt
 done
 
 

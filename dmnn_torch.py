@@ -31,7 +31,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import DMNN, CNN_AE, DAE, CIFAR_AE
+from models import DMNN, CNN_AE, DAE, CIFAR_AE, target_distribution
 from utils import *
 
 
@@ -165,6 +165,7 @@ for r in range(args.n_runs):
     one_hot_cluster_indices = label_binarize(cluster_indices, classes=list(range(args.n_clusters+1)))[:,:args.n_clusters]
     one_hot_cluster_indices = torch.FloatTensor(one_hot_cluster_indices)
     print("Pre Pre-training : ", np.bincount(cluster_indices))
+
     # train gating network
     for e in range(100):
         z_train, _, gate_vals = model(torch.FloatTensor(X_train))
@@ -195,13 +196,23 @@ for r in range(args.n_runs):
         epoch_loss = 0
         epoch_auc = 0
         epoch_f1 = 0
+
+        z_batch, x_bar, gate_vals = model(torch.Tensor(X_train).to(args.device))
+        p_train = target_distribution(gate_vals.detach())
+
         model.train()
         for X_batch, y_batch, idx in train_loader:
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
             z_batch, x_bar, gate_vals = model(X_batch)
-            train_loss = torch.tensor(0.).to(args.device)
             y_pred = torch.zeros((len(X_batch), args.n_classes))
             cluster_ids_train = torch.argmax(gate_vals, axis=1)
+            cluster_centres = torch.matmul(z_batch.T, gate_vals)/z_train.shape[0]
+
+            reconstr_loss = F.mse_loss(x_bar, X_batch)
+            km_loss = torch.tensor(0.).to(args.device)
+            train_loss = torch.tensor(0.).to(args.device)
+            class_loss = torch.tensor(0.).to(args.device)
+            cluster_balance_loss = torch.tensor(0.).to(args.device)
 
             for j in range(args.n_clusters):
                 # cluster_ids = np.where(cluster_indices[idx] == j)[0] # not what is done in paper
@@ -224,8 +235,15 @@ for r in range(args.n_runs):
                 preds_j = model.classifiers[j][0](z_cluster)
                 loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
                 y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids, j], shape=(len(preds_j), 1)) * preds_j
-                train_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
+                class_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
 
+            # print("Gate vals:", gate_vals)
+            # print("p_train:", p_train[idx])
+            # km_loss = F.kl_div(gate_vals.log(), p_train[idx], reduction='batchmean')
+            km_loss = torch.linalg.norm(torch.sqrt(gate_vals) - torch.sqrt(p_train[idx]))
+            # print("KM loss:", km_loss)
+
+            # P = torch.sum(torch.nn.Softmax(dim=1)(10*gate_vals), axis=0)
             P = torch.sum(gate_vals, axis=0)
             P = P/P.sum()
             Q = torch.ones(args.n_clusters)/args.n_clusters # Uniform distribution
@@ -235,12 +253,24 @@ for r in range(args.n_runs):
             else:
                 cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
 
-            train_loss += args.eta*cluster_balance_loss
+            # print(P, cluster_balance_loss)
+            if args.alpha != 0:
+                train_loss += args.alpha*reconstr_loss
 
-            epoch_loss += train_loss
+            if args.beta != 0:
+                train_loss += args.beta*km_loss
+
+            if args.gamma != 0:
+                train_loss += args.gamma*class_loss/z_batch.shape[0]
+
+            if args.eta != 0:
+                train_loss += args.eta*cluster_balance_loss
+
             optimizer.zero_grad()
             train_loss.backward(retain_graph=True)
             optimizer.step()
+
+            epoch_loss += train_loss
             f1 = f1_score(np.argmax(y_pred.detach().numpy(), axis=1), y_batch.detach().numpy(), average="macro")
             auc = multi_class_auc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
             auprc = multi_class_auprc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
