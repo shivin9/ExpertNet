@@ -698,14 +698,18 @@ for r in range(len(iter_array)):
             train_preds[cluster_id,:] = cluster_preds
 
             # train student on teacher's predictions
-            y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
+            # y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
+            y_cluster = train_preds[cluster_id].detach().numpy()
+            print(y_cluster.shape)
+
             # train student on real labels
-            y_cluster_true = y_train[cluster_id]
+            # y_cluster_true = y_train[cluster_id]
 
             # Train the local regressors on the data embeddings
             # Some test data might not belong to any cluster
             if len(cluster_id) > 0:
-                regs[j].fit(X_train[cluster_id], y_cluster_true)
+                # regs[j].fit(X_train[cluster_id], y_cluster_true)
+                regs[j].fit(X_train[cluster_id], y_cluster)
                 best_features = np.argsort(regs[j].feature_importances_)[::-1][:10]
                 feature_importances[j,:] = regs[j].feature_importances_
                 print("Cluster # ", j, "sized: ", len(cluster_id), "label distr: ", np.bincount(y_cluster_true)/len(y_cluster_true))
