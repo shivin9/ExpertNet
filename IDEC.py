@@ -33,7 +33,7 @@ from sklearn.metrics import davies_bouldin_score as dbs, adjusted_rand_score as 
 from matplotlib import pyplot as plt
 color = ['grey', 'red', 'blue', 'pink', 'brown', 'black', 'magenta', 'purple', 'orange', 'cyan', 'olive']
 
-from models import ExpertNet,  target_distribution, source_distribution
+from models import ExpertNet, target_distribution, source_distribution, CNN_AE, DAE, CIFAR_AE
 from utils import *
 
 parser = argparse.ArgumentParser()
@@ -41,6 +41,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default= 'creditcard')
 parser.add_argument('--input_dim', default= '-1')
 parser.add_argument('--n_features', default= '-1')
+parser.add_argument('--target', default= -1, type=int)
+parser.add_argument('--data_ratio', default= -1, type=float)
 
 # Training parameters
 parser.add_argument('--lr_enc', default= 0.002, type=float)
@@ -50,27 +52,30 @@ parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
-parser.add_argument('--pre_epoch', default= 40, type=int)
-parser.add_argument('--pretrain', default= True, type=bool)
-parser.add_argument("--load_ae",  default=False, type=bool)
+parser.add_argument('--pre_epoch', default= 200, type=int)
+parser.add_argument('--pretrain', default= 'True')
+parser.add_argument("--load_ae", default= 'False')
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
-parser.add_argument("--attention", default="False")
+parser.add_argument("--attention", default=11, type=int)
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
-parser.add_argument('--optimize', default= 'auprc')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.0, type=float) # Class seploss wt
-parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
+parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.01, type=float) # Class equalization wt
+parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
 parser.add_argument('--clustering', default= 'cac')
 parser.add_argument('--n_classes', default= 2, type=int)
+parser.add_argument('--optimize', default= 'auprc')
+parser.add_argument('--ae_type', default= 'dae')
+parser.add_argument('--sub_epochs', default= 'False')
+parser.add_argument('--n_channels', default= 1, type=int)
 
 # Utility parameters
 parser.add_argument('--device', default= 'cpu')
@@ -84,14 +89,17 @@ parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Rese
 
 parser = parser.parse_args()  
 args = parameters(parser)
-base_suffix = ""
 
 for key in ['n_clusters', 'alpha', 'beta']:
     print(key, args.__dict__[key])
 
-base_suffix += args.dataset + "_"
-base_suffix += str(args.n_clusters) + "_"
-base_suffix += str(args.attention)
+base_suffix = ""
+base_suffix += args.dataset
+base_suffix += "_" + args.ae_type
+base_suffix += "_k_" + str(args.n_clusters)
+base_suffix += "_att_" + str(args.attention)
+base_suffix += "_dr_" + str(args.data_ratio)
+base_suffix += "_target_" + str(args.target)
 
 ####################################################################################
 ####################################################################################
@@ -134,6 +142,8 @@ else:
     iter_array = range(args.n_runs)
     iteration_name = "Run"
 
+args.pretrain_path += "/AE_" + base_suffix + ".pth"
+
 for r in range(len(iter_array)):
     scale, column_names, train_data, val_data, test_data = get_train_val_test_loaders(args, r_state=r, n_features=args.n_features)
     X_train, y_train = train_data
@@ -162,23 +172,34 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
 
-    if args.expt == 'ExpertNet':
-        ae_layers = [128, 64, args.n_z, 64, 128]
-        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+    ae_layers = [128, 64, args.n_z, 64, 128]
+    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
 
+    if args.ae_type == 'cnn':
+        if X_train[0].shape[1] == 28:
+            expertnet_ae = CNN_AE(args, fc2_input_dim=128)
+        elif X_train[0].shape[1] == 32:
+            expertnet_ae = CIFAR_AE(args, fc2_input_dim=128)
+    
     else:
-        # DeepCAC expts
-        ae_layers = [64, args.n_z, 64]
-        expert_layers = [args.n_z, 30, args.n_classes]
+        ae_layers.append(args.input_dim)
+        ae_layers = [args.input_dim] + ae_layers
+        expertnet_ae = DAE(ae_layers)
 
     model = ExpertNet(
-            ae_layers,
+            expertnet_ae,
             expert_layers,
             args.lr_enc,
             args.lr_exp,
-            args=args).to(args.device)
+            args=args).to(args.device)    
 
-    model.pretrain(train_loader, args.pretrain_path)
+    print(args.pretrain)
+    if args.pretrain == 'True':
+        print("Pretraining ExpertNet")
+        model.pretrain(train_loader, args.pretrain_path)
+    else:
+        print("Not Pretraining ExpertNet")
+
     optimizer = Adam(model.parameters(), lr=args.lr_enc)
 
     # cluster parameter initiate

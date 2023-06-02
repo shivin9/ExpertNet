@@ -513,6 +513,7 @@ class ExpertNet(nn.Module):
             classifier.update(
                 {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
                 })
+            # classifier.update({"layer{}".format(i+1): nn.Softmax(dim=0)})
 
             classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=self.lr_exp)

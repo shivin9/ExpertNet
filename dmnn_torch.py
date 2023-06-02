@@ -102,6 +102,7 @@ criterion = nn.CrossEntropyLoss(reduction='mean')
 
 f1_scores, auc_scores, auprc_scores, minpse_scores, acc_scores = [], [], [], [], []
 sil_scores, nmi_scores, ari_scores, HTFD_scores, wdfd_scores = [], [], [], [], []
+test_cluster_nos = []
 
 if args.verbose == "False":
     blockPrint()
@@ -223,25 +224,22 @@ for r in range(args.n_runs):
                     sub_epochs = 1
                 z_cluster, y_cluster = z_batch[cluster_ids], y_batch[cluster_ids]
                 # for _ in range(sub_epochs):
-                #     preds_j = model.classifiers[j][0](z_cluster)
-                #     # optimizer_j = model.classifiers[j][1]
-                #     # optimizer_j.zero_grad()
-                #     loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
-                #     # local_loss = torch.sum(gate_vals.detach()[cluster_ids,j]*loss_j)
-                #     train_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
-                #     # local_loss.backward(retain_graph=True)
-                #     # optimizer_j.step()
+                # preds_j = model.classifiers[j][0](z_cluster)
+                # optimizer_j = model.classifiers[j][1]
+                # optimizer_j.zero_grad()
+                # loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
+                # local_loss = torch.sum(gate_vals[cluster_ids,j]*loss_j)
+                # train_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
+                # local_loss.backward(retain_graph=True)
+                # optimizer_j.step()
 
                 preds_j = model.classifiers[j][0](z_cluster)
                 loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
                 y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids, j], shape=(len(preds_j), 1)) * preds_j
                 class_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
 
-            # print("Gate vals:", gate_vals)
-            # print("p_train:", p_train[idx])
-            # km_loss = F.kl_div(gate_vals.log(), p_train[idx], reduction='batchmean')
-            km_loss = torch.linalg.norm(torch.sqrt(gate_vals) - torch.sqrt(p_train[idx]))
-            # print("KM loss:", km_loss)
+            km_loss = F.kl_div(gate_vals.log(), p_train[idx], reduction='batchmean')
+            # km_loss = torch.linalg.norm(torch.sqrt(gate_vals) - torch.sqrt(p_train[idx]))
 
             # P = torch.sum(torch.nn.Softmax(dim=1)(10*gate_vals), axis=0)
             P = torch.sum(gate_vals, axis=0)
@@ -253,7 +251,6 @@ for r in range(args.n_runs):
             else:
                 cluster_balance_loss = torch.linalg.norm(torch.sqrt(P) - torch.sqrt(Q))
 
-            # print(P, cluster_balance_loss)
             if args.alpha != 0:
                 train_loss += args.alpha*reconstr_loss
 
@@ -271,9 +268,14 @@ for r in range(args.n_runs):
             optimizer.step()
 
             epoch_loss += train_loss
-            f1 = f1_score(np.argmax(y_pred.detach().numpy(), axis=1), y_batch.detach().numpy(), average="macro")
-            auc = multi_class_auc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
-            auprc = multi_class_auprc(y_batch.detach().numpy(), y_pred.detach().numpy(), args.n_classes)
+
+            train_metrics = performance_metrics(y_batch, y_pred.detach().numpy(), args.n_classes)
+            f1  = train_metrics['f1_score']
+            auc = train_metrics['auroc']
+            auprc = train_metrics['auprc']
+            minpse = train_metrics['minpse']
+            acc = train_metrics['acc']
+
             epoch_auc += auc.item()
             epoch_f1 += f1.item()
 
@@ -290,9 +292,14 @@ for r in range(args.n_runs):
             val_pred += torch.reshape(gate_vals[:,j], shape=(len(preds_j), 1)) * preds_j
 
         val_loss = nn.CrossEntropyLoss(reduction='mean')(val_pred, torch.tensor(y_val).to(device))
-        val_f1 = f1_score(np.argmax(val_pred.detach().numpy(), axis=1), y_val, average="macro")
-        val_auc = multi_class_auc(y_val, val_pred.detach().numpy(), args.n_classes)
-        val_auprc = multi_class_auprc(y_val, val_pred.detach().numpy(), args.n_classes)
+    
+        val_metrics = performance_metrics(y_val, val_pred.detach().numpy(), args.n_classes)
+        val_f1  = val_metrics['f1_score']
+        val_auc = val_metrics['auroc']
+        val_auprc = val_metrics['auprc']
+        val_minpse = val_metrics['minpse']
+        val_acc = val_metrics['acc']
+
         val_sil = silhouette_new(z_val.data.cpu().numpy(), cluster_ids_val.data.cpu().numpy(), metric='euclidean')
 
         if args.optimize == 'auc':
@@ -303,7 +310,6 @@ for r in range(args.n_runs):
             opt = -val_loss
 
         es([val_f1, opt], model)
-
         print(f'Epoch {e+0:03}: | Train Loss: {epoch_loss/len(train_loader):.5f} | ',
         	f'Train F1: {epoch_f1/len(train_loader):.3f} | Train AUC: {epoch_auc/len(train_loader):.3f} | ',
         	f'Val F1: {val_f1:.3f} | Val Auc: {val_auc:.3f} | Val AUPRC: {val_auprc:.3f} | Val Sil: {val_sil:.3f} | Val Loss: {val_loss:.3f}')
@@ -369,6 +375,8 @@ for r in range(args.n_runs):
     acc_scores.append(test_acc)
     nmi_scores.append(nmi_score(cluster_ids_test.data.cpu().numpy(), y_test))
     ari_scores.append(ari_score(cluster_ids_test.data.cpu().numpy(), y_test))
+    test_cluster_nos.append(np.bincount(cluster_ids_test).shape[0])
+
     # sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids_test.data.cpu().numpy(), metric='euclidean'))
 
     z_train, _, gate_vals = model(torch.FloatTensor(X_train))
@@ -377,11 +385,13 @@ for r in range(args.n_runs):
     HTFD_scores.append(calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train))
 
 enablePrint()
+print("Plain DMNN")
 print("F1:", f1_scores)
 print("AUC:", auc_scores)
 print("AUPRC:", auprc_scores)
 print("MINPSE:", minpse_scores)
 print("SIL:", sil_scores)
+print("Test Cluster Situation:", test_cluster_nos)
 print("Sub Epochs:", args.sub_epochs)
 print("Eta:", args.eta)
 

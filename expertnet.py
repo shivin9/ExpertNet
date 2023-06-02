@@ -63,7 +63,7 @@ parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
 parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
 parser.add_argument('--delta', default= 0.01, type=float) # Class equalization wt
-parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -113,6 +113,7 @@ base_suffix += "_k_" + str(args.n_clusters)
 base_suffix += "_att_" + str(args.attention)
 base_suffix += "_dr_" + str(args.data_ratio)
 base_suffix += "_target_" + str(args.target)
+base_suffix += "_n_features_" + str(args.n_features)
 
 ####################################################################################
 ####################################################################################
@@ -582,7 +583,7 @@ for r in range(len(iter_array)):
         if es.early_stop == True or local_epoch == N_EPOCHS - 1:
             # train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
+            HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
             # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
 
@@ -675,7 +676,6 @@ for r in range(len(iter_array)):
     ####################################################################################
     ####################################################################################
     ####################################################################################
-
 
     if args.cluster_analysis == "True":
         encoder_reg = RandomForestClassifier(random_state=0)
@@ -775,6 +775,10 @@ print("Test F1: ", e_f1_scores)
 print("Test AUC: ", e_auc_scores)
 print("Test AUPRC: ", e_auprc_scores)
 print("Test MINPSE: ", e_minpse_scores)
+print("Train SIL: ", sil_scores)
+print("Train HTFD: ", HTFD_scores)
+print("Attention: ", args.attention)
+print("Pretrain: ", args.pretrain)
 
 # print("Sil scores: ", sil_scores)
 # print("HTFD: ", HTFD_scores)
@@ -790,7 +794,7 @@ print("Test MINPSE: ", e_minpse_scores)
 # print("Model Complexity: ", model_complexity)
 
 
-for key in ['alpha', 'beta', 'gamma', 'delta', 'data_ratio', 'n_clusters']:
+for key in ['alpha', 'beta', 'gamma', 'delta', 'eta', 'data_ratio', 'n_clusters']:
     print(key, args.__dict__[key])
 
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC")
@@ -832,9 +836,9 @@ print("\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format\
 
 if args.cluster_analysis == "True":
     _ , z_train = model.encoder_forward(torch.FloatTensor(X_train).to(args.device), output='latent')
-    # plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, X_latents=z_train, labels=cluster_indices, epoch=epoch)
+    plot(model, torch.FloatTensor(X_train).to(args.device), y_train, args, X_latents=z_train, labels=cluster_indices, epoch=epoch)
     WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids_train, column_names,\
-        scale=scale, X_latents=z_train, dataset=args.dataset, n_results=15)
+        scale=scale, X_latents=z_train, dataset=args.dataset, n_results=25)
 
     HTFD_Single_Cluster_Analysis(scale.inverse_transform(X_train), y_train, cluster_ids_train, column_names,\
-        scale=None, n_results=25)
+        scale=None, n_results=15)

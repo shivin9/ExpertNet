@@ -33,8 +33,8 @@ DATASETS = ['diabetes', 'ards', 'ards_new', 'ihm', 'cic', 'cic_new', 'sepsis', '
 DATA_DIR = "/Users/shivin/Document/NUS/Research/Data"
 BASE_DIR = "/Users/shivin/Document/NUS/Research/cac/cac_dl/ExpertNet"
 
-# np.random.seed(108)
-# torch.manual_seed(108)
+np.random.seed(108)
+torch.manual_seed(108)
 
 def avg(x):
     if len(x) == 0:
@@ -390,7 +390,7 @@ def HTFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, sc
         print("\n========\n")
         print("|C{}| = {}".format(i, len(ci)))
         print("|C{}| = {}".format(i, np.bincount(y_train[ci])/len(ci)))
-        sorted_dict = sorted(HTFD_scores[i].items(), key=lambda item: item[1])[::-1]
+        sorted_dict = sorted(HTFD_scores[i].items(), key=lambda item: item[1])[:n_results]
         for feature, pval in sorted_dict:
             f = column_names[feature]
             print("Feature:", f, "HTFD score:", pval)
@@ -440,7 +440,6 @@ def WDFD_Single_Cluster_Analysis(X_train, y_train, cluster_ids, column_names, X_
 
         sorted_dict = sorted(mi_scores[i].items(), key=lambda item: item[1])[:n_results]
         for feature, pval in sorted_dict:
-
             if X_latents != None:
                 idx = range(int(0.2*len(X_train)))
                 plot_data_feature_colored(X_train[idx], X_latents[idx], dataset + "_k" + str(n_clusters), column_names[feature], column=feature)
@@ -932,6 +931,7 @@ def performance_metrics(y_true, y_pred, n_classes=2):
     non_zero_class_cnt = 0
     # Adjust for situations when some class points are absent
     n_classes = cm.shape[0]
+
     for c in range(n_classes):
         if len(np.unique(y[:,c])) == 1:
             auroc_scores.append(0)
@@ -954,13 +954,15 @@ def performance_metrics(y_true, y_pred, n_classes=2):
             auroc_scores.append(roc_auc_score(y[:,c], y_pred[:,c]))
             auprc_scores.append(average_precision_score(y[:,c], y_pred[:,c]))
             minpse_scores.append(min(precision, specificity))
-            # acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
+            acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
             non_zero_class_cnt += 1
 
     return {# "acc": np.round(np.sum(acc_scores)/non_zero_class_cnt, 3),
             "acc": np.round(accuracy_score(y_true, y_pred.argmax(axis=1)), 3),
-            "auroc": np.round(np.sum(auroc_scores)/non_zero_class_cnt, 3),
-            "auprc": np.round(np.sum(auprc_scores)/non_zero_class_cnt, 3),
+            "auroc": np.round(auroc_scores[1], 3),
+            "auprc": np.round(auprc_scores[1], 3),
+            # "auroc": np.round(np.sum(auroc_scores)/non_zero_class_cnt, 3),
+            # "auprc": np.round(np.sum(auprc_scores)/non_zero_class_cnt, 3),
             "minpse": np.round(np.sum(minpse_scores)/non_zero_class_cnt, 3),
             "f1_score":np.round(f1_score(y_true, y_pred.argmax(axis=1), average="macro"), 3)}
 
