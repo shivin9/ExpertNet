@@ -698,8 +698,8 @@ for r in range(len(iter_array)):
             train_preds[cluster_id,:] = cluster_preds
 
             # train student on teacher's predictions
-            # y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
-            y_cluster = train_preds[cluster_id, 1].detach().numpy()
+            y_cluster = np.argmax(train_preds[cluster_id].detach().numpy(), axis=1)
+            # y_cluster = train_preds[cluster_id, 1].detach().numpy()
 
             # train student on real labels
             # y_cluster_true = y_train[cluster_id]

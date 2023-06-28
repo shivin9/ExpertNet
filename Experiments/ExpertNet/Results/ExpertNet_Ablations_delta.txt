@@ -1,0 +1,963 @@
+delta
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.684, 0.701, 0.675, 0.684, 0.654]
+Test AUC:  [0.823, 0.829, 0.758, 0.832, 0.842]
+Test AUPRC:  [0.373, 0.401, 0.322, 0.399, 0.336]
+Test MINPSE:  [0.417, 0.448, 0.405, 0.435, 0.377]
+Train SIL:  [0.7230248, 0.7026188, 0.66996247, 0.77313066, 0.7062365]
+Train HTFD:  [1.4693668261562987, 1.472377990430622, 1.4720940988835707, 1.4934657097288666, 1.4848181818181807]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.680	0.817	0.366	0.416	0.940
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.015	0.030	0.032	0.025	0.003
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.715	1.478	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.034	0.009	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.681, 0.715, 0.685, 0.666, 0.637]
+Test AUC:  [0.837, 0.847, 0.838, 0.852, 0.851]
+Test AUPRC:  [0.375, 0.41, 0.366, 0.422, 0.353]
+Test MINPSE:  [0.414, 0.478, 0.425, 0.45, 0.375]
+Train SIL:  [0.7278647, 0.6827116, 0.68746555, 0.49430498, 0.57597435]
+Train HTFD:  [1.4903955342902704, 1.4867352472089312, 1.485591706539075, 1.4819649122807022, 1.4973524720893134]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 1.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.677	0.845	0.385	0.428	0.942
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.025	0.006	0.026	0.035	0.003
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.634	1.488	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.086	0.005	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.668, 0.684, 0.675, 0.641, 0.638]
+Test AUC:  [0.839, 0.86, 0.798, 0.84, 0.832]
+Test AUPRC:  [0.391, 0.416, 0.336, 0.396, 0.35]
+Test MINPSE:  [0.395, 0.432, 0.399, 0.413, 0.377]
+Train SIL:  [0.70216006, 0.72210073, 0.7628514, 0.7270793, 0.6805934]
+Train HTFD:  [1.5097384370015945, 1.5119601275917065, 1.4942998405103658, 1.5262679425837318, 1.534437001594896]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 5.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.661	0.834	0.378	0.403	0.940
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.018	0.020	0.030	0.018	0.003
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.719	1.515	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.027	0.014	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.683, 0.687, 0.676, 0.686, 0.66]
+Test AUC:  [0.826, 0.852, 0.843, 0.816, 0.837]
+Test AUPRC:  [0.362, 0.415, 0.362, 0.371, 0.354]
+Test MINPSE:  [0.413, 0.449, 0.419, 0.416, 0.387]
+Train SIL:  [0.70713276, 0.74374974, 0.80297923, 0.8153428, 0.7291756]
+Train HTFD:  [1.4678118022328537, 1.4738086124401903, 1.464094098883572, 1.5046969696969683, 1.4749984051036673]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.01
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.678	0.835	0.373	0.417	0.939
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.010	0.013	0.022	0.020	0.005
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.760	1.477	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.042	0.014	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.681, 0.7, 0.683, 0.668, 0.654]
+Test AUC:  [0.829, 0.832, 0.825, 0.827, 0.834]
+Test AUPRC:  [0.367, 0.403, 0.33, 0.368, 0.337]
+Test MINPSE:  [0.418, 0.454, 0.409, 0.398, 0.38]
+Train SIL:  [0.7230026, 0.67845905, 0.80185395, 0.8119463, 0.825067]
+Train HTFD:  [1.4694609250398714, 1.4665709728867615, 1.4740701754385956, 1.4898118022328546, 1.4904497607655491]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.2
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.677	0.829	0.361	0.412	0.939
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.015	0.003	0.026	0.025	0.005
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.768	1.478	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.057	0.010	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.67, 0.675, 0.668, 0.676, 0.658]
+Test AUC:  [0.836, 0.8, 0.844, 0.83, 0.857]
+Test AUPRC:  [0.384, 0.358, 0.393, 0.407, 0.355]
+Test MINPSE:  [0.404, 0.411, 0.391, 0.427, 0.404]
+Train SIL:  [0.72410613, 0.738243, 0.6984409, 0.7479477, 0.76982045]
+Train HTFD:  [1.5030637958532687, 1.4923317384370007, 1.4995980861244014, 1.474213716108452, 1.482398724082934]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 20.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.669	0.833	0.379	0.407	0.940
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.006	0.019	0.020	0.012	0.003
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.736	1.490	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.024	0.011	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.682, 0.692, 0.661, 0.672, 0.661]
+Test AUC:  [0.83, 0.85, 0.853, 0.818, 0.846]
+Test AUPRC:  [0.391, 0.385, 0.365, 0.383, 0.356]
+Test MINPSE:  [0.422, 0.426, 0.402, 0.436, 0.39]
+Train SIL:  [0.7438249, 0.7925807, 0.39472938, 0.7140103, 0.7554595]
+Train HTFD:  [1.51159649122807, 1.5315980861244016, 1.5006411483253583, 1.5355470494417862, 1.4909904306220099]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 2.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.674	0.839	0.376	0.415	0.940
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.012	0.013	0.013	0.017	0.000
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.680	1.514	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.145	0.017	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.676, 0.653, 0.665, 0.621, 0.645]
+Test AUC:  [0.826, 0.846, 0.833, 0.848, 0.826]
+Test AUPRC:  [0.38, 0.374, 0.353, 0.417, 0.332]
+Test MINPSE:  [0.416, 0.37, 0.389, 0.438, 0.371]
+Train SIL:  [0.72951055, 0.7170328, 0.7768336, 0.35490865, 0.64163107]
+Train HTFD:  [1.5159537480063794, 1.5159712918660286, 1.5230510366826158, 1.5120574162679423, 1.5394577352472087]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 10.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.652	0.836	0.371	0.397	0.940
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.019	0.010	0.028	0.026	0.002
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.644	1.521	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.151	0.010	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.683, 0.704, 0.672, 0.673, 0.662]
+Test AUC:  [0.828, 0.863, 0.806, 0.835, 0.832]
+Test AUPRC:  [0.361, 0.421, 0.338, 0.407, 0.337]
+Test MINPSE:  [0.415, 0.453, 0.402, 0.436, 0.396]
+Train SIL:  [0.73222005, 0.78376895, 0.77882683, 0.7670067, 0.71982074]
+Train HTFD:  [1.4702966507177022, 1.4655311004784677, 1.462291866028707, 1.502210526315789, 1.4750909090909088]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.679	0.833	0.373	0.420	0.940
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.014	0.018	0.035	0.021	0.002
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.756	1.475	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.026	0.014	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.679, 0.714, 0.647, 0.665, 0.658]
+Test AUC:  [0.828, 0.859, 0.792, 0.832, 0.835]
+Test AUPRC:  [0.366, 0.436, 0.371, 0.418, 0.351]
+Test MINPSE:  [0.412, 0.482, 0.39, 0.438, 0.38]
+Train SIL:  [0.70476633, 0.7409804, 0.38522065, 0.6859041, 0.7362275]
+Train HTFD:  [1.4676539074960118, 1.4681499202551826, 1.4719936204146722, 1.4901547049441781, 1.4860143540669843]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.5
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.673	0.829	0.388	0.420	0.942
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.023	0.022	0.033	0.037	0.004
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.651	1.477	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.134	0.009	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.66, 0.691, 0.677, 0.686, 0.682]
+Test AUC:  [0.839, 0.801, 0.835, 0.835, 0.825]
+Test AUPRC:  [0.382, 0.363, 0.364, 0.403, 0.351]
+Test MINPSE:  [0.405, 0.419, 0.401, 0.431, 0.404]
+Train SIL:  [0.68035036, 0.76942635, 0.75708973, 0.72789526, 0.76870275]
+Train HTFD:  [1.5265614035087722, 1.514258373205741, 1.520272727272727, 1.5195534290271127, 1.546114832535885]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 50.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.679	0.827	0.373	0.412	0.938
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.011	0.014	0.018	0.011	0.003
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.741	1.525	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.034	0.011	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1844 30661
+Dataset dim: (22151, 209)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.674, 0.689, 0.676, 0.673, 0.64]
+Test AUC:  [0.832, 0.836, 0.833, 0.84, 0.839]
+Test AUPRC:  [0.384, 0.385, 0.385, 0.437, 0.325]
+Test MINPSE:  [0.405, 0.443, 0.411, 0.453, 0.364]
+Train SIL:  [0.08428708, 0.17320848, 0.025729012, 0.28079054, 0.3158881]
+Train HTFD:  [1.5001148325358853, 1.5367224880382773, 1.5611036682615633, 1.5415677830940993, 1.5610861244019139]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 100.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	sepsis24	3	0.670	0.836	0.383	0.415	0.941
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.016	0.003	0.035	0.031	0.003
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.176	1.540	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.111	0.022	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.628, 0.554, 0.62, 0.49, 0.626]
+Test AUC:  [0.797, 0.793, 0.818, 0.778, 0.807]
+Test AUPRC:  [0.304, 0.33, 0.33, 0.297, 0.292]
+Test MINPSE:  [0.331, 0.324, 0.356, 0.306, 0.33]
+Train SIL:  [0.3266925, 0.15457812, 0.41929692, 0.15226117, 0.29503566]
+Train HTFD:  [1.3187657466383629, 1.2918492569002173, 1.0784805378627056, 1.272681528662425, 1.3188612880396364]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.1
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.584	0.799	0.311	0.329	0.922
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.054	0.013	0.016	0.016	0.005
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.270	1.256	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.103	0.091	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.621, 0.551, 0.63, 0.585, 0.605]
+Test AUC:  [0.787, 0.804, 0.818, 0.777, 0.768]
+Test AUPRC:  [0.294, 0.314, 0.32, 0.299, 0.246]
+Test MINPSE:  [0.319, 0.276, 0.352, 0.335, 0.267]
+Train SIL:  [0.3291879, 0.14766191, 0.40469992, 0.14612839, 0.39565593]
+Train HTFD:  [1.3174076433121071, 1.287830148619962, 1.1030290162774257, 1.2810077848549224, 1.3153014861995809]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.598	0.791	0.295	0.310	0.918
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.028	0.018	0.026	0.033	0.006
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.285	1.261	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.115	0.080	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.628, 0.509, 0.632, 0.586, 0.643]
+Test AUC:  [0.791, 0.801, 0.82, 0.787, 0.784]
+Test AUPRC:  [0.302, 0.314, 0.329, 0.309, 0.281]
+Test MINPSE:  [0.328, 0.265, 0.345, 0.321, 0.337]
+Train SIL:  [0.31573904, 0.14092667, 0.41308787, 0.139912, 0.42889264]
+Train HTFD:  [1.3301663128096293, 1.2955690021231476, 1.0856015569709856, 1.2765852795470687, 1.330594479830154]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.5
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.600	0.797	0.307	0.319	0.919
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.049	0.013	0.016	0.028	0.004
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.288	1.264	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.126	0.091	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.626, 0.513, 0.627, 0.515, 0.623]
+Test AUC:  [0.791, 0.8, 0.818, 0.777, 0.781]
+Test AUPRC:  [0.292, 0.31, 0.326, 0.313, 0.268]
+Test MINPSE:  [0.326, 0.299, 0.346, 0.297, 0.3]
+Train SIL:  [0.28274652, 0.103300825, 0.3894471, 0.103313565, 0.634307]
+Train HTFD:  [1.3344133050247757, 1.300164897381462, 1.1098542108987983, 1.2746496815286685, 1.2984472753007836]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 2.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.581	0.793	0.302	0.314	0.916
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.055	0.015	0.020	0.019	0.009
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.303	1.264	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.199	0.079	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.606, 0.644, 0.577, 0.531, 0.617]
+Test AUC:  [0.785, 0.772, 0.802, 0.761, 0.74]
+Test AUPRC:  [0.283, 0.295, 0.332, 0.28, 0.195]
+Test MINPSE:  [0.289, 0.375, 0.347, 0.235, 0.287]
+Train SIL:  [0.30621332, 0.44826415, 0.22418718, 0.16501349, 0.6446343]
+Train HTFD:  [1.3166461429582506, 1.2842979476291623, 1.3332222222222263, 1.2486907289455103, 1.2774465675867006]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 10.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.595	0.772	0.277	0.307	0.917
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.039	0.021	0.045	0.049	0.008
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.358	1.292	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.172	0.030	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.603, 0.598, 0.626, 0.567, 0.539]
+Test AUC:  [0.779, 0.789, 0.811, 0.769, 0.775]
+Test AUPRC:  [0.292, 0.331, 0.317, 0.298, 0.254]
+Test MINPSE:  [0.315, 0.333, 0.353, 0.317, 0.283]
+Train SIL:  [0.27997318, 0.23677787, 0.16235748, 0.18360393, 0.21364953]
+Train HTFD:  [1.3347034677990137, 1.304015569709841, 1.2811748053786314, 1.2962172682236435, 1.3060424628450167]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 50.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.587	0.785	0.298	0.320	0.923
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.030	0.015	0.026	0.023	0.004
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.215	1.304	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.041	0.017	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.627, 0.57, 0.61, 0.592, 0.63]
+Test AUC:  [0.792, 0.807, 0.813, 0.759, 0.798]
+Test AUPRC:  [0.295, 0.338, 0.327, 0.298, 0.272]
+Test MINPSE:  [0.323, 0.328, 0.343, 0.335, 0.319]
+Train SIL:  [0.32888022, 0.15179992, 0.43110985, 0.147236, 0.28901148]
+Train HTFD:  [1.3173071479122493, 1.2884932767162116, 1.0977480537862727, 1.281801840056621, 1.3190792639773574]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.01
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.606	0.794	0.306	0.330	0.920
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.022	0.019	0.024	0.009	0.006
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.270	1.261	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.108	0.083	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.628, 0.6, 0.607, 0.59, 0.629]
+Test AUC:  [0.794, 0.795, 0.811, 0.767, 0.769]
+Test AUPRC:  [0.299, 0.314, 0.321, 0.297, 0.238]
+Test MINPSE:  [0.324, 0.319, 0.335, 0.341, 0.31]
+Train SIL:  [0.32400477, 0.2133829, 0.42848116, 0.14277658, 0.5623536]
+Train HTFD:  [1.3199271054494028, 1.2984593064402035, 1.103501769285211, 1.2830828025477752, 1.3138796886058084]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 0.2
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.611	0.787	0.294	0.326	0.918
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.015	0.017	0.029	0.011	0.006
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.334	1.264	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.150	0.081	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.614, 0.59, 0.63, 0.622, 0.516]
+Test AUC:  [0.799, 0.796, 0.757, 0.764, 0.799]
+Test AUPRC:  [0.306, 0.316, 0.269, 0.291, 0.302]
+Test MINPSE:  [0.324, 0.318, 0.317, 0.328, 0.269]
+Train SIL:  [0.21832184, 0.1790223, 0.45320815, 0.4988169, 0.2147429]
+Train HTFD:  [1.3194628450106212, 1.2559844302901666, 1.2135739561217298, 1.247589525831568, 1.291121726822368]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 5.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.594	0.783	0.297	0.311	0.919
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.041	0.019	0.016	0.021	0.006
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.313	1.266	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.135	0.037	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.626, 0.56, 0.636, 0.628, 0.481]
+Test AUC:  [0.792, 0.802, 0.701, 0.71, 0.788]
+Test AUPRC:  [0.294, 0.339, 0.24, 0.231, 0.294]
+Test MINPSE:  [0.324, 0.339, 0.328, 0.316, 0.0]
+Train SIL:  [0.30622578, 0.12633152, 0.4424866, 0.70012397, 0.22185387]
+Train HTFD:  [1.3347494692144435, 1.302641188959666, 1.1249667374380772, 1.2542590233545685, 1.3232016985138053]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 1.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.586	0.759	0.280	0.261	0.916
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.059	0.044	0.040	0.131	0.009
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.359	1.268	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.200	0.077	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.619, 0.624, 0.593, 0.611, 0.602]
+Test AUC:  [0.791, 0.798, 0.804, 0.769, 0.796]
+Test AUPRC:  [0.293, 0.316, 0.325, 0.306, 0.272]
+Test MINPSE:  [0.327, 0.337, 0.317, 0.337, 0.273]
+Train SIL:  [0.24745125, 0.45115575, 0.19846115, 0.22041284, 0.3321399]
+Train HTFD:  [1.3289957537155066, 1.2736426043878313, 1.3520644019816046, 1.2678697806086383, 1.3209808917197512]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 20.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.610	0.792	0.302	0.318	0.919
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.011	0.012	0.019	0.024	0.003
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.290	1.309	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.092	0.033	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+Stats:  1701 22450
+Dataset dim: (16219, 471)
+
+
+Experiment  Run
+range(0, 5)
+Test F1:  [0.587, 0.584, 0.521, 0.589, 0.58]
+Test AUC:  [0.798, 0.787, 0.814, 0.788, 0.785]
+Test AUPRC:  [0.313, 0.32, 0.321, 0.31, 0.248]
+Test MINPSE:  [0.296, 0.323, 0.311, 0.282, 0.251]
+Train SIL:  [0.122031525, 0.05437719, 0.16318543, 0.036096483, 0.12973045]
+Train HTFD:  [1.304469214437373, 1.2555831564048159, 1.2853220099080012, 1.2451656050955453, 1.2669143665959002]
+Attention:  11
+Pretrain:  True
+alpha 1.0
+beta 10.0
+gamma 5.0
+delta 100.0
+eta 0.0
+data_ratio -1
+n_clusters 3
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC
+	ards24	3	0.572	0.794	0.302	0.293	0.920
+
+[Std]	F1	AUC	AUPRC	MINPSE	E-ACC
+	0.026	0.011	0.028	0.025	0.004
+
+[Avg]	Tr-SIL	HTFD	WDFD
+	0.101	1.271	0.000
+
+[Std]	Tr-SIL	HTFD	WDFD
+	0.048	0.021	nan
+
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+

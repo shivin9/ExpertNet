@@ -1,205 +1,325 @@
-
+DeepCAC expts
+DeepCAC
+CIC
+k = 1
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 1
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic	1	0.700	0.820	0.536	0.495	0.878	0.000	1.802	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.011	0.036	0.049	0.026	0.005	0.000	0.000	0.000	0.000
+k = 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 2
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic	2	0.684	0.826	0.493	0.472	0.874	0.190	1.477	0.006	-0.013
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.023	0.018	0.029	0.027	0.005	0.007	0.063	0.005	0.007
+k = 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 3
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic	3	0.690	0.817	0.506	0.480	0.877	0.255	1.206	0.065	0.053
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.030	0.026	0.065	0.050	0.011	0.091	0.051	0.048	0.056
+k = 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 4
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic	4	0.615	0.785	0.421	0.403	0.869	0.191	1.272	0.027	0.035
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.042	0.044	0.050	0.042	0.008	0.049	0.022	0.020	0.040
+DeepCAC
+Diabetes
+k = 1
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 1
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	diabetes	1	0.471	0.581	0.469	0.321	0.594	0.000	1.802	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.020	0.004	0.003	0.021	0.002	0.000	0.000	0.000	0.000
+k = 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 2
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	diabetes	2	0.462	0.578	0.470	0.322	0.596	0.436	1.577	0.007	0.015
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.033	0.009	0.008	0.020	0.003	0.072	0.057	0.002	0.006
+k = 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 3
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	diabetes	3	0.477	0.572	0.462	0.326	0.594	0.435	1.535	0.006	0.008
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.006	0.009	0.007	0.007	0.004	0.031	0.072	0.002	0.002
+k = 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 4
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	diabetes	4	0.459	0.575	0.465	0.314	0.593	0.275	1.421	0.004	0.004
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.039	0.006	0.004	0.027	0.005	0.128	0.093	0.002	0.004
+DeepCAC
+CIC_LOS
+k = 1
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 1
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic_los	1	0.377	0.523	0.303	0.384	0.463	0.000	1.802	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.029	0.034	0.031	0.044	0.028	0.000	0.000	0.000	0.000
+k = 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 2
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic_los	2	0.389	0.517	0.299	0.409	0.453	0.584	1.138	0.027	0.033
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.013	0.042	0.021	0.016	0.029	0.108	0.369	0.013	0.017
+k = 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 3
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic_los	3	0.413	0.513	0.302	0.427	0.471	0.479	1.219	0.032	0.041
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.021	0.025	0.016	0.016	0.016	0.029	0.115	0.005	0.006
+k = 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 4
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	cic_los	4	0.364	0.534	0.310	0.394	0.430	0.480	1.093	0.033	0.041
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.065	0.019	0.014	0.052	0.050	0.075	0.163	0.004	0.006
+DeepCAC
+Wid_Mortality
+k = 1
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 1
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	wid_mortality	1	0.669	0.869	0.495	0.471	0.926	0.000	1.802	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.017	0.007	0.021	0.020	0.003	0.000	0.000	0.000	0.000
+k = 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 2
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	wid_mortality	2	0.679	0.861	0.497	0.472	0.926	0.151	1.523	0.048	0.057
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.026	0.011	0.025	0.024	0.002	0.137	0.198	0.048	0.115
+k = 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 3
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	wid_mortality	3	0.673	0.848	0.465	0.464	0.926	0.327	1.324	0.068	0.139
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.009	0.012	0.014	0.014	0.001	0.205	0.138	0.060	0.132
+k = 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 4
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	wid_mortality	4	0.683	0.835	0.455	0.472	0.926	0.338	1.271	0.058	0.075
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.019	0.021	0.019	0.015	0.002	0.146	0.120	0.044	0.048
 DeepCAC
 Sepsis24
+k = 1
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 1
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	sepsis24	1	0.648	0.826	0.363	0.412	0.943	0.000	1.802	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.023	0.022	0.013	0.028	0.002	0.000	0.000	0.000	0.000
 k = 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 2
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	sepsis24	2	0.656	0.817	0.366	0.412	0.943	0.459	1.408	0.039	0.038
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.031	0.012	0.037	0.039	0.002	0.189	0.188	0.021	0.029
+k = 3
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 3
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	sepsis24	3	0.616	0.795	0.279	0.343	0.938	0.328	1.131	0.020	0.021
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.039	0.027	0.061	0.062	0.003	0.123	0.568	0.023	0.023
+k = 4
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 4
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	sepsis24	4	0.643	0.763	0.316	0.387	0.934	0.394	1.196	0.039	0.034
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.031	0.042	0.033	0.053	0.011	0.078	0.150	0.024	0.025
+k = 5
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 5
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	sepsis24	5	0.612	0.792	0.309	0.345	0.940	0.310	1.314	0.026	0.021
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.037	0.016	0.056	0.077	0.002	0.214	0.049	0.013	0.016
 DeepCAC
 Respiratory24
+k = 1
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
+n_clusters 1
+attention False
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	ards24	1	0.554	0.716	0.255	0.249	0.921	0.000	1.802	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
+	0.044	0.038	0.031	0.126	0.005	0.000	0.000	0.000	0.000
 k = 2
+alpha 1.0
+beta 20.0
+gamma 0.0
+delta 0.0
+data_ratio -1
 n_clusters 2
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
 attention False
 [Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	2	0.585	0.729	0.607	0.295	0.500	0.573	0.678	0.013
+	ards24	2	0.522	0.729	0.251	0.316	0.924	0.434	0.920	0.019	0.064
 [Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.018	0.018	0.010	0.032	0.000	0.341	0.678	0.016
+	0.031	0.036	0.029	0.046	0.004	0.232	0.453	0.015	0.035
 k = 3
-n_clusters 2
 alpha 1.0
 beta 20.0
 gamma 0.0
 delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	2	0.638	0.822	0.661	0.387	0.500	0.523	1.438	0.024
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.048	0.011	0.035	0.070	0.000	0.145	1.438	0.021
-k = 3
+data_ratio -1
 n_clusters 3
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
 attention False
 [Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	3	0.574	0.714	0.602	0.309	0.500	0.236	0.983	0.025
+	ards24	3	0.578	0.717	0.247	0.285	0.919	0.229	1.116	0.016	0.043
 [Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.012	0.028	0.020	0.032	0.000	0.018	0.983	0.019
+	0.014	0.029	0.027	0.020	0.004	0.046	0.161	0.005	0.039
 k = 4
-n_clusters 3
 alpha 1.0
 beta 20.0
 gamma 0.0
 delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	3	0.604	0.806	0.639	0.339	0.500	0.459	1.396	0.019
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.044	0.014	0.027	0.061	0.000	0.226	1.396	0.012
-k = 4
+data_ratio -1
 n_clusters 4
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
 attention False
 [Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	4	0.590	0.728	0.611	0.308	0.500	0.228	0.817	0.014
+	ards24	4	0.602	0.732	0.253	0.311	0.914	0.295	0.702	0.028	0.050
 [Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.024	0.025	0.019	0.021	0.000	0.087	0.817	0.004
+	0.038	0.018	0.010	0.034	0.007	0.101	0.376	0.012	0.024
 k = 5
-n_clusters 4
 alpha 1.0
 beta 20.0
 gamma 0.0
 delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	4	0.593	0.807	0.640	0.326	0.500	0.377	1.334	0.027
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.043	0.017	0.029	0.058	0.000	0.147	1.334	0.017
-k = 5
+data_ratio -1
 n_clusters 5
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
 attention False
 [Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	5	0.566	0.703	0.605	0.299	0.500	0.238	0.516	0.022
+	ards24	5	0.555	0.721	0.252	0.285	0.921	0.284	0.510	0.024	0.042
 [Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.015	0.028	0.015	0.033	0.000	0.069	0.516	0.009
-n_clusters 5
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	5	0.534	0.769	0.602	0.209	0.500	0.301	1.236	0.012
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.028	0.044	0.017	0.110	0.000	0.148	1.236	0.011
-
-====================================
-====================================
-
-DeepCAC
-Sepsis24
-k = 2
-DeepCAC
-Respiratory24
-k = 2
-n_clusters 2
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	2	0.581	0.717	0.605	0.297	0.500	0.456	0.880	0.019
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.018	0.023	0.021	0.028	0.000	0.263	0.416	0.011
-k = 3
-n_clusters 2
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	2	0.650	0.809	0.668	0.414	0.500	0.409	1.261	0.035
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.049	0.011	0.019	0.048	0.000	0.148	0.175	0.018
-k = 3
-n_clusters 3
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	3	0.569	0.703	0.589	0.271	0.500	0.343	0.821	0.018
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.007	0.016	0.011	0.025	0.000	0.050	0.477	0.008
-k = 4
-n_clusters 4
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	4	0.549	0.692	0.588	0.269	0.500	0.279	0.714	0.020
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.020	0.022	0.012	0.035	0.000	0.050	0.439	0.008
-k = 5
-n_clusters 3
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	3	0.590	0.799	0.638	0.344	0.500	0.456	1.295	0.016
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.059	0.008	0.026	0.081	0.000	0.145	0.150	0.021
-k = 4
-n_clusters 5
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	ards24	5	0.554	0.696	0.588	0.259	0.500	0.184	0.533	0.018
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.017	0.019	0.014	0.028	0.000	0.076	0.445	0.008
-n_clusters 4
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	4	0.587	0.763	0.628	0.310	0.500	0.390	0.882	0.026
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.072	0.034	0.039	0.123	0.000	0.092	0.522	0.023
-k = 5
-n_clusters 5
-alpha 1.0
-beta 20.0
-gamma 0.0
-delta 0.0
-eta 5.0
-attention False
-[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	sepsis24	5	0.576	0.788	0.635	0.307	0.500	0.242	0.729	0.018
-[Std]	F1	AUC	AUPRC	MINPSE	ACC	Te-SIL	Tr-HTFD	Te-NMI	Te-ARI
-	0.063	0.025	0.039	0.114	0.000	0.046	0.518	0.021
+	0.039	0.019	0.024	0.022	0.007	0.132	0.425	0.010	0.022

@@ -52,7 +52,7 @@ parser.add_argument('--wd', default= 5e-4, type=float)
 parser.add_argument('--batch_size', default= 512, type=int)
 parser.add_argument('--n_epochs', default= 10, type=int)
 parser.add_argument('--n_runs', default= 5, type=int)
-parser.add_argument('--pre_epoch', default= 40, type=int)
+parser.add_argument('--pre_epoch', default= 200, type=int)
 parser.add_argument('--pretrain', default= True, type=bool)
 parser.add_argument("--load_ae",  default=False, type=bool)
 parser.add_argument("--classifier", default="LR")
@@ -62,6 +62,7 @@ parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
 parser.add_argument('--ae_type', default= 'dae')
 parser.add_argument('--n_channels', default= 1, type=int)
+parser.add_argument('--sub_epochs', default= 'False')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
@@ -87,9 +88,6 @@ parser.add_argument('--pretrain_path', default= '/Users/shivin/Document/NUS/Rese
 
 parser = parser.parse_args()  
 args = parameters(parser)
-
-for key in ['alpha', 'beta', 'gamma', 'delta', 'data_ratio', 'n_clusters', 'attention']:
-    print(key, args.__dict__[key])
 
 base_suffix = ""
 base_suffix += args.dataset
@@ -623,7 +621,7 @@ for r in range(len(iter_array)):
         if es.early_stop == True:
             # sil_scores[e].append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            # htfd_scores.append(calculate_HTFD(X_train, cluster_ids_train))
+            htfd_scores.append(calculate_HTFD(X_train, cluster_ids_train))
             # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             break
 
@@ -809,6 +807,9 @@ enablePrint()
 
 # print('Dataset\tk')
 # print("{}\t{}\n".format(args.dataset, args.n_clusters))
+
+for key in ['alpha', 'beta', 'gamma', 'delta', 'data_ratio', 'n_clusters', 'attention']:
+    print(key, args.__dict__[key])
 
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTr-SIL\tTr-HTFD\tTe-NMI\tTe-ARI")
 
