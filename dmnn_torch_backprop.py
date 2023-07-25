@@ -223,7 +223,6 @@ for r in range(args.n_runs):
                 else:
                     sub_epochs = 1
                 z_cluster, y_cluster = z_batch[cluster_ids], y_batch[cluster_ids]
-                # for _ in range(sub_epochs):
                 preds_j = model.classifiers[j][0](z_cluster)
                 optimizer_j = model.classifiers[j][1]
                 optimizer_j.zero_grad()

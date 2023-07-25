@@ -62,9 +62,9 @@ parser.add_argument('--cluster_balance', default='hellinger')
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class equalization wt
-parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.0, type=float) # Class equalization wt
+parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -174,8 +174,14 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
 
-    ae_layers = [128, 64, args.n_z, 64, 128]
-    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+    if args.expt == 'ExpertNet':
+        ae_layers = [128, 64, args.n_z, 64, 128]
+        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+
+    else:
+        # DeepCAC expts
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, args.n_classes]
 
     if args.ae_type == 'cnn':
         if X_train[0].shape[1] == 28:
@@ -368,7 +374,6 @@ for r in range(len(iter_array)):
     cluster_id_train = torch.argmax(q_train, axis=1)
 
     X_latents_data_loader = list(zip(z_train, cluster_id_train, y_train))
-    # X_latents_data_loader = list(zip(z_train.to(args.device), q_train, y_train))
 
     train_loader_latents = torch.utils.data.DataLoader(X_latents_data_loader,
         batch_size=1024, shuffle=False)
@@ -403,7 +408,6 @@ for r in range(len(iter_array)):
                 optimizer_k.zero_grad()
                 cluster_loss.backward(retain_graph=True)
                 optimizer_k.step()
-
 
         # model.ae.eval() # prep model for evaluation
         for j in range(model.n_clusters):
@@ -457,8 +461,8 @@ for r in range(len(iter_array)):
         if es.early_stop == True or e == N_EPOCHS - 1:
             # e_train_losses.append(e_train_loss.item())
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-            HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
-            wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
+            # HTFD_scores.append(calculate_HTFD(X_train, cluster_ids_train))
+            # wdfd_scores.append(calculate_WDFD(X_train, cluster_ids_train))
             # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
 

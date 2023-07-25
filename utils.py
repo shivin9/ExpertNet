@@ -932,38 +932,55 @@ def performance_metrics(y_true, y_pred, n_classes=2):
     # Adjust for situations when some class points are absent
     n_classes = cm.shape[0]
 
-    for c in range(n_classes):
-        if len(np.unique(y[:,c])) == 1:
-            auroc_scores.append(0)
-            auprc_scores.append(0)
-            minpse_scores.append(0)
-            acc_scores.append(0)
-        else:
-            tp = cm[c,c]
-            fp = sum(cm[:,c]) - cm[c,c]
-            fn = sum(cm[c,:]) - cm[c,c]
-            tn = sum(np.delete(sum(cm)-cm[c,:],c))
-            
-            recall = tp/(tp+fn)
-            if (tp+fp == 0):
-                precision = 0
+    if n_classes > 2:
+        macro_roc_auc_ovr = roc_auc_score(
+            y,
+            y_pred,
+            multi_class="ovr",
+            average="macro",
+        )
+
+        macro_auprc_ovr = average_precision_score(y.ravel(), y_pred.ravel())
+
+        return {"acc": np.round(accuracy_score(y_true, y_pred.argmax(axis=1)), 3),
+                "auroc": np.round(macro_roc_auc_ovr, 3),
+                "auprc": np.round(macro_auprc_ovr, 3),
+                "minpse": 0,
+                "f1_score":np.round(f1_score(y_true, y_pred.argmax(axis=1), average="macro"), 3)}
+
+    else:
+        for c in range(n_classes):
+            if len(np.unique(y[:,c])) == 1:
+                auroc_scores.append(0)
+                auprc_scores.append(0)
+                minpse_scores.append(0)
+                acc_scores.append(0)
             else:
-                precision = tp/(tp+fp)
-            specificity = tn/(tn+fp)
+                tp = cm[c,c]
+                fp = sum(cm[:,c]) - cm[c,c]
+                fn = sum(cm[c,:]) - cm[c,c]
+                tn = sum(np.delete(sum(cm)-cm[c,:],c))
+                
+                recall = tp/(tp+fn)
+                if (tp+fp == 0):
+                    precision = 0
+                else:
+                    precision = tp/(tp+fp)
+                specificity = tn/(tn+fp)
 
-            auroc_scores.append(roc_auc_score(y[:,c], y_pred[:,c]))
-            auprc_scores.append(average_precision_score(y[:,c], y_pred[:,c]))
-            minpse_scores.append(min(precision, specificity))
-            acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
-            non_zero_class_cnt += 1
+                auroc_scores.append(roc_auc_score(y[:,c], y_pred[:,c]))
+                auprc_scores.append(average_precision_score(y[:,c], y_pred[:,c]))
+                minpse_scores.append(min(precision, specificity))
+                acc_scores.append(accuracy_score(y[:,c], y_pred.argmax(axis=1)))
+                non_zero_class_cnt += 1
 
-    return {# "acc": np.round(np.sum(acc_scores)/non_zero_class_cnt, 3),
-            "acc": np.round(accuracy_score(y_true, y_pred.argmax(axis=1)), 3),
-            "auroc": np.round(auroc_scores[1], 3),
+        return {"acc": np.round(accuracy_score(y_true, y_pred.argmax(axis=1)), 3),
+                "auroc": np.round(auroc_scores[1], 3),
             "auprc": np.round(auprc_scores[1], 3),
+            "minpse": np.round(minpse_scores[1], 3),
             # "auroc": np.round(np.sum(auroc_scores)/non_zero_class_cnt, 3),
             # "auprc": np.round(np.sum(auprc_scores)/non_zero_class_cnt, 3),
-            "minpse": np.round(np.sum(minpse_scores)/non_zero_class_cnt, 3),
+            # "minpse": np.round(np.sum(minpse_scores)/non_zero_class_cnt, 3),
             "f1_score":np.round(f1_score(y_true, y_pred.argmax(axis=1), average="macro"), 3)}
 
 

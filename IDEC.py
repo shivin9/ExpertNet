@@ -57,16 +57,16 @@ parser.add_argument('--pretrain', default= 'True')
 parser.add_argument("--load_ae", default= 'False')
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
-parser.add_argument("--attention", default=11, type=int)
+parser.add_argument("--attention", default=00, type=int)
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
 
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class equalization wt
-parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.0, type=float) # Class equalization wt
+parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -172,8 +172,14 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
 
-    ae_layers = [128, 64, args.n_z, 64, 128]
-    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+    if args.expt == 'ExpertNet':
+        ae_layers = [128, 64, args.n_z, 64, 128]
+        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+
+    else:
+        # DeepCAC expts
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, args.n_classes]
 
     if args.ae_type == 'cnn':
         if X_train[0].shape[1] == 28:
@@ -273,19 +279,6 @@ for r in range(len(iter_array)):
                 X_cluster = z_val[cluster_id]
                 cluster_preds_val = model.classifiers[j][0](X_cluster)
                 preds[cluster_id,:] = cluster_preds_val
-
-            # else:
-            #     for j in range(model.n_clusters):
-            #         X_cluster = z_val
-            #         cluster_preds = model.classifiers[j][0](X_cluster)
-    
-            #     for c in range(args.n_classes):
-            #         preds[:,c] += q_val[:,j]*cluster_preds[:,c]
-
-            # print("qval", torch.sum(q_val, axis=0))
-            # print("Cluster Counts", np.bincount(cluster_ids))
-            # print("KL div", torch.kl_div(torch.sum(q_val, axis=0),\
-            #                         torch.ones(args.n_clusters)/args.n_clusters))
 
             # Classification Matrics
             val_metrics = performance_metrics(y_val, preds.detach().numpy(), args.n_classes)
@@ -491,8 +484,8 @@ for r in range(len(iter_array)):
         es([val_f1, opt], model)
 
         if es.early_stop == True or e == N_EPOCHS - 1:
-            HTFD_scores.append(calculate_HTFD(X_train,  cluster_ids_train))
-            wdfd_scores.append(calculate_WDFD(X_train,  cluster_ids_train))
+            # HTFD_scores.append(calculate_HTFD(X_train,  cluster_ids_train))
+            # wdfd_scores.append(calculate_WDFD(X_train,  cluster_ids_train))
             sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
             # model_complexity.append(calculate_bound(model, B, len(z_train)))
             break
@@ -515,7 +508,6 @@ for r in range(len(iter_array)):
     # # Evaluate model on Test dataset
     q_test, z_test = model.encoder_forward(torch.FloatTensor(X_test).to(args.device), output="latent")
     cluster_ids = torch.argmax(q_test, axis=1)
-    # cluster_ids = np.argmax(distance_matrix(z_test.data.cpu().numpy(), model.cluster_layer.data.cpu().numpy()), axis=1)
     test_preds_e = torch.zeros((len(z_test), args.n_classes))
 
     test_loss = 0
@@ -578,11 +570,11 @@ for r in range(len(iter_array)):
         test_auc, test_auprc, test_acc), ', E-Test F1 {:.3f}, E-Test AUC {:.3f}, E-Test AUPRC {:.3f}, E-Test ACC {:.3f}'.format\
         (e_test_f1, e_test_auc, e_test_auprc, e_test_acc))
 
-    f1_scores.append(e_test_f1)
-    auc_scores.append(e_test_auc)
-    auprc_scores.append(e_test_auprc)
-    minpse_scores.append(e_test_minpse)
-    acc_scores.append(e_test_acc)
+    f1_scores.append(test_f1)
+    auc_scores.append(test_auc)
+    auprc_scores.append(test_auprc)
+    minpse_scores.append(test_minpse)
+    acc_scores.append(test_acc)
     nmi_scores.append(nmi_score(cluster_ids.data.cpu().numpy(), y_test))
     ari_scores.append(ari_score(cluster_ids.data.cpu().numpy(), y_test))
     # sil_scores.append(silhouette_new(z_test.data.cpu().numpy(), cluster_ids.data.cpu().numpy(), metric='euclidean'))

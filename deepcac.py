@@ -171,11 +171,11 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
 
-    ae_layers = [128, 64, args.n_z, 64, 128]
-    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+    # ae_layers = [128, 64, args.n_z, 64, 128]
+    # expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
 
-    # ae_layers = [64, args.n_z, 64]
-    # expert_layers = [args.n_z, 30, args.n_classes]
+    ae_layers = [64, args.n_z, 64]
+    expert_layers = [args.n_z, args.n_classes]
 
     if args.ae_type == 'cnn':
         if X_train[0].shape[1] == 28:
@@ -516,7 +516,7 @@ for r in range(len(iter_array)):
     B = []
 
     # Post clustering training
-    for e in range(args.n_epochs):
+    for epoch in range(args.n_epochs):
         epoch_loss = 0
         epoch_acc = 0
         epoch_f1 = 0
@@ -808,7 +808,7 @@ enablePrint()
 # print('Dataset\tk')
 # print("{}\t{}\n".format(args.dataset, args.n_clusters))
 
-for key in ['alpha', 'beta', 'gamma', 'delta', 'data_ratio', 'n_clusters', 'attention']:
+for key in ['alpha', 'beta', 'gamma', 'eta', 'data_ratio', 'n_clusters', 'attention']:
     print(key, args.__dict__[key])
 
 print("[Avg]\tDataset\tk\tF1\tAUC\tAUPRC\tMINPSE\tACC\tTr-SIL\tTr-HTFD\tTe-NMI\tTe-ARI")

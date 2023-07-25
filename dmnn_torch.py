@@ -134,7 +134,8 @@ for r in range(args.n_runs):
     else:
         # DeepCAC expts
         ae_layers = [64, args.n_z, 64]
-        expert_layers = [args.n_z, 30, args.n_classes]
+        expert_layers = [args.n_z, args.n_classes]
+
 
     if args.ae_type == 'cnn':
         if X_train[0].shape[1] == 28:
@@ -224,19 +225,19 @@ for r in range(args.n_runs):
                     sub_epochs = 1
                 z_cluster, y_cluster = z_batch[cluster_ids], y_batch[cluster_ids]
                 # for _ in range(sub_epochs):
-                # preds_j = model.classifiers[j][0](z_cluster)
-                # optimizer_j = model.classifiers[j][1]
-                # optimizer_j.zero_grad()
-                # loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
-                # local_loss = torch.sum(gate_vals[cluster_ids,j]*loss_j)
-                # train_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
-                # local_loss.backward(retain_graph=True)
-                # optimizer_j.step()
-
                 preds_j = model.classifiers[j][0](z_cluster)
+                optimizer_j = model.classifiers[j][1]
+                optimizer_j.zero_grad()
                 loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
-                y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids, j], shape=(len(preds_j), 1)) * preds_j
-                class_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
+                local_loss = torch.sum(gate_vals[cluster_ids,j]*loss_j)
+                # class_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
+                local_loss.backward(retain_graph=True)
+                optimizer_j.step()
+
+                # preds_j = model.classifiers[j][0](z_cluster)
+                # loss_j = nn.CrossEntropyLoss(reduction='mean')(preds_j, y_cluster)
+                # y_pred[cluster_ids] += torch.reshape(gate_vals[cluster_ids, j], shape=(len(preds_j), 1)) * preds_j
+                # class_loss += torch.sum(gate_vals[cluster_ids,j]*loss_j)
 
             km_loss = F.kl_div(gate_vals.log(), p_train[idx], reduction='batchmean')
             # km_loss = torch.linalg.norm(torch.sqrt(gate_vals) - torch.sqrt(p_train[idx]))
@@ -263,12 +264,13 @@ for r in range(args.n_runs):
             if args.eta != 0:
                 train_loss += args.eta*cluster_balance_loss
 
-            optimizer.zero_grad()
-            train_loss.backward(retain_graph=True)
-            optimizer.step()
+            # optimizer.zero_grad()
+            # train_loss.backward(retain_graph=True)
+            # optimizer.step()
 
             epoch_loss += train_loss
 
+            # print(y_batch, y_pred)
             train_metrics = performance_metrics(y_batch, y_pred.detach().numpy(), args.n_classes)
             f1  = train_metrics['f1_score']
             auc = train_metrics['auroc']
@@ -382,7 +384,7 @@ for r in range(args.n_runs):
     z_train, _, gate_vals = model(torch.FloatTensor(X_train))
     cluster_ids_train = torch.argmax(gate_vals, axis=1)
     sil_scores.append(silhouette_new(z_train.data.cpu().numpy(), cluster_ids_train.data.cpu().numpy(), metric='euclidean'))
-    HTFD_scores.append(calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train))
+    # HTFD_scores.append(calculate_HTFD(torch.FloatTensor(X_train), cluster_ids_train))
 
 enablePrint()
 print("Plain DMNN")

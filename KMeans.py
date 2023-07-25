@@ -63,9 +63,9 @@ parser.add_argument('--cluster_balance', default='hellinger')
 # Model parameters
 parser.add_argument('--lamda', default= 1, type=float)
 parser.add_argument('--beta', default= 0.5, type=float) # KM loss wt
-parser.add_argument('--gamma', default= 1.0, type=float) # Classification loss wt
-parser.add_argument('--delta', default= 0.01, type=float) # Class equalization wt
-parser.add_argument('--eta', default= 0.01, type=float) # Class seploss wt
+parser.add_argument('--gamma', default= 0.0, type=float) # Classification loss wt
+parser.add_argument('--delta', default= 0.0, type=float) # Class equalization wt
+parser.add_argument('--eta', default= 0.0, type=float) # Class seploss wt
 parser.add_argument('--hidden_dims', default= [64, 32])
 parser.add_argument('--n_z', default= 20, type=int)
 parser.add_argument('--n_clusters', default= 3, type=int)
@@ -173,8 +173,16 @@ for r in range(len(iter_array)):
 
     suffix = base_suffix + "_" + iteration_name + "_" + str(iter_array[r])
 
-    ae_layers = [128, 64, args.n_z, 64, 128]
-    expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+    if args.expt == 'ExpertNet':
+        ae_layers = [128, 64, args.n_z, 64, 128]
+        expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+
+    else:
+        # DeepCAC expts
+        # ae_layers = [128, 64, args.n_z, 64, 128]
+        # expert_layers = [args.n_z, 128, 64, 32, 16, args.n_classes]
+        ae_layers = [64, args.n_z, 64]
+        expert_layers = [args.n_z, args.n_classes]
 
     if args.ae_type == 'cnn':
         if X_train[0].shape[1] == 28:
@@ -322,8 +330,8 @@ for r in range(len(iter_array)):
         if es.early_stop == True or epoch == N_EPOCHS - 1:
             train_losses.append(train_loss.item())
             sil_scores.append(silhouette_new(hidden.data.cpu().numpy(), cluster_ids_train, metric='euclidean'))
-            HTFD_scores.append(calculate_HTFD(X_train, torch.Tensor(cluster_ids_train)))
-            wdfd_scores.append(calculate_WDFD(X_train, torch.Tensor(cluster_ids_train)))
+            # HTFD_scores.append(calculate_HTFD(X_train, torch.Tensor(cluster_ids_train)))
+            # wdfd_scores.append(calculate_WDFD(X_train, torch.Tensor(cluster_ids_train)))
             # model_complexity.append(calculate_bound(model, B, len(hidden)))
             break
 
