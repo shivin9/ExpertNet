@@ -401,7 +401,8 @@ class DeepCAC(nn.Module):
             classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=args.lr_enc)
             self.classifiers.append([classifier, optimizer])
-            
+
+        self.optimizer = torch.optim.Adam(self.ae.parameters(), lr=args.lr_enc)
         # self.main = nn.Linear(expert_layers[i+1], args.n_classes)
 
     def pretrain(self, train_loader, path=''):
@@ -493,7 +494,11 @@ class ExpertNet(nn.Module):
 
         # cluster layer
         self.cluster_layer = torch.Tensor(self.n_clusters, self.n_z)
+        self.class_cluster_layer = torch.Tensor(self.n_clusters, args.n_classes, self.n_z)
+
         torch.nn.init.xavier_normal_(self.cluster_layer.data)
+        torch.nn.init.xavier_normal_(self.class_cluster_layer.data)
+
         # torch.nn.init.xavier_uniform_(self.ae.encoder.weight)
         # torch.nn.init.xavier_uniform_(self.ae.decoder.weight)
 
@@ -513,7 +518,6 @@ class ExpertNet(nn.Module):
             classifier.update(
                 {"layer{}".format(i): nn.Linear(expert_layers[i], expert_layers[i+1]),
                 })
-            # classifier.update({"layer{}".format(i+1): nn.Softmax(dim=0)})
 
             classifier = nn.Sequential(classifier).to(self.device)
             optimizer = torch.optim.Adam(classifier.parameters(), lr=self.lr_exp)

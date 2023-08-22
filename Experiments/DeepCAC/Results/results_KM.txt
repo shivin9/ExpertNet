@@ -563,3 +563,1097 @@ Distilled Model Metrics
 
 
 
+KMeans
+CIC_LOS
+KMeans
+CIC_LOS
+k = 1
+k = 2
+KMeans
+CIC_LOS
+k = 1
+n_clusters 1
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.378, 0.352, 0.364, 0.365, 0.384, 0.379, 0.355, 0.379, 0.36, 0.361, 0.366]
+Test AUC:  [0.513, 0.504, 0.503, 0.505, 0.516, 0.512, 0.497, 0.511, 0.498, 0.503, 0.507]
+Test AUPRC:  [0.341, 0.338, 0.343, 0.341, 0.347, 0.349, 0.343, 0.346, 0.329, 0.342, 0.347]
+Test MISPSE:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	1	0.368	0.506	0.342	0.000	0.382	0.000	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.010	0.006	0.005	0.000	0.015	0.000	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	1	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 2
+n_clusters 2
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.303, 0.278, 0.256, 0.328, 0.334, 0.324, 0.294, 0.184, 0.39, 0.327, 0.343]
+Test AUC:  [0.46, 0.528, 0.5, 0.492, 0.502, 0.509, 0.486, 0.534, 0.501, 0.498, 0.501]
+Test AUPRC:  [0.318, 0.33, 0.323, 0.337, 0.37, 0.343, 0.343, 0.327, 0.346, 0.371, 0.333]
+Test MISPSE:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	2	0.306	0.501	0.340	0.000	0.349	0.746	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.051	0.019	0.017	0.000	0.044	0.153	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	2	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 3
+n_clusters 3
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.269, 0.251, 0.228, 0.228, 0.255, 0.226, 0.293, 0.258, 0.25, 0.195, 0.268]
+Test AUC:  [0.485, 0.521, 0.486, 0.523, 0.487, 0.486, 0.471, 0.494, 0.485, 0.442, 0.515]
+Test AUPRC:  [0.366, 0.374, 0.341, 0.396, 0.314, 0.343, 0.322, 0.335, 0.314, 0.342, 0.32]
+Test MISPSE:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	3	0.247	0.490	0.342	0.000	0.344	0.540	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.025	0.022	0.025	0.000	0.050	0.085	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	3	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 4
+n_clusters 4
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.193, 0.378, 0.177, 0.385, 0.311, 0.239, 0.215, 0.229, 0.235, 0.347, 0.245]
+Test AUC:  [0.564, 0.517, 0.485, 0.488, 0.498, 0.521, 0.499, 0.458, 0.501, 0.536, 0.491]
+Test AUPRC:  [0.358, 0.345, 0.305, 0.356, 0.337, 0.368, 0.35, 0.344, 0.386, 0.373, 0.337]
+Test MISPSE:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	4	0.269	0.505	0.351	0.000	0.359	0.523	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.070	0.027	0.021	0.000	0.041	0.038	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	4	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+KMeans
+CIC_LOS
+DeepCAC
+KMeans
+Diabetes
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+DeepCAC
+KMeans
+CIC_LOS
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.377, 0.254, 0.284, 0.302, 0.228]
+Test AUC:  [0.501, 0.429, 0.516, 0.502, 0.472]
+Test AUPRC:  [0.352, 0.318, 0.337, 0.321, 0.358]
+Test MISPSE:  [0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	5	0.289	0.484	0.337	0.000	0.340	0.555	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.051	0.031	0.016	0.000	0.030	0.011	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.241, 0.251, 0.302, 0.244, 0.314]
+Test AUC:  [0.499, 0.424, 0.507, 0.44, 0.573]
+Test AUPRC:  [0.333, 0.317, 0.371, 0.335, 0.387]
+Test MISPSE:  [0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	8	0.270	0.489	0.349	0.000	0.338	0.476	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.031	0.053	0.026	0.000	0.027	0.052	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	8	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.186, 0.191, 0.235, 0.198, 0.274]
+Test AUC:  [0.532, 0.428, 0.442, 0.533, 0.48]
+Test AUPRC:  [0.349, 0.338, 0.3, 0.305, 0.327]
+Test MISPSE:  [0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	10	0.217	0.483	0.324	0.000	0.315	0.364	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.033	0.044	0.019	0.000	0.043	0.047	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	10	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 15
+n_clusters 15
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.159, 0.368, 0.215, 0.196, 0.251]
+Test AUC:  [0.536, 0.546, 0.409, 0.493, 0.425]
+Test AUPRC:  [0.349, 0.386, 0.315, 0.315, 0.319]
+Test MISPSE:  [0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	15	0.238	0.482	0.337	0.000	0.346	0.222	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.072	0.056	0.028	0.000	0.043	0.048	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	15	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 20
+n_clusters 20
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.16, 0.269, 0.257, 0.218, 0.25]
+Test AUC:  [0.528, 0.463, 0.423, 0.407, 0.445]
+Test AUPRC:  [0.336, 0.349, 0.319, 0.33, 0.331]
+Test MISPSE:  [0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	20	0.231	0.453	0.333	0.000	0.357	0.198	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.039	0.042	0.010	0.000	0.029	0.031	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	20	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 30
+n_clusters 30
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.159, 0.273, 0.186, 0.282, 0.2]
+Test AUC:  [0.518, 0.445, 0.55, 0.438, 0.547]
+Test AUPRC:  [0.341, 0.313, 0.322, 0.307, 0.366]
+Test MISPSE:  [0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	30	0.220	0.500	0.330	0.000	0.302	0.155	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.049	0.049	0.021	0.000	0.018	0.014	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	30	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 50
+n_clusters 50
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.295, 0.188, 0.303, 0.217, 0.289]
+Test AUC:  [0.522, 0.528, 0.489, 0.46, 0.503]
+Test AUPRC:  [0.345, 0.35, 0.317, 0.327, 0.326]
+Test MISPSE:  [0, 0, 0, 0, 0]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic_los	50	0.258	0.500	0.333	0.000	0.315	0.137	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.047	0.024	0.012	0.000	0.025	0.010	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic_los	50	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+KMeans
+CIC
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.307, 0.518, 0.408, 0.618, 0.391]
+Test AUC:  [0.602, 0.657, 0.445, 0.622, 0.518]
+Test AUPRC:  [0.195, 0.262, 0.137, 0.227, 0.193]
+Test MISPSE:  [0.149, 0.202, 0.111, 0.421, 0.141]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	5	0.448	0.569	0.203	0.205	0.540	0.200	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.108	0.077	0.041	0.112	0.179	0.103	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.544, 0.553, 0.326, 0.582, 0.589]
+Test AUC:  [0.52, 0.669, 0.437, 0.74, 0.664]
+Test AUPRC:  [0.163, 0.323, 0.13, 0.34, 0.265]
+Test MISPSE:  [0.216, 0.23, 0.131, 0.38, 0.272]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	8	0.519	0.606	0.244	0.246	0.690	0.116	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.098	0.111	0.084	0.081	0.183	0.018	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic	8	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.515, 0.42, 0.17, 0.565, 0.566]
+Test AUC:  [0.512, 0.528, 0.555, 0.6, 0.488]
+Test AUPRC:  [0.159, 0.162, 0.182, 0.226, 0.144]
+Test MISPSE:  [0.158, 0.152, 0.046, 0.248, 0.287]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	10	0.447	0.537	0.175	0.178	0.588	0.123	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.148	0.038	0.028	0.084	0.238	0.019	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic	10	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 15
+n_clusters 15
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.143, 0.492, 0.561, 0.482, 0.567]
+Test AUC:  [0.482, 0.52, 0.608, 0.365, 0.614]
+Test AUPRC:  [0.151, 0.16, 0.206, 0.112, 0.207]
+Test MISPSE:  [0.033, 0.172, 0.262, 0.128, 0.304]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	15	0.449	0.518	0.167	0.180	0.617	0.110	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.157	0.092	0.036	0.096	0.247	0.006	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic	15	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 20
+n_clusters 20
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.483, 0.542, 0.297, 0.336, 0.22]
+Test AUC:  [0.442, 0.616, 0.36, 0.569, 0.655]
+Test AUPRC:  [0.125, 0.253, 0.109, 0.199, 0.213]
+Test MISPSE:  [0.107, 0.225, 0.113, 0.153, 0.119]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	20	0.376	0.528	0.180	0.143	0.452	0.106	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.119	0.111	0.054	0.044	0.201	0.008	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic	20	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 30
+n_clusters 30
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.188, 0.471, 0.454, 0.485, 0.434]
+Test AUC:  [0.497, 0.446, 0.573, 0.619, 0.435]
+Test AUPRC:  [0.15, 0.141, 0.208, 0.236, 0.127]
+Test MISPSE:  [0.079, 0.188, 0.172, 0.194, 0.114]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	30	0.406	0.514	0.172	0.149	0.534	0.099	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.111	0.072	0.042	0.045	0.210	0.010	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic	30	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 50
+n_clusters 50
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.39, 0.563, 0.371, 0.509, 0.582]
+Test AUC:  [0.539, 0.634, 0.494, 0.577, 0.557]
+Test AUPRC:  [0.155, 0.254, 0.16, 0.188, 0.178]
+Test MISPSE:  [0.151, 0.249, 0.157, 0.182, 0.284]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	cic	50	0.483	0.560	0.187	0.205	0.612	0.108	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.087	0.046	0.036	0.053	0.179	0.007	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	cic	50	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+KMeans
+Respiratory
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.302, 0.475, 0.45, 0.496, 0.549]
+Test AUC:  [0.585, 0.513, 0.547, 0.499, 0.557]
+Test AUPRC:  [0.122, 0.089, 0.094, 0.09, 0.104]
+Test MISPSE:  [0.084, 0.104, 0.075, 0.073, 0.147]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	5	0.454	0.540	0.100	0.097	0.665	0.153	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.083	0.031	0.012	0.027	0.187	0.096	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.56, 0.31, 0.376, 0.564, 0.489]
+Test AUC:  [0.597, 0.428, 0.413, 0.454, 0.496]
+Test AUPRC:  [0.132, 0.075, 0.065, 0.086, 0.084]
+Test MISPSE:  [0.171, 0.076, 0.054, 0.194, 0.072]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	8	0.460	0.478	0.088	0.113	0.659	0.097	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.101	0.066	0.023	0.057	0.197	0.083	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	8	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.574, 0.463, 0.494, 0.462, 0.432]
+Test AUC:  [0.613, 0.541, 0.557, 0.472, 0.412]
+Test AUPRC:  [0.136, 0.115, 0.126, 0.084, 0.066]
+Test MISPSE:  [0.215, 0.098, 0.114, 0.074, 0.049]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	10	0.485	0.519	0.105	0.110	0.705	0.070	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.049	0.070	0.026	0.057	0.086	0.069	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	10	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 15
+n_clusters 15
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.49, 0.429, 0.498, 0.416, 0.289]
+Test AUC:  [0.419, 0.46, 0.547, 0.591, 0.453]
+Test AUPRC:  [0.071, 0.074, 0.101, 0.124, 0.08]
+Test MISPSE:  [0.125, 0.082, 0.073, 0.08, 0.069]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	15	0.424	0.494	0.090	0.086	0.643	0.028	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.075	0.064	0.020	0.020	0.213	0.015	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	15	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 20
+n_clusters 20
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.465, 0.384, 0.307, 0.455, 0.479]
+Test AUC:  [0.436, 0.445, 0.612, 0.412, 0.401]
+Test AUPRC:  [0.074, 0.071, 0.124, 0.067, 0.06]
+Test MISPSE:  [0.084, 0.063, 0.087, 0.038, 0.058]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	20	0.418	0.461	0.079	0.066	0.611	0.040	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.064	0.077	0.023	0.018	0.166	0.009	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	20	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 30
+n_clusters 30
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.503, 0.508, 0.464, 0.235, 0.497]
+Test AUC:  [0.519, 0.457, 0.424, 0.459, 0.529]
+Test AUPRC:  [0.093, 0.082, 0.063, 0.087, 0.082]
+Test MISPSE:  [0.086, 0.099, 0.08, 0.081, 0.07]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	30	0.441	0.478	0.081	0.083	0.677	0.054	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.104	0.040	0.010	0.009	0.224	0.008	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	30	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 50
+n_clusters 50
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.284, 0.214, 0.341, 0.442, 0.464]
+Test AUC:  [0.534, 0.638, 0.541, 0.474, 0.509]
+Test AUPRC:  [0.099, 0.155, 0.098, 0.079, 0.071]
+Test MISPSE:  [0.082, 0.085, 0.075, 0.084, 0.048]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	ards24	50	0.349	0.539	0.100	0.075	0.458	0.052	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.094	0.055	0.029	0.014	0.196	0.004	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	ards24	50	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+KMeans
+Sepsis24
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.5, 0.546, 0.567, 0.399, 0.16]
+Test AUC:  [0.472, 0.625, 0.574, 0.582, 0.569]
+Test AUPRC:  [0.065, 0.095, 0.089, 0.084, 0.083]
+Test MISPSE:  [0.062, 0.128, 0.163, 0.095, 0.063]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	5	0.434	0.564	0.083	0.102	0.649	0.179	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.149	0.050	0.010	0.039	0.285	0.152	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.11, 0.391, 0.448, 0.41, 0.539]
+Test AUC:  [0.587, 0.531, 0.545, 0.602, 0.564]
+Test AUPRC:  [0.093, 0.079, 0.076, 0.104, 0.078]
+Test MISPSE:  [0.057, 0.078, 0.071, 0.074, 0.132]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	8	0.380	0.566	0.086	0.082	0.536	0.134	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.144	0.026	0.011	0.026	0.253	0.043	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	8	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.41, 0.507, 0.533, 0.503, 0.408]
+Test AUC:  [0.476, 0.511, 0.501, 0.473, 0.398]
+Test AUPRC:  [0.061, 0.081, 0.087, 0.071, 0.05]
+Test MISPSE:  [0.057, 0.106, 0.128, 0.074, 0.038]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	10	0.472	0.472	0.070	0.081	0.769	0.113	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.053	0.040	0.013	0.033	0.149	0.027	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	10	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 15
+n_clusters 15
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.533, 0.518, 0.492, 0.507, 0.523]
+Test AUC:  [0.611, 0.588, 0.502, 0.607, 0.573]
+Test AUPRC:  [0.093, 0.088, 0.074, 0.094, 0.084]
+Test MISPSE:  [0.122, 0.092, 0.046, 0.078, 0.108]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	15	0.515	0.576	0.087	0.089	0.871	0.111	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.014	0.040	0.007	0.026	0.039	0.010	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	15	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 20
+n_clusters 20
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.469, 0.507, 0.503, 0.506, 0.386]
+Test AUC:  [0.577, 0.529, 0.556, 0.586, 0.534]
+Test AUPRC:  [0.075, 0.082, 0.088, 0.098, 0.08]
+Test MISPSE:  [0.056, 0.085, 0.092, 0.081, 0.049]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	20	0.474	0.556	0.085	0.073	0.734	0.124	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.046	0.023	0.008	0.017	0.105	0.010	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	20	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 30
+n_clusters 30
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.482, 0.113, 0.52, 0.134, 0.517]
+Test AUC:  [0.406, 0.504, 0.531, 0.533, 0.613]
+Test AUPRC:  [0.059, 0.065, 0.09, 0.086, 0.109]
+Test MISPSE:  [0.038, 0.058, 0.097, 0.062, 0.098]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	30	0.353	0.517	0.082	0.071	0.573	0.107	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.188	0.067	0.018	0.023	0.367	0.006	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	30	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 50
+n_clusters 50
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.336, 0.397, 0.505, 0.478, 0.52]
+Test AUC:  [0.512, 0.462, 0.625, 0.574, 0.585]
+Test AUPRC:  [0.07, 0.057, 0.112, 0.099, 0.081]
+Test MISPSE:  [0.062, 0.033, 0.105, 0.075, 0.094]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	sepsis24	50	0.447	0.552	0.084	0.074	0.664	0.087	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.070	0.058	0.020	0.025	0.153	0.005	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	sepsis24	50	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+KMeans
+Wid_Mortality
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.366, 0.321, 0.476, 0.466, 0.651]
+Test AUC:  [0.691, 0.712, 0.692, 0.706, 0.748]
+Test AUPRC:  [0.213, 0.232, 0.24, 0.209, 0.257]
+Test MISPSE:  [0.114, 0.103, 0.137, 0.134, 0.373]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	wid_mortality	5	0.456	0.710	0.230	0.172	0.563	0.160	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.114	0.021	0.018	0.101	0.191	0.013	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	wid_mortality	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.389, 0.42, 0.613, 0.375, 0.532]
+Test AUC:  [0.722, 0.643, 0.762, 0.662, 0.627]
+Test AUPRC:  [0.202, 0.143, 0.271, 0.183, 0.133]
+Test MISPSE:  [0.119, 0.116, 0.239, 0.108, 0.153]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	wid_mortality	8	0.466	0.683	0.186	0.147	0.579	0.091	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.092	0.051	0.049	0.049	0.152	0.016	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	wid_mortality	8	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.427, 0.567, 0.487, 0.367, 0.372]
+Test AUC:  [0.547, 0.678, 0.554, 0.705, 0.371]
+Test AUPRC:  [0.12, 0.171, 0.113, 0.183, 0.066]
+Test MISPSE:  [0.096, 0.182, 0.102, 0.11, 0.056]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	wid_mortality	10	0.444	0.571	0.131	0.109	0.592	0.118	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.075	0.119	0.042	0.041	0.139	0.021	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	wid_mortality	10	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 15
+n_clusters 15
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.434, 0.427, 0.527, 0.532, 0.555]
+Test AUC:  [0.497, 0.669, 0.568, 0.603, 0.741]
+Test AUPRC:  [0.088, 0.162, 0.106, 0.136, 0.219]
+Test MISPSE:  [0.085, 0.118, 0.13, 0.138, 0.18]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	wid_mortality	15	0.495	0.616	0.142	0.130	0.681	0.120	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.054	0.084	0.046	0.031	0.112	0.007	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	wid_mortality	15	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 20
+n_clusters 20
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.533, 0.441, 0.531, 0.526, 0.502]
+Test AUC:  [0.614, 0.653, 0.556, 0.576, 0.623]
+Test AUPRC:  [0.136, 0.153, 0.121, 0.127, 0.154]
+Test MISPSE:  [0.145, 0.121, 0.14, 0.127, 0.123]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	wid_mortality	20	0.507	0.604	0.138	0.131	0.734	0.138	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.035	0.034	0.013	0.010	0.110	0.015	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	wid_mortality	20	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 30
+n_clusters 30
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.251, 0.549, 0.402, 0.467, 0.468]
+Test AUC:  [0.493, 0.696, 0.558, 0.365, 0.611]
+Test AUPRC:  [0.09, 0.194, 0.119, 0.064, 0.12]
+Test MISPSE:  [0.085, 0.167, 0.099, 0.056, 0.113]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	wid_mortality	30	0.427	0.545	0.117	0.104	0.574	0.106	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.100	0.112	0.044	0.037	0.182	0.010	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	wid_mortality	30	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 50
+n_clusters 50
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.273, 0.506, 0.317, 0.347, 0.45]
+Test AUC:  [0.617, 0.561, 0.391, 0.617, 0.555]
+Test AUPRC:  [0.146, 0.108, 0.068, 0.129, 0.104]
+Test MISPSE:  [0.094, 0.123, 0.061, 0.098, 0.096]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	wid_mortality	50	0.379	0.548	0.111	0.094	0.476	0.123	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.086	0.083	0.026	0.020	0.158	0.007	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	wid_mortality	50	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+KMeans
+Diabetes
+k = 5
+n_clusters 5
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.498, 0.541, 0.477, 0.534, 0.415]
+Test AUC:  [0.536, 0.539, 0.535, 0.552, 0.498]
+Test AUPRC:  [0.428, 0.437, 0.441, 0.45, 0.41]
+Test MISPSE:  [0.459, 0.46, 0.493, 0.469, 0.417]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	diabetes	5	0.493	0.532	0.433	0.460	0.578	0.147	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.045	0.018	0.014	0.025	0.010	0.016	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	diabetes	5	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 8
+n_clusters 8
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.505, 0.443, 0.53, 0.453, 0.464]
+Test AUC:  [0.526, 0.543, 0.544, 0.538, 0.502]
+Test AUPRC:  [0.425, 0.434, 0.443, 0.43, 0.412]
+Test MISPSE:  [0.46, 0.455, 0.474, 0.449, 0.438]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	diabetes	8	0.479	0.531	0.429	0.455	0.580	0.140	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.033	0.016	0.010	0.012	0.003	0.007	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	diabetes	8	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 10
+n_clusters 10
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.494, 0.498, 0.495, 0.503, 0.469]
+Test AUC:  [0.536, 0.52, 0.501, 0.526, 0.517]
+Test AUPRC:  [0.426, 0.416, 0.412, 0.419, 0.415]
+Test MISPSE:  [0.454, 0.406, 0.45, 0.42, 0.424]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	diabetes	10	0.492	0.520	0.418	0.431	0.557	0.155	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.012	0.012	0.005	0.018	0.021	0.010	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	diabetes	10	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 15
+n_clusters 15
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.537, 0.438, 0.44, 0.528, 0.479]
+Test AUC:  [0.542, 0.5, 0.53, 0.545, 0.532]
+Test AUPRC:  [0.436, 0.406, 0.432, 0.437, 0.426]
+Test MISPSE:  [0.457, 0.386, 0.454, 0.438, 0.321]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	diabetes	15	0.484	0.530	0.427	0.411	0.546	0.168	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.042	0.016	0.011	0.052	0.035	0.008	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	diabetes	15	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 20
+n_clusters 20
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.505, 0.485, 0.486, 0.518, 0.471]
+Test AUC:  [0.511, 0.519, 0.495, 0.524, 0.508]
+Test AUPRC:  [0.407, 0.423, 0.397, 0.417, 0.413]
+Test MISPSE:  [0.419, 0.436, 0.418, 0.427, 0.39]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	diabetes	20	0.493	0.511	0.411	0.418	0.542	0.163	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.017	0.010	0.009	0.015	0.020	0.010	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	diabetes	20	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 30
+n_clusters 30
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.518, 0.508, 0.516, 0.452, 0.517]
+Test AUC:  [0.515, 0.5, 0.519, 0.48, 0.521]
+Test AUPRC:  [0.427, 0.414, 0.422, 0.387, 0.417]
+Test MISPSE:  [0.444, 0.424, 0.433, 0.379, 0.43]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	diabetes	30	0.502	0.507	0.413	0.422	0.550	0.179	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.025	0.015	0.014	0.022	0.008	0.004	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	diabetes	30	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+
+k = 50
+DeepCAC
+KMeans
+Diabetes
+k = 50
+n_clusters 50
+alpha 1.0
+beta 0.5
+gamma 0.0
+delta 0.0
+Test F1:  [0.473, 0.492, 0.494, 0.498, 0.505]
+Test AUC:  [0.508, 0.508, 0.518, 0.514, 0.502]
+Test AUPRC:  [0.408, 0.41, 0.422, 0.414, 0.412]
+Test MISPSE:  [0.4, 0.41, 0.409, 0.404, 0.412]
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	diabetes	50	0.492	0.510	0.413	0.407	0.534	0.198	0.000	0.000
+[Std]	F1	AUC	AUPRC	MINPSE	ACC	Tr-SIL	Tr-HTFD	Tr-WDFD
+	0.011	0.006	0.005	0.004	0.014	0.004	nan	nan
+Distilled Model Metrics
+[Avg]	Dataset	k	F1	AUC	AUPRC	MINPSE
+	diabetes	50	0.000	0.000	0.000	0.000
+
+[Std]	F1	AUC	AUPRC	MINPSE
+	nan	nan	nan	nan
+
+
+

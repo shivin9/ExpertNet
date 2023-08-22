@@ -56,7 +56,7 @@ parser.add_argument('--pretrain', default= 'True')
 parser.add_argument("--load_ae", default= 'False')
 parser.add_argument("--classifier", default="LR")
 parser.add_argument("--tol", default=0.01, type=float)
-parser.add_argument("--attention", default=11, type=int)
+parser.add_argument("--attention", default=0, type=int)
 parser.add_argument('--ablation', default='None')
 parser.add_argument('--cluster_balance', default='hellinger')
 
